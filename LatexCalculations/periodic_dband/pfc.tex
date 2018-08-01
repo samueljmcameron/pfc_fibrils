@@ -1,0 +1,87 @@
+\documentclass[12pt]{article}
+%\usepackage{helvet}
+%\renewcommand{\familydefault}{\sfdefault}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{braket}
+\usepackage{titlesec}
+\usepackage{siunitx}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage[font={small}]{caption}
+\usepackage{subcaption}
+%\titlespacing*{\section}{0pt}{4pt}{4pt}
+\usepackage[letterpaper, margin=2cm]{geometry}
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+\DeclareSIUnit\Molar{\textsc{m}}
+\DeclareMathOperator*{\MAXVAL}{max}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}
+\tikzstyle{place}=[circle,draw,fill,thick,inner sep = 0pt,minimum size = 1.5mm]
+\tikzstyle{theline}=[line width = 1pt]
+
+
+\begin{document}
+\pagenumbering{arabic}
+\spacing{1.5}
+
+%%%%%%%%%%%
+% Begin Document
+%%%%%%%%%%%
+
+\section{Treating d-banding as a phase field}
+I would like to couple d-banding of fibrils into the current free energy picture of the system. One way to do this is to use a phase-field-crystal model approach \cite{Elder:2004ct}, in which the periodic density modulations are described by an additional term in the free energy functional. To start with, I consider the free energy functional $F$ of a cylinder with a radius $R$, length $L$, and some internal structure given by a director field $\bm{n}(\bm{r})$ and a density $\rho(\bm{r})$, which is surrounded by a fluid. I'll suppose that the surface tension $\gamma$ between the cylinder and the fluid depends on whether it is measured on the cylinder's side (with area $2\pi R L$ and $\gamma=\gamma_s$), or on one of the two cylindrical caps (each with area $\pi R^2$ and $\gamma=\gamma_t$). The total free energy is then
+\begin{equation}\label{eq:F_basic}
+F(R,L)=\int_0^R\int_0^L\int_0^{2\pi}f(\bm{r},\bm{n}(\bm{r}),\rho(\bm{r}))rdrdzd\phi+2\pi RL\gamma_s+2\pi R^2\gamma_t.
+\end{equation}
+The equilibrium configuration is determined by minimization of eqn \ref{eq:F_basic} with respect to $R$, $L$, $\bm{n}(\bm{r})$, and $\rho(\bm{r})$.
+
+To make this problem tractable, there are several assumptions that must I'm going to apply. The first assumption is that the director field follows a double-twist, so $\bm{n}$ is reduced to a single twist field $\psi(r)$ which is dependent only on the radius. With no consideration of density fluctuations, this reduces the free energy $f$ to the familiar Frank free energy of a double-twisted liquid crystal,
+\begin{align}\label{eq:frank}
+f_{dt}=&-k_2\left(\psi'+\frac{\sin2\psi}{2r}\right)+\frac{1}{2}K_{22}\left(\psi'\frac{\sin2\psi}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\nonumber\\
+&-\frac{1}{2}\left(K_{22}+k_{24}\right)\frac{1}{r}\frac{d\sin^2\psi}{dr}.
+\end{align}
+
+The elastic constants $k_i$ and $K_j$ in eqn \ref{eq:frank} are dependent on the density of the liquid crystal \cite{Odijk:liqcryst1986}, and so density fluctuations may couple into the frank free energy. For this work, I will only allow for density fluctuations along the $z$ axis of the cylinder to mimic the d-banding of fibrils. Without considering the coupling of density to eqn \ref{eq:frank}, an additional term from the phase-field-crystal literature can be introduced into the free energy of the form
+\begin{equation}\label{eq:simple_density}
+f_{pfc}=\frac{b}{2}\rho(z)\left[\lambda_0^2+\frac{\partial^2}{\partial z^2}\right]^2\rho(z).
+\end{equation}
+Here, $\lambda_0^{-1}$ is the length scale at which the d-banding occurs. For collagen fibrils, we make the hypothesis that this length scale couples with the twist angle by the geometrical construction
+\begin{equation}\label{eq:lmbda}
+\lambda_0=\frac{2\pi}{d_0\cos\psi(r)},
+\end{equation}
+where $d_0=\SI{67}{\nano\meter}$ is the d-band spacing for a fibril with no twist.
+
+To build a tractable form of the free energy, I assume that the elastic constants are independent of the density variations, and assume $\rho(z)=\rho_0\cos(kz)$ (in the future, I may extend this to allow $k$ to vary with $r$ as well). Combining the two parts (eqns \ref{eq:frank} and \ref{eq:simple_density}) into a single free energy, and setting $q=1$, $K_{22}=1$ (they scale out of the free energy anyway), the free energy per volume of fibril is
+\begin{align}\label{eq:FE}
+E\equiv& \frac{F}{\pi R^2 L}\nonumber\\
+=&\frac{2}{R^2}\int_0^Rrdr\left[-\psi'-\frac{\sin2\psi(r)}{2r}+\frac{1}{2}\left(\psi'+\frac{\sin2\psi(r)}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi(r)}{r^2}\right]-(1+k_{24})\frac{\sin^2\psi(R)}{R^2}\nonumber\\
+&+\frac{\Lambda}{2R^2}\left(1+\frac{\sin(2kL)}{2kL}\right)\int_0^Rrdr\left(\left[\frac{2\pi}{d_0\cos\psi(r)}\right]^2-k^2\right)^2+\frac{2\gamma_{\text{side}}}{R}+\frac{2\gamma_{\text{top}}}{L}
+\end{align}
+
+Minimization of this free energy corresponds to a $\psi(r)$, $R$, $L$, and $k$ which simultaneously satisfy the constraints
+\begin{align}
+&\frac{\delta E}{\delta \psi}=0\label{eq:dEdpsi0},\\
+&\frac{\partial E}{\partial R}=0\label{eq:dEdR0},\\
+&\frac{\partial E}{\partial L}=0\label{eq:dEdL0},\\
+&\frac{\partial E}{\partial k}=0\label{eq:dEdk0}.
+\end{align}
+This is numerically difficult. My best idea so far is to use simulated annealing or gradient descent to determine $R$, $L$, and $k$.
+
+
+%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%
+\clearpage
+\bibliography{pfc}
+\bibliographystyle{unsrt}
+
+\end{document}
