@@ -2,8 +2,8 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
-#include "nrutil.h"
-#include "headerfile.h"
+#include "../../src/nrutil.h"
+#include "../../src/headerfile.h"
 
 #define NE 2                   // # of 1st order DEs
 #define M 2*2*2*2*2*2*2*2*2*2*2+1  // # of mesh points (2^M+1 for romberg integration)
