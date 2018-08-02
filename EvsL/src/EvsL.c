@@ -40,6 +40,7 @@ int main(int argc, char **argv)
   char scan_what[20];
 
   double initialSlope;
+  double upperbound;
 
   char path[200];
   char f1[200],f2[200];
@@ -54,8 +55,9 @@ int main(int argc, char **argv)
   sscanf(argv[2],"%lf",&R);
   sscanf(argv[3],"%lf",&L);
   sscanf(argv[4],"%lf",&eta);
+  sscanf(argv[5],"%lf",&upperbound);
 
-  snprintf(scan_what,sizeof(scan_what),"%s",argv[5]);
+  snprintf(scan_what,sizeof(scan_what),"%s","L");
 
   K33 = 30.;
   initialSlope = M_PI/(4.0*R);
@@ -70,7 +72,7 @@ int main(int argc, char **argv)
   psi = fopen(f2,"w");
 
   scanE(r,y,c,s,K33,k24,Lambda,eta,d0,L,R,initialSlope,
-	 gamma_s,gamma_t,energy,psi,conv,itmax,M,scan_what);
+	gamma_s,gamma_t,energy,psi,conv,itmax,M,upperbound,scan_what);
 
 
   fclose(energy); // close file!

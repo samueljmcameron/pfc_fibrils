@@ -46,11 +46,11 @@ void saveEnergy(FILE *energy, double R, double E, double derivative,
 
 
 void scanE(double *r,double **y,double ***c,double **s,
-	    double K33,double k24,double Lambda,
-	    double eta,double d0,double L,double R,
-	    double initialSlope,double gamma_s,
-	    double gamma_t,FILE *energy,FILE *psi,double conv,
-	    int itmax,int mpt,char scan_what[])
+	   double K33,double k24,double Lambda,
+	   double eta,double d0,double L,double R,
+	   double initialSlope,double gamma_s,
+	   double gamma_t,FILE *energy,FILE *psi,double conv,
+	   int itmax,int mpt, double upperbound, char scan_what[])
 // The energy of the system E(R,L,eta). This function //
 // generates data of E vs scan_what[] (either "L",    //
 // "R", or "eta"), while holding the other two values //
@@ -61,7 +61,6 @@ void scanE(double *r,double **y,double ***c,double **s,
 {
   int isitone=1;
   double *var,var0;
-  double upperbound;
   double h;
   double slowc = 1.0;
   double scalv[2+1];
@@ -77,7 +76,6 @@ void scanE(double *r,double **y,double ***c,double **s,
     printf("R!\n");
     var = &R;
     var0 = R;
-    upperbound = 3.0;
     dEdvar = &dEdR;
     dEdvarlast = &dEdRlast;
   }
@@ -85,7 +83,6 @@ void scanE(double *r,double **y,double ***c,double **s,
     printf("L!\n");
     var = &L;
     var0 = L;
-    upperbound = 40.0;
     dEdvar = &dEdL;
     dEdvarlast = &dEdLlast;
   }
