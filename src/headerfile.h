@@ -96,7 +96,8 @@ void scanE(double *r,double **y,double ***c,double **s,
 	   double eta,double d0,double L,double R,
 	   double initialSlope,double gamma_s,
 	   double gamma_t,FILE *energy,FILE *psi,
-	   double conv,int itmax,int mpt,char scan_what[]);
+	   double conv,int itmax,int mpt,double upperbound,
+	   char scan_what[]);
 
 
 #endif /* ANSI */

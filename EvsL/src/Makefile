@@ -41,57 +41,10 @@ $(MAINOBJECT) : $(MAINSRC)
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
 
-#$(OBJDIR)/bksub.o : ../../src/bksub.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/difeq.o : ../../src/difeq.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/energy.o : ../../src/energy.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/energylandscape.o : ../../src/energylandscape.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/nrutil.o : ../../src/nrutil.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/pinvs.o : ../../src/pinvs.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/polint.o : ../../src/polint.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/qromb.o : ../../src/qromb.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/red.o : ../../src/red.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/solvde.o : ../../src/solvde.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-#$(OBJDIR)/trapzd.o : ../../src/trapzd.c 
-#	$(CC) $(CFLAGS) -c $< -o $@
-#	@echo "Compiled "$<" successfully!"
-
-# this is where I'm leaving off, to get things working fine
-# uncomment everything above, but comment out the next three
-# lines below.
-
-$(OBJECTS): $(SOURCES)
+$(OBJECTS): $(OBJDIR)/%.o: $(SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
+
 
 .PHONY: clean
 clean:
