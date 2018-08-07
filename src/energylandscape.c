@@ -71,6 +71,7 @@ void scanE(double *r,double **y,double ***c,double **s,
   double dEdLlast = dEdL;
   double dEdetalast = dEdeta;
   double *dEdvar, *dEdvarlast;
+  double Emin = 1e100;
 
   if (strcmp(scan_what,"R")==0) {
     printf("R!\n");
@@ -129,10 +130,11 @@ void scanE(double *r,double **y,double ***c,double **s,
     saveEnergy(energy,*var,E,*dEdvar,y[1][mpt]);
 
     if (*var != var0 && *dEdvar*(*dEdvarlast) <= 0
-	&& *dEdvarlast < 0) {
+	&& *dEdvarlast < 0 && E <= Emin) {
       save_psi(psi,r,y,mpt);
       printf("SAVED!\n");
-      printf("E_min-E_chol = %1.2e\n",E+0.5); 
+      printf("E_min-E_chol = %1.2e\n",E+0.5);
+      Emin = E;
     }
 
     *var += 0.001;
