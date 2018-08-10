@@ -46,11 +46,12 @@ void saveEnergy(FILE *energy, double R, double E, double derivative,
 
 
 void scanE(double *r,double **y,double ***c,double **s,
-	   double K33,double k24,double Lambda,
-	   double eta,double d0,double L,double R,
-	   double initialSlope,double gamma_s,
-	   double gamma_t,FILE *energy,FILE *psi,double conv,
-	   int itmax,int mpt, double upperbound, char scan_what[])
+	   double K33,double k24,double Lambda,double d0,
+	   double omega,double R,double L,double eta,
+	   double delta,double gamma_s,double gamma_t,
+	   double initialSlope,FILE *energy,FILE *psi,
+	   double conv,int itmax,int mpt, 
+	   double upperbound, char scan_what[])
 // The energy of the system E(R,L,eta). This function //
 // generates data of E vs scan_what[] (either "L",    //
 // "R", or "eta"), while holding the other two values //
