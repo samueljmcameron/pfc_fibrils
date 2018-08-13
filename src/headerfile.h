@@ -49,14 +49,10 @@ double qromb(double *,double *, int);
 void compute_rf2233b1(double K33, double Lambda,double d0,
 		      double L,double eta,double delta,
 		      double *r,double **y, double *rf_,int mpt);
-
-void compute_integrand1(double Lambda,double eta, double d0,
-			double L, double *r, double **y,
-			double *integrand1,int mpt);
-
-void compute_integrand2(double Lambda,double eta, double d0,
-			double L, double *r, double **y,
-			double *integrand2,int mpt);
+void compute_integrand1(double d0,double L,double eta,double *r,
+			double **y,double *integrand1,int mpt);
+void compute_integrand2(double d0,double L,double eta,double *r,
+			double **y,double *integrand2,int mpt);
 
 
 double E_R(double k24,double omega,double R,double L,double eta,
@@ -64,23 +60,25 @@ double E_R(double k24,double omega,double R,double L,double eta,
 	   double **y,double integration_2233b1,int mpt);
 
 double derivEdR(double K33, double k24,double Lambda,double d0, 
-		double R,double L,double eta,double delta,double gamma_s,
-		double *r,double **y, double integration_2233b1,
-		int mpt);
+		double R,double L,double eta,double delta,
+		double gamma_s,double *r,double **y,
+		double integration_2233b1,int mpt);
 
-double derivEdeta(double R,double Lambda,double eta, 
-	      double d0, double L, double *r,double **y,
-	      double integration1,double integration2);
+double derivEdL(double Lambda,double omega,double R,double L,double eta,
+		double delta, double gamma_t,double integration2);
 
-double derivEdL(double R,double Lambda,double eta, 
-	    double d0, double L, double gamma_t,
-	    double *r,double **y,double integration2);
+double derivEdeta(double Lambda,double omega,double R,double L,double eta,
+		  double delta,double integration1,double integration2);
 
-void energy_stuff(double *E, double *dEdR,double *dEdeta, double *dEdL,
-		  double R, double K33, double k24, double Lambda,
-		  double eta, double d0, double L, double gamma_s,
-		  double gamma_t, double *r, double **y, double *rf_,
-		  double *integrand1, double *integrand2,int mpt);
+double derivEddelta(double Lambda,double omega,double R,double L,double eta,
+		    double delta,double integration2);
+
+void energy_stuff(double *E, double *dEdR,double *dEdL, double *dEdeta,
+		  double *dEddelta,double K33,double k24,double Lambda,
+		  double d0,double omega,double R,double L,double eta,
+		  double delta,double gamma_s,double gamma_t,double *r,
+		  double **y, double *rf_,double *integrand1,
+		  double *integrand2,int mpt);
 
 void linearGuess(double *r, double **y, double initialSlope,
 		 double h,int mpt);
