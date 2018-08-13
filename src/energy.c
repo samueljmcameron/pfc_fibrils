@@ -29,9 +29,8 @@ void compute_rf2233b1(double K33, double Lambda,double d0,
   return;
 }
 
-void compute_integrand1(double Lambda,double eta, double d0,
-			double L, double *r, double **y,
-			double *integrand1,int mpt)
+void compute_integrand1(double d0,double L,double eta,double *r,
+			double **y,double *integrand1,int mpt)
 {
   int i;
   double cosy;
@@ -47,9 +46,8 @@ void compute_integrand1(double Lambda,double eta, double d0,
 
 
 
-void compute_integrand2(double Lambda,double eta, double d0,
-			double L, double *r, double **y,
-			double *integrand2,int mpt)
+void compute_integrand2(double d0,double L,double eta,double *r,
+			double **y,double *integrand2,int mpt)
 {
   int i;
   double siny, sin2y,cosy;
@@ -75,7 +73,7 @@ double E_R(double k24,double omega,double R,double L,double eta,
   E = 2.0/(R*R)*integration_2233b1; // first calculate bulk energy per unit length
   // add density fluctuations term
   E = E+omega*0.5*(0.75*delta*delta-1+sin(2*eta*L)/(2*eta*L)*(delta*delta-1)
-		   +delta*delta*sin(4*eta*L)/(8*eta*L))
+		   +delta*delta*sin(4*eta*L)/(8*eta*L));
   // add surface term tension terms
   E = E+1.0/R*(-(1+k24)*(sin(y[1][mpt])*sin(y[1][mpt]))/R+2.0*gamma_s);  
   E = E+2*gamma_t/L;
@@ -84,9 +82,9 @@ double E_R(double k24,double omega,double R,double L,double eta,
 }
 
 double derivEdR(double K33, double k24,double Lambda,double d0, 
-		double R,double L,double eta,double delta,double gamma_s,
-		double *r,double **y, double integration_2233b1,
-		int mpt)
+		double R,double L,double eta,double delta,
+		double gamma_s,double *r,double **y,
+		double integration_2233b1,int mpt)
 {
   double ans;
   double sin2y = sin(2*y[1][mpt]);
@@ -108,62 +106,89 @@ double derivEdR(double K33, double k24,double Lambda,double d0,
   return ans;
 }
 
-// done up to here 2018-08-10
-
-double derivEdeta(double R,double Lambda,double eta, 
-		  double d0, double L, double *r,double **y,
-		  double integration1,double integration2)
+double derivEdeta(double Lambda,double omega,double R,double L,double eta,
+		  double delta,double integration1,double integration2)
 {
 
   double ans;
 
-  ans = (Lambda/(2*R*R)*(cos(2*eta*L)/eta-sin(2*eta*L)/(2*eta*eta*L))
+  ans = (1.0/(2*R*R*eta)*(cos(2*eta*L)-sin(2*eta*L)/(2*eta*L))
 	 *integration2);
-  ans += (-2*Lambda/(R*R)*(1+sin(2*eta*L)/(2*eta*L))*eta
-	  *integration1);
+  ans += (-2.0/(R*R)*(1+sin(2*eta*L)/(2*eta*L))*eta*integration1);
+
+  ans += (0.25/eta*((delta*delta-1)
+		    *(cos(4*eta*L)-sin(4*eta*L)/(4*eta*L))));
+
+  ans *= Lambda*delta*delta;
+
   return ans;
 }
 
-double derivEdL(double R,double Lambda,double eta, 
-		double d0, double L, double gamma_t,
-		double *r,double **y,double integration2)
+double derivEdL(double Lambda,double omega,double R,double L,double eta,
+		double delta, double gamma_t,double integration2)
 {
   double ans;
 
-  ans = (Lambda/(2*R*R)*(cos(2*eta*L)/L-sin(2*eta*L)/(2*eta*L*L))
-	 *integration2);
-  ans -= 2*gamma_t/(L*L);
+  ans = ((0.5*Lambda*delta*delta/(R*R)*integration2
+	 +0.5*omega*delta*delta*(delta*delta-1))/L
+	 *(cos(2*eta*L)-sin(2*eta*L)/(2*eta*L)));
+
+  ans += (0.25*Lambda*delta*delta/L*
+	  (cos(4*eta*L)-sin(4*eta*L)/(4*eta*L)));
+  ans += -2*gamma_t/(L*L);
 
   return ans;
 }
 
-void energy_stuff(double *E, double *dEdR,double *dEdeta, double *dEdL,
-		  double R, double K33, double k24, double Lambda,
-		  double eta, double d0, double L, double gamma_s,
-		  double gamma_t, double *r, double **y, double *rf_,
-		  double *integrand1, double *integrand2,int mpt)
+double derivEddelta(double Lambda,double omega,double R,double L,double eta,
+		    double delta,double integration2)
+{
+  double ans;
+
+  ans = 1.0/(R*R)*(1+sin(2*eta*L)/(2*eta*L))*integration2;
+  ans += (omega*delta*delta
+	  *(0.75+sin(2*eta*L)/(2*eta*L)+sin(4*eta*L)/(4*eta*L)));
+  ans += (omega*(0.75*delta*delta-1+sin(2*eta*L)/(2*eta*L)*(delta*delta-1)
+		 +delta*delta*sin(4*eta*L)/(8*eta*L)));
+
+  ans *= Lambda*delta;
+
+  return ans;
+
+}
+
+
+void energy_stuff(double *E, double *dEdR,double *dEdL, double *dEdeta,
+		  double *dEddelta,double K33, double k24,double Lambda,
+		  double d0,double omega,double R,double L,double eta,
+		  double delta,double gamma_s,double gamma_t,double *r,
+		  double **y, double *rf_,double *integrand1,
+		  double *integrand2,int mpt)
 {
   double integration_2233b1,integration1,integration2;
 
-  compute_rf2233b1(K33,Lambda,eta,d0,L,r,y,rf_,mpt);
+  compute_rf2233b1(K33,Lambda,d0,L,eta,delta,r,y,rf_,mpt);
   integration_2233b1 = qromb(r,rf_,mpt);
 
-  compute_integrand1(Lambda,eta,d0,L,r,y,integrand1,mpt);
+  compute_integrand1(d0,L,eta,r,y,integrand1,mpt);
   integration1 = qromb(r,integrand1,mpt);
 
-  compute_integrand2(Lambda,eta,d0,L,r,y,integrand2,mpt);
+  compute_integrand2(d0,L,eta,r,y,integrand2,mpt);
   integration2 = qromb(r,integrand2,mpt);
 
 
-  *E = E_R(R,k24,L,gamma_s,gamma_t,r,y,integration_2233b1,mpt);
+  *E = E_R(k24,omega,R,L,eta,delta,gamma_s,gamma_t,
+	   r,y,integration_2233b1,mpt);
 
-  *dEdR = derivEdR(R,K33,k24,Lambda,eta,d0,L,gamma_s,r,y,
-		   integration_2233b1,mpt);
+  *dEdR = derivEdR(K33,k24,Lambda,d0,R,L,eta,delta,
+		   gamma_s,r,y,integration_2233b1,mpt);
 
-  *dEdeta = derivEdeta(R,Lambda,eta,d0,L,r,y,integration1,
+  *dEdL = derivEdL(Lambda,omega,R,L,eta,delta,gamma_t,integration2);
+
+  *dEdeta = derivEdeta(Lambda,omega,R,L,eta,delta,integration1,
 		       integration2);
 
-  *dEdL = derivEdL(R,Lambda,eta,d0,L,gamma_t,r,y,integration2);
+  *dEddelta = derivEddelta(Lambda,omega,R,L,eta,delta,integration2);
 
   return;
 }

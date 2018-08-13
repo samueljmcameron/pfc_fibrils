@@ -67,10 +67,11 @@ void scanE(double *r,double **y,double ***c,double **s,
   double scalv[2+1];
   double rf_[mpt+1],integrand1[mpt+1],integrand2[mpt+1];
   double E;
-  double dEdR, dEdL, dEdeta;
+  double dEdR, dEdL, dEdeta,dEddelta;
   double dEdRlast = dEdR;
   double dEdLlast = dEdL;
   double dEdetalast = dEdeta;
+  double dEddeltalast = dEddelta;
   double *dEdvar, *dEdvarlast;
   double Emin = 1e100;
 
@@ -95,8 +96,15 @@ void scanE(double *r,double **y,double ***c,double **s,
     dEdvar = &dEdeta;
     dEdvarlast = &dEdetalast;
   }
+  else if (strcmp(scan_what,"delta")==0) {
+    printf("/delta!\n");
+    var = &delta;
+    var0 = delta;
+    dEdvar = &dEddelta;
+    dEdvarlast = &dEddeltalast;
+  }
   else {
-    printf("Need either R, L, or eta as argv[5] input."
+    printf("Need either R, L, eta, or delta as argv[14] input."
 	   "Exiting to system.\n");
     exit(1);
   }
@@ -117,15 +125,16 @@ void scanE(double *r,double **y,double ***c,double **s,
     //                            result is initial guess
 
     solvde(itmax,conv,slowc,scalv,2,1,mpt,y,r,c,s,K33,k24,
-	   Lambda,eta,d0,L,h); // relax to compute psi,
-    //                            psi' curves, note the 2,1
-    //                            corresponds to two eqns,
-    //                            and 1 BC at the r = 0.
+	   Lambda,d0,L,eta,delta,h); // relax to compute psi,
+    //                                  psi' curves, note the 2,1
+    //                                  corresponds to two eqns,
+    //                                   and 1 BC at the r = 0.
 
     // calculate energy, derivatives (see energy.c for code)
-    energy_stuff(&E,&dEdR,&dEdeta,&dEdL,R,K33,k24,Lambda,eta,
-		 d0,L,gamma_s,gamma_t,r,y,rf_,
-		 integrand1,integrand2,mpt);
+    energy_stuff(&E,&dEdR,&dEdL,&dEdeta,&dEddelta,K33,k24,
+		 Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
+		 r,y,rf_,integrand1,integrand2,mpt);
+
 
     // save L,E, and surface twist
     saveEnergy(energy,*var,E,*dEdvar,y[1][mpt]);
@@ -142,6 +151,7 @@ void scanE(double *r,double **y,double ***c,double **s,
     dEdRlast = dEdR;
     dEdLlast = dEdL;
     dEdetalast = dEdeta;
+    dEddeltalast = dEddelta;
     
   }
 
