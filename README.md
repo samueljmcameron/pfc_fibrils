@@ -6,4 +6,4 @@ The fibrils also have density fluctuations along the length of the fibril, of th
 
 The goal of this project is to see how density fluctuations along the z-direction modify the double-twist configuration, and the free energy of the fibrils.
 
-TEsting. Double check.
+TEsting. Double check. Triple check.
