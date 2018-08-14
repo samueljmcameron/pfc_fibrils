@@ -8,5 +8,4 @@ module load python/2.7
 module load scipy-stack
 
 
-python generatedata_cc.py 1
-#$SLURM_ARRAY_TASK_ID
+python generatedata_cc.py $SLURM_ARRAY_TASK_ID
