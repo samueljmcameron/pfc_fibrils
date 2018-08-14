@@ -20,7 +20,7 @@ if __name__=='__main__':
 
     d,params,str_,var_position = load_const_params()
 
-    check_data(str_,'\gamma_t')
+    check_data(str_,'K_{33}')
 
 
     save_p = "results/"
@@ -41,7 +41,7 @@ if __name__=='__main__':
     ylabel = "E"
     xlabel = d['scan_what']
     xscale = 'linear'
-    yscale = 'log'
+    yscale = 'linear'
 
     ax_config(xlabel,ylabel,xscale,yscale,ax)
 

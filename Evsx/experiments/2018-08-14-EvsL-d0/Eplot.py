@@ -20,7 +20,7 @@ if __name__=='__main__':
 
     d,params,str_,var_position = load_const_params()
 
-    check_data(str_,'\gamma_t')
+    check_data(str_,'d_0')
 
 
     save_p = "results/"
