@@ -19,7 +19,7 @@ if __name__=='__main__':
 
     d,params,str_,var_position = load_const_params()
 
-    check_data(str_,'\gamma_t')
+    check_data(str_,'K_{33}')
 
     save_p = "results/"
     load_p = "data/"
