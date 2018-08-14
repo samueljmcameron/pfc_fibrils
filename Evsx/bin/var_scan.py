@@ -3,6 +3,7 @@ from __future__ import print_function, division
 import subprocess
 import numpy as np
 import sys
+import re
 sys.path.append('../../../bin')
 from variable_positions import return_position
 
@@ -69,11 +70,16 @@ def loadfile_list(params,var,var_position):
     # are saved by the executable scan, but only the last
     # part (e.g. the part after 'energy_' or 'psivsr').
 
-    s = "%s_%1.4e_%s"%('_'.join(map('{:1.4e}'.format,
-                                    params[:var_position])),
-                       var,
-                       '_'.join(map('{:1.4e}'.format,
-                                    params[var_position:])))
+    if var_position == 0:
+        s = "%1.4e_%s"%(var,
+                        '_'.join(map('{:1.4e}'.format,
+                                     params[var_position:])))
+    else:
+        s = "%s_%1.4e_%s"%('_'.join(map('{:1.4e}'.format,
+                                        params[:var_position])),
+                           var,
+                           '_'.join(map('{:1.4e}'.format,
+                                        params[var_position:])))
     return s
 
 def one_run(var):
@@ -105,10 +111,7 @@ def one_run(var):
     return
 
 def latex2string(str_):
-    if str_[0] == '\\':
-        edited = str_[1:]
-    else:
-        edited = str_
+    edited = re.sub(r'\{',r'',re.sub(r'\}',r'',re.sub(r'\\',r'',str_)))
     return edited
 
 
