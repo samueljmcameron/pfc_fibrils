@@ -90,6 +90,13 @@ void save_psi(FILE *psi,double *r, double **y,int mpt);
 void saveEnergy(FILE *energy, double R, double E, double derivative,
 		double observable);
 
+void setup_var_pointers(double **var, double *var0,double **dEdvar,
+			double **dEdvarlast,char scan_what[],double *R, 
+			double *dEdR,double *dEdRlast,double *L,
+			double *dEdL, double *dEdLlast,double *eta,
+			double *dEdeta, double *dEdetalast,double *delta,
+			double *dEddelta,double *dEddeltalast);
+
 void scanE(double *r,double **y,double ***c,double **s,
 	   double K33,double k24,double Lambda,double d0,
 	   double omega,double R,double L,double eta,

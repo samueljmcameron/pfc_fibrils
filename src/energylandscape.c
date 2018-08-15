@@ -75,43 +75,20 @@ void scanE(double *r,double **y,double ***c,double **s,
   double *dEdvar, *dEdvarlast;
   double Emin = 1e100;
 
-  if (strcmp(scan_what,"R")==0) {
-    printf("R!\n");
-    var = &R;
-    var0 = R;
-    dEdvar = &dEdR;
-    dEdvarlast = &dEdRlast;
-  }
-  else if (strcmp(scan_what,"L")==0) {
-    printf("L!\n");
-    var = &L;
-    var0 = L;
-    dEdvar = &dEdL;
-    dEdvarlast = &dEdLlast;
-  }
-  else if (strcmp(scan_what,"eta")==0) {
-    printf("eta!\n");
-    var = &eta;
-    var0 = eta;
-    dEdvar = &dEdeta;
-    dEdvarlast = &dEdetalast;
-  }
-  else if (strcmp(scan_what,"delta")==0) {
-    printf("/delta!\n");
-    var = &delta;
-    var0 = delta;
-    dEdvar = &dEddelta;
-    dEdvarlast = &dEddeltalast;
-  }
-  else {
-    printf("Need either R, L, eta, or delta as argv[14] input."
-	   "Exiting to system.\n");
-    exit(1);
-  }
+
+  setup_var_pointers(&var,&var0,&dEdvar,&dEdvarlast,scan_what,&R, 
+		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
+		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
 
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
   
+  printf("hi\n");
+  printf("var0 = %lf\n",var0);
+  printf("hello\n");
+  printf("var = %lf\n",*var);
+  printf("L = %lf\n",L);
+  printf("hello\n");
   while (*var <= upperbound) {
 
     h = R/(mpt-1);
@@ -157,3 +134,136 @@ void scanE(double *r,double **y,double ***c,double **s,
 
   return;
 }
+
+void setup_var_pointers(double **var, double *var0,double **dEdvar,
+			double **dEdvarlast,char scan_what[],double *R, 
+			double *dEdR,double *dEdRlast,double *L,
+			double *dEdL, double *dEdLlast,double *eta,
+			double *dEdeta, double *dEdetalast,double *delta,
+			double *dEddelta,double *dEddeltalast)
+// convenient way to make a variables (ending in var) that have the  //
+// same addresses as whichever parameter that is specified by        //
+// scan_what.
+{
+
+  if (strcmp(scan_what,"R")==0) {
+    *var = R;
+    *var0 = *R;
+    *dEdvar = dEdR;
+    *dEdvarlast = dEdRlast;
+  }
+  else if (strcmp(scan_what,"L")==0) {
+    printf("L!\n");
+    *var = L;
+    *var0 = *L;
+    *dEdvar = dEdL;
+    *dEdvarlast = dEdLlast;
+  }
+  else if (strcmp(scan_what,"eta")==0) {
+    printf("eta!\n");
+    *var = eta;
+    *var0 = *eta;
+    *dEdvar = dEdeta;
+    *dEdvarlast = dEdetalast;
+  }
+  else if (strcmp(scan_what,"delta")==0) {
+    printf("/delta!\n");
+    *var = delta;
+    *var0 = *delta;
+    *dEdvar = dEddelta;
+    *dEdvarlast = dEddeltalast;
+  }
+  else {
+    printf("Need either R, L, eta, or delta as argv[14] input."
+	   "Exiting to system.\n");
+    exit(1);
+  }
+  return;
+}
+
+/*
+void scan2dE(double *r,double **y,double ***c,double **s,
+	     double K33,double k24,double Lambda,double d0,
+	     double omega,double R,double L,double eta,
+	     double delta,double gamma_s,double gamma_t,
+	     double initialSlope,FILE *energy,FILE *psi,
+	     double conv,int itmax,int mpt, 
+	     double upperboundx, double upperboundy,
+	     char scan_whatx[],char scan_whaty[])
+// The energy of the system E(R,L,eta). This function  //
+// generates data of E vs scan_whatx[] vs scan_whaty[] //
+// (either "L","R", or "eta"), while holding the other //
+// value constant. The E vs x vs y data is saved in    //
+// energy file. If a minimum (or multiple minima) are  //
+// found in the energy landscape, psi(r) are saved to  //
+// the psi file. //
+{
+  int isitone;
+  double *var_x,var_x0;
+  double *var_y,var_y0;
+  double h;
+  double slowc = 1.0;
+  double scalv[2+1];
+  double rf_[mpt+1],integrand1[mpt+1],integrand2[mpt+1];
+  double E;
+  double dEdR, dEdL, dEdeta,dEddelta;
+  double dEdRlast = dEdR;
+  double dEdLlast = dEdL;
+  double dEdetalast = dEdeta;
+  double dEddeltalast = dEddelta;
+  double *dEdvar_x, *dEdvar_xlast;
+  double *dEdvar_y, *dEdvar_ylast;
+  double Emin = 1e100;
+
+
+  scalv[1] = .1;    // guess for magnitude of the psi values
+  scalv[2] = 4.0;   // guess for magnitude of the psi' values
+  
+  isitone = 1;
+  while (*var_x <= upperboundx) {
+
+    h = R/(mpt-1);
+
+    if (isitone == 1) {
+      linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
+      isitone += 1;
+    }
+    
+    else propagate_r(r,h,mpt); // if not first loop, previous 
+    //                            result is initial guess
+
+    solvde(itmax,conv,slowc,scalv,2,1,mpt,y,r,c,s,K33,k24,
+	   Lambda,d0,L,eta,delta,h); // relax to compute psi,
+    //                                  psi' curves, note the 2,1
+    //                                  corresponds to two eqns,
+    //                                   and 1 BC at the r = 0.
+
+    // calculate energy, derivatives (see energy.c for code)
+    energy_stuff(&E,&dEdR,&dEdL,&dEdeta,&dEddelta,K33,k24,
+		 Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
+		 r,y,rf_,integrand1,integrand2,mpt);
+
+
+    // save L,E, and surface twist
+    saveEnergy(energy,*var_x,E,*dEdvar_x,y[1][mpt]);
+
+    if (*var_x != var_x0 && *dEdvar_x*(*dEdvar_xlast) <= 0
+	&& *dEdvar_xlast < 0) {
+      save_psi(psi,r,y,mpt);
+      printf("SAVED!\n");
+      printf("E_min-E_chol = %1.2e\n",E+0.5);
+      Emin = E;
+    }
+
+    *var_x += 0.001;
+    dEdRlast = dEdR;
+    dEdLlast = dEdL;
+    dEdetalast = dEdeta;
+    dEddeltalast = dEddelta;
+    
+  }
+
+  return;
+}
+
+*/
