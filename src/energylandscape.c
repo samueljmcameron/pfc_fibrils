@@ -181,21 +181,22 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
   return;
 }
 
-/*
+
 void scan2dE(double *r,double **y,double ***c,double **s,
 	     double K33,double k24,double Lambda,double d0,
 	     double omega,double R,double L,double eta,
 	     double delta,double gamma_s,double gamma_t,
 	     double initialSlope,FILE *energy,FILE *psi,
-	     double conv,int itmax,int mpt, 
-	     double upperboundx, double upperboundy,
-	     char scan_whatx[],char scan_whaty[])
-// The energy of the system E(R,L,eta). This function  //
-// generates data of E vs scan_whatx[] vs scan_whaty[] //
-// (either "L","R", or "eta"), while holding the other //
-// value constant. The E vs x vs y data is saved in    //
-// energy file. If a minimum (or multiple minima) are  //
-// found in the energy landscape, psi(r) are saved to  //
+	     FILE *deriv_energy_x,FILE *deriv_energy_y,
+	     FILE *surfacetwist,double conv,int itmax,int mpt, 
+	     double upperbound_x,double upperbound_y,
+	     char scan_what_x[],char scan_what_y[])
+// The energy of the system E(R,L,eta). This function    //
+// generates data of E vs scan_what_x[] vs scan_what_y[] //
+// (either "L","R", or "eta"), while holding the other   //
+// value constant. The E vs x vs y data is saved in      //
+// energy file. If a minimum (or multiple minima) are    //
+// found in the energy landscape, psi(r) are saved to    //
 // the psi file. //
 {
   int isitone;
@@ -215,55 +216,68 @@ void scan2dE(double *r,double **y,double ***c,double **s,
   double *dEdvar_y, *dEdvar_ylast;
   double Emin = 1e100;
 
+  setup_var_pointers(&var_x,&var_x0,&dEdvar,&dEdvarlast,scan_what_x,&R, 
+		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
+		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
 
+  setup_var_pointers(&var_y,&var_y0,&dEdvar,&dEdvarlast,scan_what_y,&R, 
+		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
+		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
+
+  
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
   
-  isitone = 1;
-  while (*var_x <= upperboundx) {
 
-    h = R/(mpt-1);
+  while (*var_x <= upperbound_x) {
+    isitone = 1;
+    while (*var_y <= upperbound_y) {
 
-    if (isitone == 1) {
-      linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
-      isitone += 1;
-    }
+      h = R/(mpt-1);
+
+      if (isitone == 1) {
+	linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
+	isitone += 1;
+      }
     
-    else propagate_r(r,h,mpt); // if not first loop, previous 
-    //                            result is initial guess
+      else propagate_r(r,h,mpt); // if not first loop, previous 
+      //                            result is initial guess
 
-    solvde(itmax,conv,slowc,scalv,2,1,mpt,y,r,c,s,K33,k24,
-	   Lambda,d0,L,eta,delta,h); // relax to compute psi,
-    //                                  psi' curves, note the 2,1
-    //                                  corresponds to two eqns,
-    //                                   and 1 BC at the r = 0.
+      solvde(itmax,conv,slowc,scalv,2,1,mpt,y,r,c,s,K33,k24,
+	     Lambda,d0,L,eta,delta,h); // relax to compute psi,
+      //                                  psi' curves, note the 2,1
+      //                                  corresponds to two eqns,
+      //                                   and 1 BC at the r = 0.
+      
+      // calculate energy, derivatives (see energy.c for code)
+      energy_stuff(&E,&dEdR,&dEdL,&dEdeta,&dEddelta,K33,k24,
+		   Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
+		   r,y,rf_,integrand1,integrand2,mpt);
+      
+      
 
-    // calculate energy, derivatives (see energy.c for code)
-    energy_stuff(&E,&dEdR,&dEdL,&dEdeta,&dEddelta,K33,k24,
-		 Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
-		 r,y,rf_,integrand1,integrand2,mpt);
+      fprintf(energy,"%.8e\t",E);
+      fprintf(deriv_energy_x,"%.8e\t",*dEdvar_x);
+      fprintf(deriv_energy_y,"%.8e\t",*dEdvar_y);
+      fprintf(surfacetwist,"%.8e\t",y[1][mpt]);
+      
+      if (*var_x != var_x0 && *dEdvar_x*(*dEdvar_xlast) <= 0
+	  && *dEdvar_xlast < 0 && *var_y != var_y0
+	  && *dEdvar_y*(*dEdvar_ylast) <= 0 && *dEdvar_ylast <0) {
+	save_psi(psi,r,y,mpt);
+	printf("SAVED!\n");
+	printf("E_min-E_chol = %1.2e\n",E+0.5);
+	Emin = E;
+      }
 
-
-    // save L,E, and surface twist
-    saveEnergy(energy,*var_x,E,*dEdvar_x,y[1][mpt]);
-
-    if (*var_x != var_x0 && *dEdvar_x*(*dEdvar_xlast) <= 0
-	&& *dEdvar_xlast < 0) {
-      save_psi(psi,r,y,mpt);
-      printf("SAVED!\n");
-      printf("E_min-E_chol = %1.2e\n",E+0.5);
-      Emin = E;
+      *var_x += 0.001;
+      dEdRlast = dEdR;
+      dEdLlast = dEdL;
+      dEdetalast = dEdeta;
+      dEddeltalast = dEddelta;
     }
-
-    *var_x += 0.001;
-    dEdRlast = dEdR;
-    dEdLlast = dEdL;
-    dEdetalast = dEdeta;
-    dEddeltalast = dEddelta;
-    
+    *var_y += 0.001;
   }
 
   return;
 }
-
-*/

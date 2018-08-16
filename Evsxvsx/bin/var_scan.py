@@ -51,17 +51,17 @@ def load_const_params():
     return d, params, varied_param_name, var_position
 
 def argv_list(init_path,params,var,var_position,
-              scan_what):
+              scan_what_x,scan_what_y):
 
     # Load in the list of parameters which must be fed to
     # the executable scan (with src code from scan.c).
 
-    args = ("%s %s %lf "
+    args = ("%s %s %lf %s"
             "%s %s")%(init_path,
                       ' '.join(map(str,params[0:var_position])),
                       var,
                       ' '.join(map(str,params[var_position:])),
-                      scan_what)
+                      scan_what_x,scan_what_y)
     return args
 
 def loadfile_list(params,var,var_position):
@@ -95,7 +95,7 @@ def one_run(var):
         
     # run scan executable for var
     variable_scanE(init_path,params,var,var_position,
-                   d['scan_what'],successful_var)
+                   d['scan_what_x'],d['scan_what_y'],successful_var)
 
     # store whichever calculations were successful into
     # a .dat file in the results folder
@@ -116,18 +116,19 @@ def latex2string(str_):
 
 
 def variable_scanE(init_path,params,var,var_position,
-                   scan_what,successful_calc_list):
+                   scan_what_x,scan_what_y,successful_calc_list):
 
     # For a specified set of constant params, as well
     # as the parameter you are varying to see its
-    # effect on 'Evs%s'%scan_what (i.e. var in the
+    # effect on 'Evs%s%s'%scan_whatxy (i.e. var in the
     # argument list above), attempt to compute 
-    # the data for E vs '%s'%scan_what. If it fails,
+    # the data for E vs '%s'%scan_what_x vs
+    # '%s'%scan_what_y. If it fails,
     # return the stdout of the run.
 
 
     args = argv_list(init_path,params,var,var_position,
-                     scan_what)
+                     scan_what_x,scan_what_y)
 
     cmd = "../../bin/scan " + args
 
@@ -135,11 +136,21 @@ def variable_scanE(init_path,params,var,var_position,
                        stderr=subprocess.STDOUT)==0):
         successful_calc_list.append(var)
         load_str = loadfile_list(params,var,var_position)
-        Efile =  ("%s_%s_energy_%s"
-                  ".txt")%(init_path,scan_what,
+        Efile =  ("%s_%s_%s_energy_%s"
+                  ".txt")%(init_path,scan_what_x,scan_what_y,
                            load_str)
-        psifile = ("%s_%s_psivsr_%s"
-                   ".txt")%(init_path,scan_what,
+        psifile = ("%s_%s_%s_psivsr_%s"
+                   ".txt")%(init_path,scan_what_x,scan_what_y,
+                            load_str)
+        # left off HERE
+        psifile = ("%s_%s_%s_psivsr_%s"
+                   ".txt")%(init_path,scan_what_x,scan_what_y,
+                            load_str)
+        psifile = ("%s_%s_%s_psivsr_%s"
+                   ".txt")%(init_path,scan_what_x,scan_what_y,
+                            load_str)
+        psifile = ("%s_%s_%s_psivsr_%s"
+                   ".txt")%(init_path,scan_what_x,scan_what_y,
                             load_str)
 
 
