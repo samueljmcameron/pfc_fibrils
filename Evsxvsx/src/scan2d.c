@@ -35,12 +35,14 @@ int main(int argc, char **argv)
   double delta;
   double gamma_s;
   double gamma_t;
-  double upperbound;
+  double upperbound_x,upperbound_y;
   double initialSlope;
-  char scan_what[20];
+  char scan_what_x[20],scan_what_y[20];
   char path[200];
-  char f1[200],f2[200];
-  FILE *energy, *psi;
+  char suffix[200],f1[200],f2[200],f3[200];
+  char f4[200],f5[200];
+  FILE *energy, *psi, *deriv_energy_x;
+  FILE *deriv_energy_y, *surfacetwist;
 
   // read in the the variables and paths
   snprintf(path,sizeof(path),"%s",argv[1]);
@@ -55,8 +57,10 @@ int main(int argc, char **argv)
   sscanf(argv[10],"%lf",&delta);
   sscanf(argv[11],"%lf",&gamma_s);
   sscanf(argv[12],"%lf",&gamma_t);
-  sscanf(argv[13],"%lf",&upperbound);
-  snprintf(scan_what,sizeof(scan_what),"%s",argv[14]);
+  sscanf(argv[13],"%lf",&upperbound_x);
+  sscanf(argv[14],"%lf",&upperbound_y);
+  snprintf(scan_what_x,sizeof(scan_what_x),"%s",argv[15]);
+  snprintf(scan_what_y,sizeof(scan_what_y),"%s",argv[16]);
 
   y = matrix(1,NYJ,1,NYK);
   s = matrix(1,NSI,1,NSJ);
@@ -65,26 +69,46 @@ int main(int argc, char **argv)
 
   initialSlope = M_PI/(4.0*R);
 
-  snprintf(f1,sizeof(f1),"%s_%s_energy_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
-	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
-	   path,scan_what,K33,k24,Lambda,d0,omega,R,L,eta,delta,
-	   gamma_s,gamma_t,upperbound);
-  snprintf(f2,sizeof(f2),"%s_%s_psivsr_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
-	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
-	   path,scan_what,K33,k24,Lambda,d0,omega,R,L,eta,delta,
-	   gamma_s,gamma_t,upperbound);
+  snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
+	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
+	   K33,k24,Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
+	   upperbound_x,upperbound_y);
+  
+  snprintf(f1,sizeof(f1),"%s_%s_%s_energy_%s",
+	   path,scan_what_x,scan_what_y,suffix);
+
+  snprintf(f2,sizeof(f2),"%s_%s_%s_psivsr_%s",
+	   path,scan_what_x,scan_what_y,suffix);
+  
+  snprintf(f3,sizeof(f3),"%s_%s_%s_deriv_energy_%s_%s",
+	   path,scan_what_x,scan_what_y,scan_what_x,suffix);
+
+  snprintf(f4,sizeof(f4),"%s_%s_%s_deriv_energy_%s_%s",
+	   path,scan_what_x,scan_what_y,scan_what_y,suffix);
+
+  snprintf(f5,sizeof(f5),"%s_%s_%s_surfacetwist_%s",
+	   path,scan_what_x,scan_what_y,suffix);
 
   energy = fopen(f1,"w");
   psi = fopen(f2,"w");
+  deriv_energy_x = fopen(f3,"w");
+  deriv_energy_y = fopen(f4,"w");
+  surfacetwist = fopen(f5,"w");
+  
 
 
-  scanE(r,y,c,s,K33,k24,Lambda,d0,omega,R,L,eta,delta,gamma_s,
-	gamma_t,initialSlope,energy,psi,conv,itmax,M,upperbound,
-	scan_what);
+  scan2dE(r,y,c,s,K33,k24,Lambda,d0,omega,R,L,eta,delta,gamma_s,
+	  gamma_t,initialSlope,energy,psi,deriv_energy_x,
+	  deriv_energy_y,surfacetwist,conv,itmax,mpt,upperbound_x,
+	  upperbound_y,scan_what_x,scan_what_y);
+  
   
 
   fclose(energy); // close file!
   fclose(psi);
+  fclose(deriv_energy_x);
+  fclose(deriv_energy_y);
+  fclose(surfacetwist);
   free_f3tensor(c,1,NCI,1,NCJ,1,NCK);
   free_matrix(s,1,NSI,1,NSJ);
   free_matrix(y,1,NYJ,1,NYK);
