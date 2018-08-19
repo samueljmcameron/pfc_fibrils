@@ -216,6 +216,10 @@ void scan2dE(double *r,double **y,double ***c,double **s,
   double *dEdvar_y, *dEdvar_ylast;
   double Emin = 1e100;
 
+
+  // initialize the pointers to the x variable (in E vs x vs y) so that
+  // they reference the correct derivatives of E. x is either R, L,
+  // eta, or delta.
   setup_var_pointers(&var_x,&var_x0,&dEdvar,&dEdvarlast,scan_what_x,&R, 
 		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
 		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
