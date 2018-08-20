@@ -83,12 +83,7 @@ void scanE(double *r,double **y,double ***c,double **s,
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
   
-  printf("hi\n");
-  printf("var0 = %lf\n",var0);
-  printf("hello\n");
-  printf("var = %lf\n",*var);
-  printf("L = %lf\n",L);
-  printf("hello\n");
+
   while (*var <= upperbound) {
 
     h = R/(mpt-1);
@@ -147,6 +142,7 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
 {
 
   if (strcmp(scan_what,"R")==0) {
+    printf("R!\n");
     *var = R;
     *var0 = *R;
     *dEdvar = dEdR;
@@ -167,7 +163,7 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
     *dEdvarlast = dEdetalast;
   }
   else if (strcmp(scan_what,"delta")==0) {
-    printf("/delta!\n");
+    printf("delta!\n");
     *var = delta;
     *var0 = *delta;
     *dEdvar = dEddelta;
@@ -186,9 +182,9 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 	     double K33,double k24,double Lambda,double d0,
 	     double omega,double R,double L,double eta,
 	     double delta,double gamma_s,double gamma_t,
-	     double initialSlope,FILE *energy,FILE *psi,
-	     FILE *deriv_energy_x,FILE *deriv_energy_y,
-	     FILE *surfacetwist,double conv,int itmax,int mpt, 
+	     FILE *energy,FILE *psi,FILE *deriv_energy_x,
+	     FILE *deriv_energy_y,FILE *surfacetwist,
+	     double conv,int itmax,int mpt,
 	     double upperbound_x,double upperbound_y,
 	     char scan_what_x[],char scan_what_y[])
 // The energy of the system E(R,L,eta). This function    //
@@ -205,6 +201,7 @@ void scan2dE(double *r,double **y,double ***c,double **s,
   double h;
   double slowc = 1.0;
   double scalv[2+1];
+  double initialSlope;
   double rf_[mpt+1],integrand1[mpt+1],integrand2[mpt+1];
   double E;
   double dEdR, dEdL, dEdeta,dEddelta;
@@ -220,11 +217,11 @@ void scan2dE(double *r,double **y,double ***c,double **s,
   // initialize the pointers to the x variable (in E vs x vs y) so that
   // they reference the correct derivatives of E. x is either R, L,
   // eta, or delta.
-  setup_var_pointers(&var_x,&var_x0,&dEdvar,&dEdvarlast,scan_what_x,&R, 
+  setup_var_pointers(&var_x,&var_x0,&dEdvar_x,&dEdvar_xlast,scan_what_x,&R, 
 		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
 		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
 
-  setup_var_pointers(&var_y,&var_y0,&dEdvar,&dEdvarlast,scan_what_y,&R, 
+  setup_var_pointers(&var_y,&var_y0,&dEdvar_y,&dEdvar_ylast,scan_what_y,&R, 
 		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
 		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
 
@@ -235,11 +232,15 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 
   while (*var_x <= upperbound_x) {
     isitone = 1;
+    *var_y = var_y0;
     while (*var_y <= upperbound_y) {
 
       h = R/(mpt-1);
 
+
+
       if (isitone == 1) {
+	initialSlope = M_PI/(4.0*R);
 	linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
 	isitone += 1;
       }
@@ -252,7 +253,12 @@ void scan2dE(double *r,double **y,double ***c,double **s,
       //                                  psi' curves, note the 2,1
       //                                  corresponds to two eqns,
       //                                   and 1 BC at the r = 0.
-      
+
+      //      if (*var_x > 0.002) {
+      //	printf("%s = %lf\n",scan_what_x,*var_x);
+      //	printf("%s = %lf\n",scan_what_y,*var_y);
+      //	save_psi(psi,r,y,mpt);
+      //  }
       // calculate energy, derivatives (see energy.c for code)
       energy_stuff(&E,&dEdR,&dEdL,&dEdeta,&dEddelta,K33,k24,
 		   Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
@@ -274,13 +280,19 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 	Emin = E;
       }
 
-      *var_x += 0.001;
+      *var_y += 0.001;
       dEdRlast = dEdR;
       dEdLlast = dEdL;
       dEdetalast = dEdeta;
       dEddeltalast = dEddelta;
     }
-    *var_y += 0.001;
+    fprintf(energy,"\n");
+    fprintf(deriv_energy_x,"\n");
+    fprintf(deriv_energy_y,"\n");
+    fprintf(surfacetwist,"\n");
+    printf("%s = %lf\n",scan_what_x,*var_x);
+    printf("%s = %lf\n",scan_what_y,*var_y);
+    *var_x += 0.001;
   }
 
   return;

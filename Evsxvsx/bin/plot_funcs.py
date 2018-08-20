@@ -4,7 +4,10 @@ import subprocess
 import numpy as np
 import sys
 sys.path.append('../../bin')
-from var_scan import loadfile_list, load_const_params,latex2string
+from var_scan2d import loadfile_list, load_const_params
+from universe_funcs import latex2string,string2latex
+from variable_positions import return_position
+from matplotlib import cm, ticker
 
 def check_data(str_,string2compare2):
     if str_ != string2compare2:
@@ -42,88 +45,104 @@ def ax_config(xlabel,ylabel,xscale,yscale,ax):
 
     return
 
+def mk_mesh(d,params,excluded_param_position):
 
-def plot_scanE(ax,colors,d,var_array,params,
-               var_position,varied_param_name,load_p):
+    var_x_spacing = 0.001
+    var_y_spacing = 0.001
 
-    # plots E vs d['scan_what'], for all the values of 
-    # var in the array var_array. varied_param_name is
-    # the name (a string) of var. load_p is the path
-    # which the data for the plots is loaded from.
+    xname = string2latex(d['scan_what_x'])
+    yname = string2latex(d['scan_what_y'])
 
-    for i,var in enumerate(var_array):
+    x_position = return_position(xname)
+    y_position = return_position(yname)
 
-        load_str = loadfile_list(params,var,var_position)
-        fname= ("%s_%s_energy_%s")%(load_p,d['scan_what'],
-                                    load_str)
+    if x_position > excluded_param_position:
+        x_position -= 1
 
+    if y_position > excluded_param_position:
+        y_position -= 1
 
-        #if (varied_param_name == 'Lambda'
-        #    or varied_param_name == 'omega'
-        #    or varied_param_name == 'eta'
-        #    or varied_param_name == 'delta'
-        #    or varied_param_name == 'gamma_s'
-        #    or varied_param_name == 'gamma_t'):
-        #    legend_label = "\%s=\SI{%1.1e}{}"%(varied_param_name,
-        #                                       var)
-        #        else:
-        legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
-                                               var)
+    x0 = params[x_position]
+    xf = d['upperbound_x']
+    numx = int(round((xf-x0)/var_x_spacing))
+    print(numx)
+    xs = np.linspace(x0,xf,num=numx,endpoint=True)
 
-        # load and plot E vs x
-        Evsx = np.loadtxt(fname + ".txt")
-        xs = Evsx[:,0]
-        Es = Evsx[:,1]
-        dEdxs = Evsx[:,2]
-        psixs = Evsx[:,3]
+    y0 = params[y_position]
+    yf = d['upperbound_y']
+    numy = int(round((yf-y0)/var_y_spacing))
+    ys = np.linspace(y0,yf,num=numy,endpoint=True)
+    print(numy)
+    return np.meshgrid(xs,ys)
+    
 
-        ax.plot(xs,Es,'-',lw = 2,color = colors[i],
-                label = r"$%s$"%legend_label)
-        for i,x in enumerate(xs[1:]):
-            if dEdxs[i]*dEdxs[i-1] <= 0 and dEdxs[i] >0:
-                ax.plot(xs[i],Es[i],'k.')
-
-    return
-
-def plot_scanderivE(ax,colors,d,var_array,params,
-                    var_position,varied_param_name,load_p):
+def plot_scanE2d(ax,colors,d,var,params,var_position,
+                 varied_param_name,load_p):
 
     # plots E vs d['scan_what'], for all the values of 
     # var in the array var_array. varied_param_name is
     # the name (a string) of var. load_p is the path
     # which the data for the plots is loaded from.
 
-    for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params,var,var_position)
-        fname= ("%s_%s_energy_%s")%(load_p,d['scan_what'],
-                                    load_str)
+    load_str = loadfile_list(params,var,var_position)
+    fname= ("%s_%s_%s_energy_%s")%(load_p,d['scan_what_x'],
+                                   d['scan_what_y'],load_str)
+    
+    legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
+                                      var)
+    
+    # load and plot E vs x
+    EE = np.loadtxt(fname + ".txt")
+
+    print(EE.shape)
+
+    xx,yy = mk_mesh(d,params,var_position)
+
+    print(xx.shape)
+    print(yy.shape)
+
+    cs = ax.imshow(EE.T,vmin=EE.min(),vmax=EE.max(),
+                   cmap=cm.coolwarm,
+                   extent=[xx.min(),xx.max(),yy.min(),yy.max()],
+                   aspect=1.0/5.0,origin='lower')
+
+    return cs
+
+def plot_scanderivEx(ax,colors,d,var,params,var_position,
+                     varied_param_name,load_p,which_deriv):
+
+    # plots dEdx vs d['scan_what'], for all the values of 
+    # var in the array var_array. varied_param_name is
+    # the name (a string) of var. load_p is the path
+    # which the data for the plots is loaded from.
+
+    load_str = loadfile_list(params,var,var_position)
+    fname= ("%s_%s_%s_deriv_"
+            "energy_%s_%s")%(load_p,d['scan_what_x'],
+                             d['scan_what_y'],which_deriv,
+                             load_str)
+    
+    legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
+                                      var)
+    
+    # load and plot E vs x
+    dEEdxx = np.loadtxt(fname + ".txt")
+
+    print(dEEdxx.shape)
+
+    xx,yy = mk_mesh(d,params,var_position)
+
+    print(xx.shape)
+    print(yy.shape)
+
+    cs = ax.imshow(dEEdxx.T,vmin=dEEdxx.min(),vmax=dEEdxx.max(),
+                   cmap=cm.coolwarm,
+                   extent=[xx.min(),xx.max(),yy.min(),yy.max()],
+                   aspect=1.0/5.0,origin='lower')
 
 
-        #if (varied_param_name == 'Lambda'
-        #    or varied_param_name == 'omega'
-        #    or varied_param_name == 'eta'
-        #    or varied_param_name == 'delta'
-        #    or varied_param_name == 'gamma_s'
-        #    or varied_param_name == 'gamma_t'):
-        #    legend_label = "\%s=\SI{%1.1e}{}"%(varied_param_name,
-        #                                       var)
-        #        else:
-        legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
-                                               var)
-
-        # load and plot E vs x
-        Evsx = np.loadtxt(fname + ".txt")
-        xs = Evsx[:,0]
-        Es = Evsx[:,1]
-        dEdxs = Evsx[:,2]
-        psixs = Evsx[:,3]
-
-        ax.plot(xs,dEdxs,'-',lw = 2,color = colors[i],
-                label = r"$%s$"%legend_label)
-
-    return
-
+    return cs
 
 def plot_scanpsi(ax,colors,d,var_array,params,
                  var_position,varied_param_name,load_p):

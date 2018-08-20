@@ -109,12 +109,11 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 	     double K33,double k24,double Lambda,double d0,
 	     double omega,double R,double L,double eta,
 	     double delta,double gamma_s,double gamma_t,
-	     double initialSlope,FILE *energy,FILE *psi,
-	     FILE *deriv_energy_x,FILE *deriv_energy_y,
-	     FILE *surfacetwist,double conv,int itmax,int mpt, 
+	     FILE *energy,FILE *psi,FILE *deriv_energy_x,
+	     FILE *deriv_energy_y,FILE *surfacetwist,
+	     double conv,int itmax,int mpt,
 	     double upperbound_x,double upperbound_y,
 	     char scan_what_x[],char scan_what_y[]);
-
 
 #endif /* ANSI */
 

@@ -64,6 +64,7 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
 0.5. This makes the extrapolation a polynomial in h^2 as allowed by equation (4.2.1),
 not just a polynomial in h.*/
   }
+  printf("R = %lf\n",x[xlength]);
   nrerror("Too many steps in routine qromb");
   return 0.0; //Never get here.
 }

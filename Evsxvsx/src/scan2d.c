@@ -36,7 +36,6 @@ int main(int argc, char **argv)
   double gamma_s;
   double gamma_t;
   double upperbound_x,upperbound_y;
-  double initialSlope;
   char scan_what_x[20],scan_what_y[20];
   char path[200];
   char suffix[200],f1[200],f2[200],f3[200];
@@ -62,12 +61,31 @@ int main(int argc, char **argv)
   snprintf(scan_what_x,sizeof(scan_what_x),"%s",argv[15]);
   snprintf(scan_what_y,sizeof(scan_what_y),"%s",argv[16]);
 
+  printf("K33 = %lf\n",K33);
+  printf("k24 = %lf\n",k24);
+  printf("Lambda = %lf\n",Lambda);
+  printf("d0 = %lf\n",d0);
+  printf("omega = %lf\n",omega);
+  printf("R = %lf\n",R);
+  printf("L = %lf\n",L);
+  printf("eta = %lf\n",eta);
+  printf("delta = %lf\n",delta);
+  printf("gamma_s = %lf\n",gamma_s);
+  printf("gamma_t = %lf\n",gamma_t);
+  printf("upperbound_x = %lf\n",upperbound_x);
+  printf("upperbound_y = %lf\n",upperbound_y);
+
+  printf("scan_what_x = %s\n",scan_what_x);
+  printf("scan_what_y = %s\n",scan_what_y);
+
+
+
   y = matrix(1,NYJ,1,NYK);
   s = matrix(1,NSI,1,NSJ);
   c = f3tensor(1,NCI,1,NCJ,1,NCK);
   r = vector(1,NYK);
 
-  initialSlope = M_PI/(4.0*R);
+
 
   snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
 	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
@@ -98,9 +116,9 @@ int main(int argc, char **argv)
 
 
   scan2dE(r,y,c,s,K33,k24,Lambda,d0,omega,R,L,eta,delta,gamma_s,
-	  gamma_t,initialSlope,energy,psi,deriv_energy_x,
-	  deriv_energy_y,surfacetwist,conv,itmax,mpt,upperbound_x,
-	  upperbound_y,scan_what_x,scan_what_y);
+	  gamma_t,energy,psi,deriv_energy_x,deriv_energy_y,
+	  surfacetwist,conv,itmax,M,upperbound_x,upperbound_y,
+	  scan_what_x,scan_what_y);
   
   
 
