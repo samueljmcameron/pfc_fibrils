@@ -5,7 +5,6 @@ import numpy as np
 import sys
 import re
 sys.path.append('../../../bin')
-from variable_positions import return_position
 from universe_funcs import not_number, load_const_params
 from universe_funcs import loadfile_list,latex2string
 
@@ -69,7 +68,7 @@ def variable_scanE2d(init_path,params,var,var_position,
     args = argv_list(init_path,params,var,var_position,
                      scan_what_x,scan_what_y)
 
-    cmd = "../../bin/scan " + args
+    cmd = "../../bin/scan2d " + args
 
     if(subprocess.call(cmd,shell=True,
                        stderr=subprocess.STDOUT)==0):

@@ -72,3 +72,11 @@ def loadfile_list(params,var,var_position):
 def latex2string(str_):
     edited = re.sub(r'\{',r'',re.sub(r'\}',r'',re.sub(r'\\',r'',str_)))
     return edited
+
+def string2latex(str_):
+    if str_ == 'eta':
+        return '\eta'
+    elif str_ == 'delta':
+        return '\delta'
+    else:
+        return str_
