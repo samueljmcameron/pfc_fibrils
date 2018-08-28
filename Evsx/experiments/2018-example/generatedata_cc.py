@@ -3,7 +3,7 @@ from __future__ import print_function, division
 import subprocess
 import numpy as np
 import sys
-sys.path.append('../../bin')
+sys.path.append('../../scripts')
 from var_scan import one_run
 
 if __name__=="__main__":
