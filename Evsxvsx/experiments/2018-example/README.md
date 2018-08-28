@@ -1,0 +1,1 @@
+first experiment with correct code now (hopefully) for energy characteristics of the system.
