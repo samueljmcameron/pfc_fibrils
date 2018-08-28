@@ -1,3 +1,12 @@
 *.[oa]
 *~
 *.tar.gz
+*.pyc
+bin/*
+!bin/README.md
+*.DS_Store
+*.dSYM
+experiments/*
+!experiments/Eplot.py
+!experiments/dEplot.py
+!experiments/psiplot.py
