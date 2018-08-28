@@ -55,9 +55,9 @@ void compute_integrand2(double d0,double L,double eta,double *r,
 			double **y,double *integrand2,int mpt);
 
 
-double E_R(double k24,double omega,double R,double L,double eta,
-	   double delta,double gamma_s,double gamma_t,double *r,
-	   double **y,double integration_2233b1,int mpt);
+double E_R(double k24,double Lambda,double omega,double R,double L,
+	   double eta,double delta,double gamma_s,double gamma_t,
+	   double *r,double **y,double integration_2233b1,int mpt);
 
 double derivEdR(double K33, double k24,double Lambda,double d0, 
 		double R,double L,double eta,double delta,
