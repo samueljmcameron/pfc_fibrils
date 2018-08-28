@@ -64,16 +64,17 @@ void compute_integrand2(double d0,double L,double eta,double *r,
   return;
 }
 
-double E_R(double k24,double omega,double R,double L,double eta,
-	   double delta,double gamma_s,double gamma_t,double *r,
-	   double **y,double integration_2233b1,int mpt)
+double E_R(double k24,double Lambda,double omega,double R,double L,
+	   double eta,double delta,double gamma_s,double gamma_t,
+	   double *r,double **y,double integration_2233b1,int mpt)
 {
 
   double E;
   E = 2.0/(R*R)*integration_2233b1; // first calculate bulk energy per unit length
   // add density fluctuations term
-  E = E+omega*0.5*(0.75*delta*delta-1+sin(2*eta*L)/(2*eta*L)*(delta*delta-1)
-		   +delta*delta*sin(4*eta*L)/(8*eta*L));
+  E = (E+Lambda*delta*delta*omega*0.5
+       *(0.75*delta*delta-1+sin(2*eta*L)/(2*eta*L)*(delta*delta-1)
+	 +delta*delta*sin(4*eta*L)/(16*eta*L)));
   // add surface term tension terms
   E = E+1.0/R*(-(1+k24)*(sin(y[1][mpt])*sin(y[1][mpt]))/R+2.0*gamma_s);  
   E = E+2*gamma_t/L;
@@ -112,12 +113,11 @@ double derivEdeta(double Lambda,double omega,double R,double L,double eta,
 
   double ans;
 
-  ans = (1.0/(2*R*R*eta)*(cos(2*eta*L)-sin(2*eta*L)/(2*eta*L))
-	 *integration2);
+  ans = ((0.5/(R*R)*integration2+0.5*omega*(delta*delta-1))
+	 /eta*(cos(2*eta*L)-sin(2*eta*L)/(2*eta*L)));
   ans += (-2.0/(R*R)*(1+sin(2*eta*L)/(2*eta*L))*eta*integration1);
 
-  ans += (0.25/eta*((delta*delta-1)
-		    *(cos(4*eta*L)-sin(4*eta*L)/(4*eta*L))));
+  ans += (omega/(8*eta)*(cos(4*eta*L)-sin(4*eta*L)/(4*eta*L)));
 
   ans *= Lambda*delta*delta;
 
@@ -129,12 +129,12 @@ double derivEdL(double Lambda,double omega,double R,double L,double eta,
 {
   double ans;
 
-  ans = ((0.5*Lambda*delta*delta/(R*R)*integration2
-	 +0.5*omega*delta*delta*(delta*delta-1))/L
+  ans = ((0.5/(R*R)*integration2
+	  +0.5*omega*(delta*delta-1))
 	 *(cos(2*eta*L)-sin(2*eta*L)/(2*eta*L)));
 
-  ans += (0.25*Lambda*delta*delta/L*
-	  (cos(4*eta*L)-sin(4*eta*L)/(4*eta*L)));
+  ans += (omega/8.0*(cos(4*eta*L)-sin(4*eta*L)/(4*eta*L)));
+  ans *= Lambda*delta*delta/L;
   ans += -2*gamma_t/(L*L);
 
   return ans;
@@ -147,9 +147,9 @@ double derivEddelta(double Lambda,double omega,double R,double L,double eta,
 
   ans = 1.0/(R*R)*(1+sin(2*eta*L)/(2*eta*L))*integration2;
   ans += (omega*delta*delta
-	  *(0.75+sin(2*eta*L)/(2*eta*L)+sin(4*eta*L)/(4*eta*L)));
+	  *(0.75+sin(2*eta*L)/(2*eta*L)+sin(4*eta*L)/(16*eta*L)));
   ans += (omega*(0.75*delta*delta-1+sin(2*eta*L)/(2*eta*L)*(delta*delta-1)
-		 +delta*delta*sin(4*eta*L)/(8*eta*L)));
+		 +delta*delta*sin(4*eta*L)/(16*eta*L)));
 
   ans *= Lambda*delta;
 
@@ -177,7 +177,7 @@ void energy_stuff(double *E, double *dEdR,double *dEdL, double *dEdeta,
   integration2 = qromb(r,integrand2,mpt);
 
 
-  *E = E_R(k24,omega,R,L,eta,delta,gamma_s,gamma_t,
+  *E = E_R(k24,Lambda,omega,R,L,eta,delta,gamma_s,gamma_t,
 	   r,y,integration_2233b1,mpt);
 
   *dEdR = derivEdR(K33,k24,Lambda,d0,R,L,eta,delta,
