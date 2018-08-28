@@ -1,0 +1,1 @@
+keep git tracking the bin folder.
