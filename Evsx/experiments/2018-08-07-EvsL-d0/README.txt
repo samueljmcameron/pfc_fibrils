@@ -1,1 +1,0 @@
-These calculations were done when the incorrect energy was being used/minimized. The actual psi(r) configurations would be mainly correct, but there is no omega term in the calculation (and also no delta term for the size of the density fluctuations!
