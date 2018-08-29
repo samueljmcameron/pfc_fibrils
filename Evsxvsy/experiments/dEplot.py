@@ -23,6 +23,7 @@ if __name__=='__main__':
 
     check_data(str_,sys.argv[1])
 
+    index_var = int(sys.argv[2])
 
     save_p = "results/"
     load_p = "data/"
@@ -38,7 +39,7 @@ if __name__=='__main__':
         height = width
         fig.set_size_inches(width,height)
 
-        cs = plot_scanderivEx(ax,colors,d,var_array[0],params,
+        cs = plot_scanderivEx(ax,colors,d,var_array[index_var],params,
                               var_position,str_,load_p,which_deriv)
 
         xlabel = string2latex(d['scan_what_x'])
@@ -52,8 +53,9 @@ if __name__=='__main__':
         
         edited_str_ = latex2string(str_)
 
-        sname = "derivEd%svs%svs%s-%ss"%(which_deriv,d['scan_what_x'],
-                                         d['scan_what_y'],edited_str_)
+        sname = "derivEd%svs%svs%s-%ss-%1.2e"%(which_deriv,d['scan_what_x'],
+                                               d['scan_what_y'],edited_str_,
+                                               var_array[index_var])
 
         fig.tight_layout()
         fig.savefig(save_p + sname + ".pdf")

@@ -136,7 +136,7 @@ def plot_scanderivEx(ax,colors,d,var,params,var_position,
     print(xx.shape)
     print(yy.shape)
 
-    cs = ax.imshow(dEEdxx.T,vmin=dEEdxx.min(),vmax=dEEdxx.max(),
+    cs = ax.imshow(dEEdxx.T,vmin=-10,vmax=10,#dEEdxx.min(),vmax=dEEdxx.max(),
                    cmap=cm.coolwarm,
                    extent=[xx.min(),xx.max(),yy.min(),yy.max()],
                    aspect=1.0/5.0,origin='lower')
@@ -144,7 +144,7 @@ def plot_scanderivEx(ax,colors,d,var,params,var_position,
 
     return cs
 
-def plot_scanpsi(ax,colors,d,var_array,params,
+def plot_scanpsi(ax,colors,d,var,params,
                  var_position,varied_param_name,load_p):
 
     # plots all psi vs r which minimize the energy,
@@ -161,51 +161,51 @@ def plot_scanpsi(ax,colors,d,var_array,params,
 
     length = 2*2*2*2*2*2*2*2*2*2*2+1
 
-    for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params,var,var_position)
-        fname= ("%s_%s_psivsr_%s")%(load_p,d['scan_what'],
-                                    load_str)
+    load_str = loadfile_list(params,var,var_position)
+    fname= ("%s_%s_%s_psivsr_%s")%(load_p,d['scan_what_x'],
+                                   d['scan_what_y'],load_str)
 
-        if (varied_param_name == 'gamma_s'
-            or varied_param_name == 'gamma_t'
-            or varied_param_name == 'Lambda'
-            or varied_param_name == 'eta'):
-            legend_label = "\%s=\SI{%1.1e}{}"%(varied_param_name,
-                                               var)
-        else:
-            legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
-                                               var)
-
-
-        # load and plot psi vs r
-        psivsr = np.loadtxt(fname + ".txt")
-        if psivsr.size != 0:
-            print(psivsr.size)
-            rs = psivsr[:,0]
-            psis = psivsr[:,1]
-            dpsidrs = psivsr[:,2]
+    if (varied_param_name == 'gamma_s'
+        or varied_param_name == 'gamma_t'
+        or varied_param_name == 'Lambda'
+        or varied_param_name == 'eta'):
+        legend_label = "\%s=\SI{%1.1e}{}"%(varied_param_name,
+                                           var)
+    else:
+        legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
+                                           var)
 
 
-            if len(rs) % length != 0:
-                print("The length of psi(r) is not what "
-                      "was expected!")
-                print("Exiting to system while trying to plot!")
-                exit(1)
+    # load and plot psi vs r
+    psivsr = np.loadtxt(fname + ".txt")
+    if psivsr.size != 0:
+        print(psivsr.size)
+        rs = psivsr[:,0]
+        psis = psivsr[:,1]
+        dpsidrs = psivsr[:,2]
 
-            j = 1
-            while (len(rs)-j*length>=0):
-                if j == 1:
-                    ax.plot(rs[(j-1)*length:j*length],
-                            psis[(j-1)*length:j*length],
-                            '-',lw = 2,color = colors[i],
-                            label = r"$%s$"%legend_label)
-                else:
-                    ax.plot(rs[(j-1)*length:j*length],
-                            psis[(j-1)*length:j*length],
-                            '-',lw = 2,color = colors[i])
-                if j > 1:
-                    print("multiple psi(r) configurations "
-                          " with the same energy!")
-                j += 1
+
+        if len(rs) % length != 0:
+            print("The length of psi(r) is not what "
+                  "was expected!")
+            print("Exiting to system while trying to plot!")
+            exit(1)
+
+        j = 1
+        while (len(rs)-j*length>=0):
+            if j == 1:
+                ax.plot(rs[(j-1)*length:j*length],
+                        psis[(j-1)*length:j*length],
+                        '-',lw = 2,color = colors[i],
+                        label = r"$%s$"%legend_label)
+            else:
+                ax.plot(rs[(j-1)*length:j*length],
+                        psis[(j-1)*length:j*length],
+                        '-',lw = 2,color = colors[i])
+            if j > 1:
+                print("multiple psi(r) configurations "
+                      " with the same energy!")
+            j += 1
+
     return
