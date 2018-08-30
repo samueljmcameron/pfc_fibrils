@@ -30,11 +30,9 @@ int main(int argc, char **argv)
   double d0;
   double omega;
   double R;
-  double L;
   double eta;
   double delta;
   double gamma_s;
-  double gamma_t;
   double upperbound_x,upperbound_y;
   char scan_what_x[20],scan_what_y[20];
   char path[200];
@@ -51,15 +49,13 @@ int main(int argc, char **argv)
   sscanf(argv[5],"%lf",&d0);
   sscanf(argv[6],"%lf",&omega);
   sscanf(argv[7],"%lf",&R);
-  sscanf(argv[8],"%lf",&L);
-  sscanf(argv[9],"%lf",&eta);
-  sscanf(argv[10],"%lf",&delta);
-  sscanf(argv[11],"%lf",&gamma_s);
-  sscanf(argv[12],"%lf",&gamma_t);
-  sscanf(argv[13],"%lf",&upperbound_x);
-  sscanf(argv[14],"%lf",&upperbound_y);
-  snprintf(scan_what_x,sizeof(scan_what_x),"%s",argv[15]);
-  snprintf(scan_what_y,sizeof(scan_what_y),"%s",argv[16]);
+  sscanf(argv[8],"%lf",&eta);
+  sscanf(argv[9],"%lf",&delta);
+  sscanf(argv[10],"%lf",&gamma_s);
+  sscanf(argv[11],"%lf",&upperbound_x);
+  sscanf(argv[12],"%lf",&upperbound_y);
+  snprintf(scan_what_x,sizeof(scan_what_x),"%s",argv[13]);
+  snprintf(scan_what_y,sizeof(scan_what_y),"%s",argv[14]);
 
   printf("K33 = %lf\n",K33);
   printf("k24 = %lf\n",k24);
@@ -67,11 +63,9 @@ int main(int argc, char **argv)
   printf("d0 = %lf\n",d0);
   printf("omega = %lf\n",omega);
   printf("R = %lf\n",R);
-  printf("L = %lf\n",L);
   printf("eta = %lf\n",eta);
   printf("delta = %lf\n",delta);
   printf("gamma_s = %lf\n",gamma_s);
-  printf("gamma_t = %lf\n",gamma_t);
   printf("upperbound_x = %lf\n",upperbound_x);
   printf("upperbound_y = %lf\n",upperbound_y);
 
@@ -88,8 +82,8 @@ int main(int argc, char **argv)
 
 
   snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
-	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
-	   K33,k24,Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
+	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
+	   K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s,
 	   upperbound_x,upperbound_y);
   
   snprintf(f1,sizeof(f1),"%s_%s_%s_energy_%s",
@@ -115,8 +109,8 @@ int main(int argc, char **argv)
   
 
 
-  scan2dE(r,y,c,s,K33,k24,Lambda,d0,omega,R,L,eta,delta,gamma_s,
-	  gamma_t,energy,psi,deriv_energy_x,deriv_energy_y,
+  scan2dE(r,y,c,s,K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s,
+	  energy,psi,deriv_energy_x,deriv_energy_y,
 	  surfacetwist,conv,itmax,M,upperbound_x,upperbound_y,
 	  scan_what_x,scan_what_y);
   

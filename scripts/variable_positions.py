@@ -18,16 +18,12 @@ def return_position(key):
         return 4
     elif key == 'R':
         return 5
-    elif key == 'L':
-        return 6
     elif key == '\eta':
-        return 7
+        return 6
     elif key == '\delta':
-        return 8
+        return 7
     elif key == '\gamma_s':
-        return 9
-    elif key == '\gamma_t':
-        return 10
+        return 8
     else:
         print("no position could be found for"
               "the specified key!")

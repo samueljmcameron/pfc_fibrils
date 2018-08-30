@@ -6,8 +6,8 @@
 
 void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
 	   int ne, double **s, double **y, double *r,double K33,
-	   double k24, double Lambda, double d0,double L,
-	   double eta, double delta, double h, int mpt)
+	   double k24, double Lambda, double d0,double eta,
+	   double delta, double h, int mpt)
 /*Returns matrix s for solvde. See Numerical Recipes in C for details on what s is. */
 {
   double t1,t2, shalf,chalf,sine,cosine;
@@ -35,7 +35,7 @@ void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
     s[2][1] = -2*h/t1*(2*K33/t1*(sine*sine/2.0+shalf*shalf*cosine)
 		       +sine*(1-sine/t1)+cosine*cosine/t1
 		       +2*M_PI*M_PI/(d0*d0)*Lambda*delta*delta*t1
-		       *(1+sin(2*eta*L)/(2*eta*L))
+		       //		       *(1+sin(2*eta*L)/(2*eta*L))
 		       *(4*M_PI*M_PI/(d0*d0)*shalf*shalf
 			 /(chalf*chalf*chalf*chalf*chalf*chalf)
 			 +0.5*(4*M_PI*M_PI/(d0*d0*chalf*chalf)-eta*eta)
@@ -45,21 +45,19 @@ void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
     s[2][3] = -2*h/t1*(2*K33/t1*(sine*sine/2.0+shalf*shalf*cosine)
 		       +sine*(1-sine/t1)+cosine*cosine/t1
 		       +2*M_PI*M_PI/(d0*d0)*Lambda*delta*delta*t1
-		       *(1+sin(2*eta*L)/(2*eta*L))
+		       //		       *(1+sin(2*eta*L)/(2*eta*L))
 		       *(4*M_PI*M_PI/(d0*d0)*shalf*shalf
 			 /(chalf*chalf*chalf*chalf*chalf*chalf)
 			 +0.5*(4*M_PI*M_PI/(d0*d0*chalf*chalf)-eta*eta)
 			 *(1.0/(chalf*chalf)+3*shalf*shalf
 			   /(chalf*chalf*chalf*chalf))));
-    //    s[2][3] = -2*h/t1*(2*K33/t1*(sine*sine/2.0+shalf*shalf*cosine)
-    //	       +sine*(1-sine/t1)+cosine*cosine/t1);
     s[2][4] = h/t1+1;
     s[1][jsf] = y[1][k]-y[1][k-1]-0.5*h*(y[2][k]+y[2][k-1]);
     s[2][jsf] = (-2.0*h/t1*(1-0.5*(y[2][k]+y[2][k-1])
 			    +2*K33*shalf*shalf*sine/t1
 			    -cosine*(1-sine/t1)
 			    +2*M_PI*M_PI/(d0*d0)*Lambda*delta*delta
-			    *(1+sin(2*eta*L)/(2*eta*L))
+			    //			    *(1+sin(2*eta*L)/(2*eta*L))
 			    *(4*M_PI*M_PI/(d0*d0*chalf*chalf)-eta*eta)
 			    *shalf*t1/(chalf*chalf*chalf))
 		 +y[2][k]-y[2][k-1]);

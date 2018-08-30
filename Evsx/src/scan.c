@@ -30,11 +30,9 @@ int main(int argc, char **argv)
   double d0;
   double omega;
   double R;
-  double L;
   double eta;
   double delta;
   double gamma_s;
-  double gamma_t;
   double upperbound;
   double initialSlope;
   char scan_what[20];
@@ -50,13 +48,11 @@ int main(int argc, char **argv)
   sscanf(argv[5],"%lf",&d0);
   sscanf(argv[6],"%lf",&omega);
   sscanf(argv[7],"%lf",&R);
-  sscanf(argv[8],"%lf",&L);
-  sscanf(argv[9],"%lf",&eta);
-  sscanf(argv[10],"%lf",&delta);
-  sscanf(argv[11],"%lf",&gamma_s);
-  sscanf(argv[12],"%lf",&gamma_t);
-  sscanf(argv[13],"%lf",&upperbound);
-  snprintf(scan_what,sizeof(scan_what),"%s",argv[14]);
+  sscanf(argv[8],"%lf",&eta);
+  sscanf(argv[9],"%lf",&delta);
+  sscanf(argv[10],"%lf",&gamma_s);
+  sscanf(argv[11],"%lf",&upperbound);
+  snprintf(scan_what,sizeof(scan_what),"%s",argv[12]);
 
   y = matrix(1,NYJ,1,NYK);
   s = matrix(1,NSI,1,NSJ);
@@ -66,21 +62,20 @@ int main(int argc, char **argv)
   initialSlope = M_PI/(4.0*R);
 
   snprintf(f1,sizeof(f1),"%s_%s_energy_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
-	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
-	   path,scan_what,K33,k24,Lambda,d0,omega,R,L,eta,delta,
-	   gamma_s,gamma_t,upperbound);
+	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
+	   path,scan_what,K33,k24,Lambda,d0,omega,R,eta,delta,
+	   gamma_s,upperbound);
   snprintf(f2,sizeof(f2),"%s_%s_psivsr_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
-	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
-	   path,scan_what,K33,k24,Lambda,d0,omega,R,L,eta,delta,
-	   gamma_s,gamma_t,upperbound);
+	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
+	   path,scan_what,K33,k24,Lambda,d0,omega,R,eta,delta,
+	   gamma_s,upperbound);
 
   energy = fopen(f1,"w");
   psi = fopen(f2,"w");
 
 
-  scanE(r,y,c,s,K33,k24,Lambda,d0,omega,R,L,eta,delta,gamma_s,
-	gamma_t,initialSlope,energy,psi,conv,itmax,M,upperbound,
-	scan_what);
+  scanE(r,y,c,s,K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s,
+	energy,psi,conv,itmax,M,upperbound,scan_what);
   
 
   fclose(energy); // close file!

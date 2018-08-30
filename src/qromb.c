@@ -34,7 +34,9 @@ int main(void)
 /*Here EPS is the fractional accuracy desired, as determined by the extrapolation error estimate;
  JMAX limits the total number of steps; K is the number of points used in the extrapolation.*/
 
-double qromb(double *x,double *y, int xlength)
+void write_failure(double *x, double *y,int xlength,char *f_err);
+
+double qromb(double *x,double *y, int xlength,char *f_err)
 /*Returns the integral of the function func from a to b. Integration is performed by Romberg's 
 method of order 2K, where, e.g., K=2 is Simpsons rule. */
 {
@@ -46,7 +48,6 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
   double s[JMAX+2],h[JMAX+3]; //These store the successive trapezoidal approxi-
   int j;                      //mations and their relative stepsizes.
   double hmin = x[2]-x[1];   // smallest possible step size for integration;
-
 
   h[1]=1.0;
   for (j=1;j<=JMAX+1;j++) {
@@ -65,6 +66,19 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
 not just a polynomial in h.*/
   }
   printf("R = %lf\n",x[xlength]);
+  write_failure(x,y,xlength,f_err);
   nrerror("Too many steps in routine qromb");
   return 0.0; //Never get here.
+}
+
+void write_failure(double *x, double *y,int xlength,char *f_err)
+{
+  int i;
+  FILE *broken;
+  broken = fopen(f_err,"w");
+  for (i = 1; i<=xlength; i++) {
+    fprintf(broken,"%.8e\t%.8e\n",x[i],y[i]);
+  }
+  fclose(broken);
+  return;
 }

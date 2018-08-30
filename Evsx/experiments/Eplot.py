@@ -45,10 +45,13 @@ if __name__=='__main__':
         xlabel = '\delta'
     else:
         xlabel = d['scan_what']
-    xscale = 'linear'
-    yscale = 'log'
+    xscale = 'log'
+    yscale = 'linear'
+
+    ax.set_ylim(-2,-1)
 
     ax_config(xlabel,ylabel,xscale,yscale,ax)
+
 
     edited_str_ = latex2string(str_)
 

@@ -149,7 +149,6 @@ def plot_scanpsi(ax,colors,d,var_array,params,
                                     load_str)
 
         if (varied_param_name == 'gamma_s'
-            or varied_param_name == 'gamma_t'
             or varied_param_name == 'Lambda'
             or varied_param_name == 'eta'):
             legend_label = "\%s=\SI{%1.1e}{}"%(varied_param_name,

@@ -24,7 +24,7 @@ def load_const_params():
     # Load in dictionary of the constant parameter values,
     # put those values in the pre-specified order (in the 
     # 'const_params.txt' file), and then write the name of
-    # the parameter which is being varied (e.g. 'gamma_t')
+    # the parameter which is being varied (e.g. 'gamma_s')
     # to the string variable varied_key_name. Also returns
     # the position of the variable which is being varied,
     # according to the function return_position(key).

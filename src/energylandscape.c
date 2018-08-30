@@ -44,20 +44,28 @@ void saveEnergy(FILE *energy, double R, double E, double derivative,
   return;
 }
 
+void make_f_err(char *f_err,int f_err_size,double K33,double k24,
+		double Lambda,double d0,double omega,double R,
+		double eta,double delta,double gamma_s)
+{
+  snprintf(f_err,f_err_size,"data/QROMB_psivsr_%1.4e_%1.4e_%1.4e_"
+	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
+	   K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s);
+  return;
+}
 
 void scanE(double *r,double **y,double ***c,double **s,
 	   double K33,double k24,double Lambda,double d0,
-	   double omega,double R,double L,double eta,
-	   double delta,double gamma_s,double gamma_t,
-	   double initialSlope,FILE *energy,FILE *psi,
-	   double conv,int itmax,int mpt, 
+	   double omega,double R,double eta,double delta,
+	   double gamma_s,FILE *energy,FILE *psi,
+	   double conv,int itmax,int mpt,
 	   double upperbound, char scan_what[])
-// The energy of the system E(R,L,eta). This function //
-// generates data of E vs scan_what[] (either "L",    //
-// "R", or "eta"), while holding the other two values //
-// constant. The E vs scan_what[] data is saved in    //
-// energy file. If a minimum (or multiple minima) are //
-// found in the energy landscape, psi(r) is saved to  //
+// The energy of the system E(R,L,eta). This function  //
+// generates data of E vs scan_what[] (either "delta", //
+// "R", or "eta"), while holding the other two values  //
+// constant. The E vs scan_what[] data is saved in     //
+// energy file. If a minimum (or multiple minima) are  //
+// found in the energy landscape, psi(r) is saved to   //
 // the psi file. //
 {
   int isitone=1;
@@ -66,19 +74,21 @@ void scanE(double *r,double **y,double ***c,double **s,
   double slowc = 1.0;
   double scalv[2+1];
   double rf_[mpt+1],integrand1[mpt+1],integrand2[mpt+1];
+  double initialSlope;
   double E;
-  double dEdR, dEdL, dEdeta,dEddelta;
+  double dEdR, dEdeta,dEddelta;
   double dEdRlast = dEdR;
-  double dEdLlast = dEdL;
   double dEdetalast = dEdeta;
   double dEddeltalast = dEddelta;
   double *dEdvar, *dEdvarlast;
   double Emin = 1e100;
+  int f_err_size = 200;
+  char f_err[f_err_size];
 
 
   setup_var_pointers(&var,&var0,&dEdvar,&dEdvarlast,scan_what,&R, 
-		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
-		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
+		     &dEdR,&dEdRlast,&eta,&dEdeta,&dEdetalast,
+		     &delta,&dEddelta,&dEddeltalast);
 
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
@@ -89,26 +99,30 @@ void scanE(double *r,double **y,double ***c,double **s,
     h = R/(mpt-1);
 
     if (isitone == 1) {
+      initialSlope = M_PI/(4.0*R);
       linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
       isitone += 1;
     }
-    
+
     else propagate_r(r,h,mpt); // if not first loop, previous 
     //                            result is initial guess
 
+    make_f_err(f_err,f_err_size,K33,k24,Lambda,d0,omega,R,
+	       eta,delta,gamma_s);
+
     solvde(itmax,conv,slowc,scalv,2,1,mpt,y,r,c,s,K33,k24,
-	   Lambda,d0,L,eta,delta,h); // relax to compute psi,
+	   Lambda,d0,eta,delta,h); // relax to compute psi,
     //                                  psi' curves, note the 2,1
     //                                  corresponds to two eqns,
     //                                   and 1 BC at the r = 0.
 
     // calculate energy, derivatives (see energy.c for code)
-    energy_stuff(&E,&dEdR,&dEdL,&dEdeta,&dEddelta,K33,k24,
-		 Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
-		 r,y,rf_,integrand1,integrand2,mpt);
+    energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,
+		 Lambda,d0,omega,R,eta,delta,gamma_s,
+		 r,y,rf_,integrand1,integrand2,mpt,f_err);
 
 
-    // save L,E, and surface twist
+    // save var,E, and surface twist
     saveEnergy(energy,*var,E,*dEdvar,y[1][mpt]);
 
     if (*var != var0 && *dEdvar*(*dEdvarlast) <= 0
@@ -121,7 +135,6 @@ void scanE(double *r,double **y,double ***c,double **s,
 
     *var += 0.001;
     dEdRlast = dEdR;
-    dEdLlast = dEdL;
     dEdetalast = dEdeta;
     dEddeltalast = dEddelta;
     
@@ -132,8 +145,7 @@ void scanE(double *r,double **y,double ***c,double **s,
 
 void setup_var_pointers(double **var, double *var0,double **dEdvar,
 			double **dEdvarlast,char scan_what[],double *R, 
-			double *dEdR,double *dEdRlast,double *L,
-			double *dEdL, double *dEdLlast,double *eta,
+			double *dEdR,double *dEdRlast,double *eta,
 			double *dEdeta, double *dEdetalast,double *delta,
 			double *dEddelta,double *dEddeltalast)
 // convenient way to make a variables (ending in var) that have the  //
@@ -147,13 +159,6 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
     *var0 = *R;
     *dEdvar = dEdR;
     *dEdvarlast = dEdRlast;
-  }
-  else if (strcmp(scan_what,"L")==0) {
-    printf("L!\n");
-    *var = L;
-    *var0 = *L;
-    *dEdvar = dEdL;
-    *dEdvarlast = dEdLlast;
   }
   else if (strcmp(scan_what,"eta")==0) {
     printf("eta!\n");
@@ -170,7 +175,7 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
     *dEdvarlast = dEddeltalast;
   }
   else {
-    printf("Need either R, L, eta, or delta as argv[14] input."
+    printf("Need either R, eta, or delta as argv[n] input."
 	   "Exiting to system.\n");
     exit(1);
   }
@@ -180,18 +185,17 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
 
 void scan2dE(double *r,double **y,double ***c,double **s,
 	     double K33,double k24,double Lambda,double d0,
-	     double omega,double R,double L,double eta,
-	     double delta,double gamma_s,double gamma_t,
-	     FILE *energy,FILE *psi,FILE *deriv_energy_x,
-	     FILE *deriv_energy_y,FILE *surfacetwist,
-	     double conv,int itmax,int mpt,
-	     double upperbound_x,double upperbound_y,
+	     double omega,double R,double eta,double delta,
+	     double gamma_s,FILE *energy,FILE *psi,
+	     FILE *deriv_energy_x,FILE *deriv_energy_y,
+	     FILE *surfacetwist,double conv,int itmax,
+	     int mpt,double upperbound_x,double upperbound_y,
 	     char scan_what_x[],char scan_what_y[])
 // The energy of the system E(R,L,eta). This function    //
 // generates data of E vs scan_what_x[] vs scan_what_y[] //
-// (either "L","R", or "eta"), while holding the other   //
-// value constant. The E vs x vs y data is saved in      //
-// energy file. If a minimum (or multiple minima) are    //
+// (either "delta","R", or "eta"), while holding the     //
+// other value constant. The E vs x vs y data is saved   //
+// in energy file. If a minimum (or multiple minima) are //
 // found in the energy landscape, psi(r) are saved to    //
 // the psi file. //
 {
@@ -204,26 +208,27 @@ void scan2dE(double *r,double **y,double ***c,double **s,
   double initialSlope;
   double rf_[mpt+1],integrand1[mpt+1],integrand2[mpt+1];
   double E;
-  double dEdR, dEdL, dEdeta,dEddelta;
+  double dEdR,  dEdeta,dEddelta;
   double dEdRlast = dEdR;
-  double dEdLlast = dEdL;
   double dEdetalast = dEdeta;
   double dEddeltalast = dEddelta;
   double *dEdvar_x, *dEdvar_xlast;
   double *dEdvar_y, *dEdvar_ylast;
   double Emin = 1e100;
+  int f_err_size = 200;
+  char f_err[f_err_size];
 
 
   // initialize the pointers to the x variable (in E vs x vs y) so that
-  // they reference the correct derivatives of E. x is either R, L,
+  // they reference the correct derivatives of E. x is either R,
   // eta, or delta.
   setup_var_pointers(&var_x,&var_x0,&dEdvar_x,&dEdvar_xlast,scan_what_x,&R, 
-		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
-		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
+		     &dEdR,&dEdRlast,&eta,&dEdeta,&dEdetalast,&delta,
+		     &dEddelta,&dEddeltalast);
 
   setup_var_pointers(&var_y,&var_y0,&dEdvar_y,&dEdvar_ylast,scan_what_y,&R, 
-		     &dEdR,&dEdRlast,&L,&dEdL,&dEdLlast,&eta,&dEdeta,
-		     &dEdetalast,&delta,&dEddelta,&dEddeltalast);
+		     &dEdR,&dEdRlast,&eta,&dEdeta,&dEdetalast,&delta,
+		     &dEddelta,&dEddeltalast);
 
   
   scalv[1] = .1;    // guess for magnitude of the psi values
@@ -248,8 +253,11 @@ void scan2dE(double *r,double **y,double ***c,double **s,
       else propagate_r(r,h,mpt); // if not first loop, previous 
       //                            result is initial guess
 
+      make_f_err(f_err,f_err_size,K33,k24,Lambda,d0,omega,R,
+		 eta,delta,gamma_s);
+
       solvde(itmax,conv,slowc,scalv,2,1,mpt,y,r,c,s,K33,k24,
-	     Lambda,d0,L,eta,delta,h); // relax to compute psi,
+	     Lambda,d0,eta,delta,h); // relax to compute psi,
       //                                  psi' curves, note the 2,1
       //                                  corresponds to two eqns,
       //                                   and 1 BC at the r = 0.
@@ -260,9 +268,9 @@ void scan2dE(double *r,double **y,double ***c,double **s,
       //	save_psi(psi,r,y,mpt);
       //  }
       // calculate energy, derivatives (see energy.c for code)
-      energy_stuff(&E,&dEdR,&dEdL,&dEdeta,&dEddelta,K33,k24,
-		   Lambda,d0,omega,R,L,eta,delta,gamma_s,gamma_t,
-		   r,y,rf_,integrand1,integrand2,mpt);
+      energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,Lambda,
+		   d0,omega,R,eta,delta,gamma_s,r,y,rf_,
+		   integrand1,integrand2,mpt,f_err);
       
       
 
@@ -282,7 +290,6 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 
       *var_y += 0.001;
       dEdRlast = dEdR;
-      dEdLlast = dEdL;
       dEdetalast = dEdeta;
       dEddeltalast = dEddelta;
     }

@@ -7,7 +7,7 @@
 void solvde(int itmax, double conv, double slowc, double scalv[],
 	    int ne, int nb, int m, double **y, double *r,
 	    double ***c, double **s, double K33, double k24,
-	    double Lambda,double d0,double L,double eta,double delta,
+	    double Lambda,double d0,double eta,double delta,
 	    double h)
 /*Driver routine for solution of two point boundary value problems by relaxation. itmax is the maximum number of iterations. conv is the convergence criterion (see text). slowc controls the fraction of corrections actually used after each iteration. scalv[1..ne] contains typical sizes for each dependent variable, used to weight errors. indexv[1..ne] lists the column ordering of variables used to construct the matrix s[1..ne][1..2*ne+1] of derivatives. (The nb boundary conditions at the first mesh point must contain some dependence on the first nb variables listed in indexv.) The problem involves ne equations for ne adjustable dependent variables at each point. At the first mesh point there are nb boundary conditions. There are a total of m mesh points. y[1..ne][1..m] is the two-dimensional array that contains the initial guess for all the dependent variables at each mesh point. On each iteration, it is updated by the calculated correction. The arrays c[1..ne][1..ne-nb+1][1..m+1] and s supply dummy storage used by the relaxation code.*/
 {
@@ -15,8 +15,8 @@ void solvde(int itmax, double conv, double slowc, double scalv[],
   void bksub(int ne, int nb, int jf, int k1, int k2, double ***c);
   void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
 	     int ne, double **s, double **y, double *r,double K33,
-	     double k24, double Lambda, double d0,double L,
-	     double eta, double delta, double h, int mpt);
+	     double k24, double Lambda, double d0,double eta,
+	     double delta, double h, int mpt);
   void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k,
 	     double ***c, double **s);
   void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
@@ -48,16 +48,16 @@ void solvde(int itmax, double conv, double slowc, double scalv[],
   int index = 1;
   for (it=1;it<=itmax;it++) { //Primary iteration loop.
     k=k1; //Boundary conditions at first point.
-    difeq(k,k1,k2,j9,ic3,ic4,ne,s,y,r,K33,k24,Lambda,d0,L,eta,delta,h,m);
+    difeq(k,k1,k2,j9,ic3,ic4,ne,s,y,r,K33,k24,Lambda,d0,eta,delta,h,m);
     pinvs(ic3,ic4,j5,j9,jc1,k1,c,s);
     for (k=k1+1;k<=k2;k++) { //Finite difference equations at all point pairs.
       kp=k-1;
-      difeq(k,k1,k2,j9,ic1,ic4,ne,s,y,r,K33,k24,Lambda,d0,L,eta,delta,h,m);
+      difeq(k,k1,k2,j9,ic1,ic4,ne,s,y,r,K33,k24,Lambda,d0,eta,delta,h,m);
       red(ic1,ic4,j1,j2,j3,j4,j9,ic3,jc1,jcf,kp,c,s);
       pinvs(ic1,ic4,j3,j9,jc1,k,c,s);
     }
     k=k2+1;// Final boundary conditions.
-    difeq(k,k1,k2,j9,ic1,ic2,ne,s,y,r,K33,k24,Lambda,d0,L,eta,delta,h,m);
+    difeq(k,k1,k2,j9,ic1,ic2,ne,s,y,r,K33,k24,Lambda,d0,eta,delta,h,m);
     red(ic1,ic2,j5,j6,j7,j8,j9,ic3,jc1,jcf,k2,c,s);
     pinvs(ic1,ic2,j7,j9,jcf,k2+1,c,s);
     bksub(ne,nb,jcf,k1,k2,c); //Backsubstitution.

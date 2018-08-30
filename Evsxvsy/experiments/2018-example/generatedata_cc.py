@@ -12,9 +12,9 @@ if __name__=="__main__":
     # generates and then plots the data files for 
     # the specified parameter values
 
-    gamma_t_index = int(sys.argv[1])
+    delta_index = int(sys.argv[1])
 
-    gamma_ts = np.logspace(-2,5,num=8)
-    gamma_t = gamma_ts[gamma_t_index-1]
+    deltas = np.linspace(0,10,num=11)
+    delta = deltas[delta_index-1]
 
-    one_run(gamma_t)
+    one_run(delta)

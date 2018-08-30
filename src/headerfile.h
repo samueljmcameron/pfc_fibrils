@@ -31,54 +31,55 @@ typedef struct {
 void solvde(int itmax, double conv, double slowc, double scalv[],
 	    int ne, int nb, int m, double **y, double *r,
 	    double ***c, double **s, double K33, double k24,
-	    double Lambda,double d0,double L,double eta,double delta,
+	    double Lambda,double d0,double eta,double delta,
 	    double h);
 void bksub(int ne, int nb, int jf, int k1, int k2, double ***c);
 void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
 	   int ne, double **s, double **y, double *r,double K33,
-	   double k24, double Lambda, double d0,double L,
-	   double eta, double delta, double h, int mpt);
+	   double k24, double Lambda, double d0,double eta,
+	   double delta, double h, int mpt);
 void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
 	   double **s);
 void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
 	 int ic1, int jc1, int jcf, int kc, double ***c, double **s);
 double trapzd(double *, double *, double, int, int);
 void polint(double xa[], double ya[], int, double, double *, double *);
-double qromb(double *,double *, int);
+double qromb(double *,double *, int,char *f_err);
 
 void compute_rf2233b1(double K33, double Lambda,double d0,
-		      double L,double eta,double delta,
-		      double *r,double **y, double *rf_,int mpt);
-void compute_integrand1(double d0,double L,double eta,double *r,
+		      double eta,double delta,double *r,
+		      double **y, double *rf_,int mpt);
+void compute_integrand1(double d0,double eta,double *r,
 			double **y,double *integrand1,int mpt);
-void compute_integrand2(double d0,double L,double eta,double *r,
+void compute_integrand2(double d0,double eta,double *r,
 			double **y,double *integrand2,int mpt);
 
 
-double E_R(double k24,double Lambda,double omega,double R,double L,
-	   double eta,double delta,double gamma_s,double gamma_t,
-	   double *r,double **y,double integration_2233b1,int mpt);
+double E_R(double k24,double Lambda,double omega,double R,
+	   double eta,double delta,double gamma_s,double *r,
+	   double **y,double integration_2233b1,int mpt);
 
 double derivEdR(double K33, double k24,double Lambda,double d0, 
-		double R,double L,double eta,double delta,
-		double gamma_s,double *r,double **y,
-		double integration_2233b1,int mpt);
+		double R,double eta,double delta,double gamma_s,
+		double *r,double **y,double integration_2233b1,
+		int mpt);
 
-double derivEdL(double Lambda,double omega,double R,double L,double eta,
-		double delta, double gamma_t,double integration2);
+//double derivEdL(double Lambda,double omega,double R,double eta,
+//		double delta, double gamma_t,double integration2);
 
-double derivEdeta(double Lambda,double omega,double R,double L,double eta,
+double derivEdeta(double Lambda,double omega,double R,double eta,
 		  double delta,double integration1,double integration2);
 
-double derivEddelta(double Lambda,double omega,double R,double L,double eta,
+double derivEddelta(double Lambda,double omega,double R,double eta,
 		    double delta,double integration2);
 
-void energy_stuff(double *E, double *dEdR,double *dEdL, double *dEdeta,
-		  double *dEddelta,double K33,double k24,double Lambda,
-		  double d0,double omega,double R,double L,double eta,
-		  double delta,double gamma_s,double gamma_t,double *r,
-		  double **y, double *rf_,double *integrand1,
-		  double *integrand2,int mpt);
+void energy_stuff(double *E, double *dEdR,double *dEdeta,
+		  double *dEddelta,double K33, double k24,
+		  double Lambda,double d0,double omega,double R,
+		  double eta,double delta,double gamma_s,
+		  double *r,double **y,double *rf_,
+		  double *integrand1,double *integrand2,int mpt,
+		  char *f_err);
 
 void linearGuess(double *r, double **y, double initialSlope,
 		 double h,int mpt);
@@ -90,29 +91,30 @@ void save_psi(FILE *psi,double *r, double **y,int mpt);
 void saveEnergy(FILE *energy, double R, double E, double derivative,
 		double observable);
 
-void setup_var_pointers(double **var, double *var0,double **dEdvar,
-			double **dEdvarlast,char scan_what[],double *R, 
-			double *dEdR,double *dEdRlast,double *L,
-			double *dEdL, double *dEdLlast,double *eta,
-			double *dEdeta, double *dEdetalast,double *delta,
-			double *dEddelta,double *dEddeltalast);
+void make_f_err(char *f_err,int f_err_size,double K33,double k24,
+		double Lambda,double d0,double omega,double R,
+		double eta,double delta,double gamma_s);
 
 void scanE(double *r,double **y,double ***c,double **s,
 	   double K33,double k24,double Lambda,double d0,
-	   double omega,double R,double L,double eta,
-	   double delta,double gamma_s,double gamma_t,
-	   double initialSlope,FILE *energy,FILE *psi,
-	   double conv,int itmax,int mpt, 
+	   double omega,double R,double eta,double delta,
+	   double gamma_s,FILE *energy,FILE *psi,
+	   double conv,int itmax,int mpt,
 	   double upperbound, char scan_what[]);
+
+void setup_var_pointers(double **var, double *var0,double **dEdvar,
+			double **dEdvarlast,char scan_what[],double *R, 
+			double *dEdR,double *dEdRlast,double *eta,
+			double *dEdeta, double *dEdetalast,double *delta,
+			double *dEddelta,double *dEddeltalast);
 
 void scan2dE(double *r,double **y,double ***c,double **s,
 	     double K33,double k24,double Lambda,double d0,
-	     double omega,double R,double L,double eta,
-	     double delta,double gamma_s,double gamma_t,
-	     FILE *energy,FILE *psi,FILE *deriv_energy_x,
-	     FILE *deriv_energy_y,FILE *surfacetwist,
-	     double conv,int itmax,int mpt,
-	     double upperbound_x,double upperbound_y,
+	     double omega,double R,double eta,double delta,
+	     double gamma_s,FILE *energy,FILE *psi,
+	     FILE *deriv_energy_x,FILE *deriv_energy_y,
+	     FILE *surfacetwist,double conv,int itmax,
+	     int mpt,double upperbound_x,double upperbound_y,
 	     char scan_what_x[],char scan_what_y[]);
 
 #endif /* ANSI */
