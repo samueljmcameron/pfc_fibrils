@@ -18,10 +18,6 @@
 
 int main(int argc, char **argv)
 {
-
-
-  double **y,*r, **s, ***c;
-
   int itmax= 1000,logStep = 1000;
   double conv = 1.0e-10;
   double K33;
@@ -54,13 +50,6 @@ int main(int argc, char **argv)
   sscanf(argv[11],"%lf",&upperbound);
   snprintf(scan_what,sizeof(scan_what),"%s",argv[12]);
 
-  y = matrix(1,NYJ,1,NYK);
-  s = matrix(1,NSI,1,NSJ);
-  c = f3tensor(1,NCI,1,NCJ,1,NCK);
-  r = vector(1,NYK);
-
-  initialSlope = M_PI/(4.0*R);
-
   snprintf(f1,sizeof(f1),"%s_%s_energy_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
 	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
 	   path,scan_what,K33,k24,Lambda,d0,omega,R,eta,delta,
@@ -74,15 +63,12 @@ int main(int argc, char **argv)
   psi = fopen(f2,"w");
 
 
-  scanE(r,y,c,s,K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s,
+  scanE(K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s,
 	energy,psi,conv,itmax,M,upperbound,scan_what);
   
 
   fclose(energy); // close file!
   fclose(psi);
-  free_f3tensor(c,1,NCI,1,NCJ,1,NCK);
-  free_matrix(s,1,NSI,1,NSJ);
-  free_matrix(y,1,NYJ,1,NYK);
-  free_vector(r,1,NYK);
+
   return 0;
 }

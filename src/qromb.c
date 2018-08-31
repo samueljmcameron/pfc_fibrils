@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <stdbool.h>
 #include "nrutil.h"
 
 
@@ -34,9 +35,7 @@ int main(void)
 /*Here EPS is the fractional accuracy desired, as determined by the extrapolation error estimate;
  JMAX limits the total number of steps; K is the number of points used in the extrapolation.*/
 
-void write_failure(double *x, double *y,int xlength,char *f_err);
-
-double qromb(double *x,double *y, int xlength,char *f_err)
+double qromb(double *x,double *y, int xlength,bool *failure)
 /*Returns the integral of the function func from a to b. Integration is performed by Romberg's 
 method of order 2K, where, e.g., K=2 is Simpsons rule. */
 {
@@ -57,6 +56,7 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
       if (fabs(dss) <= EPS*fabs(ss)) {
 	//printf("number of attempts = %d\n",j);
 	//printf("JMAX = %d\n",JMAX);
+	*failure = false;
 	return ss;
       }
     }
@@ -65,20 +65,8 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
 0.5. This makes the extrapolation a polynomial in h^2 as allowed by equation (4.2.1),
 not just a polynomial in h.*/
   }
-  printf("R = %lf\n",x[xlength]);
-  write_failure(x,y,xlength,f_err);
-  nrerror("Too many steps in routine qromb");
-  return 0.0; //Never get here.
-}
-
-void write_failure(double *x, double *y,int xlength,char *f_err)
-{
-  int i;
-  FILE *broken;
-  broken = fopen(f_err,"w");
-  for (i = 1; i<=xlength; i++) {
-    fprintf(broken,"%.8e\t%.8e\n",x[i],y[i]);
-  }
-  fclose(broken);
-  return;
+  printf("Too many steps in routine qromb, retrying with (N-1)*2+1 steps,"
+	 " where N is the current number of steps.\n");
+  *failure = true;
+  return 0.0; // this return value doesn't matter, as failure signals that convergence failed.
 }

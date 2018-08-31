@@ -39,7 +39,7 @@ if __name__=='__main__':
         height = width
         fig.set_size_inches(width,height)
 
-        cs = plot_scanderivEx(ax,colors,d,var_array[index_var],params,
+        cs = plot_scanderivEx(fig,ax,colors,d,var_array[index_var],params,
                               var_position,str_,load_p,which_deriv)
 
         xlabel = string2latex(d['scan_what_x'])
@@ -48,8 +48,6 @@ if __name__=='__main__':
         yscale = 'linear'
 
         ax_config(xlabel,ylabel,xscale,yscale,ax)
-        
-        cbar = fig.colorbar(cs)
         
         edited_str_ = latex2string(str_)
 

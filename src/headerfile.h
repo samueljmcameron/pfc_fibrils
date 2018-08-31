@@ -25,6 +25,7 @@ typedef struct {
 #endif /* _HUFFCODE_DECLARE_T_ */
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #if defined(__STDC__) || defined(ANSI) || defined(NRANSI) /* ANSI */
 
@@ -44,7 +45,7 @@ void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
 	 int ic1, int jc1, int jcf, int kc, double ***c, double **s);
 double trapzd(double *, double *, double, int, int);
 void polint(double xa[], double ya[], int, double, double *, double *);
-double qromb(double *,double *, int,char *f_err);
+double qromb(double *,double *, int,bool failure);
 
 void compute_rf2233b1(double K33, double Lambda,double d0,
 		      double eta,double delta,double *r,
@@ -73,13 +74,14 @@ double derivEdeta(double Lambda,double omega,double R,double eta,
 double derivEddelta(double Lambda,double omega,double R,double eta,
 		    double delta,double integration2);
 
-void energy_stuff(double *E, double *dEdR,double *dEdeta,
+bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 		  double *dEddelta,double K33, double k24,
 		  double Lambda,double d0,double omega,double R,
 		  double eta,double delta,double gamma_s,
 		  double *r,double **y,double *rf_,
-		  double *integrand1,double *integrand2,int mpt,
-		  char *f_err);
+		  double *integrand1,double *integrand2,int mpt);
+
+void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err);
 
 void linearGuess(double *r, double **y, double initialSlope,
 		 double h,int mpt);
@@ -95,8 +97,7 @@ void make_f_err(char *f_err,int f_err_size,double K33,double k24,
 		double Lambda,double d0,double omega,double R,
 		double eta,double delta,double gamma_s);
 
-void scanE(double *r,double **y,double ***c,double **s,
-	   double K33,double k24,double Lambda,double d0,
+void scanE(double K33,double k24,double Lambda,double d0,
 	   double omega,double R,double eta,double delta,
 	   double gamma_s,FILE *energy,FILE *psi,
 	   double conv,int itmax,int mpt,

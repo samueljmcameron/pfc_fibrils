@@ -7,7 +7,10 @@ sys.path.append('../../scripts')
 from var_scan2d import loadfile_list, load_const_params
 from universe_funcs import latex2string,string2latex
 from variable_positions import return_position
+import matplotlib.pyplot as plt
 from matplotlib import cm, ticker
+from matplotlib.colors import LogNorm
+from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 
 def check_data(str_,string2compare2):
     if str_ != string2compare2:
@@ -23,7 +26,6 @@ def load_plt_array(str_,load_p):
     var_array = np.loadtxt(load_p + '%ss.dat'%edited_str_)
     if var_array.size > 1:
         print(var_array)
-        print(var_array.size)
         var_array = np.sort(var_array)
         np.savetxt(load_p + '%ss.dat'%edited_str_,var_array,
                    fmt = '%1.4e')
@@ -69,14 +71,14 @@ def mk_mesh(d,params,excluded_param_position):
     xs = np.linspace(x0,xf,num=numx,endpoint=True)
 
     y0 = params[y_position]
-    yf = d['upperbound_y']
+    yf = d['upperbound_y']+0.001
     numy = int(round((yf-y0)/var_y_spacing))
     ys = np.linspace(y0,yf,num=numy,endpoint=True)
     print(numy)
     return np.meshgrid(xs,ys)
     
 
-def plot_scanE2d(ax,colors,d,var,params,var_position,
+def plot_scanE2d(fig,ax,colors,d,var,params,var_position,
                  varied_param_name,load_p):
 
     # plots E vs d['scan_what'], for all the values of 
@@ -95,21 +97,19 @@ def plot_scanE2d(ax,colors,d,var,params,var_position,
     # load and plot E vs x
     EE = np.loadtxt(fname + ".txt")
 
-    print(EE.shape)
-
     xx,yy = mk_mesh(d,params,var_position)
 
-    print(xx.shape)
-    print(yy.shape)
-
     cs = ax.imshow(EE.T,vmin=EE.min(),vmax=EE.max(),
-                   cmap=cm.coolwarm,
+                   cmap='Reds_r',#norm=LogNorm(),
                    extent=[xx.min(),xx.max(),yy.min(),yy.max()],
-                   aspect=1.0/5.0,origin='lower')
+                   aspect=1.0/10.0,origin='lower')
+
+    cbar = fig.colorbar(cs,ax=ax,fraction=0.046,pad=0.04)#cax=cax)
+    cs.set_clim(EE.min(),EE.max())
 
     return cs
 
-def plot_scanderivEx(ax,colors,d,var,params,var_position,
+def plot_scanderivEx(fig,ax,colors,d,var,params,var_position,
                      varied_param_name,load_p,which_deriv):
 
     # plots dEdx vs d['scan_what'], for all the values of 
@@ -129,18 +129,23 @@ def plot_scanderivEx(ax,colors,d,var,params,var_position,
     # load and plot E vs x
     dEEdxx = np.loadtxt(fname + ".txt")
 
-    print(dEEdxx.shape)
-
     xx,yy = mk_mesh(d,params,var_position)
 
-    print(xx.shape)
-    print(yy.shape)
+    for i in range(len(dEEdxx[:,0])):
+        for j in range(len(dEEdxx[0,:])):
+            if dEEdxx[i,j]<0:
+                dEEdxx[i,j] = -np.inf
 
-    cs = ax.imshow(dEEdxx.T,vmin=-10,vmax=10,#dEEdxx.min(),vmax=dEEdxx.max(),
-                   cmap=cm.coolwarm,
+    print(dEEdxx.min(),dEEdxx.max())
+
+    cs = ax.imshow(dEEdxx.T,vmin=0,vmax=dEEdxx.max(),
+                   cmap=cm.cool,
                    extent=[xx.min(),xx.max(),yy.min(),yy.max()],
-                   aspect=1.0/5.0,origin='lower')
+                   aspect=1.0/10.0,origin='lower')
 
+    cbar = fig.colorbar(cs,ax=ax,fraction=0.046,pad=0.04)
+    cs.set_clim(0,dEEdxx.max())
+                
 
     return cs
 

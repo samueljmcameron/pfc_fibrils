@@ -2,8 +2,10 @@
 #include <math.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "nrutil.h"
 #include "headerfile.h"
+
 
 void linearGuess(double *r, double **y, double initialSlope,
 		 double h,int mpt)
@@ -54,8 +56,7 @@ void make_f_err(char *f_err,int f_err_size,double K33,double k24,
   return;
 }
 
-void scanE(double *r,double **y,double ***c,double **s,
-	   double K33,double k24,double Lambda,double d0,
+void scanE(double K33,double k24,double Lambda,double d0,
 	   double omega,double R,double eta,double delta,
 	   double gamma_s,FILE *energy,FILE *psi,
 	   double conv,int itmax,int mpt,
@@ -68,12 +69,13 @@ void scanE(double *r,double **y,double ***c,double **s,
 // found in the energy landscape, psi(r) is saved to   //
 // the psi file. //
 {
-  int isitone=1;
+  int xpoints = mpt;
   double *var,var0;
   double h;
   double slowc = 1.0;
   double scalv[2+1];
-  double rf_[mpt+1],integrand1[mpt+1],integrand2[mpt+1];
+  double **y,*r, **s, ***c;
+  double *rf_,*integrand1,*integrand2;
   double initialSlope;
   double E;
   double dEdR, dEdeta,dEddelta;
@@ -84,6 +86,24 @@ void scanE(double *r,double **y,double ***c,double **s,
   double Emin = 1e100;
   int f_err_size = 200;
   char f_err[f_err_size];
+  bool successful_calc = false;
+  int ne = 2; // number of equations in ODE (2)
+  int nb = 1; // number of BCs at first boundary
+  int nsi = ne;
+  int nsj = 2*ne+1;
+  int nyj = ne;
+  int nci = ne;
+  int ncj = ne-nb+1;
+  int do_while_count = 0;
+  int max_size = (mpt-1)*4+1;
+
+  y = matrix(1,nyj,1,mpt);
+  s = matrix(1,nsi,1,nsj);
+  c = f3tensor(1,nci,1,ncj,1,mpt+1);
+  r = vector(1,mpt);
+  rf_ = vector(1,mpt);
+  integrand1 = vector(1,mpt);
+  integrand2 = vector(1,mpt);
 
 
   setup_var_pointers(&var,&var0,&dEdvar,&dEdvarlast,scan_what,&R, 
@@ -92,42 +112,63 @@ void scanE(double *r,double **y,double ***c,double **s,
 
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
+
+  // start with xpoints = mpt
+
+  xpoints = mpt;
   
 
   while (*var <= upperbound) {
 
-    h = R/(mpt-1);
+    // for each value of x (i.e *var) in E vs x
 
-    if (isitone == 1) {
-      initialSlope = M_PI/(4.0*R);
-      linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
-      isitone += 1;
+    do {
+
+      h = R/(xpoints-1);
+
+      if (xpoints != mpt) {
+	resize_all_arrays(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+			  xpoints,nci,ncj,nsi,nsj,nyj);
+      }
+
+
+      if (!successful_calc) {
+	initialSlope = M_PI/(4.0*R);
+	linearGuess(r,y,initialSlope,h,xpoints); //linear initial guess 
+      }
+      
+      else propagate_r(r,h,xpoints); // if not first loop, previous 
+      //                            result is initial guess
+      
+      solvde(itmax,conv,slowc,scalv,ne,nb,xpoints,y,r,c,s,K33,k24,
+	     Lambda,d0,eta,delta,h); // relax to compute psi,
+      //                                  psi' curves,
+      
+      // calculate energy, derivatives (see energy.c for code)
+      successful_calc = energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,
+				     Lambda,d0,omega,R,eta,delta,gamma_s,
+				     r,y,rf_,integrand1,integrand2,xpoints,f_err);
+      xpoints = (xpoints-1)*2+1;
+      
+
+    }
+    while (!successful_calc && xpoints <= max_size);
+
+    xpoints = (xpoints-1)/2+1;
+
+    if (!successful_calc) {
+      make_f_err(f_err,f_err_size,K33,k24,Lambda,d0,omega,R,
+		 eta,delta,gamma_s);
+      write_failure(r,y,rf_,xpoints,f_err);
     }
 
-    else propagate_r(r,h,mpt); // if not first loop, previous 
-    //                            result is initial guess
-
-    make_f_err(f_err,f_err_size,K33,k24,Lambda,d0,omega,R,
-	       eta,delta,gamma_s);
-
-    solvde(itmax,conv,slowc,scalv,2,1,mpt,y,r,c,s,K33,k24,
-	   Lambda,d0,eta,delta,h); // relax to compute psi,
-    //                                  psi' curves, note the 2,1
-    //                                  corresponds to two eqns,
-    //                                   and 1 BC at the r = 0.
-
-    // calculate energy, derivatives (see energy.c for code)
-    energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,
-		 Lambda,d0,omega,R,eta,delta,gamma_s,
-		 r,y,rf_,integrand1,integrand2,mpt,f_err);
-
-
     // save var,E, and surface twist
-    saveEnergy(energy,*var,E,*dEdvar,y[1][mpt]);
+    saveEnergy(energy,*var,E,*dEdvar,y[1][xpoints]);
+      
 
     if (*var != var0 && *dEdvar*(*dEdvarlast) <= 0
 	&& *dEdvarlast < 0 && E <= Emin) {
-      save_psi(psi,r,y,mpt);
+      save_psi(psi,r,y,xpoints);
       printf("SAVED!\n");
       printf("E_min-E_chol = %1.2e\n",E+0.5);
       Emin = E;
@@ -138,7 +179,21 @@ void scanE(double *r,double **y,double ***c,double **s,
     dEdetalast = dEdeta;
     dEddeltalast = dEddelta;
     
+    if (xpoints != mpt) {
+      resize_all_arrays(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+			xpoints,nci,ncj,nsi,nsj,nyj);
+      xpoints = mpt;
+    }
+
   }
+
+  free_f3tensor(c,1,nci,1,ncj,1,mpt+1);
+  free_matrix(s,1,nsi,1,nsj);
+  free_matrix(y,1,nyj,1,mpt);
+  free_vector(r,1,mpt);
+  free_vector(rf_,1,mpt);
+  free_vector(integrand1,1,mpt);
+  free_vector(integrand2,1,mpt);
 
   return;
 }
@@ -302,5 +357,43 @@ void scan2dE(double *r,double **y,double ***c,double **s,
     *var_x += 0.001;
   }
 
+  return;
+}
+
+void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err)
+{
+  int i;
+  FILE *broken;
+  broken = fopen(f_err,"w");
+  for (i = 1; i<=rlength; i++) {
+    fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_[i]);
+  }
+  fclose(broken);
+  exit(1);
+  return;
+}
+
+void resize_all_arrays(double ****c,double ***s,double ***y,double **r,
+		       double **rf_, double **integrand1,
+		       double **integrand2,int xpoints,int nci,int ncj,
+		       int nsi,int nsj,int nyj)
+{
+  old_xpoints = (xpoints-1)/2+1;
+  free_f3tensor(*c,1,nci,1,ncj,1,old_xpoints+1);
+  free_matrix(*s,1,nsi,1,nsj);
+  free_matrix(*y,1,nyj,1,old_xpoints);
+  free_vector(*r,1,old_xpoints);
+  free_vector(*rf_,1,old_xpoints);
+  free_vector(*integrand1,1,old_xpoints);
+  free_vector(*integrand2,1,old_xpoints);
+  
+  *y = matrix(1,nyj,1,xpoints);
+  *s = matrix(1,nsi,1,nsj);
+  *c = f3tensor(1,nci,1,ncj,1,xpoints+1);
+  *r = vector(1,xpoints);
+  *rf_ = vector(1,xpoints);
+  *integrand1 = vector(1,xpoints);
+  *integrand2 = vector(1,xpoints);
+  
   return;
 }
