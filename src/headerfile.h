@@ -45,7 +45,7 @@ void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
 	 int ic1, int jc1, int jcf, int kc, double ***c, double **s);
 double trapzd(double *, double *, double, int, int);
 void polint(double xa[], double ya[], int, double, double *, double *);
-double qromb(double *,double *, int,bool failure);
+double qromb(double *,double *, int,bool *failure);
 
 void compute_rf2233b1(double K33, double Lambda,double d0,
 		      double eta,double delta,double *r,
@@ -101,7 +101,16 @@ void scanE(double K33,double k24,double Lambda,double d0,
 	   double omega,double R,double eta,double delta,
 	   double gamma_s,FILE *energy,FILE *psi,
 	   double conv,int itmax,int mpt,
-	   double upperbound, char scan_what[]);
+	   double upperbound,char scan_what[]);
+
+void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
+		 int last_xpoints);
+
+void interpolate_array(double *r,double **y,double *r_cp,
+		       double **y_cp,int xpoints);
+
+void quick_interp(double *xa, double *ya, double x, double *y,
+		  int xpoints);
 
 void setup_var_pointers(double **var, double *var0,double **dEdvar,
 			double **dEdvarlast,char scan_what[],double *R, 
@@ -117,6 +126,11 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 	     FILE *surfacetwist,double conv,int itmax,
 	     int mpt,double upperbound_x,double upperbound_y,
 	     char scan_what_x[],char scan_what_y[]);
+
+void resize_all_arrays(double ****c,double ***s,double ***y,double **r,
+		       double **rf_, double **integrand1,
+		       double **integrand2,int xpoints,int nci,int ncj,
+		       int nsi,int nsj,int nyj);
 
 #endif /* ANSI */
 

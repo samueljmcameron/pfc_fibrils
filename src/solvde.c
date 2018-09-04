@@ -98,6 +98,7 @@ void solvde(int itmax, double conv, double slowc, double scalv[],
       return;
     }
   }
+  printf("delta = %lf\n",delta);
   nrerror("Too many iterations in solvde"); //Convergence failed.
 }
 

@@ -18,7 +18,7 @@
 
 int main(int argc, char **argv)
 {
-  int itmax= 1000,logStep = 1000;
+  int itmax = 10000;
   double conv = 1.0e-10;
   double K33;
   double k24;

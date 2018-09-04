@@ -176,30 +176,30 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 		  double *r,double **y,double *rf_,
 		  double *integrand1,double *integrand2,int mpt)
 {
-  bool failure;
+  bool failure = true;
   double integration_2233b1,integration1,integration2;
 
   compute_rf2233b1(K33,Lambda,d0,eta,delta,r,y,rf_,mpt);
   integration_2233b1 = qromb(r,rf_,mpt,&failure);
 
   if (failure) {
-    printf("failure occurred at integration_2233b1.\n");
-    return failure;
+    //    printf("failure occurred at integration_2233b1.\n");
+    return false;
   }
   compute_integrand1(d0,eta,r,y,integrand1,mpt);
   integration1 = qromb(r,integrand1,mpt,&failure);
 
   if (failure) {
-    printf("failure occurred at integration1.\n");
-    return failure;
+    //    printf("failure occurred at integration1.\n");
+    return false;
   }
 
   compute_integrand2(d0,eta,r,y,integrand2,mpt);
   integration2 = qromb(r,integrand2,mpt,&failure);
 
   if (failure) {
-    printf("failure occurred at integration2.\n");
-    return failure;
+    //    printf("failure occurred at integration2.\n");
+    return false;
   }
 
   *E = E_R(k24,Lambda,omega,R,eta,delta,gamma_s,r,y,

@@ -49,7 +49,7 @@ if __name__=='__main__':
     yscale = 'linear'
 
     ax_config(xlabel,ylabel,xscale,yscale,ax)
-    ax.set_ylim(-10,10)
+    #    ax.set_ylim(-10,10)
 
     edited_str_ = latex2string(str_)
 

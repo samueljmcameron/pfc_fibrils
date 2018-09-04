@@ -60,7 +60,7 @@ void scanE(double K33,double k24,double Lambda,double d0,
 	   double omega,double R,double eta,double delta,
 	   double gamma_s,FILE *energy,FILE *psi,
 	   double conv,int itmax,int mpt,
-	   double upperbound, char scan_what[])
+	   double upperbound,char scan_what[])
 // The energy of the system E(R,L,eta). This function  //
 // generates data of E vs scan_what[] (either "delta", //
 // "R", or "eta"), while holding the other two values  //
@@ -70,11 +70,12 @@ void scanE(double K33,double k24,double Lambda,double d0,
 // the psi file. //
 {
   int xpoints = mpt;
+  int last_xpoints = mpt;
   double *var,var0;
   double h;
   double slowc = 1.0;
   double scalv[2+1];
-  double **y,*r, **s, ***c;
+  double **y,**y_cp,*r,*r_cp, **s, ***c;
   double *rf_,*integrand1,*integrand2;
   double initialSlope;
   double E;
@@ -94,13 +95,14 @@ void scanE(double K33,double k24,double Lambda,double d0,
   int nyj = ne;
   int nci = ne;
   int ncj = ne-nb+1;
-  int do_while_count = 0;
   int max_size = (mpt-1)*4+1;
 
   y = matrix(1,nyj,1,mpt);
+  y_cp = matrix(1,nyj,1,max_size);
   s = matrix(1,nsi,1,nsj);
   c = f3tensor(1,nci,1,ncj,1,mpt+1);
   r = vector(1,mpt);
+  r_cp = vector(1,max_size);
   rf_ = vector(1,mpt);
   integrand1 = vector(1,mpt);
   integrand2 = vector(1,mpt);
@@ -112,10 +114,6 @@ void scanE(double K33,double k24,double Lambda,double d0,
 
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
-
-  // start with xpoints = mpt
-
-  xpoints = mpt;
   
 
   while (*var <= upperbound) {
@@ -126,37 +124,46 @@ void scanE(double K33,double k24,double Lambda,double d0,
 
       h = R/(xpoints-1);
 
-      if (xpoints != mpt) {
+      // only executes if the first calculation for the current var value is unsuccessful
+      if (xpoints != last_xpoints) {
+	printf("interpolating...\n");
+	copy_arrays(r,y,r_cp,y_cp,last_xpoints);
 	resize_all_arrays(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
-			  xpoints,nci,ncj,nsi,nsj,nyj);
+      			  xpoints,nci,ncj,nsi,nsj,nyj);
+	propagate_r(r,h,xpoints);
+	interpolate_array(r,y,r_cp,y_cp,xpoints);
+	printf("done interpolating.\n");
+
       }
-
-
-      if (!successful_calc) {
-	initialSlope = M_PI/(4.0*R);
+      // only executes the first loop, as after that any unsuccessful calculations exit
+      // to the system.
+      if (!successful_calc) { 
+	initialSlope = M_PI/(2.01*R);
 	linearGuess(r,y,initialSlope,h,xpoints); //linear initial guess 
       }
-      
-      else propagate_r(r,h,xpoints); // if not first loop, previous 
-      //                            result is initial guess
+      // if last loop was successful with last_xpoint sized arrays, then just
+      // use last y values as initial guess
+      else propagate_r(r,h,xpoints);
       
       solvde(itmax,conv,slowc,scalv,ne,nb,xpoints,y,r,c,s,K33,k24,
-	     Lambda,d0,eta,delta,h); // relax to compute psi,
-      //                                  psi' curves,
-      
+	     Lambda,d0,eta,delta,h); // relax to compute psi, psi' curves,
+
       // calculate energy, derivatives (see energy.c for code)
       successful_calc = energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,
 				     Lambda,d0,omega,R,eta,delta,gamma_s,
-				     r,y,rf_,integrand1,integrand2,xpoints,f_err);
+				     r,y,rf_,integrand1,integrand2,xpoints);
+
       xpoints = (xpoints-1)*2+1;
-      
 
     }
     while (!successful_calc && xpoints <= max_size);
 
+    // since multiply xpoints at the end of every loop, need to undo
+    // one multiplication after the loop is finished.
     xpoints = (xpoints-1)/2+1;
+    last_xpoints = xpoints;
 
-    if (!successful_calc) {
+    if (!successful_calc) { // writes the psi(r), r*f, etc, and exits
       make_f_err(f_err,f_err_size,K33,k24,Lambda,d0,omega,R,
 		 eta,delta,gamma_s);
       write_failure(r,y,rf_,xpoints,f_err);
@@ -166,6 +173,8 @@ void scanE(double K33,double k24,double Lambda,double d0,
     saveEnergy(energy,*var,E,*dEdvar,y[1][xpoints]);
       
 
+
+    // if a minimum has been found, save the psi(r) curve
     if (*var != var0 && *dEdvar*(*dEdvarlast) <= 0
 	&& *dEdvarlast < 0 && E <= Emin) {
       save_psi(psi,r,y,xpoints);
@@ -179,22 +188,63 @@ void scanE(double K33,double k24,double Lambda,double d0,
     dEdetalast = dEdeta;
     dEddeltalast = dEddelta;
     
-    if (xpoints != mpt) {
-      resize_all_arrays(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
-			xpoints,nci,ncj,nsi,nsj,nyj);
-      xpoints = mpt;
-    }
-
   }
 
-  free_f3tensor(c,1,nci,1,ncj,1,mpt+1);
+  free_f3tensor(c,1,nci,1,ncj,1,xpoints+1);
   free_matrix(s,1,nsi,1,nsj);
-  free_matrix(y,1,nyj,1,mpt);
-  free_vector(r,1,mpt);
-  free_vector(rf_,1,mpt);
-  free_vector(integrand1,1,mpt);
-  free_vector(integrand2,1,mpt);
+  free_matrix(y,1,nyj,1,xpoints);
+  free_matrix(y_cp,1,nyj,1,max_size);
+  free_vector(r,1,xpoints);
+  free_vector(r_cp,1,max_size);
+  free_vector(rf_,1,xpoints);
+  free_vector(integrand1,1,xpoints);
+  free_vector(integrand2,1,xpoints);
 
+  return;
+}
+
+void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
+		 int last_xpoints)
+{
+  int i;
+
+  for (i = 1; i <=last_xpoints; i++) {
+    y_cp[1][i] = y[1][i];
+    y_cp[2][i] = y[2][i];
+    r_cp[i] = r[i];
+  }
+
+  return;
+}
+
+void interpolate_array(double *r,double **y,double *r_cp,
+		       double **y_cp,int xpoints)
+{
+  int i;
+  int last_xpoints = (xpoints-1)/2+1;
+  double dy;
+
+  for (i = 1; i <=xpoints; i++) {
+    quick_interp(r_cp,y_cp[1],r[i],&y[1][i],last_xpoints);
+    quick_interp(r_cp,y_cp[2],r[i],&y[2][i],last_xpoints);
+  }
+  return;
+}
+
+void quick_interp(double *xa, double *ya, double x, double *y,
+		  int xpoints)
+{
+  int i=0;
+  double diff=0.5*(xa[2]-xa[1]);
+  int index;
+
+  do i += 1;
+  while (fabs(x-xa[i])>diff);
+  if (i > xpoints) {printf("too many points!\n"); exit(1);}
+  if (x==xa[i]) { *y = y[i]; }
+  else if (x<xa[i]) i -= 1;
+  double slope = (ya[i+1]-ya[i])/(2*diff);
+  *y = slope*(x-xa[i+1])+ya[i+1];
   return;
 }
 
@@ -325,7 +375,7 @@ void scan2dE(double *r,double **y,double ***c,double **s,
       // calculate energy, derivatives (see energy.c for code)
       energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,Lambda,
 		   d0,omega,R,eta,delta,gamma_s,r,y,rf_,
-		   integrand1,integrand2,mpt,f_err);
+		   integrand1,integrand2,mpt);
       
       
 
@@ -364,6 +414,8 @@ void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err)
 {
   int i;
   FILE *broken;
+  printf("failed to integrate at xpoints = %d, with R = %e.\n",rlength,r[rlength]);
+  printf("saving psi(r) shape, and exiting to system.\n");
   broken = fopen(f_err,"w");
   for (i = 1; i<=rlength; i++) {
     fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_[i]);
@@ -375,17 +427,19 @@ void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err)
 
 void resize_all_arrays(double ****c,double ***s,double ***y,double **r,
 		       double **rf_, double **integrand1,
-		       double **integrand2,int xpoints,int nci,int ncj,
-		       int nsi,int nsj,int nyj)
+		       double **integrand2,int xpoints,
+		       int nci,int ncj,int nsi,int nsj,int nyj)
 {
-  old_xpoints = (xpoints-1)/2+1;
-  free_f3tensor(*c,1,nci,1,ncj,1,old_xpoints+1);
+  int last_xpoints;
+
+  last_xpoints = (xpoints-1)/2+1;
+  free_f3tensor(*c,1,nci,1,ncj,1,last_xpoints+1);
   free_matrix(*s,1,nsi,1,nsj);
-  free_matrix(*y,1,nyj,1,old_xpoints);
-  free_vector(*r,1,old_xpoints);
-  free_vector(*rf_,1,old_xpoints);
-  free_vector(*integrand1,1,old_xpoints);
-  free_vector(*integrand2,1,old_xpoints);
+  free_matrix(*y,1,nyj,1,last_xpoints);
+  free_vector(*r,1,last_xpoints);
+  free_vector(*rf_,1,last_xpoints);
+  free_vector(*integrand1,1,last_xpoints);
+  free_vector(*integrand2,1,last_xpoints);
   
   *y = matrix(1,nyj,1,xpoints);
   *s = matrix(1,nsi,1,nsj);

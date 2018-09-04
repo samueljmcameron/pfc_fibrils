@@ -129,7 +129,7 @@ def variable_scanE(init_path,params,var,var_position,
     args = argv_list(init_path,params,var,var_position,
                      scan_what)
 
-    cmd = "../../bin/scan " + args
+    cmd = "valgrind ../../bin/scan " + args
 
     if(subprocess.call(cmd,shell=True,
                        stderr=subprocess.STDOUT)==0):

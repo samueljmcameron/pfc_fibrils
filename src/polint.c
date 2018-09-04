@@ -39,7 +39,7 @@ tableau forking up or down. We do this in such a way as to take the most straigh
 line route through the tableau to its apex, updating ns accordingly to keep track of
 where we are. This route keeps the partial approximations centered (insofar as possible)
 on the target x. The last dy added is thus the error indication.*/
-}
-free_vector(d,1,n);
-free_vector(c,1,n);
+  }
+  free_vector(d,1,n);
+  free_vector(c,1,n);
 }
