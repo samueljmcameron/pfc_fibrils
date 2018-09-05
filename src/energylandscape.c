@@ -6,6 +6,32 @@
 #include "nrutil.h"
 #include "headerfile.h"
 
+void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err);
+void linearGuess(double *r, double **y, double initialSlope,
+		 double h,int mpt);
+void propagate_r(double *r, double h,int mpt);
+void save_psi(FILE *psi,double *r, double **y,int mpt);
+void saveEnergy(FILE *energy, double R, double E, double derivative,
+		double observable);
+void make_f_err(char *f_err,int f_err_size,double K33,double k24,
+		double Lambda,double d0,double omega,double R,
+		double eta,double delta,double gamma_s);
+void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
+		 int last_xpoints);
+void interpolate_array(double *r,double **y,double *r_cp,
+		       double **y_cp,int xpoints);
+void quick_interp(double *xcp,double **ycp,double x,double **y,int i);
+void setup_var_pointers(double **var, double *var0,double **dEdvar,
+			double **dEdvarlast,char scan_what[],double *R, 
+			double *dEdR,double *dEdRlast,double *eta,
+			double *dEdeta, double *dEdetalast,double *delta,
+			double *dEddelta,double *dEddeltalast);
+void resize_all_arrays(double ****c,double ***s,double ***y,double **r,
+		       double **rf_, double **integrand1,
+		       double **integrand2,int xpoints,int nci,int ncj,
+		       int nsi,int nsj,int nyj);
+
+
 
 void linearGuess(double *r, double **y, double initialSlope,
 		 double h,int mpt)
@@ -116,6 +142,10 @@ void scanE(double K33,double k24,double Lambda,double d0,
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
   
 
+  // initial guess for the functional form of psi(r) and psi'(r)
+  initialSlope = M_PI/(4.01*R);
+  linearGuess(r,y,initialSlope,h,xpoints); //linear initial guess 
+
   while (*var <= upperbound) {
 
     // for each value of x (i.e *var) in E vs x
@@ -126,7 +156,7 @@ void scanE(double K33,double k24,double Lambda,double d0,
 
       // only executes if the first calculation for the current var value is unsuccessful
       if (xpoints != last_xpoints) {
-	printf("interpolating...\n");
+	printf("interpolating at var = %e...\n",*var);
 	copy_arrays(r,y,r_cp,y_cp,last_xpoints);
 	resize_all_arrays(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
       			  xpoints,nci,ncj,nsi,nsj,nyj);
@@ -135,12 +165,7 @@ void scanE(double K33,double k24,double Lambda,double d0,
 	printf("done interpolating.\n");
 
       }
-      // only executes the first loop, as after that any unsuccessful calculations exit
-      // to the system.
-      if (!successful_calc) { 
-	initialSlope = M_PI/(2.01*R);
-	linearGuess(r,y,initialSlope,h,xpoints); //linear initial guess 
-      }
+
       // if last loop was successful with last_xpoint sized arrays, then just
       // use last y values as initial guess
       else propagate_r(r,h,xpoints);
@@ -203,6 +228,46 @@ void scanE(double K33,double k24,double Lambda,double d0,
   return;
 }
 
+
+bool calculation(double ***y,double ***y_cp,double ***s,double ****c,
+		 double **r, double **r_cp, double **rf_,
+		 double **rf_, double **integrand1, double **integrand2,
+		 double xpoints,double last_xpoints,double *var,
+		 double K33,double k24,double Lambda,double d0,
+		 double omega,double R,double eta,double delta,
+		 double gamma_s,double conv,int itmax)
+{
+  double h;
+
+
+  h = R/(xpoints-1);
+  
+  // only executes if the first calculation for the current var value is unsuccessful
+  if (xpoints != last_xpoints) {
+    printf("interpolating at var = %e...\n",*var);
+    copy_arrays(*r,*y,*r_cp,*y_cp,last_xpoints);
+    resize_all_arrays(c,s,y,r,rf_,integrand1,integrand2,
+		      xpoints,nci,ncj,nsi,nsj,nyj);
+    propagate_r(*r,h,xpoints);
+    interpolate_array(*r,*y,*r_cp,*y_cp,xpoints);
+    printf("done interpolating.\n");
+    
+  }
+  
+  // if last loop was successful with last_xpoint sized arrays, then just
+  // use last y values as initial guess
+  else propagate_r(*r,h,xpoints);
+  
+  solvde(itmax,conv,slowc,scalv,ne,nb,xpoints,*y,*r,*c,*s,K33,k24,
+	 Lambda,d0,eta,delta,h); // relax to compute psi, psi' curves,
+  
+  // calculate energy, derivatives (see energy.c for code)
+  return energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,
+		      Lambda,d0,omega,R,eta,delta,gamma_s,
+		      r,y,rf_,integrand1,integrand2,xpoints);
+}
+
+
 void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
 		 int last_xpoints)
 {
@@ -221,30 +286,31 @@ void interpolate_array(double *r,double **y,double *r_cp,
 		       double **y_cp,int xpoints)
 {
   int i;
-  int last_xpoints = (xpoints-1)/2+1;
   double dy;
 
-  for (i = 1; i <=xpoints; i++) {
-    quick_interp(r_cp,y_cp[1],r[i],&y[1][i],last_xpoints);
-    quick_interp(r_cp,y_cp[2],r[i],&y[2][i],last_xpoints);
-  }
+  for (i = 1; i <=xpoints; i++) quick_interp(r_cp,y_cp,r[i],y,i);
   return;
 }
 
-void quick_interp(double *xa, double *ya, double x, double *y,
-		  int xpoints)
-{
-  int i=0;
-  double diff=0.5*(xa[2]-xa[1]);
-  int index;
+void quick_interp(double *xcp,double **ycp,double x,double **y,int i)
+// Given two points of ycp[1][:] (y11cp,x1cp) and y(12cp,x2cp), //
+// and two points of ycp[2][:] (y21cp,x1cp) and (y22cp,x2cp),   //
+// interpolate to determine the value of y between the two
 
-  do i += 1;
-  while (fabs(x-xa[i])>diff);
-  if (i > xpoints) {printf("too many points!\n"); exit(1);}
-  if (x==xa[i]) { *y = y[i]; }
-  else if (x<xa[i]) i -= 1;
-  double slope = (ya[i+1]-ya[i])/(2*diff);
-  *y = slope*(x-xa[i+1])+ya[i+1];
+{
+  if (i%2 != 0) {
+    y[1][i] = ycp[1][(i-1)/2+1];
+    y[2][i] = ycp[2][(i-1)/2+1];
+  }
+  else {
+    double slope_1, slope_2;
+    slope_1 = (ycp[1][i/2+1]-ycp[1][i/2])/(xcp[i/2+1]-xcp[i/2]);
+    slope_2 = (ycp[2][i/2+1]-ycp[2][i/2])/(xcp[i/2+1]-xcp[i/2]);
+
+    y[1][i] = slope_1*(x-xcp[i/2])+ycp[1][i/2];
+    y[2][i] = slope_2*(x-xcp[i/2])+ycp[2][i/2];
+  }
+
   return;
 }
 

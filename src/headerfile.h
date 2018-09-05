@@ -81,42 +81,12 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 		  double *r,double **y,double *rf_,
 		  double *integrand1,double *integrand2,int mpt);
 
-void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err);
-
-void linearGuess(double *r, double **y, double initialSlope,
-		 double h,int mpt);
-
-void propagate_r(double *r, double h,int mpt);
-
-void save_psi(FILE *psi,double *r, double **y,int mpt);
-
-void saveEnergy(FILE *energy, double R, double E, double derivative,
-		double observable);
-
-void make_f_err(char *f_err,int f_err_size,double K33,double k24,
-		double Lambda,double d0,double omega,double R,
-		double eta,double delta,double gamma_s);
-
 void scanE(double K33,double k24,double Lambda,double d0,
 	   double omega,double R,double eta,double delta,
 	   double gamma_s,FILE *energy,FILE *psi,
 	   double conv,int itmax,int mpt,
 	   double upperbound,char scan_what[]);
 
-void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
-		 int last_xpoints);
-
-void interpolate_array(double *r,double **y,double *r_cp,
-		       double **y_cp,int xpoints);
-
-void quick_interp(double *xa, double *ya, double x, double *y,
-		  int xpoints);
-
-void setup_var_pointers(double **var, double *var0,double **dEdvar,
-			double **dEdvarlast,char scan_what[],double *R, 
-			double *dEdR,double *dEdRlast,double *eta,
-			double *dEdeta, double *dEdetalast,double *delta,
-			double *dEddelta,double *dEddeltalast);
 
 void scan2dE(double *r,double **y,double ***c,double **s,
 	     double K33,double k24,double Lambda,double d0,
@@ -126,11 +96,6 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 	     FILE *surfacetwist,double conv,int itmax,
 	     int mpt,double upperbound_x,double upperbound_y,
 	     char scan_what_x[],char scan_what_y[]);
-
-void resize_all_arrays(double ****c,double ***s,double ***y,double **r,
-		       double **rf_, double **integrand1,
-		       double **integrand2,int xpoints,int nci,int ncj,
-		       int nsi,int nsj,int nyj);
 
 #endif /* ANSI */
 
