@@ -29,16 +29,39 @@ typedef struct {
 
 #if defined(__STDC__) || defined(ANSI) || defined(NRANSI) /* ANSI */
 
+
+struct arr_ns{
+  int ne; // number of equations in ODE (2)
+  int nb; // number of BCs at first boundary
+  int nsi;
+  int nsj;
+  int nyj;
+  int nci;
+  int ncj;
+};
+
+struct params{
+  double K33;
+  double k24;
+  double Lambda;
+  double d0;
+  double omega;
+  double R;
+  double eta;
+  double delta;
+  double gamma_s;
+  double upperbound;
+};
+
 void solvde(int itmax, double conv, double slowc, double scalv[],
-	    int ne, int nb, int m, double **y, double *r,
-	    double ***c, double **s, double K33, double k24,
-	    double Lambda,double d0,double eta,double delta,
+	    struct arr_ns *ns, int m, double **y, double *r,
+	    double ***c, double **s, struct params *p,
 	    double h);
+
 void bksub(int ne, int nb, int jf, int k1, int k2, double ***c);
 void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
-	   int ne, double **s, double **y, double *r,double K33,
-	   double k24, double Lambda, double d0,double eta,
-	   double delta, double h, int mpt);
+	   int ne, double **s, double **y, double *r,
+	   struct params *p, double h, int mpt);
 void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
 	   double **s);
 void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
@@ -47,45 +70,13 @@ double trapzd(double *, double *, double, int, int);
 void polint(double xa[], double ya[], int, double, double *, double *);
 double qromb(double *,double *, int,bool *failure);
 
-void compute_rf2233b1(double K33, double Lambda,double d0,
-		      double eta,double delta,double *r,
-		      double **y, double *rf_,int mpt);
-void compute_integrand1(double d0,double eta,double *r,
-			double **y,double *integrand1,int mpt);
-void compute_integrand2(double d0,double eta,double *r,
-			double **y,double *integrand2,int mpt);
-
-
-double E_R(double k24,double Lambda,double omega,double R,
-	   double eta,double delta,double gamma_s,double *r,
-	   double **y,double integration_2233b1,int mpt);
-
-double derivEdR(double K33, double k24,double Lambda,double d0, 
-		double R,double eta,double delta,double gamma_s,
-		double *r,double **y,double integration_2233b1,
-		int mpt);
-
-//double derivEdL(double Lambda,double omega,double R,double eta,
-//		double delta, double gamma_t,double integration2);
-
-double derivEdeta(double Lambda,double omega,double R,double eta,
-		  double delta,double integration1,double integration2);
-
-double derivEddelta(double Lambda,double omega,double R,double eta,
-		    double delta,double integration2);
-
 bool energy_stuff(double *E, double *dEdR,double *dEdeta,
-		  double *dEddelta,double K33, double k24,
-		  double Lambda,double d0,double omega,double R,
-		  double eta,double delta,double gamma_s,
+		  double *dEddelta,struct params *p,
 		  double *r,double **y,double *rf_,
 		  double *integrand1,double *integrand2,int mpt);
 
-void scanE(double K33,double k24,double Lambda,double d0,
-	   double omega,double R,double eta,double delta,
-	   double gamma_s,FILE *energy,FILE *psi,
-	   double conv,int itmax,int mpt,
-	   double upperbound,char scan_what[]);
+void scanE(struct params p,FILE *energy,FILE *psi,
+	   double conv,int itmax,int mpt,char scan_what[]);
 
 
 void scan2dE(double *r,double **y,double ***c,double **s,

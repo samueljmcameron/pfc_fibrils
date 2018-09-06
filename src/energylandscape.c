@@ -6,6 +6,22 @@
 #include "nrutil.h"
 #include "headerfile.h"
 
+
+
+void assign_ns(struct arr_ns *ns)
+{
+  int ne = 2;
+  int nb = 1;
+  ns->ne = ne;
+  ns->nb = nb;
+  ns->nsi = ne;
+  ns->nsj = 2*ne+1;
+  ns->nyj = ne;
+  ns->nci = ne;
+  ns->ncj = ne-nb+1;
+  return;
+}
+
 void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err);
 void linearGuess(double *r, double **y, double initialSlope,
 		 double h,int mpt);
@@ -13,9 +29,7 @@ void propagate_r(double *r, double h,int mpt);
 void save_psi(FILE *psi,double *r, double **y,int mpt);
 void saveEnergy(FILE *energy, double R, double E, double derivative,
 		double observable);
-void make_f_err(char *f_err,int f_err_size,double K33,double k24,
-		double Lambda,double d0,double omega,double R,
-		double eta,double delta,double gamma_s);
+void make_f_err(char *f_err,int f_err_size,struct params p);
 void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
 		 int last_xpoints);
 void interpolate_array(double *r,double **y,double *r_cp,
@@ -26,11 +40,13 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
 			double *dEdR,double *dEdRlast,double *eta,
 			double *dEdeta, double *dEdetalast,double *delta,
 			double *dEddelta,double *dEddeltalast);
-void resize_all_arrays(double ****c,double ***s,double ***y,double **r,
-		       double **rf_, double **integrand1,
-		       double **integrand2,int xpoints,int nci,int ncj,
-		       int nsi,int nsj,int nyj);
 
+void allocate_matrices(double ****c,double ***s,double ***y,double **r,
+		       double **rf_, double **integrand1,
+		       double **integrand2,int xpoints,struct arr_ns *ns);
+void free_matrices(double ****c,double ***s,double ***y,double **r,
+		   double **rf_, double **integrand1,
+		   double **integrand2,int xpoints,struct arr_ns *ns);
 
 
 void linearGuess(double *r, double **y, double initialSlope,
@@ -72,21 +88,17 @@ void saveEnergy(FILE *energy, double R, double E, double derivative,
   return;
 }
 
-void make_f_err(char *f_err,int f_err_size,double K33,double k24,
-		double Lambda,double d0,double omega,double R,
-		double eta,double delta,double gamma_s)
+void make_f_err(char *f_err,int f_err_size,struct params p)
 {
   snprintf(f_err,f_err_size,"data/QROMB_psivsr_%1.4e_%1.4e_%1.4e_"
 	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
-	   K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s);
+	   p.K33,p.k24,p.Lambda,p.d0,p.omega,p.R,p.eta,
+	   p.delta,p.gamma_s);
   return;
 }
 
-void scanE(double K33,double k24,double Lambda,double d0,
-	   double omega,double R,double eta,double delta,
-	   double gamma_s,FILE *energy,FILE *psi,
-	   double conv,int itmax,int mpt,
-	   double upperbound,char scan_what[])
+void scanE(struct params p,FILE *energy,FILE *psi,double conv,
+	   int itmax,int mpt,char scan_what[])
 // The energy of the system E(R,L,eta). This function  //
 // generates data of E vs scan_what[] (either "delta", //
 // "R", or "eta"), while holding the other two values  //
@@ -114,52 +126,48 @@ void scanE(double K33,double k24,double Lambda,double d0,
   int f_err_size = 200;
   char f_err[f_err_size];
   bool successful_calc = false;
-  int ne = 2; // number of equations in ODE (2)
-  int nb = 1; // number of BCs at first boundary
-  int nsi = ne;
-  int nsj = 2*ne+1;
-  int nyj = ne;
-  int nci = ne;
-  int ncj = ne-nb+1;
+  struct arr_ns ns;
+  assign_ns(&ns);
   int max_size = (mpt-1)*4+1;
 
-  y = matrix(1,nyj,1,mpt);
-  y_cp = matrix(1,nyj,1,max_size);
-  s = matrix(1,nsi,1,nsj);
-  c = f3tensor(1,nci,1,ncj,1,mpt+1);
-  r = vector(1,mpt);
+
+  // malloc the relevant arrays
+  allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		    xpoints,&ns);
+  // as well as two extra arrays to copy r and y contents into
+  y_cp = matrix(1,ns.nyj,1,max_size);
   r_cp = vector(1,max_size);
-  rf_ = vector(1,mpt);
-  integrand1 = vector(1,mpt);
-  integrand2 = vector(1,mpt);
 
 
-  setup_var_pointers(&var,&var0,&dEdvar,&dEdvarlast,scan_what,&R, 
-		     &dEdR,&dEdRlast,&eta,&dEdeta,&dEdetalast,
-		     &delta,&dEddelta,&dEddeltalast);
+  setup_var_pointers(&var,&var0,&dEdvar,&dEdvarlast,scan_what,&p.R, 
+		     &dEdR,&dEdRlast,&p.eta,&dEdeta,&dEdetalast,
+		     &p.delta,&dEddelta,&dEddeltalast);
 
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
   
-
+  h = p.R/(xpoints-1);
   // initial guess for the functional form of psi(r) and psi'(r)
-  initialSlope = M_PI/(4.01*R);
+  initialSlope = M_PI/(2.01*p.R);
   linearGuess(r,y,initialSlope,h,xpoints); //linear initial guess 
 
-  while (*var <= upperbound) {
+  while (*var <= p.upperbound) {
 
     // for each value of x (i.e *var) in E vs x
 
     do {
 
-      h = R/(xpoints-1);
+
+      h = p.R/(xpoints-1);
 
       // only executes if the first calculation for the current var value is unsuccessful
       if (xpoints != last_xpoints) {
 	printf("interpolating at var = %e...\n",*var);
 	copy_arrays(r,y,r_cp,y_cp,last_xpoints);
-	resize_all_arrays(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
-      			  xpoints,nci,ncj,nsi,nsj,nyj);
+	free_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		      last_xpoints,&ns);
+	allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+			  xpoints,&ns);
 	propagate_r(r,h,xpoints);
 	interpolate_array(r,y,r_cp,y_cp,xpoints);
 	printf("done interpolating.\n");
@@ -170,13 +178,11 @@ void scanE(double K33,double k24,double Lambda,double d0,
       // use last y values as initial guess
       else propagate_r(r,h,xpoints);
       
-      solvde(itmax,conv,slowc,scalv,ne,nb,xpoints,y,r,c,s,K33,k24,
-	     Lambda,d0,eta,delta,h); // relax to compute psi, psi' curves,
+      solvde(itmax,conv,slowc,scalv,&ns,xpoints,y,r,c,s,&p,h); // relax to compute psi, psi' curves,
 
       // calculate energy, derivatives (see energy.c for code)
-      successful_calc = energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,
-				     Lambda,d0,omega,R,eta,delta,gamma_s,
-				     r,y,rf_,integrand1,integrand2,xpoints);
+      successful_calc = energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,&p,r,y,
+				     rf_,integrand1,integrand2,xpoints);
 
       xpoints = (xpoints-1)*2+1;
 
@@ -189,8 +195,7 @@ void scanE(double K33,double k24,double Lambda,double d0,
     last_xpoints = xpoints;
 
     if (!successful_calc) { // writes the psi(r), r*f, etc, and exits
-      make_f_err(f_err,f_err_size,K33,k24,Lambda,d0,omega,R,
-		 eta,delta,gamma_s);
+      make_f_err(f_err,f_err_size,p);
       write_failure(r,y,rf_,xpoints,f_err);
     }
 
@@ -215,29 +220,23 @@ void scanE(double K33,double k24,double Lambda,double d0,
     
   }
 
-  free_f3tensor(c,1,nci,1,ncj,1,xpoints+1);
-  free_matrix(s,1,nsi,1,nsj);
-  free_matrix(y,1,nyj,1,xpoints);
-  free_matrix(y_cp,1,nyj,1,max_size);
-  free_vector(r,1,xpoints);
+  free_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		xpoints,&ns);
+  free_matrix(y_cp,1,ns.nyj,1,max_size);
   free_vector(r_cp,1,max_size);
-  free_vector(rf_,1,xpoints);
-  free_vector(integrand1,1,xpoints);
-  free_vector(integrand2,1,xpoints);
 
   return;
 }
 
-
+/*
 bool calculation(double ***y,double ***y_cp,double ***s,double ****c,
 		 double **r, double **r_cp, double **rf_,
-		 double **rf_, double **integrand1, double **integrand2,
+		 double **integrand1, double **integrand2,
 		 double xpoints,double last_xpoints,double *var,
 		 double K33,double k24,double Lambda,double d0,
 		 double omega,double R,double eta,double delta,
 		 double gamma_s,double conv,int itmax)
 {
-  double h;
 
 
   h = R/(xpoints-1);
@@ -267,7 +266,7 @@ bool calculation(double ***y,double ***y_cp,double ***s,double ****c,
 		      r,y,rf_,integrand1,integrand2,xpoints);
 }
 
-
+*/
 void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
 		 int last_xpoints)
 {
@@ -353,7 +352,7 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
   return;
 }
 
-
+/*
 void scan2dE(double *r,double **y,double ***c,double **s,
 	     double K33,double k24,double Lambda,double d0,
 	     double omega,double R,double eta,double delta,
@@ -475,6 +474,7 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 
   return;
 }
+*/
 
 void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err)
 {
@@ -493,27 +493,43 @@ void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err)
 
 void resize_all_arrays(double ****c,double ***s,double ***y,double **r,
 		       double **rf_, double **integrand1,
-		       double **integrand2,int xpoints,
-		       int nci,int ncj,int nsi,int nsj,int nyj)
+		       double **integrand2,int xpoints,struct arr_ns *ns)
 {
   int last_xpoints;
 
   last_xpoints = (xpoints-1)/2+1;
-  free_f3tensor(*c,1,nci,1,ncj,1,last_xpoints+1);
-  free_matrix(*s,1,nsi,1,nsj);
-  free_matrix(*y,1,nyj,1,last_xpoints);
-  free_vector(*r,1,last_xpoints);
-  free_vector(*rf_,1,last_xpoints);
-  free_vector(*integrand1,1,last_xpoints);
-  free_vector(*integrand2,1,last_xpoints);
-  
-  *y = matrix(1,nyj,1,xpoints);
-  *s = matrix(1,nsi,1,nsj);
-  *c = f3tensor(1,nci,1,ncj,1,xpoints+1);
+  free_matrices(c,s,y,r,rf_,integrand1,integrand2,last_xpoints,ns);
+  allocate_matrices(c,s,y,r,rf_,integrand1,integrand2,xpoints,ns);
+
+
+  return;
+}
+
+void allocate_matrices(double ****c,double ***s,double ***y,double **r,
+		       double **rf_, double **integrand1,
+		       double **integrand2,int xpoints,struct arr_ns *ns)
+{
+  *y = matrix(1,ns->nyj,1,xpoints);
+  *s = matrix(1,ns->nsi,1,ns->nsj);
+  *c = f3tensor(1,ns->nci,1,ns->ncj,1,xpoints+1);
   *r = vector(1,xpoints);
   *rf_ = vector(1,xpoints);
   *integrand1 = vector(1,xpoints);
   *integrand2 = vector(1,xpoints);
-  
+  return;
+}
+
+void free_matrices(double ****c,double ***s,double ***y,double **r,
+		   double **rf_, double **integrand1,
+		   double **integrand2,int xpoints,struct arr_ns *ns)
+{
+
+  free_f3tensor(*c,1,ns->nci,1,ns->ncj,1,xpoints+1);
+  free_matrix(*s,1,ns->nsi,1,ns->nsj);
+  free_matrix(*y,1,ns->nyj,1,xpoints);
+  free_vector(*r,1,xpoints);
+  free_vector(*rf_,1,xpoints);
+  free_vector(*integrand1,1,xpoints);
+  free_vector(*integrand2,1,xpoints);
   return;
 }
