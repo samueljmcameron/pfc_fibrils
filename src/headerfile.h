@@ -50,7 +50,8 @@ struct params{
   double eta;
   double delta;
   double gamma_s;
-  double upperbound;
+  double upperbound_x;
+  double upperbound_y;
 };
 
 void solvde(int itmax, double conv, double slowc, double scalv[],

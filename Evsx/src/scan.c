@@ -51,35 +51,14 @@ int main(int argc, char **argv)
   sscanf(argv[8],"%lf",&p.eta);
   sscanf(argv[9],"%lf",&p.delta);
   sscanf(argv[10],"%lf",&p.gamma_s);
-  sscanf(argv[11],"%lf",&p.upperbound);
-  K33 = p.K33;
-  k24 = p.k24;
-  Lambda = p.Lambda;
-  d0 = p.d0;
-  omega = p.omega;
-  R = p.R;
-  eta = p.eta;
-  delta = p.delta;
-  gamma_s = p.gamma_s;
-  upperbound = p.upperbound;
-  /*
-  sscanf(argv[2],"%lf",&K33);
-  sscanf(argv[3],"%lf",&k24);
-  sscanf(argv[4],"%lf",&Lambda);
-  sscanf(argv[5],"%lf",&d0);
-  sscanf(argv[6],"%lf",&omega);
-  sscanf(argv[7],"%lf",&R);
-  sscanf(argv[8],"%lf",&eta);
-  sscanf(argv[9],"%lf",&delta);
-  sscanf(argv[10],"%lf",&gamma_s);
-  sscanf(argv[11],"%lf",&upperbound);
-  */
+  sscanf(argv[11],"%lf",&p.upperbound_x);
+
   snprintf(scan_what,sizeof(scan_what),"%s",argv[12]);
 
   snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
 	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
 	   p.K33,p.k24,p.Lambda,p.d0,p.omega,p.R,p.eta,p.delta,p.gamma_s,
-	   p.upperbound);
+	   p.upperbound_x);
 
   snprintf(f1,sizeof(f1),"%s_%s_energy_%s",
 	   path,scan_what,suffix);
@@ -90,9 +69,6 @@ int main(int argc, char **argv)
   psi = fopen(f2,"w");
 
   scanE(p,energy,psi,conv,itmax,M,scan_what);
-
-  //  scanE(K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s,
-  //energy,psi,conv,itmax,M,upperbound,scan_what);
   
 
   fclose(energy); // close file!
