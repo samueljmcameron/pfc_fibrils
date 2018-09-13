@@ -24,16 +24,6 @@ int main(int argc, char **argv)
   int itmax = 10000;
   double conv = 1.0e-10;
   struct params p;
-  double K33;
-  double k24;
-  double Lambda;
-  double d0;
-  double omega;
-  double R;
-  double eta;
-  double delta;
-  double gamma_s;
-  double upperbound;
   char scan_what[20];
   char path[200];
   char suffix[200];
@@ -53,6 +43,18 @@ int main(int argc, char **argv)
   sscanf(argv[10],"%lf",&p.gamma_s);
   sscanf(argv[11],"%lf",&p.upperbound_x);
 
+  printf("K33 = %lf\n",p.K33);
+  printf("k24 = %lf\n",p.k24);
+  printf("Lambda = %lf\n",p.Lambda);
+  printf("d0 = %lf\n",p.d0);
+  printf("omega = %lf\n",p.omega);
+  printf("R = %lf\n",p.R);
+  printf("eta = %lf\n",p.eta);
+  printf("delta = %lf\n",p.delta);
+  printf("gamma_s = %lf\n",p.gamma_s);
+  printf("upperbound_x = %lf\n",p.upperbound_x);
+  printf("upperbound_y = %lf\n",p.upperbound_y);
+  
   snprintf(scan_what,sizeof(scan_what),"%s",argv[12]);
 
   snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"

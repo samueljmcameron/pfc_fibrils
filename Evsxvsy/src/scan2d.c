@@ -19,21 +19,9 @@
 int main(int argc, char **argv)
 {
 
-
-  double **y,*r, **s, ***c;
-
-  int itmax= 1000,logStep = 1000;
+  int itmax= 1000;
   double conv = 1.0e-10;
-  double K33;
-  double k24;
-  double Lambda;
-  double d0;
-  double omega;
-  double R;
-  double eta;
-  double delta;
-  double gamma_s;
-  double upperbound_x,upperbound_y;
+  struct params p;
   char scan_what_x[20],scan_what_y[20];
   char path[200];
   char suffix[200],f1[200],f2[200],f3[200];
@@ -43,48 +31,40 @@ int main(int argc, char **argv)
 
   // read in the the variables and paths
   snprintf(path,sizeof(path),"%s",argv[1]);
-  sscanf(argv[2],"%lf",&K33);
-  sscanf(argv[3],"%lf",&k24);
-  sscanf(argv[4],"%lf",&Lambda);
-  sscanf(argv[5],"%lf",&d0);
-  sscanf(argv[6],"%lf",&omega);
-  sscanf(argv[7],"%lf",&R);
-  sscanf(argv[8],"%lf",&eta);
-  sscanf(argv[9],"%lf",&delta);
-  sscanf(argv[10],"%lf",&gamma_s);
-  sscanf(argv[11],"%lf",&upperbound_x);
-  sscanf(argv[12],"%lf",&upperbound_y);
+  sscanf(argv[2],"%lf",&p.K33);
+  sscanf(argv[3],"%lf",&p.k24);
+  sscanf(argv[4],"%lf",&p.Lambda);
+  sscanf(argv[5],"%lf",&p.d0);
+  sscanf(argv[6],"%lf",&p.omega);
+  sscanf(argv[7],"%lf",&p.R);
+  sscanf(argv[8],"%lf",&p.eta);
+  sscanf(argv[9],"%lf",&p.delta);
+  sscanf(argv[10],"%lf",&p.gamma_s);
+  sscanf(argv[11],"%lf",&p.upperbound_x);
+  sscanf(argv[12],"%lf",&p.upperbound_y);
   snprintf(scan_what_x,sizeof(scan_what_x),"%s",argv[13]);
   snprintf(scan_what_y,sizeof(scan_what_y),"%s",argv[14]);
 
-  printf("K33 = %lf\n",K33);
-  printf("k24 = %lf\n",k24);
-  printf("Lambda = %lf\n",Lambda);
-  printf("d0 = %lf\n",d0);
-  printf("omega = %lf\n",omega);
-  printf("R = %lf\n",R);
-  printf("eta = %lf\n",eta);
-  printf("delta = %lf\n",delta);
-  printf("gamma_s = %lf\n",gamma_s);
-  printf("upperbound_x = %lf\n",upperbound_x);
-  printf("upperbound_y = %lf\n",upperbound_y);
+  printf("K33 = %lf\n",p.K33);
+  printf("k24 = %lf\n",p.k24);
+  printf("Lambda = %lf\n",p.Lambda);
+  printf("d0 = %lf\n",p.d0);
+  printf("omega = %lf\n",p.omega);
+  printf("R = %lf\n",p.R);
+  printf("eta = %lf\n",p.eta);
+  printf("delta = %lf\n",p.delta);
+  printf("gamma_s = %lf\n",p.gamma_s);
+  printf("upperbound_x = %lf\n",p.upperbound_x);
+  printf("upperbound_y = %lf\n",p.upperbound_y);
 
   printf("scan_what_x = %s\n",scan_what_x);
   printf("scan_what_y = %s\n",scan_what_y);
 
 
-
-  y = matrix(1,NYJ,1,NYK);
-  s = matrix(1,NSI,1,NSJ);
-  c = f3tensor(1,NCI,1,NCJ,1,NCK);
-  r = vector(1,NYK);
-
-
-
   snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
 	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",
-	   K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s,
-	   upperbound_x,upperbound_y);
+	   p.K33,p.k24,p.Lambda,p.d0,p.omega,p.R,p.eta,p.delta,p.gamma_s,
+	   p.upperbound_x,p.upperbound_y);
   
   snprintf(f1,sizeof(f1),"%s_%s_%s_energy_%s",
 	   path,scan_what_x,scan_what_y,suffix);
@@ -109,10 +89,8 @@ int main(int argc, char **argv)
   
 
 
-  scan2dE(r,y,c,s,K33,k24,Lambda,d0,omega,R,eta,delta,gamma_s,
-	  energy,psi,deriv_energy_x,deriv_energy_y,
-	  surfacetwist,conv,itmax,M,upperbound_x,upperbound_y,
-	  scan_what_x,scan_what_y);
+  scan2dE(p,energy,psi,deriv_energy_x,deriv_energy_y,
+	  surfacetwist,conv,itmax,M,scan_what_x,scan_what_y);
   
   
 
@@ -121,9 +99,5 @@ int main(int argc, char **argv)
   fclose(deriv_energy_x);
   fclose(deriv_energy_y);
   fclose(surfacetwist);
-  free_f3tensor(c,1,NCI,1,NCJ,1,NCK);
-  free_matrix(s,1,NSI,1,NSJ);
-  free_matrix(y,1,NYJ,1,NYK);
-  free_vector(r,1,NYK);
   return 0;
 }

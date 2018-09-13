@@ -248,7 +248,7 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
 
       // only executes if the first calculation for the current var value is unsuccessful
       if (xpoints != last_xpoints) {
-	printf("interpolating at var = %e...\n",*var);
+	printf("interpolating at %s = %e...\n",,scan_what,*var);
 	copy_arrays(r,y,r_cp,y_cp,last_xpoints);
 	free_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
 		      last_xpoints,&ns);
@@ -314,16 +314,14 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
   return;
 }
 
+  scan2dE(p,energy,psi,deriv_energy_x,deriv_energy_y,
+	  surfacetwist,conv,itmax,M,scan_what_x,scan_what_y);
 
-/*
-void scan2dE(double *r,double **y,double ***c,double **s,
-	     double K33,double k24,double Lambda,double d0,
-	     double omega,double R,double eta,double delta,
-	     double gamma_s,FILE *energy,FILE *psi,
+
+void scan2dE(struct params p,FILE *energy,FILE *psi,
 	     FILE *deriv_energy_x,FILE *deriv_energy_y,
 	     FILE *surfacetwist,double conv,int itmax,
-	     int mpt,double upperbound_x,double upperbound_y,
-	     char scan_what_x[],char scan_what_y[])
+	     int mpt,char scan_what_x[],char scan_what_y[])
 // The energy of the system E(R,L,eta). This function    //
 // generates data of E vs scan_what_x[] vs scan_what_y[] //
 // (either "delta","R", or "eta"), while holding the     //
@@ -332,16 +330,18 @@ void scan2dE(double *r,double **y,double ***c,double **s,
 // found in the energy landscape, psi(r) are saved to    //
 // the psi file. //
 {
-  int isitone;
+  int xpoints = mpt;
+  int last_xpoints = mpt;
   double *var_x,var_x0;
   double *var_y,var_y0;
   double h;
   double slowc = 1.0;
   double scalv[2+1];
+  double **y,**y_cp,*r,*r_cp, **s, ***c;
+  double *rf_,*integrand1,*integrand2;
   double initialSlope;
-  double rf_[mpt+1],integrand1[mpt+1],integrand2[mpt+1];
   double E;
-  double dEdR,  dEdeta,dEddelta;
+  double dEdR, dEdeta,dEddelta;
   double dEdRlast = dEdR;
   double dEdetalast = dEdeta;
   double dEddeltalast = dEddelta;
@@ -350,17 +350,32 @@ void scan2dE(double *r,double **y,double ***c,double **s,
   double Emin = 1e100;
   int f_err_size = 200;
   char f_err[f_err_size];
+  bool successful_calc = false;
+  struct arr_ns ns;
+  assign_ns(&ns);
+  int max_size = (mpt-1)*4+1;
+
+
+  int isitone;
 
 
   // initialize the pointers to the x variable (in E vs x vs y) so that
   // they reference the correct derivatives of E. x is either R,
   // eta, or delta.
-  setup_var_pointers(&var_x,&var_x0,&dEdvar_x,&dEdvar_xlast,scan_what_x,&R, 
-		     &dEdR,&dEdRlast,&eta,&dEdeta,&dEdetalast,&delta,
+
+  // malloc the relevant arrays
+  allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		    xpoints,&ns);
+  // as well as two extra arrays to copy r and y contents into
+  y_cp = matrix(1,ns.nyj,1,max_size);
+  r_cp = vector(1,max_size);
+
+  setup_var_pointers(&var_x,&var_x0,&dEdvar_x,&dEdvar_xlast,scan_what_x,&p.R, 
+		     &dEdR,&dEdRlast,&p.eta,&dEdeta,&dEdetalast,&p.delta,
 		     &dEddelta,&dEddeltalast);
 
-  setup_var_pointers(&var_y,&var_y0,&dEdvar_y,&dEdvar_ylast,scan_what_y,&R, 
-		     &dEdR,&dEdRlast,&eta,&dEdeta,&dEdetalast,&delta,
+  setup_var_pointers(&var_y,&var_y0,&dEdvar_y,&dEdvar_ylast,scan_what_y,&p.R,
+		     &dEdR,&dEdRlast,&p.eta,&dEdeta,&dEdetalast,&p.delta,
 		     &dEddelta,&dEddeltalast);
 
   
@@ -368,45 +383,63 @@ void scan2dE(double *r,double **y,double ***c,double **s,
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
   
 
-  while (*var_x <= upperbound_x) {
+  while (*var_x <= p.upperbound_x) {
     isitone = 1;
     *var_y = var_y0;
-    while (*var_y <= upperbound_y) {
+    h = p.R/(xpoints-1);
+    // initial guess for the functional form of psi(r) and psi'(r)
+    initialSlope = M_PI/(4.0*p.R);
+    linearGuess(r,y,initialSlope,h,xpoints); //linear initial guess 
 
-      h = R/(mpt-1);
-
-
-
-      if (isitone == 1) {
-	initialSlope = M_PI/(4.0*R);
-	linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
-	isitone += 1;
-      }
     
-      else propagate_r(r,h,mpt); // if not first loop, previous 
-      //                            result is initial guess
+    while (*var_y <= p.upperbound_y) {
 
-      make_f_err(f_err,f_err_size,K33,k24,Lambda,d0,omega,R,
-		 eta,delta,gamma_s);
+      do {
+	h = p.R/(xpoints-1);
+	
+	// only executes if the first calculation for the current var value is unsuccessful
+	if (xpoints != last_xpoints) {
+	  printf("interpolating at %s = %e, %s = %e...\n",scan_what_x,*var_x,
+		 scan_what_y,*var_y);
+	  copy_arrays(r,y,r_cp,y_cp,last_xpoints);
+	  free_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+			last_xpoints,&ns);
+	  allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+			    xpoints,&ns);
+	  propagate_r(r,h,xpoints);
+	  interpolate_array(r,y,r_cp,y_cp,xpoints);
+	  printf("done interpolating.\n");
+	  
+	}
+	
+	// if last loop was successful with last_xpoint sized arrays, then just
+	// use last y values as initial guess
+	else propagate_r(r,h,xpoints);
+	
+	solvde(itmax,conv,slowc,scalv,&ns,xpoints,y,r,c,s,&p,h); // relax to compute psi,
+	//                                  psi' curves, 
 
-      solvde(itmax,conv,slowc,scalv,2,1,mpt,y,r,c,s,K33,k24,
-	     Lambda,d0,eta,delta,h); // relax to compute psi,
-      //                                  psi' curves, note the 2,1
-      //                                  corresponds to two eqns,
-      //                                   and 1 BC at the r = 0.
-
-      //      if (*var_x > 0.002) {
-      //	printf("%s = %lf\n",scan_what_x,*var_x);
-      //	printf("%s = %lf\n",scan_what_y,*var_y);
-      //	save_psi(psi,r,y,mpt);
-      //  }
-      // calculate energy, derivatives (see energy.c for code)
-      energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,K33,k24,Lambda,
-		   d0,omega,R,eta,delta,gamma_s,r,y,rf_,
-		   integrand1,integrand2,mpt);
+	
+	// calculate energy, derivatives (see energy.c for code)
+	successful_calc = energy_stuff(&E,&dEdR,&dEdeta,&dEddelta,&p,r,y,
+				       rf_,integrand1,integrand2,xpoints);
       
       
+	xpoints = (xpoints-1)*2+1;
+	
+      }
+      while (!successful_calc && xpoints <= max_size);
+      // since multiply xpoints at the end of every loop, need to undo
+      // one multiplication after the loop is finished.
+      xpoints = (xpoints-1)/2+1;
+      last_xpoints = xpoints;
 
+      if (!successful_calc) { // writes the psi(r), r*f, etc, and exits
+	make_f_err(f_err,f_err_size,p);
+	write_failure(r,y,rf_,xpoints,f_err);
+      }
+
+      
       fprintf(energy,"%.8e\t",E);
       fprintf(deriv_energy_x,"%.8e\t",*dEdvar_x);
       fprintf(deriv_energy_y,"%.8e\t",*dEdvar_y);
@@ -435,9 +468,13 @@ void scan2dE(double *r,double **y,double ***c,double **s,
     *var_x += 0.001;
   }
 
+  free_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		xpoints,&ns);
+  free_matrix(y_cp,1,ns.nyj,1,max_size);
+  free_vector(r_cp,1,max_size);
+  
   return;
 }
-*/
 
 void write_failure(double *r, double **y,double *rf_,int rlength,char *f_err)
 {
