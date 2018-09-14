@@ -33,7 +33,8 @@ if __name__=='__main__':
     colors = sns.color_palette('muted',len(var_array))
 
     for which_deriv in [d['scan_what_x'],d['scan_what_y']]:
-
+        
+        print("plotting ",which_deriv)
         fig,ax = plt.subplots()
         width  = 3.487
         height = width

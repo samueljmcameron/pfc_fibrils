@@ -19,7 +19,7 @@
 int main(int argc, char **argv)
 {
 
-  int itmax= 1000;
+  int itmax= 10000;
   double conv = 1.0e-10;
   struct params p;
   char scan_what_x[20],scan_what_y[20];
@@ -28,6 +28,7 @@ int main(int argc, char **argv)
   char f4[200],f5[200];
   FILE *energy, *psi, *deriv_energy_x;
   FILE *deriv_energy_y, *surfacetwist;
+  int num_x = 200, num_y = 201;
 
   // read in the the variables and paths
   snprintf(path,sizeof(path),"%s",argv[1]);
@@ -90,7 +91,8 @@ int main(int argc, char **argv)
 
 
   scan2dE(p,energy,psi,deriv_energy_x,deriv_energy_y,
-	  surfacetwist,conv,itmax,M,scan_what_x,scan_what_y);
+	  surfacetwist,conv,itmax,M,num_x,num_y,
+	  scan_what_x,scan_what_y);
   
   
 

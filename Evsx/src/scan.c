@@ -29,6 +29,7 @@ int main(int argc, char **argv)
   char suffix[200];
   char f1[200],f2[200];
   FILE *energy, *psi;
+  int num_x = 200;
 
   // read in the the variables and paths
   snprintf(path,sizeof(path),"%s",argv[1]);
@@ -70,7 +71,7 @@ int main(int argc, char **argv)
   energy = fopen(f1,"w");
   psi = fopen(f2,"w");
 
-  scanE(p,energy,psi,conv,itmax,M,scan_what);
+  scanE(p,energy,psi,conv,itmax,M,num_x,scan_what);
   
 
   fclose(energy); // close file!

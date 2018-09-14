@@ -12,6 +12,14 @@ from matplotlib import cm, ticker
 from matplotlib.colors import LogNorm
 from mpl_toolkits.axes_grid1 import make_axes_locatable, axes_size
 
+def print_vals_near_min(arr,x_index,y_index):
+    print("\t\t%10.5e"%arr[y_index+1,x_index])
+    print("%10.5e\t%10.5e\t%10.5e"%(arr[y_index,x_index-1],arr[y_index,x_index],
+                             arr[y_index,x_index+1]))
+    print("\t\t%10.5e"%arr[y_index-1,x_index])
+
+    return
+
 def check_data(str_,string2compare2):
     if str_ != string2compare2:
         print("const_params.txt does not match the data"
@@ -47,10 +55,7 @@ def ax_config(xlabel,ylabel,xscale,yscale,ax):
 
     return
 
-def mk_mesh(d,params,excluded_param_position):
-
-    var_x_spacing = 0.001
-    var_y_spacing = 0.001
+def mk_mesh(d,params,excluded_param_position,numx,numy):
 
     xname = string2latex(d['scan_what_x'])
     yname = string2latex(d['scan_what_y'])
@@ -66,13 +71,11 @@ def mk_mesh(d,params,excluded_param_position):
 
     x0 = params[x_position]
     xf = d['upperbound_x']
-    numx = int(round((xf-x0)/var_x_spacing))
     print(numx)
     xs = np.linspace(x0,xf,num=numx,endpoint=True)
 
     y0 = params[y_position]
     yf = d['upperbound_y']+0.001
-    numy = int(round((yf-y0)/var_y_spacing))
     ys = np.linspace(y0,yf,num=numy,endpoint=True)
     print(numy)
     return np.meshgrid(xs,ys)
@@ -97,15 +100,28 @@ def plot_scanE2d(fig,ax,colors,d,var,params,var_position,
     # load and plot E vs x
     EE = np.loadtxt(fname + ".txt")
 
-    xx,yy = mk_mesh(d,params,var_position)
+    numy,numx = EE.shape
 
-    cs = ax.imshow(EE.T,vmin=EE.min(),vmax=EE.max(),
+    xx,yy = mk_mesh(d,params,var_position,numx,numy)
+
+    cs = ax.imshow(EE,vmin=EE.min(),vmax=EE.max(),
                    cmap='Reds_r',#norm=LogNorm(),
                    extent=[xx.min(),xx.max(),yy.min(),yy.max()],
-                   aspect=1.0/10.0,origin='lower')
+                   aspect=xx.max()/yy.max(),origin='lower')
 
     cbar = fig.colorbar(cs,ax=ax,fraction=0.046,pad=0.04)#cax=cax)
     cs.set_clim(EE.min(),EE.max())
+
+    y_index,x_index = np.unravel_index(EE.argmin(),EE.shape)
+
+    ax.plot(xx[x_index,y_index],yy[x_index,y_index],'ko')
+
+    print(x_index,y_index)
+
+    print_vals_near_min(EE,x_index,y_index)
+
+    ax.set_xlim(xx.min(),xx.max())
+    ax.set_ylim(yy.min(),yy.max())
 
     return cs
 
@@ -129,22 +145,31 @@ def plot_scanderivEx(fig,ax,colors,d,var,params,var_position,
     # load and plot E vs x
     dEEdxx = np.loadtxt(fname + ".txt")
 
-    xx,yy = mk_mesh(d,params,var_position)
+    fname= ("%s_%s_%s_energy_%s")%(load_p,d['scan_what_x'],
+                                   d['scan_what_y'],load_str)
 
-    for i in range(len(dEEdxx[:,0])):
-        for j in range(len(dEEdxx[0,:])):
-            if dEEdxx[i,j]<0:
-                dEEdxx[i,j] = -np.inf
+    EE = np.loadtxt(fname + ".txt")
 
-    print(dEEdxx.min(),dEEdxx.max())
+    numy,numx = dEEdxx.shape
 
-    cs = ax.imshow(dEEdxx.T,vmin=0,vmax=dEEdxx.max(),
+    xx,yy = mk_mesh(d,params,var_position,numx,numy)
+
+    cs = ax.imshow(dEEdxx,vmin=-1,vmax=1,#dEEdxx.min(),vmax=dEEdxx.max(),
                    cmap=cm.cool,
                    extent=[xx.min(),xx.max(),yy.min(),yy.max()],
-                   aspect=1.0/10.0,origin='lower')
+                   aspect=xx.max()/yy.max(),origin='lower')
 
     cbar = fig.colorbar(cs,ax=ax,fraction=0.046,pad=0.04)
-    cs.set_clim(0,dEEdxx.max())
+    cs.set_clim(-1,1)
+
+    y_index,x_index = np.unravel_index(EE.argmin(),EE.shape)
+    
+    print(x_index,y_index)
+
+    ax.plot(xx[x_index,y_index],yy[x_index,y_index],'ko')
+
+    print_vals_near_min(dEEdxx,x_index,y_index)
+
                 
 
     return cs
