@@ -79,15 +79,10 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 void scanE(struct params p,FILE *energy,FILE *psi,
 	   double conv,int itmax,int mpt,char scan_what[]);
 
-
-void scan2dE(double *r,double **y,double ***c,double **s,
-	     double K33,double k24,double Lambda,double d0,
-	     double omega,double R,double eta,double delta,
-	     double gamma_s,FILE *energy,FILE *psi,
+void scan2dE(struct params p,FILE *energy,FILE *psi,
 	     FILE *deriv_energy_x,FILE *deriv_energy_y,
 	     FILE *surfacetwist,double conv,int itmax,
-	     int mpt,double upperbound_x,double upperbound_y,
-	     char scan_what_x[],char scan_what_y[]);
+	     int mpt,char scan_what_x[],char scan_what_y[]);
 
 #endif /* ANSI */
 

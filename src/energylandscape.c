@@ -248,7 +248,7 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
 
       // only executes if the first calculation for the current var value is unsuccessful
       if (xpoints != last_xpoints) {
-	printf("interpolating at %s = %e...\n",,scan_what,*var);
+	printf("interpolating at %s = %e...\n",scan_what,*var);
 	copy_arrays(r,y,r_cp,y_cp,last_xpoints);
 	free_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
 		      last_xpoints,&ns);
@@ -314,8 +314,6 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
   return;
 }
 
-  scan2dE(p,energy,psi,deriv_energy_x,deriv_energy_y,
-	  surfacetwist,conv,itmax,M,scan_what_x,scan_what_y);
 
 
 void scan2dE(struct params p,FILE *energy,FILE *psi,
@@ -356,9 +354,6 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
   int max_size = (mpt-1)*4+1;
 
 
-  int isitone;
-
-
   // initialize the pointers to the x variable (in E vs x vs y) so that
   // they reference the correct derivatives of E. x is either R,
   // eta, or delta.
@@ -384,7 +379,8 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
   
 
   while (*var_x <= p.upperbound_x) {
-    isitone = 1;
+    xpoints = mpt;
+    last_xpoints = mpt;
     *var_y = var_y0;
     h = p.R/(xpoints-1);
     // initial guess for the functional form of psi(r) and psi'(r)
