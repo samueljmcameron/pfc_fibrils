@@ -5,7 +5,7 @@
 #include "nrutil.h"
 
 
-#define EPS 1.0e-12
+#define EPS 1.0e-10
 #define K 5
 
 // sample driver integrating sin(x) from 0 to pi
@@ -42,7 +42,7 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
   void polint(double xa[], double ya[], int n, double x, double *y, double *dy);
   double trapzd(double *x, double *y, double hmin, int xlength, int n);
   void nrerror(char error_text[]);
-  double ss,dss;
+  double ss=1e50,dss,lastss=1e50;
   int JMAX = round(log((xlength-1))/log(2)); // cannot have more steps than there are data points;
   double s[JMAX+2],h[JMAX+3]; //These store the successive trapezoidal approxi-
   int j;                      //mations and their relative stepsizes.
@@ -52,11 +52,13 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
   for (j=1;j<=JMAX+1;j++) {
     s[j]=trapzd(x,y,hmin,xlength,j);
     if (j >= K) {
+      lastss = ss;
       polint(&h[j-K],&s[j-K],K,0.0,&ss,&dss);
-      if (fabs(dss) <= EPS*fabs(ss)) {
+      if (fabs(dss) <= EPS*fabs(ss) || fabs(lastss-ss)<1e-15) {
 	//printf("number of attempts = %d\n",j);
 	//printf("JMAX = %d\n",JMAX);
 	*failure = false;
+	//	printf("ss=%e\n",ss);
 	return ss;
       }
     }
@@ -66,6 +68,8 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
 not just a polynomial in h.*/
   }
   //  printf("Too many steps in routine qromb, retrying with %d steps.\n",(xlength-1)*2+1);
+  //  printf("fabs(ss)*EPS = %e, fabs(dss) = %e, hmin = %e\n",EPS*fabs(ss),fabs(dss),hmin);
+  //  printf("ss=%e\n",ss);
   *failure = true;
   return 0.0; // this return value doesn't matter, as failure signals that convergence failed.
 }

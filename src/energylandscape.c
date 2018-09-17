@@ -600,8 +600,8 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
   // using classical gradient descent, try to find minimum.
 
-  while (fabs(dEdR) > 1e-8 || fabs(dEdeta) > 1e-8
-	 || fabs(dEddelta) > 1e-8) {
+  while (fabs(dEdR) > conv || fabs(dEdeta) > conv
+	 || fabs(dEddelta) > conv) {
 
     do {
       h = p.R/(npoints-1);
@@ -647,11 +647,11 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
       write_failure(r,y,rf_,npoints,f_err);
     }
 
-    fprintf(energy,"%.8e\t",E);
-    fprintf(denergydR,"%.8e\t",dEdR);
-    fprintf(denergydeta,"%.8e\t",dEdeta);
-    fprintf(denergyddelta,"%.8e\t",dEddelta);
-    fprintf(surfacetwist,"%.8e\t",y[1][mpt]);
+    fprintf(energy,"%d\t%.8e\n",count,E);
+    fprintf(denergydR,"%.8e\t%.8e\n",p.R,dEdR);
+    fprintf(denergydeta,"%.8e\t%.8e\n",p.eta,dEdeta);
+    fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEddelta);
+    fprintf(surfacetwist,"%.8e\t%.8e\n",p.R,y[1][mpt]);
 
 
     Rdot = -rateR*dEdR;
@@ -661,9 +661,9 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     p.R = p.R+Rdot;
     p.eta = p.eta+etadot;
     p.delta = p.delta+deltadot;
-    printf("R = %e, eta = %e, delta = %e, ",p.R,p.eta,p.delta);
-    printf("dEdR = %e, dEdeta = %e, dEddelta = %e, ",dEdR,dEdeta,dEddelta);
-    printf("E = %e\n",E);
+    //    printf("R = %e, eta = %e, delta = %e, ",p.R,p.eta,p.delta);
+    //    printf("dEdR = %e, dEdeta = %e, dEddelta = %e, ",dEdR,dEdeta,dEddelta);
+    //    printf("E = %e, rf_[npoints/2] = %e\n",E,rf_[npoints/2]);
     count += 1;
 
     if (p.R <= 0) p.R = 1e-4;
