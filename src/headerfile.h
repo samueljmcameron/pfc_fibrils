@@ -85,6 +85,13 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
 	     int mpt,int num_x, int num_y,
 	     char scan_what_x[],char scan_what_y[]);
 
+void graddesc(struct params p,FILE *energy,FILE *psi,
+	      FILE *denergydR,FILE *denergydeta,
+	      FILE *denergyddelta,FILE *surfacetwist,
+	      double conv,int itmax,int mpt,double rateR,
+	      double rateeta,double ratedelta);
+
+
 #endif /* ANSI */
 
 #endif /* _PROJECTILE_H_ */

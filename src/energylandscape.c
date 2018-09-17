@@ -552,10 +552,10 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
 }
 
 void graddesc(struct params p,FILE *energy,FILE *psi,
-	      FILE *deriv_energy_x,FILE *deriv_energy_y,
-	      FILE *surfacetwist,double conv,int itmax,
-	      int mpt,double rateR, double rateeta,
-	      double ratedelta)
+	      FILE *denergydR,FILE *denergydeta,
+	      FILE *denergyddelta,FILE *surfacetwist,
+	      double conv,int itmax,int mpt,double rateR,
+	      double rateeta,double ratedelta)
 
 {
   int npoints = mpt;
@@ -573,9 +573,10 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   bool successful_calc = false;
   struct arr_ns ns;
   assign_ns(&ns);
-  int max_size = (mpt-1)*4+1;
+  int max_size = (mpt-1)*8+1;
   double Rdot,etadot,deltadot;
-
+  int count = 0;
+  
   // malloc the relevant arrays
   allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
 		    npoints,&ns);
@@ -585,6 +586,9 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
+
+
+
   
   initialSlope = M_PI/(4.0*p.R);
   h = p.R/(npoints-1);
@@ -596,8 +600,8 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
   // using classical gradient descent, try to find minimum.
 
-  while (fabs(dEdR) > 1e-8 && fabs(dEdeta) > 1e-8
-	 && fabs(dEddelta) > 1e-8) {
+  while (fabs(dEdR) > 1e-8 || fabs(dEdeta) > 1e-8
+	 || fabs(dEddelta) > 1e-8) {
 
     do {
       h = p.R/(npoints-1);
@@ -620,7 +624,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
       // if last loop was successful with last_xpoint sized arrays, then just
       // use last y values as initial guess
       else propagate_r(r,h,npoints);
-	
+      
       solvde(itmax,conv,slowc,scalv,&ns,npoints,y,r,c,s,&p,h); // relax to compute psi,
       //                                  psi' curves, 
       
@@ -644,8 +648,9 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     }
 
     fprintf(energy,"%.8e\t",E);
-    //    fprintf(deriv_energy_x,"%.8e\t",*dEdvar_x);
-    //fprintf(deriv_energy_y,"%.8e\t",*dEdvar_y);
+    fprintf(denergydR,"%.8e\t",dEdR);
+    fprintf(denergydeta,"%.8e\t",dEdeta);
+    fprintf(denergyddelta,"%.8e\t",dEddelta);
     fprintf(surfacetwist,"%.8e\t",y[1][mpt]);
 
 
@@ -656,9 +661,14 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     p.R = p.R+Rdot;
     p.eta = p.eta+etadot;
     p.delta = p.delta+deltadot;
+    printf("R = %e, eta = %e, delta = %e, ",p.R,p.eta,p.delta);
+    printf("dEdR = %e, dEdeta = %e, dEddelta = %e, ",dEdR,dEdeta,dEddelta);
+    printf("E = %e\n",E);
+    count += 1;
 
+    if (p.R <= 0) p.R = 1e-4;
   }
-
+  printf("count = %d\n",count);
   save_psi(psi,r,y,npoints);
   printf("SAVED!\n");
   printf("E_min-E_chol = %1.2e\n",E+0.5);
