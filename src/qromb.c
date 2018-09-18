@@ -35,9 +35,15 @@ int main(void)
 /*Here EPS is the fractional accuracy desired, as determined by the extrapolation error estimate;
  JMAX limits the total number of steps; K is the number of points used in the extrapolation.*/
 
-double qromb(double *x,double *y, int xlength,bool *failure)
+double qromb(double *x,double *y, int xlength,double tol,bool *failure)
 /*Returns the integral of the function func from a to b. Integration is performed by Romberg's 
 method of order 2K, where, e.g., K=2 is Simpsons rule. */
+// tol is the magnitude of the function times 1e-14 with the integral being zero, e.g. in //
+// the E(R) equation, if the total magnitude with the integration2233b1=0 is 0.6, then    //
+// after multiplying through by R^2, etc, to get it so that the (would be) integral does  //
+// not have any prefactors, tol would be 0.6*R^2/2.0*1e-14. So if the integral error from //
+// qromb (dss below) does not make a significant contribution to the overal value of the  //
+// function E(R), we can consider the integration to be converged. //
 {
   void polint(double xa[], double ya[], int n, double x, double *y, double *dy);
   double trapzd(double *x, double *y, double hmin, int xlength, int n);
@@ -54,11 +60,10 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
     if (j >= K) {
       lastss = ss;
       polint(&h[j-K],&s[j-K],K,0.0,&ss,&dss);
-      if (fabs(dss) <= EPS*fabs(ss) || fabs(lastss-ss)<1e-15) {
+      if (fabs(dss) <= EPS*fabs(ss) || fabs(dss) <= tol) {
 	//printf("number of attempts = %d\n",j);
 	//printf("JMAX = %d\n",JMAX);
 	*failure = false;
-	//	printf("ss=%e\n",ss);
 	return ss;
       }
     }
@@ -70,6 +75,7 @@ not just a polynomial in h.*/
   //  printf("Too many steps in routine qromb, retrying with %d steps.\n",(xlength-1)*2+1);
   //  printf("fabs(ss)*EPS = %e, fabs(dss) = %e, hmin = %e\n",EPS*fabs(ss),fabs(dss),hmin);
   //  printf("ss=%e\n",ss);
+  printf("ss=%e, lastss = %e\n",ss,lastss);
   *failure = true;
   return 0.0; // this return value doesn't matter, as failure signals that convergence failed.
 }

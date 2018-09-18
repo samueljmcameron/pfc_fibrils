@@ -69,7 +69,7 @@ void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
 	 int ic1, int jc1, int jcf, int kc, double ***c, double **s);
 double trapzd(double *, double *, double, int, int);
 void polint(double xa[], double ya[], int, double, double *, double *);
-double qromb(double *,double *, int,bool *failure);
+double qromb(double *,double *, int,double tol,bool *failure);
 
 bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 		  double *dEddelta,struct params *p,

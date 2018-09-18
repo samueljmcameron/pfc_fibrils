@@ -34,11 +34,11 @@ void polint(double xa[], double ya[], int n, double x, double *y, double *dy)
     }
     *y += (*dy=(2*ns < (n-m) ? c[ns+1] : d[ns--]));
     /*After each column in the tableau is completed, we decide which correction, c or d,
-we want to add to our accumulating value of y, i.e., which path to take through the
-tableau forking up or down. We do this in such a way as to take the most straight
-line route through the tableau to its apex, updating ns accordingly to keep track of
-where we are. This route keeps the partial approximations centered (insofar as possible)
-on the target x. The last dy added is thus the error indication.*/
+      we want to add to our accumulating value of y, i.e., which path to take through the
+      tableau forking up or down. We do this in such a way as to take the most straight
+      line route through the tableau to its apex, updating ns accordingly to keep track of
+      where we are. This route keeps the partial approximations centered (insofar as possible)
+      on the target x. The last dy added is thus the error indication.*/
   }
   free_vector(d,1,n);
   free_vector(c,1,n);
