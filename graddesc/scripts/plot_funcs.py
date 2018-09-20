@@ -43,8 +43,8 @@ def ax_config(xlabel,ylabel,xscale,yscale,ax):
     return
 
 
-def plot_scanE(ax,colors,d,var_array,params,
-               var_position,varied_param_name,load_p):
+def plot_desc(what_plot,ax,colors,d,var_array,params,
+              var_position,varied_param_name,load_p):
 
     # plots E vs d['scan_what'], for all the values of 
     # var in the array var_array. varied_param_name is
@@ -53,79 +53,23 @@ def plot_scanE(ax,colors,d,var_array,params,
 
     for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params,var,var_position)
-        fname= ("%s_%s_energy_%s")%(load_p,d['scan_what'],
-                                    load_str)
+        load_str = loadfile_list(params[:-3],var,var_position)
+        fname= ("%s_%s_%s")%(load_p,what_plot,load_str)
 
-
-        #if (varied_param_name == 'Lambda'
-        #    or varied_param_name == 'omega'
-        #    or varied_param_name == 'eta'
-        #    or varied_param_name == 'delta'
-        #    or varied_param_name == 'gamma_s'
-        #    or varied_param_name == 'gamma_t'):
-        #    legend_label = "\%s=\SI{%1.1e}{}"%(varied_param_name,
-        #                                       var)
-        #        else:
         legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
-                                               var)
+                                          var)
 
-        # load and plot E vs x
-        Evsx = np.loadtxt(fname + ".txt")
-        xs = Evsx[:,0]
-        Es = Evsx[:,1]
-        dEdxs = Evsx[:,2]
-        psixs = Evsx[:,3]
+        # load and plot y vs x
+        yvsx = np.loadtxt(fname + ".txt")
+        xs = yvsx[:,0]
+        ys = yvsx[:,1]
 
-        ax.plot(xs,Es,'-',lw = 2,color = colors[i],
-                label = r"$%s$"%legend_label)
-        for i,x in enumerate(xs[1:]):
-            if dEdxs[i]*dEdxs[i-1] <= 0 and dEdxs[i] >0:
-                ax.plot(xs[i],Es[i],'k.')
-
-    return
-
-def plot_scanderivE(ax,colors,d,var_array,params,
-                    var_position,varied_param_name,load_p):
-
-    # plots E vs d['scan_what'], for all the values of 
-    # var in the array var_array. varied_param_name is
-    # the name (a string) of var. load_p is the path
-    # which the data for the plots is loaded from.
-
-    for i,var in enumerate(var_array):
-
-        load_str = loadfile_list(params,var,var_position)
-        fname= ("%s_%s_energy_%s")%(load_p,d['scan_what'],
-                                    load_str)
-
-
-        #if (varied_param_name == 'Lambda'
-        #    or varied_param_name == 'omega'
-        #    or varied_param_name == 'eta'
-        #    or varied_param_name == 'delta'
-        #    or varied_param_name == 'gamma_s'
-        #    or varied_param_name == 'gamma_t'):
-        #    legend_label = "\%s=\SI{%1.1e}{}"%(varied_param_name,
-        #                                       var)
-        #        else:
-        legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
-                                               var)
-
-        # load and plot E vs x
-        Evsx = np.loadtxt(fname + ".txt")
-        xs = Evsx[:,0]
-        Es = Evsx[:,1]
-        dEdxs = Evsx[:,2]
-        psixs = Evsx[:,3]
-
-        ax.plot(xs,dEdxs,'-',lw = 2,color = colors[i],
+        ax.plot(xs,ys,'-o',lw = 2,color = colors[i],
                 label = r"$%s$"%legend_label)
 
     return
 
-
-def plot_scanpsi(ax,colors,d,var_array,params,
+def plot_descpsi(ax,colors,d,var_array,params,
                  var_position,varied_param_name,load_p):
 
     # plots all psi vs r which minimize the energy,
@@ -140,23 +84,13 @@ def plot_scanpsi(ax,colors,d,var_array,params,
     # data, assuming only one unique configuration
     # minimizes the energy.
 
-    length = 2*2*2*2*2*2*2*2*2*2*2+1
-
     for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params,var,var_position)
-        fname= ("%s_%s_psivsr_%s")%(load_p,d['scan_what'],
-                                    load_str)
+        load_str = loadfile_list(params[:-3],var,var_position)
+        fname= ("%s_psivsr_%s")%(load_p,load_str)
 
-        if (varied_param_name == 'gamma_s'
-            or varied_param_name == 'Lambda'
-            or varied_param_name == 'eta'):
-            legend_label = "\%s=\SI{%1.1e}{}"%(varied_param_name,
-                                               var)
-        else:
-            legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
-                                               var)
-
+        legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
+                                          var)
 
         # load and plot psi vs r
         psivsr = np.loadtxt(fname + ".txt")
@@ -166,6 +100,11 @@ def plot_scanpsi(ax,colors,d,var_array,params,
             psis = psivsr[:,1]
             dpsidrs = psivsr[:,2]
 
+            zero_index = np.argmin(rs[1:])+1
+            if rs[zero_index] == 0:
+                length = len(rs[:zero_index])
+            else:
+                length = len(rs)
 
             if len(rs) % length != 0:
                 print("The length of psi(r) is not what "
