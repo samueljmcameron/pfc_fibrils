@@ -128,3 +128,42 @@ def plot_descpsi(ax,colors,d,var_array,params,
                           " with the same energy!")
                 j += 1
     return
+
+def plot_obs(what_plot,ax,colors,d,var_array,params,
+             var_position,varied_param_name,load_p):
+
+    # plots some observable (E,delta,eta,etc) vs all 
+    # var in the array var_array. varied_param_name is
+    # the name (a string) of var. load_p is the path
+    # which the data for the plots is loaded from.
+    # e.g. if var_array was a bunch of Lambda values,
+    # and what_plot = 'dEddelta' (which contains the
+    # equilibrium delta value), then the plot would be
+    # delta_eq vs Lambda
+
+    # create array to store values in
+    observables = np.copy(var_array)*0
+    
+    for i,var in enumerate(var_array):
+
+        load_str = loadfile_list(params[:-3],var,var_position)
+        fname= ("%s_%s_%s")%(load_p,what_plot,load_str)
+
+
+        # load and plot y vs x
+        yvsx = np.loadtxt(fname + ".txt")
+        xs = yvsx[:,0]
+        ys = yvsx[:,1]
+
+
+        if what_plot == 'energy':
+            #since energy file has E vs t
+            observables[i] = ys[-1]
+        else:
+            #since deriv files have observables vs deriv
+            observables[i] = xs[-1]
+
+
+    ax.plot(var_array,observables,'-o',lw = 2,color = colors[0])
+
+    return

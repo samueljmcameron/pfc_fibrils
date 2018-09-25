@@ -88,7 +88,7 @@ double E_R(struct params *p,double *r,
   double E;
   E = 2.0/(p->R*p->R)*integration_2233b1; // first calculate bulk energy per unit length
   // add density fluctuations term
-  E = (E+p->Lambda*p->delta*p->delta*p->omega*0.5
+  E = (E+p->delta*p->delta*p->omega*0.5
        *(0.75*p->delta*p->delta-1
 	 //	 +sin(2*eta*L)/(2*eta*L)*(delta*delta-1)
 	 //	 +delta*delta*sin(4*eta*L)/(16*eta*L)
@@ -166,9 +166,9 @@ double derivEddelta(struct params *p,double integration2)
 {
   double ans;
 
-  ans = (1.0/(p->R*p->R)
-	 //	 *(1+sin(2*eta*L)/(2*eta*L))
-	 *integration2);
+  ans = p->Lambda*(1.0/(p->R*p->R)
+		   //	 *(1+sin(2*eta*L)/(2*eta*L))
+		   *integration2);
   ans += (p->omega*p->delta*p->delta
 	  *(0.75
 	    //+sin(2*eta*L)/(2*eta*L)+sin(4*eta*L)/(16*eta*L)
@@ -178,7 +178,7 @@ double derivEddelta(struct params *p,double integration2)
 		 //		 +delta*delta*sin(4*eta*L)/(16*eta*L)
 		 ));
 
-  ans *= p->Lambda*p->delta;
+  ans *= p->delta;
 
   return ans;
 
@@ -195,6 +195,16 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
   double tol0 = 1e-14;
   double tol2233b1,tol1,tol2;
 
+  // tolerances ("tol...") are to determine how large the energy or 
+  // derivative terms are without the integrals (setting them to 0).
+  // The reason for this is if the integral calculation performed
+  // by qromb has not converged (usually because the integral error
+  // is so small that round-off error becomes an issue), if the
+  // size of the error term is so small relative to the rest of the
+  // function that it doesn't change the functions value (up to
+  // some tolerance tolblabla), then the lack of convergence can just
+  // be ignored.
+  
   tol2233b1 = E_R(p,r,y,0,mpt)*p->R*p->R/2.0*tol0;
   compute_rf2233b1(p,r,y,rf_,mpt);
   integration_2233b1 = qromb(r,rf_,mpt,tol2233b1,&failure);
