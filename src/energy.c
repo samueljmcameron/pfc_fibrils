@@ -94,7 +94,7 @@ double E_R(struct params *p,double *r,
 	 //	 +delta*delta*sin(4*eta*L)/(16*eta*L)
 	 ));
   // add surface term tension terms
-  E = E+1.0/p->R*(-(1+p->k24)*(sin(y[1][mpt])*sin(y[1][mpt]))/p->R+2.0*p->gamma_s);  
+  E = E+0.5+1.0/p->R*(-(1+p->k24)*(sin(y[1][mpt])*sin(y[1][mpt]))/p->R+2.0*p->gamma_s);  
   //  E = E+2*gamma_t/L;
 
   return E;

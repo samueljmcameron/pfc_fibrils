@@ -360,7 +360,7 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
 	&& *dEdvarlast < 0 && E <= Emin) {
       save_psi(psi,r,y,npoints);
       printf("SAVED!\n");
-      printf("E_min-E_chol = %1.2e\n",E+0.5);
+      printf("E_min-E_chol = %1.2e\n",E);
       Emin = E;
     }
 
@@ -523,7 +523,7 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
 	  && *dEdvar_y*(*dEdvar_ylast) <= 0 && *dEdvar_ylast <0) {
 	save_psi(psi,r,y,npoints);
 	printf("SAVED!\n");
-	printf("E_min-E_chol = %1.2e\n",E+0.5);
+	printf("E_min-E_chol = %1.2e\n",E);
 	Emin = E;
       }
 
@@ -554,9 +554,7 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
 void graddesc(struct params p,FILE *energy,FILE *psi,
 	      FILE *denergydR,FILE *denergydeta,
 	      FILE *denergyddelta,FILE *surfacetwist,
-	      double conv,int itmax,int mpt,double rateR,
-	      double rateeta,double ratedelta)
-
+	      double conv,int itmax,int mpt,double rate)
 {
   int npoints = mpt;
   int last_npoints = mpt;
@@ -653,10 +651,9 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEddelta);
     fprintf(surfacetwist,"%.8e\t%.8e\n",p.R,y[1][mpt]);
 
-
-    Rdot = -rateR*dEdR;
-    etadot = -rateeta*dEdeta;
-    deltadot = -ratedelta*dEddelta;
+    Rdot = -rate*dEdR;
+    etadot = -rate*dEdeta;
+    deltadot = -rate*dEddelta;
 
     p.R = p.R+Rdot;
     p.eta = p.eta+etadot;
@@ -671,7 +668,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   printf("count = %d\n",count);
   save_psi(psi,r,y,npoints);
   printf("SAVED!\n");
-  printf("E_min-E_chol = %1.2e\n",E+0.5);
+  printf("E_min-E_chol = %1.2e\n",E);
 
   free_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
 		npoints,&ns);

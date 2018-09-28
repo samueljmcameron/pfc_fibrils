@@ -31,7 +31,7 @@ if __name__=='__main__':
     colors = sns.color_palette('muted',len(var_array))
 
 
-    for ylabel in ['energy','\delta','\eta','R']:
+    for ylabel in ['energy','\delta','\eta','R','surfacetwist']:
         edited_ylabel = latex2string(ylabel)
 
         fig,ax = plt.subplots()
@@ -39,7 +39,7 @@ if __name__=='__main__':
         height = width
         fig.set_size_inches(width,height)
 
-        if ylabel != 'energy':
+        if ylabel != 'energy' and ylabel != 'surfacetwist':
             plot_obs('dEd%s'%edited_ylabel,ax,colors,d,var_array,params,var_position,
                      str_,load_p)
         else:
@@ -49,6 +49,9 @@ if __name__=='__main__':
         xlabel = sys.argv[1]
         xscale = 'log'
         yscale = 'linear'
+
+        if ylabel == 'surfacetwist':
+            ylabel = '\psi(R)'
 
         ax_config(xlabel,ylabel,xscale,yscale,ax)
 

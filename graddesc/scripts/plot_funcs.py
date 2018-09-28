@@ -156,7 +156,7 @@ def plot_obs(what_plot,ax,colors,d,var_array,params,
         ys = yvsx[:,1]
 
 
-        if what_plot == 'energy':
+        if what_plot == 'energy' or what_plot == 'surfacetwist':
             #since energy file has E vs t
             observables[i] = ys[-1]
         else:

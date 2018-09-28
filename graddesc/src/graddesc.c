@@ -30,7 +30,7 @@ int main(int argc, char **argv)
   char f1[200],f2[200],f3[200],f4[200],f5[200],f6[200];
   FILE *energy,*psi,*denergydR,*denergydeta;
   FILE *denergyddelta,*surfacetwist;
-  double rateR, rateeta, ratedelta;
+  double rate;
 
   // read in the the variables and paths
   snprintf(path,sizeof(path),"%s",argv[1]);
@@ -43,9 +43,8 @@ int main(int argc, char **argv)
   sscanf(argv[8],"%lf",&p.eta);
   sscanf(argv[9],"%lf",&p.delta);
   sscanf(argv[10],"%lf",&p.gamma_s);
-  sscanf(argv[11],"%lf",&rateR);
-  sscanf(argv[12],"%lf",&rateeta);
-  sscanf(argv[13],"%lf",&ratedelta);
+  sscanf(argv[11],"%lf",&rate);
+
 
   printf("K33 = %lf\n",p.K33);
   printf("k24 = %lf\n",p.k24);
@@ -56,11 +55,8 @@ int main(int argc, char **argv)
   printf("eta = %lf\n",p.eta);
   printf("delta = %lf\n",p.delta);
   printf("gamma_s = %lf\n",p.gamma_s);
-  printf("rateR = %lf\n",rateR);
-  printf("rateeta = %lf\n",rateeta);
-  printf("ratedelta = %lf\n",ratedelta);
+  printf("rateR = %lf\n",rate);
   
-  snprintf(scan_what,sizeof(scan_what),"%s",argv[12]);
 
   snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
 	   "%1.4e_%1.4e_%1.4e_%1.4e.txt",
@@ -87,7 +83,7 @@ int main(int argc, char **argv)
   surfacetwist = fopen(f6,"w");
 
   graddesc(p,energy,psi,denergydR,denergydeta,denergyddelta,
-	   surfacetwist,conv,itmax,M,rateR,rateeta,ratedelta);
+	   surfacetwist,conv,itmax,M,rate);
   
 
   fclose(energy); // close file!
