@@ -566,6 +566,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   double initialSlope;
   double E;
   double dEdR, dEdeta,dEddelta;
+  double lastdEdR,lastdEdeta,lastdEddelta;
   int f_err_size = 200;
   char f_err[f_err_size];
   bool successful_calc = false;
@@ -574,6 +575,9 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   int max_size = (mpt-1)*8+1;
   double Rdot,etadot,deltadot;
   int count = 0;
+  double min_dot = 1e-4;
+  double max_rate = 1e-2;
+  double min_rate = 5e-4;
   
   // malloc the relevant arrays
   allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
@@ -595,6 +599,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   linearGuess(r,y,initialSlope,h,npoints); //linear initial guess 
 
   dEdR = dEdeta = dEddelta = 1e100;
+  lastdEdR = lastdEdeta = lastdEddelta = dEdR;
 
   // using classical gradient descent, try to find minimum.
 
@@ -651,9 +656,25 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEddelta);
     fprintf(surfacetwist,"%.8e\t%.8e\n",p.R,y[1][mpt]);
 
+    if ((lastdEdR*dEdR < 0 || lastdEdeta*dEdeta < 0
+	 || lastdEddelta*dEddelta < 0) && rate > min_rate) {
+      rate /= 2.0;
+      printf("rate decreased to %e!\n",rate);
+    }
+
     Rdot = -rate*dEdR;
     etadot = -rate*dEdeta;
     deltadot = -rate*dEddelta;
+
+    if (fabs(Rdot)<min_dot && fabs(etadot)<min_dot
+	&& fabs(deltadot) <min_dot && rate < max_rate) {
+      rate *= 2.0;
+      printf("rate has increased to %e\n",rate);
+    }
+
+    lastdEdR = dEdR;
+    lastdEdeta = dEdeta;
+    lastdEddelta = dEddelta;
 
     p.R = p.R+Rdot;
     p.eta = p.eta+etadot;

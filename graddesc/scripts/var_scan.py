@@ -130,7 +130,7 @@ def variable_graddesc(init_path,params,var,var_position,
     if(subprocess.call(cmd,shell=True,
                        stderr=subprocess.STDOUT)==0):
         successful_calc_list.append(var)
-        load_str = loadfile_list(params[:-3],var,var_position)
+        load_str = loadfile_list(params[:-1],var,var_position)
         Efile =  ("%s_energy_%s"
                   ".txt")%(init_path,load_str)
         psifile = ("%s_psivsr_%s"

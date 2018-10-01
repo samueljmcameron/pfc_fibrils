@@ -53,7 +53,7 @@ def plot_desc(what_plot,ax,colors,d,var_array,params,
 
     for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params[:-3],var,var_position)
+        load_str = loadfile_list(params[:-1],var,var_position)
         fname= ("%s_%s_%s")%(load_p,what_plot,load_str)
 
         legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
@@ -86,7 +86,7 @@ def plot_descpsi(ax,colors,d,var_array,params,
 
     for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params[:-3],var,var_position)
+        load_str = loadfile_list(params[:-1],var,var_position)
         fname= ("%s_psivsr_%s")%(load_p,load_str)
 
         legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
@@ -146,7 +146,7 @@ def plot_obs(what_plot,ax,colors,d,var_array,params,
     
     for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params[:-3],var,var_position)
+        load_str = loadfile_list(params[:-1],var,var_position)
         fname= ("%s_%s_%s")%(load_p,what_plot,load_str)
 
 

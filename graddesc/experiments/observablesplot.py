@@ -52,6 +52,8 @@ if __name__=='__main__':
 
         if ylabel == 'surfacetwist':
             ylabel = '\psi(R)'
+        elif ylabel == 'energy':
+            ylabel = 'E'
 
         ax_config(xlabel,ylabel,xscale,yscale,ax)
 
