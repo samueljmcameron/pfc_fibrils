@@ -19,7 +19,7 @@ def not_number(s):
     except ValueError:
         return True
 
-def load_const_params():
+def load_const_params(index=None):
 
     # Load in dictionary of the constant parameter values,
     # put those values in the pre-specified order (in the 
@@ -41,8 +41,14 @@ def load_const_params():
                 varied_param_name = key
                 var_position = return_position(key)
             elif ',' in val:
-                d[key] = val
-                params
+                if index == None:
+                    print("array of values for parameter %s, but "
+                          "no index value to select which value "
+                          "of the array is to be used."%key)
+                    exit(1)
+                array_val = np.array(val.split(','),float)[index]
+                d[key] = array_val
+                params.append(array_val)
             elif not_number(val):
                 d[key] = val
             else:

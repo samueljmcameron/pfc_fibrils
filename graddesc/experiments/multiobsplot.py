@@ -18,50 +18,51 @@ if __name__=='__main__':
 
     configure_fig_settings()
 
-    second_var_position = return_position(sys.argv[2])
-
-    
-
-    d,params,str_,var_position = load_const_params()
-
-
-    
-    check_data(str_,sys.argv[1])
-
-
-    save_p = "results/"
-    load_p = "data/"
-
-    var_array = load_plt_array(str_,load_p)
-
-    colors = sns.color_palette('muted',len(var_array))
-
+    nmbr_of_second_variable_values = int(sys.argv[3])
+    listofdates = sys.argv[4].split(',')
 
     for ylabel in ['energy','\delta','\eta','R','surfacetwist']:
-        edited_ylabel = latex2string(ylabel)
 
         fig,ax = plt.subplots()
         width  = 3.487
         height = width
         fig.set_size_inches(width,height)
 
-        if ylabel != 'energy' and ylabel != 'surfacetwist':
-            plot_obs('dEd%s'%edited_ylabel,ax,colors,d,var_array,params,var_position,
-                     str_,load_p)
-        else:
-            plot_obs(edited_ylabel,ax,colors,d,var_array,params,var_position,
-                     str_,load_p)            
+        edited_ylabel = latex2string(ylabel)
+
+        for i in range(nmbr_of_second_variable_values):
+            d,params,str_,var_position = load_const_params(i)
+        
+            check_data(str_,sys.argv[1])
+                    
+            save_p = "results/"
+            load_p = "../%s-%s-%sis%.3lf/data/"%(listofdates[i],edited_ylabel,
+                                                 latex2string(sys.argv[2]),
+                                                 d[sys.argv[2]])
+        
+            var_array = load_plt_array(str_,load_p)
+            
+            colors = sns.color_palette('muted',len(var_array))
+            
+            label = r'%s=\SI{%1.1e}{}'%(sys.argv[2],d[sys.argv[2]])
+
+            if ylabel != 'energy' and ylabel != 'surfacetwist':
+                plot_obs('dEd%s'%edited_ylabel,ax,colors,d,var_array,params,var_position,
+                         str_,load_p,label=label)
+            else:
+                if ylabel == 'surfacetwist':
+                    ylabel = '\psi(R)'
+                elif ylabel == 'energy':
+                    ylabel = 'E'
+                plot_obs(edited_ylabel,ax,colors,d,var_array,params,var_position,
+                         str_,load_p,label=label)            
 
         xlabel = sys.argv[1]
         xscale = 'log'
         yscale = 'linear'
 
-        if ylabel == 'surfacetwist':
-            ylabel = '\psi(R)'
-        elif ylabel == 'energy':
-            ylabel = 'E'
-
         ax_config(xlabel,ylabel,xscale,yscale,ax)
+        ax.legend(frameon=False)
 
         edited_str_ = latex2string(str_)
 

@@ -130,7 +130,8 @@ def plot_descpsi(ax,colors,d,var_array,params,
     return
 
 def plot_obs(what_plot,ax,colors,d,var_array,params,
-             var_position,varied_param_name,load_p):
+             var_position,varied_param_name,load_p,
+             label=None):
 
     # plots some observable (E,delta,eta,etc) vs all 
     # var in the array var_array. varied_param_name is
@@ -164,6 +165,6 @@ def plot_obs(what_plot,ax,colors,d,var_array,params,
             observables[i] = xs[-1]
 
 
-    ax.plot(var_array,observables,'-o',lw = 2,color = colors[0])
+    ax.plot(var_array,observables,'-o',label = label,lw = 2,color = colors[0])
 
     return
