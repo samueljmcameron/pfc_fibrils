@@ -40,6 +40,9 @@ def load_const_params():
                 d[key] = val
                 varied_param_name = key
                 var_position = return_position(key)
+            elif ',' in val:
+                d[key] = val
+                params
             elif not_number(val):
                 d[key] = val
             else:
