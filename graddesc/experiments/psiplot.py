@@ -24,7 +24,7 @@ if __name__=='__main__':
     save_p = "results/"
     load_p = "data/"
 
-    var_array = load_plt_array(str_,load_p)
+    var_array = load_plt_array(str_,load_p,suffix = "-short")
 
     fig,ax = plt.subplots()
     width  = 3.487

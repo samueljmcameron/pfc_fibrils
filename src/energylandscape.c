@@ -47,6 +47,13 @@ void allocate_matrices(double ****c,double ***s,double ***y,double **r,
 void free_matrices(double ****c,double ***s,double ***y,double **r,
 		   double **rf_, double **integrand1,
 		   double **integrand2,int npoints,struct arr_ns *ns);
+bool single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
+		 struct params *p,double ****c,double ***s,double ***y,
+		 double **r,double **rf_,double **integrand1,
+		 double **integrand2,double **y_cp,double *r_cp,
+		 double conv,int itmax,int *npoints,int last_npoints,
+		 struct arr_ns *ns,int max_size);
+
 
 
 void linearGuess(double *r, double **y, double initialSlope,
@@ -565,6 +572,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   double *rf_,*integrand1,*integrand2;
   double initialSlope;
   double E;
+  double Elast = -1e100; // a really large, negative number to start with
   double dEdR, dEdeta,dEddelta;
   double lastdEdR,lastdEdeta,lastdEddelta;
   int f_err_size = 200;
@@ -575,9 +583,208 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   int max_size = (mpt-1)*8+1;
   double Rdot,etadot,deltadot;
   int count = 0;
-  double min_dot = 1e-4;
+  double min_dot = 1e-6;
   double max_rate = 1e-2;
-  double min_rate = 5e-4;
+  double min_rate = 1e-6;
+  
+  // malloc the relevant arrays
+  allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		    npoints,&ns);
+  // as well as two extra arrays to copy r and y contents into
+  y_cp = matrix(1,ns.nyj,1,max_size);
+  r_cp = vector(1,max_size);
+  
+  scalv[1] = .1;    // guess for magnitude of the psi values
+  scalv[2] = 4.0;   // guess for magnitude of the psi' values
+
+
+
+  
+  initialSlope = M_PI/(4.0*p.R);
+  h = p.R/(npoints-1);
+  // initial guess for the functional form of psi(r) and psi'(r)
+  printf("initial slope for guess = %lf\n", initialSlope);
+  linearGuess(r,y,initialSlope,h,npoints); //linear initial guess 
+
+  dEdR = dEdeta = dEddelta = 1e100;
+  lastdEdR = lastdEdeta = lastdEddelta = dEdR;
+
+  // using classical gradient descent, try to find minimum.
+
+  while (fabs(dEdR) > conv || fabs(dEdeta) > conv
+	 || fabs(dEddelta) > conv) {
+
+    successful_calc = single_calc(&E,&dEdR,&dEdeta,&dEddelta,
+				  &p,&c,&s,&y,&r,&rf_,&integrand1,
+				  &integrand2,y_cp,r_cp,conv,itmax,
+				  &npoints,last_npoints,&ns,max_size);
+    last_npoints = npoints;
+    
+    if (!successful_calc) { // writes the psi(r), r*f, etc, and exits
+      make_f_err(f_err,f_err_size,p);
+      write_failure(r,y,rf_,npoints,f_err);
+    }
+
+    fprintf(energy,"%d\t%.8e\n",count,E);
+    fprintf(denergydR,"%.8e\t%.8e\n",p.R,dEdR);
+    fprintf(denergydeta,"%.8e\t%.8e\n",p.eta,dEdeta);
+    fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEddelta);
+    fprintf(surfacetwist,"%.8e\t%.8e\n",p.R,y[1][mpt]);
+
+    if (Elast<E-fabs(1e-6*E) && rate > min_rate) {
+      rate /= 2.0;
+      printf("rate decreased to %e!\n",rate);
+    }
+
+    Rdot = -rate*dEdR;
+    etadot = -rate*dEdeta;
+    deltadot = -rate*dEddelta;
+
+    if (fabs(Rdot)<min_dot && fabs(etadot)<min_dot
+	&& fabs(deltadot) <min_dot && rate < max_rate
+	&& Elast >= E) {
+      rate *= 1.5;
+      printf("rate has increased to %e\n",rate);
+    }
+
+    lastdEdR = dEdR;
+    lastdEdeta = dEdeta;
+    lastdEddelta = dEddelta;
+    Elast = E;
+
+    p.R = p.R+Rdot;
+    p.eta = p.eta+etadot;
+    p.delta = p.delta+deltadot;
+
+    count += 1;
+
+    if (p.R <= 0) p.R = 1e-6;
+  }
+  printf("count = %d\n",count);
+  save_psi(psi,r,y,npoints);
+  printf("SAVED!\n");
+  printf("E_min-E_chol = %1.2e\n",E);
+
+  free_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		npoints,&ns);
+  free_matrix(y_cp,1,ns.nyj,1,max_size);
+  free_vector(r_cp,1,max_size);
+  
+  return;
+}
+
+bool single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
+		 struct params *p,double ****c,double ***s,double ***y,
+		 double **r,double **rf_,double **integrand1,
+		 double **integrand2,double **y_cp,double *r_cp,
+		 double conv,int itmax,int *npoints,int last_npoints,
+		 struct arr_ns *ns,int max_size)
+{
+  double h;
+  bool successful_calc=false;
+  double slowc = 1.0;
+  double scalv[2+1];
+
+  scalv[1] = .1;    // guess for magnitude of the psi values
+  scalv[2] = 4.0;   // guess for magnitude of the psi' values
+
+  do {
+    h = p->R/((*npoints)-1);
+    
+    // only executes if the first calculation for the current variable values is unsuccessful
+    if ((*npoints) != last_npoints) {
+      printf("interpolating at R = %e, eta = %e, delta = %e...\n",
+	     p->R,p->eta,p->delta);
+      copy_arrays(*r,*y,r_cp,y_cp,last_npoints);
+      free_matrices(c,s,y,r,rf_,integrand1,integrand2,
+		    last_npoints,ns);
+      allocate_matrices(c,s,y,r,rf_,integrand1,integrand2,
+			(*npoints),ns);
+      propagate_r(*r,h,(*npoints));
+      interpolate_array(*r,*y,r_cp,y_cp,(*npoints));
+      printf("done interpolating.\n");
+      
+    }
+    
+    // if last loop was successful with last_xpoint sized arrays, then just
+    // use last y values as initial guess
+    else propagate_r(*r,h,(*npoints));
+    
+    solvde(itmax,conv,slowc,scalv,ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
+    //                                  psi' curves, 
+    
+    // calculate energy, derivatives (see energy.c for code)
+    successful_calc = energy_stuff(E,dEdR,dEdeta,dEddelta,p,*r,*y,
+				   *rf_,*integrand1,*integrand2,(*npoints));
+    
+    
+    (*npoints) = ((*npoints)-1)*2+1;
+    
+  }
+  while (!successful_calc && (*npoints) <= max_size);
+
+  (*npoints) = ((*npoints)-1)/2+1;
+
+  return successful_calc;
+}
+  
+  
+void backtracker(double beta,double rate,double E, double dEdeta,
+		 double dEddelta,struct params p,double *r,
+		 double *r,double **y,double ***c,double *rf_,
+		 double *integrand1,double *integrand2,int npoints,
+		 struct arr_ns *ns)
+{
+
+  gradEsq = dEdR*dEdR+dEdeta*dEdeta+dEddelta*dEddelta;
+
+  Eold = E;
+  do {
+    
+    rate *=beta;
+
+    successful_calc = single_calc(&E,&dEdR,&dEdeta,&dEddelta,
+				  &p,&c,&s,&y,&r,&rf_,&integrand1,
+				  &integrand2,y_cp,r_cp,conv,itmax,
+				  &npoints,last_npoints,&ns,max_size);
+    last_npoints = npoints;
+
+
+  }
+  while (E>Eold-0.5*rate*gradEsq);
+  return;
+}
+
+
+/*
+void graddesc(struct params p,FILE *energy,FILE *psi,
+	      FILE *denergydR,FILE *denergydeta,
+	      FILE *denergyddelta,FILE *surfacetwist,
+	      double conv,int itmax,int mpt,double rate)
+{
+  int npoints = mpt;
+  int last_npoints = mpt;
+  double h;
+  double slowc = 1.0;
+  double scalv[2+1];
+  double **y,**y_cp,*r,*r_cp, **s, ***c;
+  double *rf_,*integrand1,*integrand2;
+  double initialSlope;
+  double E;
+  double Elast = -1e100; // a really large, negative number to start with
+  double dEdR, dEdeta,dEddelta;
+  double lastdEdR,lastdEdeta,lastdEddelta;
+  int f_err_size = 200;
+  char f_err[f_err_size];
+  bool successful_calc = false;
+  struct arr_ns ns;
+  assign_ns(&ns);
+  int max_size = (mpt-1)*8+1;
+  double Rdot,etadot,deltadot;
+  int count = 0;
+  double min_dot = 1e-6;
+  double max_rate = 1e-2;
+  double min_rate = 1e-6;
   
   // malloc the relevant arrays
   allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
@@ -656,8 +863,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEddelta);
     fprintf(surfacetwist,"%.8e\t%.8e\n",p.R,y[1][mpt]);
 
-    if ((lastdEdR*dEdR < 0 || lastdEdeta*dEdeta < 0
-	 || lastdEddelta*dEddelta < 0) && rate > min_rate) {
+    if (Elast<E-fabs(1e-6*E) && rate > min_rate) {
       rate /= 2.0;
       printf("rate decreased to %e!\n",rate);
     }
@@ -667,24 +873,24 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     deltadot = -rate*dEddelta;
 
     if (fabs(Rdot)<min_dot && fabs(etadot)<min_dot
-	&& fabs(deltadot) <min_dot && rate < max_rate) {
-      rate *= 2.0;
+	&& fabs(deltadot) <min_dot && rate < max_rate
+	&& Elast >= E) {
+      rate *= 1.5;
       printf("rate has increased to %e\n",rate);
     }
 
     lastdEdR = dEdR;
     lastdEdeta = dEdeta;
     lastdEddelta = dEddelta;
+    Elast = E;
 
     p.R = p.R+Rdot;
     p.eta = p.eta+etadot;
     p.delta = p.delta+deltadot;
-    //    printf("R = %e, eta = %e, delta = %e, ",p.R,p.eta,p.delta);
-    //    printf("dEdR = %e, dEdeta = %e, dEddelta = %e, ",dEdR,dEdeta,dEddelta);
-    //    printf("E = %e, rf_[npoints/2] = %e\n",E,rf_[npoints/2]);
+
     count += 1;
 
-    if (p.R <= 0) p.R = 1e-4;
+    if (p.R <= 0) p.R = 1e-6;
   }
   printf("count = %d\n",count);
   save_psi(psi,r,y,npoints);
@@ -698,4 +904,4 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   
   return;
 }
-
+*/

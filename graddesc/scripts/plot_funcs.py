@@ -14,10 +14,10 @@ def check_data(str_,string2compare2):
         exit(1)
     return
 
-def load_plt_array(str_,load_p):
+def load_plt_array(str_,load_p,suffix=''):
 
     edited_str_ = latex2string(str_)
-    var_array = np.loadtxt(load_p + '%ss.dat'%edited_str_)
+    var_array = np.loadtxt(load_p + '%ss%s.dat'%(edited_str_,suffix))
     if var_array.size > 1:
         print(var_array)
         print(var_array.size)
