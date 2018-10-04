@@ -27,9 +27,9 @@ int main(int argc, char **argv)
   char scan_what[20];
   char path[200];
   char suffix[200];
-  char f1[200],f2[200],f3[200],f4[200],f5[200],f6[200];
+  char f1[200],f2[200],f3[200],f4[200],f5[200],f6[200],f7[200];
   FILE *energy,*psi,*denergydR,*denergydeta;
-  FILE *denergyddelta,*surfacetwist;
+  FILE *denergyddelta,*surfacetwist,*energydensity;
   double rate;
 
   // read in the the variables and paths
@@ -74,6 +74,8 @@ int main(int argc, char **argv)
 	   path,suffix);
   snprintf(f6,sizeof(f6),"%s_surfacetwist_%s",
 	   path,suffix);
+  snprintf(f7,sizeof(f7),"%s_energydensity_%s",
+	   path,suffix);
 
   energy = fopen(f1,"w");
   psi = fopen(f2,"w");
@@ -81,9 +83,10 @@ int main(int argc, char **argv)
   denergydeta = fopen(f4,"w");
   denergyddelta = fopen(f5,"w");
   surfacetwist = fopen(f6,"w");
+  energydensity = fopen(f7,"w");
 
   graddesc(p,energy,psi,denergydR,denergydeta,denergyddelta,
-	   surfacetwist,conv,itmax,M,rate);
+	   surfacetwist,energydensity,conv,itmax,M,rate);
   
 
   fclose(energy); // close file!
@@ -92,6 +95,7 @@ int main(int argc, char **argv)
   fclose(denergydeta);
   fclose(denergyddelta);
   fclose(surfacetwist);
+  fclose(energydensity);
 
   return 0;
 }

@@ -215,56 +215,56 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
     return false;
   }
 
-  if (fabs(p->delta)<=tol0) {
-    *dEdeta = 0;
-    
-    *dEddelta = 0;
-  }
-  else if (fabs(p->eta) <= tol0) {
-    *dEdeta = 0;
-
-    tol2 = derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0;
-    compute_integrand2(p,r,y,integrand2,mpt);
-    integration2 = qromb(r,integrand2,mpt,tol2,&failure);
-    
-    if (failure) {
-      printf("tol2=%e\n",tol2);
-      //    printf("failure occurred at integration2.\n");
-      return false;
+  if (*dEdR != 0 || *dEdeta != 0 || *dEddelta != 0) {
+    if (fabs(p->delta)<=tol0) {
+      *dEdeta = 0;
+      
+      *dEddelta = 0;
     }
-    *dEddelta = derivEddelta(p,integration2);
-  }
-  else {
-
-    tol1 = tol0;
-    compute_integrand1(p,r,y,integrand1,mpt);
-    integration1 = qromb(r,integrand1,mpt,tol1,&failure);
-
-    if (failure) {
-      printf("tol1=%e\n",tol1);
-      //    printf("failure occurred at integration1.\n");
-      return false;
+    else if (fabs(p->eta) <= tol0) {
+      *dEdeta = 0;
+      
+      tol2 = derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0;
+      compute_integrand2(p,r,y,integrand2,mpt);
+      integration2 = qromb(r,integrand2,mpt,tol2,&failure);
+      
+      if (failure) {
+	printf("tol2=%e\n",tol2);
+	//    printf("failure occurred at integration2.\n");
+	return false;
+      }
+      *dEddelta = derivEddelta(p,integration2);
+    }
+    else {
+      
+      tol1 = tol0;
+      compute_integrand1(p,r,y,integrand1,mpt);
+      integration1 = qromb(r,integrand1,mpt,tol1,&failure);
+      
+      if (failure) {
+	printf("tol1=%e\n",tol1);
+	//    printf("failure occurred at integration1.\n");
+	return false;
+      }
+      
+      tol2 = derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0;
+      compute_integrand2(p,r,y,integrand2,mpt);
+      integration2 = qromb(r,integrand2,mpt,tol2,&failure);
+      
+      if (failure) {
+	printf("tol2=%e\n",tol2);
+	//    printf("failure occurred at integration2.\n");
+	return false;
+      }
+      
+      *dEdeta = derivEdeta(p,integration1);
+      
+      *dEddelta = derivEddelta(p,integration2);
     }
     
-    tol2 = derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0;
-    compute_integrand2(p,r,y,integrand2,mpt);
-    integration2 = qromb(r,integrand2,mpt,tol2,&failure);
-    
-    if (failure) {
-      printf("tol2=%e\n",tol2);
-      //    printf("failure occurred at integration2.\n");
-      return false;
-    }
-
-    *dEdeta = derivEdeta(p,integration1);
-
-    *dEddelta = derivEddelta(p,integration2);
+    *dEdR = derivEdR(p,r,y,integration_2233b1,mpt);
   }
-  *E = E_R(p,r,y,
-	   integration_2233b1,mpt);
-  
-  *dEdR = derivEdR(p,r,y,integration_2233b1,mpt);
-  
+  *E = E_R(p,r,y,integration_2233b1,mpt);
 
   return true;
 }

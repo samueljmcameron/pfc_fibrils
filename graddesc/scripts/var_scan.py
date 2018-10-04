@@ -138,36 +138,20 @@ def variable_graddesc(init_path,params,var,var_position,
 
     if(subprocess.call(cmd,shell=True,
                        stderr=subprocess.STDOUT)==0):
+
         successful_calc_list.append(var)
         load_str = loadfile_list(params[:-1],var,var_position)
-        Efile =  ("%s_energy_%s"
-                  ".txt")%(init_path,load_str)
-        psifile = ("%s_psivsr_%s"
-                   ".txt")%(init_path,load_str)
-        dEdRfile = ("%s_dEdR_%s"
-                    ".txt")%(init_path,load_str)
-        dEdetafile = ("%s_dEdeta_%s"
-                      ".txt")%(init_path,load_str)
-        dEddeltafile = ("%s_dEddelta_%s"
-                        ".txt")%(init_path,load_str)
-        surfacefile = ("%s_surfacetwist_%s"
-                       ".txt")%(init_path,load_str)
 
+        for fpart in ['energy','psivsr','dEdR','dEdeta','dEddelta',
+                      'surfacetwist','energydensity']:
+            file = ("%s_%s_%s"
+                    ".txt")%(init_path,fpart,load_str)
 
-        cmdE = "mv " + Efile + " data/"
-        subprocess.call(cmdE,shell=True)
-        cmdpsi = "mv " + psifile + " data/"
-        subprocess.call(cmdpsi,shell=True)
-        cmddEdR = "mv " + dEdRfile + " data/"
-        subprocess.call(cmddEdR,shell=True)
-        cmddEdeta = "mv " + dEdetafile + " data/"
-        subprocess.call(cmddEdeta,shell=True)
-        cmddEddelta = "mv " + dEddeltafile + " data/"
-        subprocess.call(cmddEddelta,shell=True)
-        cmdsurface = "mv " + surfacefile + " data/"
-        subprocess.call(cmdsurface,shell=True)
+            cmd = "mv " + file + " data/"
+            subprocess.call(cmd,shell=True)
 
     else:
         print(subprocess.STDOUT)
+
     return 
 

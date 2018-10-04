@@ -88,7 +88,8 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
 void graddesc(struct params p,FILE *energy,FILE *psi,
 	      FILE *denergydR,FILE *denergydeta,
 	      FILE *denergyddelta,FILE *surfacetwist,
-	      double conv,int itmax,int mpt,double rate);
+	      FILE *energydensity,double conv,int itmax,
+	      int mpt,double rate);
 
 
 #endif /* ANSI */
