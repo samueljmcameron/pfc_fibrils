@@ -54,7 +54,7 @@ struct params{
   double upperbound_y;
 };
 
-void solvde(int itmax, double conv, double slowc, double scalv[],
+bool solvde(int itmax, double conv, double slowc, double scalv[],
 	    struct arr_ns *ns, int m, double **y, double *r,
 	    double ***c, double **s, struct params *p,
 	    double h);

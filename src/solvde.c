@@ -1,11 +1,12 @@
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "nrutil.h"
 #include "headerfile.h"
 
 
-void solvde(int itmax, double conv, double slowc, double scalv[],
+bool solvde(int itmax, double conv, double slowc, double scalv[],
 	    struct arr_ns *ns, int m, double **y, double *r,
 	    double ***c, double **s,struct params *p,
 	    double h)
@@ -98,9 +99,10 @@ void solvde(int itmax, double conv, double slowc, double scalv[],
                       // ermax.
       free_vector(ermax,1,ne);
       free_ivector(kmax,1,ne);
-      return;
+      return true;
     }
   }
-  nrerror("Too many iterations in solvde"); //Convergence failed.
+  printf("Too many iterations in solvde, err = %e.\n",err); //Convergence failed.
+  return false;
 }
 

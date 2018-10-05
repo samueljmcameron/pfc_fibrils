@@ -129,7 +129,7 @@ def plot_descpsi(ax,colors,d,var_array,params,
                 j += 1
     return
 
-def plot_obs(what_plot,ax,colors,d,var_array,params,
+def plot_obs(what_plot,ax,color,d,var_array,params,
              var_position,varied_param_name,load_p,
              label=None):
 
@@ -165,6 +165,6 @@ def plot_obs(what_plot,ax,colors,d,var_array,params,
             observables[i] = xs[-1]
 
 
-    ax.plot(var_array,observables,'-o',label = label,lw = 2,color = colors[0])
+    ax.plot(var_array,observables,'-o',label = label,lw = 2,color = color)
 
     return

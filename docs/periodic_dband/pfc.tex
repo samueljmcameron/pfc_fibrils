@@ -37,8 +37,8 @@
 % Begin Document
 %%%%%%%%%%%
 
-\section{Treating d-banding as a phase field}
-I would like to couple d-banding of fibrils into the current free energy picture of the system. One way to do this is to use a phase-field-crystal model approach \cite{Elder:2004ct}, in which the periodic density modulations are described by an additional term in the free energy functional. To start with, I consider the free energy functional $F$ of a cylinder with a radius $R$, length $L$, and some internal structure given by a director field $\bm{n}(\bm{r})$ and a density $\rho(\bm{r})$, which is surrounded by a fluid. I'll suppose that the surface tension $\gamma$ between the cylinder and the fluid depends on whether it is measured on the cylinder's side (with area $2\pi R L$ and $\gamma=\gamma_s$), or on one of the two cylindrical caps (each with area $\pi R^2$ and $\gamma=\gamma_t$). The total free energy is then
+\section{Modelling d-banding with phase-field-crystal}
+I would like to couple d-banding of fibrils into the current free energy picture of the system. One way to do this is to use a phase-field-crystal model approach \cite{Elder:2004ct}, in which the periodic density modulations are described by an additional term in the free energy functional. To start with, I consider the free energy functional $F$ of a cylinder with a radius $R$, length $L$, and some internal structure given by a director field $\bm{n}(\bm{r})$ and a density $\rho(\bm{r})$, which is surrounded by a fluid. I'll suppose that the surface tension $\gamma$ between the cylinder and the fluid depends on whether it is measured on the cylinder's side (with area $2\pi R L$ and $\gamma=\gamma_s$), or on one of the two (flat) tops of the fibril (each with area $\pi R^2$ and $\gamma=\gamma_t$). The total free energy is then
 \begin{equation}\label{eq:F_basic}
 F(R,L)=\int_0^R\int_0^L\int_0^{2\pi}f(\bm{r},\bm{n}(\bm{r}),\rho(\bm{r}))rdrdzd\phi+2\pi RL\gamma_s+2\pi R^2\gamma_t.
 \end{equation}
@@ -46,7 +46,7 @@ The equilibrium configuration is determined by minimization of eqn \ref{eq:F_bas
 
 To make this problem tractable, there are several assumptions that must I'm going to apply. The first assumption is that the director field follows a double-twist, so $\bm{n}$ is reduced to a single twist field $\psi(r)$ which is dependent only on the radius. With no consideration of density fluctuations, this reduces the free energy $f$ to the familiar Frank free energy of a double-twisted liquid crystal,
 \begin{align}\label{eq:frank}
-f_{dt}=&-k_2\left(\psi'+\frac{\sin2\psi}{2r}\right)+\frac{1}{2}K_{22}\left(\psi'\frac{\sin2\psi}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\nonumber\\
+f_{dt}=&\frac{k_{2}^2}{2K_{22}}-k_2\left(\psi'+\frac{\sin2\psi}{2r}\right)+\frac{1}{2}K_{22}\left(\psi'\frac{\sin2\psi}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\nonumber\\
 &-\frac{1}{2}\left(K_{22}+k_{24}\right)\frac{1}{r}\frac{d\sin^2\psi}{dr}.
 \end{align}
 
