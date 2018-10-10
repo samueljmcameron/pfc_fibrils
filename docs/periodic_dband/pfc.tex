@@ -21,12 +21,6 @@
 \usepackage{subcaption}
 %\titlespacing*{\section}{0pt}{4pt}{4pt}
 \usepackage[letterpaper, margin=2cm]{geometry}
-\newcommand*\diff{\mathop{}\!\mathrm{d}}
-\DeclareSIUnit\Molar{\textsc{m}}
-\DeclareMathOperator*{\MAXVAL}{max}
-\DeclarePairedDelimiter\abs{\lvert}{\rvert}
-\tikzstyle{place}=[circle,draw,fill,thick,inner sep = 0pt,minimum size = 1.5mm]
-\tikzstyle{theline}=[line width = 1pt]
 
 
 \begin{document}
@@ -46,25 +40,30 @@ The equilibrium configuration is determined by minimization of eqn \ref{eq:F_bas
 
 To make this problem tractable, there are several assumptions that must I'm going to apply. The first assumption is that the director field follows a double-twist, so $\bm{n}$ is reduced to a single twist field $\psi(r)$ which is dependent only on the radius. With no consideration of density fluctuations, this reduces the free energy $f$ to the familiar Frank free energy of a double-twisted liquid crystal,
 \begin{align}\label{eq:frank}
-f_{dt}=&\frac{k_{2}^2}{2K_{22}}-k_2\left(\psi'+\frac{\sin2\psi}{2r}\right)+\frac{1}{2}K_{22}\left(\psi'\frac{\sin2\psi}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\nonumber\\
+f_{dt}=&\frac{1}{2}K_{22}q^2-K_{22}q\left(\psi'+\frac{\sin2\psi}{2r}\right)+\frac{1}{2}K_{22}\left(\psi'\frac{\sin2\psi}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\nonumber\\
 &-\frac{1}{2}\left(K_{22}+k_{24}\right)\frac{1}{r}\frac{d\sin^2\psi}{dr}.
 \end{align}
 
-The elastic constants $k_i$ and $K_j$ in eqn \ref{eq:frank} are dependent on the density of the liquid crystal \cite{Odijk:liqcryst1986}, and so density fluctuations may couple into the frank free energy. For this work, I will only allow for density fluctuations along the $z$ axis of the cylinder to mimic the d-banding of fibrils. Without considering the coupling of density to eqn \ref{eq:frank}, an additional term from the phase-field-crystal literature can be introduced into the free energy of the form
-\begin{equation}\label{eq:simple_density}
-f_{pfc}=\frac{b}{2}\rho(z)\left[\lambda_0^2+\frac{\partial^2}{\partial z^2}\right]^2\rho(z).
+The elastic constants $k_i$ and $K_j$, as well as the inverse cholesteric pitch $q$, in eqn \ref{eq:frank} are dependent on the density of the liquid crystal \cite{Odijk:liqcryst1986}, and so density fluctuations may couple into the frank free energy. For this work, I will only allow for density fluctuations along the $z$ axis of the cylinder to mimic the d-banding of fibrils. Without considering the coupling of density to eqn \ref{eq:frank}, two additional terms from the phase-field-crystal literature can be introduced into the free energy of the form
+\begin{equation}\label{eq:density_period}
+f_{pfc}=\frac{b}{2}\Delta\rho(z)\left[\lambda_0^2+\frac{\partial^2}{\partial z^2}\right]^2\Delta\rho(z).
 \end{equation}
-Here, $\lambda_0^{-1}$ is the length scale at which the d-banding occurs. For collagen fibrils, we make the hypothesis that this length scale couples with the twist angle by the geometrical construction
+\begin{equation}
+\label{eq:density_amplitude}
+f_{a}=c\Delta\rho(z)^2\left(\Delta\rho(z)^2-\chi^2\right)
+\end{equation}
+Here, $\lambda_0^{-1}$ is the length of the d-band period preferred from the molecular interactions (which we ignore the details of). $\Delta\rho(z)$ are the local density fluctuations, and $\chi^2>0$ encourages non-zero density fluctuations. For collagen fibrils, we make the hypothesis that the d-band couples with the twist angle by the geometrical construction
 \begin{equation}\label{eq:lmbda}
 \lambda_0=\frac{2\pi}{d_0\cos\psi(r)},
 \end{equation}
-where $d_0=\SI{67}{\nano\meter}$ is the d-band spacing for a fibril with no twist.
+where $d_0=\SI{67}{\nano\meter}$ is the d-band spacing for a fibril with no twist. This assumption is known as the "projective coupling hypothesis".
 
-To build a tractable form of the free energy, I assume that the elastic constants are independent of the density variations, and assume $\rho(z)=\rho_0\cos(kz)$ (in the future, I may extend this to allow $k$ to vary with $r$ as well). Combining the two parts (eqns \ref{eq:frank} and \ref{eq:simple_density}) into a single free energy, and setting $q=1$, $K_{22}=1$ (they scale out of the free energy anyway), the free energy per volume of fibril is
+To build a tractable form of the free energy, I assume that the elastic constants are independent of the density variations, and assume $\Delta\rho(z)=\delta\cos(\eta z)$. Combining the three parts (eqns \ref{eq:frank}, \ref{eq:density_period} and \ref{eq:density_amplitude}) into a single free energy, the free energy per volume of fibril is
 \begin{align}\label{eq:FE}
 E\equiv& \frac{F}{\pi R^2 L}\nonumber\\
-=&\frac{2}{R^2}\int_0^Rrdr\left[-\psi'-\frac{\sin2\psi(r)}{2r}+\frac{1}{2}\left(\psi'+\frac{\sin2\psi(r)}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi(r)}{r^2}\right]-(1+k_{24})\frac{\sin^2\psi(R)}{R^2}\nonumber\\
-&+\frac{\Lambda}{2R^2}\left(1+\frac{\sin(2kL)}{2kL}\right)\int_0^Rrdr\left(\left[\frac{2\pi}{d_0\cos\psi(r)}\right]^2-k^2\right)^2+\frac{2\gamma_{\text{side}}}{R}+\frac{2\gamma_{\text{top}}}{L}
+=&\frac{2}{R^2}\int_0^Rrdr\left[-K_{22}q\left(\psi'+\frac{\sin2\psi(r)}{2r}\right)+\frac{1}{2}K_{22}\left(\psi'+\frac{\sin2\psi(r)}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi(r)}{r^2}\right]\nonumber\\
+&-(K_{22}+k_{24})\frac{\sin^2\psi(R)}{R^2}+\frac{b\delta^2}{2R^2}\left(1+\frac{\sin(2\eta L)}{2\eta L}\right) \int_0^Rrdr\left(\left[\frac{2\pi}{d_0\cos\psi(r)}\right]^2-\eta^2\right)^2\nonumber\\
+&+\frac{c\delta^2}{2}\left(\frac{3}{4}\delta^2-\chi^2+\frac{\sin(2\eta L)}{2\eta L}\left(\delta^2-\chi^2\right)+\delta^2\frac{\sin(4\eta L)}{16\eta L}\right)+\frac{2\gamma_{\text{side}}}{R}+\frac{2\gamma_{\text{top}}}{L}
 \end{align}
 
 Minimization of this free energy corresponds to a $\psi(r)$, $R$, $L$, and $k$ which simultaneously satisfy the constraints
