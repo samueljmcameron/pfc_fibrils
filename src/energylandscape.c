@@ -570,7 +570,8 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     printf("count = %d\n",count);
 
     if (last_rate <= min_rate) {
-      printf("last rate <= min_rate, where min_rate = %e.\n",min_rate);
+      printf("last rate <= min_rate, where min_rate = %e and last "
+	     " rate = %e.\n",min_rate,last_rate);
       if (fabs(lastR-p.R)<conv && fabs(lasteta-p.eta)<conv
 	  && fabs(lastdelta-p.delta)<conv) {
 	printf("changes in R, eta, and delta are smaller than %e.\n",conv);
@@ -621,6 +622,8 @@ void single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
   double h;
   bool successful_qromb=false;
   bool successful_solvde;
+  int solvde_count;
+  double slopeguess = M_PI/(4.0*p->R);
   double slowc = 1.0;
   double scalv[2+1];
 
@@ -652,11 +655,21 @@ void single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
     
     successful_solvde = solvde(itmax,conv,slowc,scalv,
 			       ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
-    //                                                            psi' curves, 
+      //                                                            psi' curves, 
+      
 
-    if (!successful_solvde) { // writes the psi(r), r*f, etc, and exits
+
+    if (!successful_solvde) {
+      printf("solvde convergence failed, trying one more time with a "
+	     "linear guess and a final twist angle value of pi/4");
+      linearGuess(*r,*y,slopeguess,h,(*npoints));
+      successful_solvde = solvde(itmax,conv,slowc,scalv,
+				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
+      //                                                            psi' curves, 
+    }
+    if (!successful_solvde) {
       write_failure("SOLVDE",*r,*y,*rf_,*npoints,*p);
-      return;
+    return;
     }
     
     // calculate energy, derivatives (see energy.c for code)
@@ -769,7 +782,7 @@ double backtracker(double beta,double rate,double E,double dEdR,double dEdeta,
   p->eta = p->eta-rate*dEdeta;
   p->delta = p->delta-rate*dEddelta;    
 
-  if (rate0 != rate) printf("rate = %lf, rate0 = %lf\n",rate,rate0);
+  if (rate0 != rate) printf("rate = %e, rate0 = %e\n",rate,rate0);
 
   free_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
 
