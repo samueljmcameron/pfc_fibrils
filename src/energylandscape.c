@@ -6,6 +6,9 @@
 #include "nrutil.h"
 #include "headerfile.h"
 
+int sign(double x) {
+  return (x > 0) - (x < 0);
+}
 
 
 void assign_ns(struct arr_ns *ns)
@@ -61,6 +64,12 @@ double backtracker(double beta,double rate,double E,double dEdR,double dEdeta,
 		   double *r_cp, double **y_cp,double conv, int itmax,
 		   int npoints,struct arr_ns *ns,int last_npoints,int max_size,
 		   double min_rate);
+bool jumpmin(double frac_tol,double E,double dEdR,double dEdeta,
+	     double dEddelta,struct params p,double ***c,
+	     double **s,double **y,double *r,double *rf_,
+	     double *integrand1,double *integrand2,double **y_cp,
+	     double *r_cp,double conv,int itmax,int npoints,
+	     int last_npoints,struct arr_ns *ns,int max_size);
 
 
 
@@ -524,7 +533,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   double lastdelta = p.delta;
   int max_size = (mpt-1)*8+1;
   int count = 0;
-  bool small_rate = false;
+  double frac_tol = 1e-6;
 
   struct arr_ns ns;
   assign_ns(&ns);
@@ -550,6 +559,8 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   while (fabs(dEdR) > conv || fabs(dEdeta) > conv
 	 || fabs(dEddelta) > conv) {
 
+
+
     single_calc(&E,&dEdR,&dEdeta,&dEddelta,&p,&c,&s,&y,&r,&rf_,&integrand1,
 		&integrand2,y_cp,r_cp,conv,itmax,&npoints,last_npoints,
 		&ns,max_size);
@@ -567,20 +578,17 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 			    conv,itmax,npoints,&ns,last_npoints,max_size,min_rate);
 
     count += 1;
-    printf("count = %d\n",count);
+    //printf("count = %d\n",count);
 
     if (last_rate <= min_rate) {
-      printf("last rate <= min_rate, where min_rate = %e and last "
-	     " rate = %e.\n",min_rate,last_rate);
+      //      printf("last rate <= min_rate, where min_rate = %e and last "
+      //     " rate = %e.\n",min_rate,last_rate);
       if (fabs(lastR-p.R)<conv && fabs(lasteta-p.eta)<conv
-	  && fabs(lastdelta-p.delta)<conv) {
-	printf("changes in R, eta, and delta are smaller than %e.\n",conv);
-	
-	if (dEdR*lastdEdR <=0 && dEdeta*lastdEdeta <= 0
-	    && dEddelta*lastdEddelta <= 0) {
-	  printf("jumped over the minimimum (derivatives all changed signs).\n");
-	  break;
-	}
+	  && fabs(lastdelta-p.delta)<conv && fabs(Elast-E)<conv) {
+	//printf("changes in R, eta, and delta are smaller than %e.\n",conv);
+	if(jumpmin(frac_tol,E,dEdR,dEdeta,dEddelta,p,c,s,y,r,rf_,
+		   integrand1,integrand2,y_cp,r_cp,conv,itmax,
+		   npoints,last_npoints,&ns,max_size)) break;
       }
     }
 
@@ -598,6 +606,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     }
       
   }
+  
   printf("count = %d\n",count);
   save_psi(psi,r,y,npoints);
   save_energydensity(energydensity,r,rf_,npoints);
@@ -611,6 +620,60 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   
   return;
 }
+
+bool jumpmin(double frac_tol,double E,double dEdR,double dEdeta,
+	     double dEddelta,struct params p,double ***c,
+	     double **s,double **y,double *r,double *rf_,
+	     double *integrand1,double *integrand2,double **y_cp,
+	     double *r_cp,double conv,int itmax,int npoints,
+	     int last_npoints,struct arr_ns *ns,int max_size)
+{
+  double lastR = p.R;
+  double lasteta = p.eta;
+  double lastdelta = p.delta;
+  double lastdEdR = dEdR;
+  double lastdEdeta = dEdeta;
+  double lastdEddelta = dEddelta;
+  double Elast = E;
+  double *rc;
+  double **yc,**sc;
+  double ***cc;
+  double *rf_c, *integrand1c,*integrand2c;
+
+  // create arrays to manipulate without affecting external arrays
+  allocate_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
+
+  // copy the external r,y arrays into the internal rc,yc arrays
+  copy_arrays(r,y,rc,yc,last_npoints);
+
+
+  p.R = lastR*(1-sign(dEdR)*frac_tol);
+  p.eta = lasteta*(1-sign(dEdeta)*1e-2*frac_tol);
+  p.delta = lastdelta*(1-sign(dEddelta)*1e-2*frac_tol);
+
+  single_calc(&E,&dEdR,&dEdeta,&dEddelta,&p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
+	      &integrand2c,y_cp,r_cp,conv,itmax,&npoints,last_npoints,
+	      ns,max_size);
+
+  printf("lastE = %e, E = %e\n",Elast,E);
+  printf("lastdEdR = %e, dEdR = %e,",lastdEdR,dEdR);
+  printf("lastR = %e, R = %e\n",lastR,p.R);
+  printf("lastdEdeta = %e, dEdeta = %e,",lastdEdeta,dEdeta);
+  printf("lasteta = %e, eta = %e\n",lasteta,p.eta);
+  printf("lastdEddelta = %e, dEddelta = %e,",lastdEddelta,dEddelta);
+  printf("lastdelta = %e, delta = %e\n",lastdelta,p.delta);
+  printf("\n\n");
+  if (dEdR*lastdEdR <=0 && dEdeta*lastdEdeta <= 0
+      && dEddelta*lastdEddelta <= 0) {
+    printf("jumped over the minimimum (derivatives all changed signs).\n");
+    return true;
+  }
+
+
+  return false;
+}
+
+
 
 void single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
 		 struct params *p,double ****c,double ***s,double ***y,
@@ -782,7 +845,7 @@ double backtracker(double beta,double rate,double E,double dEdR,double dEdeta,
   p->eta = p->eta-rate*dEdeta;
   p->delta = p->delta-rate*dEddelta;    
 
-  if (rate0 != rate) printf("rate = %e, rate0 = %e\n",rate,rate0);
+  //  if (rate0 != rate) printf("rate = %e, rate0 = %e\n",rate,rate0);
 
   free_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
 
