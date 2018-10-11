@@ -71,8 +71,7 @@ double trapzd(double *, double *, double, int, int);
 void polint(double xa[], double ya[], int, double, double *, double *);
 double qromb(double *,double *, int,double tol,bool *failure);
 
-bool energy_stuff(double *E, double *dEdR,double *dEdeta,
-		  double *dEddelta,struct params *p,
+bool energy_stuff(double *E,double *dEdx,struct params *p,
 		  double *r,double **y,double *rf_,
 		  double *integrand1,double *integrand2,int mpt);
 
@@ -89,7 +88,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 	      FILE *denergydR,FILE *denergydeta,
 	      FILE *denergyddelta,FILE *surfacetwist,
 	      FILE *energydensity,double conv,int itmax,
-	      int mpt,double rate);
+	      int mpt,double rate0);
 
 
 #endif /* ANSI */

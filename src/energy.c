@@ -185,8 +185,7 @@ double derivEddelta(struct params *p,double integration2)
 }
 
 
-bool energy_stuff(double *E, double *dEdR,double *dEdeta,
-		  double *dEddelta,struct params *p,
+bool energy_stuff(double *E, double *dEdx,struct params *p,
 		  double *r,double **y,double *rf_,
 		  double *integrand1,double *integrand2,int mpt)
 {
@@ -205,7 +204,7 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
   // some tolerance tolblabla), then the lack of convergence can just
   // be ignored.
   
-  tol2233b1 = E_R(p,r,y,0,mpt)*p->R*p->R/2.0*tol0;
+  tol2233b1 = fabs(E_R(p,r,y,0,mpt)*p->R*p->R/2.0*tol0);
   compute_rf2233b1(p,r,y,rf_,mpt);
   integration_2233b1 = qromb(r,rf_,mpt,tol2233b1,&failure);
 
@@ -215,16 +214,16 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
     return false;
   }
 
-  if (*dEdR != 0 || *dEdeta != 0 || *dEddelta != 0) {
+  if (dEdx[1] != 0 || dEdx[2] != 0 || dEdx[3] != 0) {
     if (fabs(p->delta)<=tol0) {
-      *dEdeta = 0;
+      dEdx[2] = 0;
       
-      *dEddelta = 0;
+      dEdx[3] = 0;
     }
     else if (fabs(p->eta) <= tol0) {
-      *dEdeta = 0;
+      dEdx[2] = 0;
       
-      tol2 = derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0;
+      tol2 = fabs(derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0);
       compute_integrand2(p,r,y,integrand2,mpt);
       integration2 = qromb(r,integrand2,mpt,tol2,&failure);
       
@@ -233,7 +232,7 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 	//    printf("failure occurred at integration2.\n");
 	return false;
       }
-      *dEddelta = derivEddelta(p,integration2);
+      dEdx[3] = derivEddelta(p,integration2);
     }
     else {
       
@@ -247,7 +246,7 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 	return false;
       }
       
-      tol2 = derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0;
+      tol2 = fabs(derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0);
       compute_integrand2(p,r,y,integrand2,mpt);
       integration2 = qromb(r,integrand2,mpt,tol2,&failure);
       
@@ -257,12 +256,12 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 	return false;
       }
       
-      *dEdeta = derivEdeta(p,integration1);
+      dEdx[2] = derivEdeta(p,integration1);
       
-      *dEddelta = derivEddelta(p,integration2);
+      dEdx[3] = derivEddelta(p,integration2);
     }
     
-    *dEdR = derivEdR(p,r,y,integration_2233b1,mpt);
+    dEdx[1] = derivEdR(p,r,y,integration_2233b1,mpt);
   }
   *E = E_R(p,r,y,integration_2233b1,mpt);
 
