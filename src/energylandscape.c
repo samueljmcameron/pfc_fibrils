@@ -887,14 +887,17 @@ double backtracker(double beta,double rate,double E,double *dEdx,
   free_vector(tmpdEdx,1,3);
   return rate;
 }
-/*
-double beta_k()
+
+double beta_k(double *dEdx,double *lastdEdx)
 {
-  double beta;
-  beta = (dEdR-lastdEdR)*dEdR+(dEdeta-lastdEdeta)*dEdeta+(dEddelta-lastdEddelta)*dEddelta;
-  beta = dEdR*dEdR+dEdeta*dEdeta+dEddelta*dEddelta;
+  double beta=0;
+  int i;
 
+  for (i = 1; i <= 3; i++) beta += (dEdx[i]-lastdEdx[i])*dEdx[i];
 
+  beta /= vector_norm(lastdEdx,3);
+
+  return beta;
 }
 
 
@@ -903,4 +906,3 @@ void set_p_k()
 
 
 }
-*/
