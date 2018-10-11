@@ -11,6 +11,50 @@ int sign(double x) {
   return (x > 0) - (x < 0);
 }
 
+void arr_cp(double *acp, double *a,int length)
+{
+  int i;
+  for (i = 1; i <= length; i++) acp[i] = a[i];
+  return;
+}
+
+double vector_norm(double *a,int length)
+{
+  int i;
+  double sum = 0;
+  for (i = 1; i <= length; i++) sum += a[i]*a[i];
+
+  return sum;
+}
+
+void array_constant(double constant,double *a,int length)
+{
+  int i;
+  for (i = 1; i <= length; i++) a[i] = constant;
+  return;
+}
+
+bool non_zero_array(double *dEdx,double conv)
+{
+  return (fabs(dEdx[1]) > conv || fabs(dEdx[2]) > conv
+	  || fabs(dEdx[3]) > conv);
+}
+
+void update_p(struct params *p,double rate,double *arrchange)
+{
+  p->R -= rate*arrchange[1];
+  p->eta -= rate*arrchange[2];
+  p->delta -= rate*arrchange[3];
+  return;
+}
+
+void reset_p(struct params *p,double rate,double *arrchange)
+{
+  p->R += rate*arrchange[1];
+  p->eta += rate*arrchange[2];
+  p->delta += rate*arrchange[3];
+  return;
+}
 
 void assign_ns(struct arr_ns *ns)
 {
@@ -43,10 +87,8 @@ void interpolate_array(double *r,double **y,double *r_cp,
 		       double **y_cp,int npoints);
 void quick_interp(double *xcp,double **ycp,double x,double **y,int i);
 void setup_var_pointers(double **var, double *var0,double **dEdvar,
-			double **dEdvarlast,char scan_what[],double *R, 
-			double *dEdR,double *dEdRlast,double *eta,
-			double *dEdeta, double *dEdetalast,double *delta,
-			double *dEddelta,double *dEddeltalast);
+			double **dEdvarlast,char scan_what[],
+			struct params *p,double *dEdx,double *lastdEdx);
 
 void allocate_matrices(double ****c,double ***s,double ***y,double **r,
 		       double **rf_, double **integrand1,
@@ -54,25 +96,22 @@ void allocate_matrices(double ****c,double ***s,double ***y,double **r,
 void free_matrices(double ****c,double ***s,double ***y,double **r,
 		   double **rf_, double **integrand1,
 		   double **integrand2,int npoints,struct arr_ns *ns);
-void single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
-		 struct params *p,double ****c,double ***s,double ***y,
-		 double **r,double **rf_,double **integrand1,
-		 double **integrand2,double **y_cp,double *r_cp,
-		 double conv,int itmax,int *npoints,int last_npoints,
-		 struct arr_ns *ns,int max_size);
-double backtracker(double beta,double rate,double E,double dEdR,double dEdeta,
-		   double dEddelta,struct params *p,double *r,double **y,
-		   double *r_cp, double **y_cp,double conv, int itmax,
-		   int npoints,struct arr_ns *ns,int last_npoints,int max_size,
+void single_calc(double *E,double *dEdx,struct params *p,
+		 double ****c,double ***s,double ***y,double **r,
+		 double **rf_,double **integrand1,double **integrand2,
+		 double **y_cp,double *r_cp,double conv,int itmax,
+		 int *npoints,int last_npoints,struct arr_ns *ns,
+		 int max_size);
+double backtracker(double beta,double rate,double E,double *dEdx,
+		   struct params *p,double *r,double **y,double *r_cp,
+		   double **y_cp,double conv, int itmax,int npoints,
+		   struct arr_ns *ns,int last_npoints,int max_size,
 		   double min_rate);
-bool jumpmin(double frac_tol,double E,double dEdR,double dEdeta,
-	     double dEddelta,struct params p,double ***c,
-	     double **s,double **y,double *r,double *rf_,
+bool jumpmin(double frac_tol,double E,double *dEdR,struct params p,
+	     double ***c,double **s,double **y,double *r,double *rf_,
 	     double *integrand1,double *integrand2,double **y_cp,
 	     double *r_cp,double conv,int itmax,int npoints,
 	     int last_npoints,struct arr_ns *ns,int max_size);
-
-
 
 void linearGuess(double *r, double **y, double initialSlope,
 		 double h,int mpt)
@@ -180,10 +219,8 @@ void quick_interp(double *xcp,double **ycp,double x,double **y,int i)
 }
 
 void setup_var_pointers(double **var, double *var0,double **dEdvar,
-			double **dEdvarlast,char scan_what[],double *R, 
-			double *dEdR,double *dEdRlast,double *eta,
-			double *dEdeta, double *dEdetalast,double *delta,
-			double *dEddelta,double *dEddeltalast)
+			double **dEdvarlast,char scan_what[],
+			struct params *p,double *dEdx,double *lastdEdx)
 // convenient way to make a variables (ending in var) that have the  //
 // same addresses as whichever parameter that is specified by        //
 // scan_what.
@@ -191,24 +228,24 @@ void setup_var_pointers(double **var, double *var0,double **dEdvar,
 
   if (strcmp(scan_what,"R")==0) {
     printf("R!\n");
-    *var = R;
-    *var0 = *R;
-    *dEdvar = dEdR;
-    *dEdvarlast = dEdRlast;
+    *var = &p->R;
+    *var0 = p->R;
+    *dEdvar = &dEdx[1];
+    *dEdvarlast = &lastdEdx[1];
   }
   else if (strcmp(scan_what,"eta")==0) {
     printf("eta!\n");
-    *var = eta;
-    *var0 = *eta;
-    *dEdvar = dEdeta;
-    *dEdvarlast = dEdetalast;
+    *var = &p->eta;
+    *var0 = p->eta;
+    *dEdvar = &dEdx[2];
+    *dEdvarlast = &lastdEdx[2];
   }
   else if (strcmp(scan_what,"delta")==0) {
     printf("delta!\n");
-    *var = delta;
-    *var0 = *delta;
-    *dEdvar = dEddelta;
-    *dEdvarlast = dEddeltalast;
+    *var = &p->delta;
+    *var0 = p->delta;
+    *dEdvar = &dEdx[3];
+    *dEdvarlast = &lastdEdx[3];
   }
   else {
     printf("Need either R, eta, or delta as argv[n] input."
@@ -303,12 +340,9 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
   double h;
   double **y,**y_cp,*r,*r_cp, **s, ***c;
   double *rf_,*integrand1,*integrand2;
+  double *dEdx, *lastdEdx;
   double initialSlope;
   double E;
-  double dEdR, dEdeta,dEddelta;
-  double dEdRlast = dEdR;
-  double dEdetalast = dEdeta;
-  double dEddeltalast = dEddelta;
   double *dEdvar, *dEdvarlast;
   double Emin = 1e100;
   int max_size = (mpt-1)*4+1;
@@ -317,6 +351,8 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
   struct arr_ns ns;
 
   assign_ns(&ns);
+  dEdx = vector(1,3);
+  lastdEdx = vector(1,3);
 
   // malloc the relevant arrays
   allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
@@ -325,10 +361,9 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
   y_cp = matrix(1,ns.nyj,1,max_size);
   r_cp = vector(1,max_size);
 
+  setup_var_pointers(&var,&var0,&dEdvar,&dEdvarlast,scan_what,
+		     &p,dEdx,lastdEdx);
 
-  setup_var_pointers(&var,&var0,&dEdvar,&dEdvarlast,scan_what,&p.R, 
-		     &dEdR,&dEdRlast,&p.eta,&dEdeta,&dEdetalast,
-		     &p.delta,&dEddelta,&dEddeltalast);
   dx = (p.upperbound_x-var0)/num_x;
   printf("dx = %lf\n",dx);
   
@@ -344,9 +379,8 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
     // for each value of x (i.e *var) in E vs x
 
 
-    single_calc(&E,&dEdR,&dEdeta,&dEddelta,&p,&c,&s,&y,&r,&rf_,&integrand1,
-		&integrand2,y_cp,r_cp,conv,itmax,&npoints,last_npoints,
-		&ns,max_size);
+    single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		y_cp,r_cp,conv,itmax,&npoints,last_npoints,&ns,max_size);
 
     last_npoints = npoints;
 
@@ -366,9 +400,7 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
 
     count_x += 1;
     *var = var0+dx*count_x;
-    dEdRlast = dEdR;
-    dEdetalast = dEdeta;
-    dEddeltalast = dEddelta;
+    arr_cp(lastdEdx,dEdx,3);
     
   }
 
@@ -376,6 +408,8 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
 		npoints,&ns);
   free_matrix(y_cp,1,ns.nyj,1,max_size);
   free_vector(r_cp,1,max_size);
+  free_vector(dEdx,1,3);
+  free_vector(lastdEdx,1,3);
 
   return;
 }
@@ -406,10 +440,7 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
   double *rf_,*integrand1,*integrand2;
   double initialSlope;
   double E;
-  double dEdR, dEdeta,dEddelta;
-  double dEdRlast = dEdR;
-  double dEdetalast = dEdeta;
-  double dEddeltalast = dEddelta;
+  double *dEdx, *lastdEdx;
   double *dEdvar_x, *dEdvar_xlast;
   double *dEdvar_y, *dEdvar_ylast;
   double Emin = 1e100;
@@ -419,6 +450,8 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
   struct arr_ns ns;
 
   assign_ns(&ns);
+  dEdx = vector(1,3);
+  lastdEdx = vector(1,3);
 
   // initialize the pointers to the x variable (in E vs x vs y) so that
   // they reference the correct derivatives of E. x is either R,
@@ -432,14 +465,12 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
   r_cp = vector(1,max_size);
   
 
-  setup_var_pointers(&var_x,&var_x0,&dEdvar_x,&dEdvar_xlast,scan_what_x,&p.R, 
-		     &dEdR,&dEdRlast,&p.eta,&dEdeta,&dEdetalast,&p.delta,
-		     &dEddelta,&dEddeltalast);
+  setup_var_pointers(&var_x,&var_x0,&dEdvar_x,&dEdvar_xlast,scan_what_x,
+		     &p,dEdx,lastdEdx);
   dx = (p.upperbound_x-var_x0)/(num_x-1);
 
-  setup_var_pointers(&var_y,&var_y0,&dEdvar_y,&dEdvar_ylast,scan_what_y,&p.R,
-		     &dEdR,&dEdRlast,&p.eta,&dEdeta,&dEdetalast,&p.delta,
-		     &dEddelta,&dEddeltalast);
+  setup_var_pointers(&var_y,&var_y0,&dEdvar_y,&dEdvar_ylast,scan_what_y,
+		     &p,dEdx,lastdEdx);
   dy = (p.upperbound_y-var_y0)/(num_y-1);
 
   scalv[1] = .1;    // guess for magnitude of the psi values
@@ -464,9 +495,8 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
     
     while (count_x < num_x) {
 
-      single_calc(&E,&dEdR,&dEdeta,&dEddelta,&p,&c,&s,&y,&r,&rf_,&integrand1,
-		  &integrand2,y_cp,r_cp,conv,itmax,&npoints,last_npoints,
-		  &ns,max_size);
+      single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		  y_cp,r_cp,conv,itmax,&npoints,last_npoints,&ns,max_size);
 
       last_npoints = npoints;
 
@@ -486,9 +516,7 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
 	Emin = E;
       }
 
-      dEdRlast = dEdR;
-      dEdetalast = dEdeta;
-      dEddeltalast = dEddelta;
+      arr_cp(lastdEdx,dEdx,3);
       count_x += 1;
       *var_x = var_x0+count_x*dx;
     }
@@ -506,6 +534,8 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
 		npoints,&ns);
   free_matrix(y_cp,1,ns.nyj,1,max_size);
   free_vector(r_cp,1,max_size);
+  free_vector(dEdx,1,3);
+  free_vector(lastdEdx,1,3);
   
   return;
 }
@@ -514,7 +544,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 	      FILE *denergydR,FILE *denergydeta,
 	      FILE *denergyddelta,FILE *surfacetwist,
 	      FILE *energydensity,double conv,int itmax,
-	      int mpt,double rate)
+	      int mpt,double rate0)
 {
   int npoints = mpt;
   int last_npoints = mpt;
@@ -523,15 +553,14 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   double *rf_,*integrand1,*integrand2;
   double initialSlope;
   double E;
+  double *dEdx, *lastdEdx;
   double beta = 0.7;
   double Elast = -1e100; // a really large, negative number to start with
-  double dEdR, dEdeta,dEddelta;
-  double lastdEdR,lastdEdeta,lastdEddelta;
   double min_rate = 1e3*conv;
-  double last_rate = rate;
-  double lastR = p.R;
-  double lasteta = p.eta;
-  double lastdelta = p.delta;
+  double rate = rate0;
+  double lastR = 1e100;
+  double lasteta = 1e100;
+  double lastdelta = 1e100;
   int max_size = (mpt-1)*8+1;
   int count = 0;
   double frac_tol = 1e-6;
@@ -540,7 +569,10 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
   struct arr_ns ns;
   assign_ns(&ns);
-  
+  dEdx = vector(1,3);
+  lastdEdx = vector(1,3);  
+ 
+
   // malloc the relevant arrays
   allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
 		    npoints,&ns);
@@ -556,53 +588,49 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
   // using classical gradient descent, try to find minimum.
 
-  dEdR = dEdeta = dEddelta = lastdEdR = lastdEdeta = lastdEddelta = 1e100;
+
+  array_constant(1e100,dEdx,3);
+  arr_cp(lastdEdx,dEdx,3);
+
+  while (non_zero_array(dEdx,conv)) {
 
 
-  while (fabs(dEdR) > conv || fabs(dEdeta) > conv
-	  || fabs(dEddelta) > conv) {
+    single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		y_cp,r_cp,conv,itmax,&npoints,last_npoints,&ns,max_size);
 
-
-
-    single_calc(&E,&dEdR,&dEdeta,&dEddelta,&p,&c,&s,&y,&r,&rf_,&integrand1,
-		&integrand2,y_cp,r_cp,conv,itmax,&npoints,last_npoints,
-		&ns,max_size);
 
     last_npoints = npoints;
 
     fprintf(energy,"%d\t%.8e\n",count,E);
-    fprintf(denergydR,"%.8e\t%.8e\n",p.R,dEdR);
-    fprintf(denergydeta,"%.8e\t%.8e\n",p.eta,dEdeta);
-    fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEddelta);
+    fprintf(denergydR,"%.8e\t%.8e\n",p.R,dEdx[1]);
+    fprintf(denergydeta,"%.8e\t%.8e\n",p.eta,dEdx[2]);
+    fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEdx[3]);
     fprintf(surfacetwist,"%.8e\t%.8e\n",p.R,y[1][mpt]);
 
+    rate = backtracker(beta,rate0,E,dEdx,&p,r,y,r_cp,y_cp,
+		       conv,itmax,npoints,&ns,last_npoints,max_size,min_rate);
 
-    last_rate = backtracker(beta,rate,E,dEdR,dEdeta,dEddelta,&p,r,y,r_cp,y_cp,
-			    conv,itmax,npoints,&ns,last_npoints,max_size,min_rate);
-
-
+    update_p(&p,rate,dEdx);
 
     count += 1;
     //    printf("count = %d\n",count);
 
-    if (last_rate <= min_rate) {
+    if (rate <= min_rate) {
       //      printf("last rate <= min_rate, where min_rate = %e and last "
-      //     " rate = %e.\n",min_rate,last_rate);
+      //     " rate = %e.\n",min_rate,rate);
       if (fabs(lastR-p.R)<conv && fabs(lasteta-p.eta)<conv
 	  && fabs(lastdelta-p.delta)<conv && fabs(Elast-E)<conv) {
 	//printf("changes in R, eta, and delta are smaller than %e.\n",conv);
-	if(jumpmin(frac_tol,E,dEdR,dEdeta,dEddelta,p,c,s,y,r,rf_,
-		   integrand1,integrand2,y_cp,r_cp,conv,itmax,
-		   npoints,last_npoints,&ns,max_size)) break;
+	if(jumpmin(frac_tol,E,dEdx,p,c,s,y,r,rf_,integrand1,
+		   integrand2,y_cp,r_cp,conv,itmax,npoints,
+		   last_npoints,&ns,max_size)) break;
       }
     }
 
     lastR = p.R;
     lasteta = p.eta;
     lastdelta = p.delta;
-    lastdEdR = dEdR;
-    lastdEdeta = dEdeta;
-    lastdEddelta = dEddelta;
+    arr_cp(lastdEdx,dEdx,3);
     Elast = E;
 
     if (count == 10000) {
@@ -622,6 +650,9 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
 
   
+
+
+
   printf("count = %d\n",count);
   save_psi(psi,r,y,npoints);
   save_energydensity(energydensity,r,rf_,npoints);
@@ -632,28 +663,33 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 		npoints,&ns);
   free_matrix(y_cp,1,ns.nyj,1,max_size);
   free_vector(r_cp,1,max_size);
+  free_vector(dEdx,1,3);
+  free_vector(lastdEdx,1,3);
+
   
   return;
 }
 
-bool jumpmin(double frac_tol,double E,double dEdR,double dEdeta,
-	     double dEddelta,struct params p,double ***c,
-	     double **s,double **y,double *r,double *rf_,
+bool jumpmin(double frac_tol,double E,double *dEdx,struct params p,
+	     double ***c,double **s,double **y,double *r,double *rf_,
 	     double *integrand1,double *integrand2,double **y_cp,
 	     double *r_cp,double conv,int itmax,int npoints,
 	     int last_npoints,struct arr_ns *ns,int max_size)
 {
+  int i;
   double lastR = p.R;
   double lasteta = p.eta;
   double lastdelta = p.delta;
-  double lastdEdR = dEdR;
-  double lastdEdeta = dEdeta;
-  double lastdEddelta = dEddelta;
+  double *tmpdEdx;
   double Elast = E;
   double *rc;
   double **yc,**sc;
   double ***cc;
   double *rf_c, *integrand1c,*integrand2c;
+
+  tmpdEdx = vector(1,3);
+  arr_cp(tmpdEdx,dEdx,3);
+
 
   // create arrays to manipulate without affecting external arrays
   allocate_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
@@ -662,24 +698,22 @@ bool jumpmin(double frac_tol,double E,double dEdR,double dEdeta,
   copy_arrays(r,y,rc,yc,last_npoints);
 
 
-  p.R = lastR*(1-sign(dEdR)*frac_tol);
-  p.eta = lasteta*(1-sign(dEdeta)*1e-2*frac_tol);
-  p.delta = lastdelta*(1-sign(dEddelta)*1e-2*frac_tol);
+  p.R = lastR*(1-sign(dEdx[1])*frac_tol);
+  p.eta = lasteta*(1-sign(dEdx[2])*frac_tol);
+  p.delta = lastdelta*(1-sign(dEdx[3])*frac_tol);
 
-  single_calc(&E,&dEdR,&dEdeta,&dEddelta,&p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
+  single_calc(&E,tmpdEdx,&p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
 	      &integrand2c,y_cp,r_cp,conv,itmax,&npoints,last_npoints,
 	      ns,max_size);
 
   printf("lastE = %e, E = %e\n",Elast,E);
-  printf("lastdEdR = %e, dEdR = %e,",lastdEdR,dEdR);
-  printf("lastR = %e, R = %e\n",lastR,p.R);
-  printf("lastdEdeta = %e, dEdeta = %e,",lastdEdeta,dEdeta);
-  printf("lasteta = %e, eta = %e\n",lasteta,p.eta);
-  printf("lastdEddelta = %e, dEddelta = %e,",lastdEddelta,dEddelta);
-  printf("lastdelta = %e, delta = %e\n",lastdelta,p.delta);
+  for (i = 1; i <= 3; i++) {
+    printf("initial dEdx[%d] = %e, new dEdx[%d] = %e,",
+	   i,dEdx[i],i,tmpdEdx[i]);
+  }
   printf("\n\n");
-  if (dEdR*lastdEdR <=0 && dEdeta*lastdEdeta <= 0
-      && dEddelta*lastdEddelta <= 0) {
+  if (dEdx[1]*tmpdEdx[1] <=0 && dEdx[2]*tmpdEdx[2] <= 0
+      && dEdx[3]*tmpdEdx[3] <= 0) {
     printf("jumped over the minimimum (derivatives all changed signs).\n");
     return true;
   }
@@ -690,12 +724,12 @@ bool jumpmin(double frac_tol,double E,double dEdR,double dEdeta,
 
 
 
-void single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
-		 struct params *p,double ****c,double ***s,double ***y,
-		 double **r,double **rf_,double **integrand1,
-		 double **integrand2,double **y_cp,double *r_cp,
-		 double conv,int itmax,int *npoints,int last_npoints,
-		 struct arr_ns *ns,int max_size)
+void single_calc(double *E,double *dEdx,struct params *p,
+		 double ****c,double ***s,double ***y,double **r,
+		 double **rf_,double **integrand1,double **integrand2,
+		 double **y_cp,double *r_cp,double conv,int itmax,
+		 int *npoints,int last_npoints,struct arr_ns *ns,
+		 int max_size)
 {
   double h;
   bool successful_qromb=false;
@@ -751,8 +785,8 @@ void single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
     }
     
     // calculate energy, derivatives (see energy.c for code)
-    successful_qromb = energy_stuff(E,dEdR,dEdeta,dEddelta,p,*r,*y,
-				   *rf_,*integrand1,*integrand2,(*npoints));
+    successful_qromb = energy_stuff(E,dEdx,p,*r,*y,*rf_,
+				    *integrand1,*integrand2,(*npoints));
     
     
     (*npoints) = ((*npoints)-1)*2+1;
@@ -771,12 +805,13 @@ void single_calc(double *E,double *dEdR,double *dEdeta,double *dEddelta,
   return;
 }
   
+
   
-double backtracker(double beta,double rate,double E,double dEdR,double dEdeta,
-		   double dEddelta,struct params *p,double *r,double **y,
-		   double *r_cp, double **y_cp,double conv, int itmax,
-		   int npoints,struct arr_ns *ns,int last_npoints,int max_size,
-		   double min_rate)
+double backtracker(double beta,double rate,double E,double *dEdx,
+		   struct params *p,double *r,double **y,
+		   double *r_cp,double **y_cp,double conv,
+		   int itmax,int npoints,struct arr_ns *ns,
+		   int last_npoints,int max_size,double min_rate)
 // Implements the standard backtracking routine for gradient descent. If         //
 // x = (R,eta,delta)', E(x) is the energy, and grad = (ddR,ddeta,dddelta)', then //
 // searching for rate such that E(x-rate*grad(E(x)))>E(x)-rate/2*grad(E(x))^2 is //
@@ -789,9 +824,10 @@ double backtracker(double beta,double rate,double E,double dEdR,double dEdeta,
   double ***cc;
   double *rf_c, *integrand1c,*integrand2c;
   double Eold;
-  double tmpdEdR,tmpdEdeta,tmpdEddelta;
+  double *tmpdEdx;
   double gradEsq;
-  double rate0=rate;
+
+  tmpdEdx = vector(1,3); 
 
   // create arrays to manipulate without affecting external arrays
   allocate_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
@@ -800,16 +836,15 @@ double backtracker(double beta,double rate,double E,double dEdR,double dEdeta,
   copy_arrays(r,y,rc,yc,last_npoints);
 
   // compute the current value of the gradient of E squared
-  gradEsq = dEdR*dEdR+dEdeta*dEdeta+dEddelta*dEddelta;
+  gradEsq = vector_norm(dEdx,3);
 
   // save the current value of E in Eold
   Eold = E;
 
   // calculate the next values of R, eta, and delta, if the rate was just the normal
   // rate input to this function.
-  p->R = p->R-rate*dEdR;
-  p->eta = p->eta-rate*dEdeta;
-  p->delta = p->delta-rate*dEddelta;    
+
+  update_p(p,rate,dEdx);
   
   // calculate E, given the new values of R,eta, and delta
 
@@ -817,54 +852,54 @@ double backtracker(double beta,double rate,double E,double dEdR,double dEdeta,
   // so can just use temp variables to calculate them
 
 
-  tmpdEdR = tmpdEdeta = tmpdEddelta = 0;
 
+  array_constant(0,tmpdEdx,3);
   // setting derivatives to zero flags single_calc function to not waste time
   // calculating them.
 
-
-  single_calc(&E,&tmpdEdR,&tmpdEdeta,&tmpdEddelta,p,&cc,&sc,&yc,&rc,
-	      &rf_c,&integrand1c,&integrand2c,y_cp,r_cp,conv,itmax,
-	      &npoints,last_npoints,ns,max_size);
+  single_calc(&E,tmpdEdx,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
+	      &integrand2c,y_cp,r_cp,conv,itmax,&npoints,
+	      last_npoints,ns,max_size);
 
   last_npoints = npoints;
 
 
-  p->R = p->R+rate*dEdR;
-  p->eta = p->eta+rate*dEdeta;
-  p->delta = p->delta+rate*dEddelta;    
 
+  reset_p(p,rate,dEdx);
 
   while (E>=Eold-0.5*rate*gradEsq && rate > min_rate) {
 
     rate *=beta;
 
-    p->R = p->R-rate*dEdR;
-    p->eta = p->eta-rate*dEdeta;
-    p->delta = p->delta-rate*dEddelta;    
-
-    single_calc(&E,&tmpdEdR,&tmpdEdeta,&tmpdEddelta,p,&cc,&sc,&yc,&rc,
-		&rf_c,&integrand1c,&integrand2c,y_cp,r_cp,conv,itmax,
-		&npoints,last_npoints,ns,max_size);
+    update_p(p,rate,dEdx);
+    single_calc(&E,tmpdEdx,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
+		&integrand2c,y_cp,r_cp,conv,itmax,&npoints,
+		last_npoints,ns,max_size);
 
     last_npoints = npoints;
 
-    p->R = p->R+rate*dEdR;
-    p->eta = p->eta+rate*dEdeta;
-    p->delta = p->delta+rate*dEddelta;
-
+    reset_p(p,rate,dEdx);
 
   }
 
-  p->R = p->R-rate*dEdR;
-  p->eta = p->eta-rate*dEdeta;
-  p->delta = p->delta-rate*dEddelta;    
-
-  //  if (rate0 != rate) printf("rate = %e, rate0 = %e\n",rate,rate0);
-
   free_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
-
+  free_vector(tmpdEdx,1,3);
   return rate;
+}
+/*
+double beta_k()
+{
+  double beta;
+  beta = (dEdR-lastdEdR)*dEdR+(dEdeta-lastdEdeta)*dEdeta+(dEddelta-lastdEddelta)*dEddelta;
+  beta = dEdR*dEdR+dEdeta*dEdeta+dEddelta*dEddelta;
+
+
 }
 
 
+void set_p_k()
+{
+
+
+}
+*/
