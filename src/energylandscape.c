@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include "nrutil.h"
 #include "headerfile.h"
+#include <time.h>
 
 int sign(double x) {
   return (x > 0) - (x < 0);
@@ -534,6 +535,8 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   int max_size = (mpt-1)*8+1;
   int count = 0;
   double frac_tol = 1e-6;
+  clock_t begin = clock();
+  clock_t end;
 
   struct arr_ns ns;
   assign_ns(&ns);
@@ -557,7 +560,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
 
   while (fabs(dEdR) > conv || fabs(dEdeta) > conv
-	 || fabs(dEddelta) > conv) {
+	  || fabs(dEddelta) > conv) {
 
 
 
@@ -577,8 +580,10 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     last_rate = backtracker(beta,rate,E,dEdR,dEdeta,dEddelta,&p,r,y,r_cp,y_cp,
 			    conv,itmax,npoints,&ns,last_npoints,max_size,min_rate);
 
+
+
     count += 1;
-    //printf("count = %d\n",count);
+    //    printf("count = %d\n",count);
 
     if (last_rate <= min_rate) {
       //      printf("last rate <= min_rate, where min_rate = %e and last "
@@ -600,12 +605,22 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     lastdEddelta = dEddelta;
     Elast = E;
 
+    if (count == 10000) {
+      end = clock();
+      printf("Elapsed after %d: %lf seconds\n",count,
+	     (double)(end - begin) / CLOCKS_PER_SEC);
+      exit(1);
+    }
+
     if (p.R <= 0) {
       printf("R is being driven to negative values, R = %e!\n",p.R);
       p.R = 1e-6;
     }
       
   }
+
+
+
   
   printf("count = %d\n",count);
   save_psi(psi,r,y,npoints);

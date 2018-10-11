@@ -205,7 +205,7 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
   // some tolerance tolblabla), then the lack of convergence can just
   // be ignored.
   
-  tol2233b1 = E_R(p,r,y,0,mpt)*p->R*p->R/2.0*tol0;
+  tol2233b1 = fabs(E_R(p,r,y,0,mpt)*p->R*p->R/2.0*tol0);
   compute_rf2233b1(p,r,y,rf_,mpt);
   integration_2233b1 = qromb(r,rf_,mpt,tol2233b1,&failure);
 
@@ -224,7 +224,7 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
     else if (fabs(p->eta) <= tol0) {
       *dEdeta = 0;
       
-      tol2 = derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0;
+      tol2 = fabs(derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0);
       compute_integrand2(p,r,y,integrand2,mpt);
       integration2 = qromb(r,integrand2,mpt,tol2,&failure);
       
@@ -247,7 +247,7 @@ bool energy_stuff(double *E, double *dEdR,double *dEdeta,
 	return false;
       }
       
-      tol2 = derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0;
+      tol2 = fabs(derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0);
       compute_integrand2(p,r,y,integrand2,mpt);
       integration2 = qromb(r,integrand2,mpt,tol2,&failure);
       
