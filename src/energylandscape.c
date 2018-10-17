@@ -1,3 +1,12 @@
+/* Functions for computing phase field crystal model of fibrils.
+
+
+ */
+
+
+
+
+
 #include <stdio.h>
 #include <math.h>
 #include <string.h>
@@ -7,321 +16,114 @@
 #include "headerfile.h"
 #include <time.h>
 
-int sign(double x) {
-  return (x > 0) - (x < 0);
-}
 
-void arr_cp(double *acp, double *a,int length)
-{
-  int i;
-  for (i = 1; i <= length; i++) acp[i] = a[i];
-  return;
-}
+// energy calculation function (links this file to energy.c file). //
 
-double vector_norm(double *a,int length)
-{
-  int i;
-  double sum = 0;
-  for (i = 1; i <= length; i++) sum += a[i]*a[i];
-
-  return sum;
-}
-
-void array_constant(double constant,double *a,int length)
-{
-  int i;
-  for (i = 1; i <= length; i++) a[i] = constant;
-  return;
-}
-
-bool non_zero_array(double *dEdx,double conv)
-{
-  return (fabs(dEdx[1]) > conv || fabs(dEdx[2]) > conv
-	  || fabs(dEdx[3]) > conv);
-}
-
-void update_p(struct params *p,double rate,double *arrchange)
-{
-  p->R -= rate*arrchange[1];
-  p->eta -= rate*arrchange[2];
-  p->delta -= rate*arrchange[3];
-  return;
-}
-
-void reset_p(struct params *p,double rate,double *arrchange)
-{
-  p->R += rate*arrchange[1];
-  p->eta += rate*arrchange[2];
-  p->delta += rate*arrchange[3];
-  return;
-}
-
-void assign_ns(struct arr_ns *ns)
-{
-  int ne = 2;
-  int nb = 1;
-  ns->ne = ne;
-  ns->nb = nb;
-  ns->nsi = ne;
-  ns->nsj = 2*ne+1;
-  ns->nyj = ne;
-  ns->nci = ne;
-  ns->ncj = ne-nb+1;
-  return;
-}
-void write_failure(char *err_type,double *r, double **y,double *rf_,
-		   int rlength,struct params p);
-
-
-void linearGuess(double *r, double **y, double initialSlope,
-		 double h,int mpt);
-void propagate_r(double *r, double h,int mpt);
-void save_psi(FILE *psi,double *r, double **y,int mpt);
-void save_energydensity(FILE *energydensity,double *r, double *rf_,int mpt);
-void saveEnergy(FILE *energy, double R, double E, double derivative,
-		double observable);
-void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p);
-void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
-		 int last_npoints);
-void interpolate_array(double *r,double **y,double *r_cp,
-		       double **y_cp,int npoints);
-void quick_interp(double *xcp,double **ycp,double x,double **y,int i);
-void setup_var_pointers(double **var, double *var0,double **dEdvar,
-			double **dEdvarlast,char scan_what[],
-			struct params *p,double *dEdx,double *lastdEdx);
-
-void allocate_matrices(double ****c,double ***s,double ***y,double **r,
-		       double **rf_, double **integrand1,
-		       double **integrand2,int npoints,struct arr_ns *ns);
-void free_matrices(double ****c,double ***s,double ***y,double **r,
-		   double **rf_, double **integrand1,
-		   double **integrand2,int npoints,struct arr_ns *ns);
 void single_calc(double *E,double *dEdx,struct params *p,
 		 double ****c,double ***s,double ***y,double **r,
 		 double **rf_,double **integrand1,double **integrand2,
 		 double **y_cp,double *r_cp,double conv,int itmax,
 		 int *npoints,int last_npoints,struct arr_ns *ns,
 		 int max_size);
-double backtracker(double beta,double rate,double E,double *dEdx,
-		   struct params *p,double *r,double **y,double *r_cp,
-		   double **y_cp,double conv, int itmax,int npoints,
-		   struct arr_ns *ns,int last_npoints,int max_size,
-		   double min_rate);
+
+
+
+// conjugate gradient descent tools. //
+
+void update_p(struct params *p,double rate,double *arrchange);
+
+void reset_p(struct params *p,double rate,double *arrchange);
+
+double polak_betak(double *dEdx,double *lastdEdx);
+
+void set_dk(double *dk,double *dEdx,double betak);
+
+bool strong_wolfe(double E,double E_new,double rate,double *dEdx,
+		  double *dEdx_new,double *dk, double rho,double sigma);
+
+double backtracker(double st,double rate,double E,double *dEdx,
+		   double *dk,struct params *p,double *r,double **y,
+		   double *r_cp,double **y_cp,double conv,
+		   int itmax,int npoints,struct arr_ns *ns,
+		   int last_npoints,int max_size,double min_rate);
+
 bool jumpmin(double frac_tol,double E,double *dEdR,struct params p,
 	     double ***c,double **s,double **y,double *r,double *rf_,
 	     double *integrand1,double *integrand2,double **y_cp,
 	     double *r_cp,double conv,int itmax,int npoints,
 	     int last_npoints,struct arr_ns *ns,int max_size);
 
-void linearGuess(double *r, double **y, double initialSlope,
-		 double h,int mpt)
-{
-  int k;
-  
-  for (k=1;k <=mpt; k++) { // initial guess!
-    r[k] = (k-1)*h;
-    y[1][k] = initialSlope*r[k]; // y1 is psi
-    y[2][k] = initialSlope; // y2 is psi'!!!!!!!!!!!!!!!!!!
-  }
-  return;
-}
 
-void propagate_r(double *r, double h,int mpt)
-{
-  int k;
-  for (k=1;k <=mpt; k++) r[k] = (k-1)*h; // only change r since psi, psi' are stored from last loop
-  return;
-}
 
-void save_psi(FILE *psi,double *r, double **y,int mpt)
-{
-  int i;
+// file I/O functions.
 
-  for (i = 1; i <= mpt; i++) {
-    fprintf(psi,"%10.8e\t%10.8e\t%10.8e\n",r[i],y[1][i],y[2][i]);
-  }
-  printf("psi(R) = %1.2e\n",y[1][mpt]);
-  return;
-}
+void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p);
 
-void save_energydensity(FILE *energydensity,double *r, double *rf_,int mpt)
-{
-  int i;
+void write_failure(char *err_type,double *r, double **y,double *rf_,
+		   int rlength,struct params p);
 
-  for (i = 1; i <= mpt; i++) {
-    fprintf(energydensity,"%10.8e\t%10.8e\n",r[i],rf_[i]);
-  }
-  return;
-}
+void save_psi(FILE *psi,double *r, double **y,int mpt);
+
+void save_energydensity(FILE *energydensity,double *r, double *rf_,int mpt);
 
 void saveEnergy(FILE *energy, double R, double E, double derivative,
-		double observable)
-{
-  fprintf(energy,"%10.8e\t%10.8e\t%10.8e\t%10.8e\n",R,E,
-	  derivative,observable);
-  return;
-}
-
-void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p)
-{
-  snprintf(f_err,f_err_size,"data/%s_psivsr_%1.4e_%1.4e_%1.4e_"
-	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",err_type,
-	   p.K33,p.k24,p.Lambda,p.d0,p.omega,p.R,p.eta,
-	   p.delta,p.gamma_s);
-  return;
-}
+		double observable);
 
 
-void copy_arrays(double *r,double **y,double *r_cp,double **y_cp,
-		 int last_npoints)
-{
-  int i;
 
-  for (i = 1; i <=last_npoints; i++) {
-    y_cp[1][i] = y[1][i];
-    y_cp[2][i] = y[2][i];
-    r_cp[i] = r[i];
-  }
+// array and utility functions which are specific to algorithms being used. //
 
-  return;
-}
+void assign_ns(struct arr_ns *ns);
 
-void interpolate_array(double *r,double **y,double *r_cp,
-		       double **y_cp,int npoints)
-{
-  int i;
-  double dy;
-
-  for (i = 1; i <=npoints; i++) quick_interp(r_cp,y_cp,r[i],y,i);
-  return;
-}
-
-void quick_interp(double *xcp,double **ycp,double x,double **y,int i)
-// Given two points of ycp[1][:] (y11cp,x1cp) and y(12cp,x2cp), //
-// and two points of ycp[2][:] (y21cp,x1cp) and (y22cp,x2cp),   //
-// interpolate to determine the value of y between the two
-
-{
-  if (i%2 != 0) {
-    y[1][i] = ycp[1][(i-1)/2+1];
-    y[2][i] = ycp[2][(i-1)/2+1];
-  }
-  else {
-    double slope_1, slope_2;
-    slope_1 = (ycp[1][i/2+1]-ycp[1][i/2])/(xcp[i/2+1]-xcp[i/2]);
-    slope_2 = (ycp[2][i/2+1]-ycp[2][i/2])/(xcp[i/2+1]-xcp[i/2]);
-
-    y[1][i] = slope_1*(x-xcp[i/2])+ycp[1][i/2];
-    y[2][i] = slope_2*(x-xcp[i/2])+ycp[2][i/2];
-  }
-
-  return;
-}
-
-void setup_var_pointers(double **var, double *var0,double **dEdvar,
-			double **dEdvarlast,char scan_what[],
-			struct params *p,double *dEdx,double *lastdEdx)
-// convenient way to make a variables (ending in var) that have the  //
-// same addresses as whichever parameter that is specified by        //
-// scan_what.
-{
-
-  if (strcmp(scan_what,"R")==0) {
-    printf("R!\n");
-    *var = &p->R;
-    *var0 = p->R;
-    *dEdvar = &dEdx[1];
-    *dEdvarlast = &lastdEdx[1];
-  }
-  else if (strcmp(scan_what,"eta")==0) {
-    printf("eta!\n");
-    *var = &p->eta;
-    *var0 = p->eta;
-    *dEdvar = &dEdx[2];
-    *dEdvarlast = &lastdEdx[2];
-  }
-  else if (strcmp(scan_what,"delta")==0) {
-    printf("delta!\n");
-    *var = &p->delta;
-    *var0 = p->delta;
-    *dEdvar = &dEdx[3];
-    *dEdvarlast = &lastdEdx[3];
-  }
-  else {
-    printf("Need either R, eta, or delta as argv[n] input."
-	   "Exiting to system.\n");
-    exit(1);
-  }
-  return;
-}
-
-
-void write_failure(char *err_type,double *r, double **y,double *rf_,int rlength,struct params p)
-{
-  int i;
-  FILE *broken;
-  int f_err_size = 200;
-  char f_err[f_err_size];
-
-  make_f_err(f_err,err_type,f_err_size,p);
-
-  if (strcmp(err_type,"QROMB")==0) {
-      printf("failed to integrate at npoints = %d, with R = %e.\n",rlength,r[rlength]);
-      printf("saving psi(r) shape, and exiting to system.\n");
-    }
-  broken = fopen(f_err,"w");
-
-
-  for (i = 1; i<=rlength; i++) {
-    fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_[i]);
-  }
-  fclose(broken);
-  exit(1);
-  return;
-}
-
-void resize_all_arrays(double ****c,double ***s,double ***y,double **r,
-		       double **rf_, double **integrand1,
-		       double **integrand2,int npoints,struct arr_ns *ns)
-{
-  int last_npoints;
-
-  last_npoints = (npoints-1)/2+1;
-  free_matrices(c,s,y,r,rf_,integrand1,integrand2,last_npoints,ns);
-  allocate_matrices(c,s,y,r,rf_,integrand1,integrand2,npoints,ns);
-
-
-  return;
-}
+void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
+		       double **rf_,double **integrand1,double **integrand2,
+		       double **y_cp,double *r_cp,int npoints,int last_npoints,
+		       struct arr_ns *ns);
 
 void allocate_matrices(double ****c,double ***s,double ***y,double **r,
 		       double **rf_, double **integrand1,
-		       double **integrand2,int npoints,struct arr_ns *ns)
-{
-  *y = matrix(1,ns->nyj,1,npoints);
-  *s = matrix(1,ns->nsi,1,ns->nsj);
-  *c = f3tensor(1,ns->nci,1,ns->ncj,1,npoints+1);
-  *r = vector(1,npoints);
-  *rf_ = vector(1,npoints);
-  *integrand1 = vector(1,npoints);
-  *integrand2 = vector(1,npoints);
-  return;
-}
+		       double **integrand2,int npoints,struct arr_ns *ns);
 
 void free_matrices(double ****c,double ***s,double ***y,double **r,
 		   double **rf_, double **integrand1,
-		   double **integrand2,int npoints,struct arr_ns *ns)
-{
+		   double **integrand2,int npoints,struct arr_ns *ns);
 
-  free_f3tensor(*c,1,ns->nci,1,ns->ncj,1,npoints+1);
-  free_matrix(*s,1,ns->nsi,1,ns->nsj);
-  free_matrix(*y,1,ns->nyj,1,npoints);
-  free_vector(*r,1,npoints);
-  free_vector(*rf_,1,npoints);
-  free_vector(*integrand1,1,npoints);
-  free_vector(*integrand2,1,npoints);
-  return;
-}
+void linearGuess(double *r, double **y, double initialSlope,
+		 double h,int mpt);
+
+void propagate_r(double *r, double h,int mpt);
+
+void setup_var_pointers(double **var, double *var0,double **dEdvar,
+			double **dEdvarlast,char scan_what[],
+			struct params *p,double *dEdx,double *lastdEdx);
+
+
+
+// array interpolation utility functions. //
+
+void interpolate_array(double *r,double **y,double *r_cp,
+		       double **y_cp,int npoints);
+
+void quick_interp(double *xcp,double **ycp,double x,double **y,int i);
+
+
+// utility functions that are not specific to algorithms being used. //
+
+int sign(double x);
+
+void arr_cp(double *acp, double *a,int length);
+
+double vector_norm(double *a,int length);
+
+void array_constant(double constant,double *a,int length);
+
+bool non_zero_array(double *dEdx,double conv);
+
+void copy_2_arrays(double *r,double **y,double *r_cp,double **y_cp,
+		   int last_npoints);
+
+
+
 
 
 void scanE(struct params p,FILE *energy,FILE *psi,double conv,
@@ -553,14 +355,15 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   double *rf_,*integrand1,*integrand2;
   double initialSlope;
   double E;
-  double *dEdx, *lastdEdx;
-  double beta = 0.7;
+  double *dEdx, *lastdEdx, *direction;
+  double st = 0.7;
   double Elast = -1e100; // a really large, negative number to start with
   double min_rate = 1e3*conv;
   double rate = rate0;
   double lastR = 1e100;
   double lasteta = 1e100;
   double lastdelta = 1e100;
+  double betak;
   int max_size = (mpt-1)*8+1;
   int count = 0;
   double frac_tol = 1e-6;
@@ -570,8 +373,8 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   struct arr_ns ns;
   assign_ns(&ns);
   dEdx = vector(1,3);
-  lastdEdx = vector(1,3);  
- 
+  lastdEdx = vector(1,3);
+  direction = vector(1,3);
 
   // malloc the relevant arrays
   allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
@@ -591,6 +394,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
   array_constant(1e100,dEdx,3);
   arr_cp(lastdEdx,dEdx,3);
+  array_constant(0,direction,3);
 
 
 
@@ -599,6 +403,10 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
     single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
 		y_cp,r_cp,conv,itmax,&npoints,last_npoints,&ns,max_size);
+
+    betak = polak_betak(dEdx,lastdEdx);
+
+    set_dk(direction,dEdx,betak);
 
 
     last_npoints = npoints;
@@ -609,10 +417,10 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEdx[3]);
     fprintf(surfacetwist,"%.8e\t%.8e\n",p.R,y[1][mpt]);
 
-    rate = backtracker(beta,rate0,E,dEdx,&p,r,y,r_cp,y_cp,
+    rate = backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
 		       conv,itmax,npoints,&ns,last_npoints,max_size,min_rate);
 
-    update_p(&p,rate,dEdx);
+    update_p(&p,rate,direction);
     count += 1;
     //    printf("count = %d\n",count);
 
@@ -666,9 +474,213 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   free_vector(r_cp,1,max_size);
   free_vector(dEdx,1,3);
   free_vector(lastdEdx,1,3);
-
+  free_vector(direction,1,3);
   
   return;
+}
+
+void single_calc(double *E,double *dEdx,struct params *p,
+		 double ****c,double ***s,double ***y,double **r,
+		 double **rf_,double **integrand1,double **integrand2,
+		 double **y_cp,double *r_cp,double conv,int itmax,
+		 int *npoints,int last_npoints,struct arr_ns *ns,
+		 int max_size)
+{
+  double h;
+  bool successful_qromb=false;
+  bool successful_solvde;
+  int solvde_count;
+  double slopeguess = M_PI/(4.0*p->R);
+  double slowc = 1.0;
+  double scalv[2+1];
+
+  scalv[1] = .1;    // guess for magnitude of the psi values
+  scalv[2] = 4.0;   // guess for magnitude of the psi' values
+
+  do {
+    h = p->R/((*npoints)-1);
+    
+
+    if ((*npoints) != last_npoints) {
+
+      // if the first calculation for the current variable values is unsuccessful
+      printf("interpolating at R = %e, eta = %e, delta = %e...\n",
+	     p->R,p->eta,p->delta);
+
+      resize_and_interp(h,c,s,y,r,rf_,integrand1,integrand2,y_cp,r_cp,*npoints,
+			last_npoints,ns);
+
+      printf("done interpolating.\n");      
+    }
+    
+    // if last loop was successful with last_xpoint sized arrays, then just
+    // use last y values as initial guess
+    else propagate_r(*r,h,(*npoints));
+    
+    successful_solvde = solvde(itmax,conv,slowc,scalv,
+			       ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
+    //                                                            psi' curves, 
+      
+
+
+    if (!successful_solvde) {
+      printf("solvde convergence failed, trying one more time with a "
+	     "linear guess and a final twist angle value of pi/4");
+      linearGuess(*r,*y,slopeguess,h,(*npoints));
+      successful_solvde = solvde(itmax,conv,slowc,scalv,
+				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
+      //                                                            psi' curves, 
+    }
+    if (!successful_solvde) {
+      write_failure("SOLVDE",*r,*y,*rf_,*npoints,*p);
+      return;
+    }
+    
+    // calculate energy, derivatives (see energy.c for code)
+    successful_qromb = energy_stuff(E,dEdx,p,*r,*y,*rf_,
+				    *integrand1,*integrand2,(*npoints));
+    
+    
+    (*npoints) = ((*npoints)-1)*2+1;
+    
+  }
+  while (!successful_qromb && (*npoints) <= max_size);
+
+
+
+  (*npoints) = ((*npoints)-1)/2+1;
+
+
+  if (!successful_qromb) { // writes the psi(r), r*f, etc, and exits
+    write_failure("QROMB",*r,*y,*rf_,*npoints,*p);
+  }
+
+  return;
+}
+
+
+void update_p(struct params *p,double rate,double *arrchange)
+{
+  p->R -= rate*arrchange[1];
+  p->eta -= rate*arrchange[2];
+  p->delta -= rate*arrchange[3];
+  return;
+}
+
+void reset_p(struct params *p,double rate,double *arrchange)
+{
+  p->R += rate*arrchange[1];
+  p->eta += rate*arrchange[2];
+  p->delta += rate*arrchange[3];
+  return;
+}
+
+
+double polak_betak(double *dEdx,double *lastdEdx)
+// Sets the magnitude of the directional change from the exact gradient //
+// in the conjugate gradient method according to Polak and Ribiere (see //
+// e.g. Numerical Recipes for discussion). So if d_k is the new vector  //
+// for the direction of the next step, d_k = -dEdx+betak*d_{k-1}. //
+{
+  double betak=0;
+  int i;
+
+  for (i = 1; i <= 3; i++) betak += (dEdx[i]-lastdEdx[i])*dEdx[i];
+
+  betak /= vector_norm(lastdEdx,3);
+
+  return betak;
+}
+
+
+void set_dk(double *dk,double *dEdx,double betak)
+{
+
+  dk[1] = -dEdx[1]+betak*dk[1];
+  dk[2] = -dEdx[2]+betak*dk[2];
+  dk[3] = -dEdx[3]+betak*dk[3];
+
+  return;
+}
+  
+bool strong_wolfe(double E,double E_new,double rate,double *dEdx,
+		  double *dEdx_new,double *dk, double rho,double sigma)
+{
+  int i;
+  double gkTdk = 0;
+  double gkTdk_new = 0;
+  for (i = 1; i <= 3; i++) {
+    gkTdk += dEdx[i]*dk[i];
+    gkTdk_new += dEdx_new[i]*dk[i];
+  }
+
+  bool cond1 = (E_new-E <= rho*rate*gkTdk);
+  bool cond2 = (fabs(gkTdk_new) <= -sigma*gkTdk);
+
+  return cond1 && cond2;
+}
+  
+double backtracker(double st,double rate,double E,double *dEdx,
+		   double *dk,struct params *p,double *r,double **y,
+		   double *r_cp,double **y_cp,double conv,
+		   int itmax,int npoints,struct arr_ns *ns,
+		   int last_npoints,int max_size,double min_rate)
+// Using the strong Wolfe conditions to determine what the rate //
+// parameter should be. //
+{
+
+  double *rc;
+  double **yc,**sc;
+  double ***cc;
+  double *rf_c, *integrand1c,*integrand2c;
+  double E_new;
+  double *dEdx_new;
+  double rho = 0.01;
+  double sigma = 0.1;
+
+  dEdx_new = vector(1,3);
+  arr_cp(dEdx_new,dEdx,3);
+
+  // create arrays to manipulate without affecting external arrays
+  allocate_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
+
+  // copy the external r,y arrays into the internal rc,yc arrays
+  copy_2_arrays(r,y,rc,yc,last_npoints);
+
+  // calculate the next values of R, eta, and delta, if the rate was just the normal
+  // rate input to this function.
+
+  update_p(p,rate,dk);
+  
+  // calculate E, given the new values of R,eta, and delta
+
+  single_calc(&E_new,dEdx_new,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
+	      &integrand2c,y_cp,r_cp,conv,itmax,&npoints,
+	      last_npoints,ns,max_size);
+
+  last_npoints = npoints;
+
+  reset_p(p,rate,dk);
+
+  while (strong_wolfe(E,E_new,rate,dEdx,dEdx_new,dk,rho,sigma)
+	 && rate > min_rate) {
+
+    rate *=st;
+
+    update_p(p,rate,dk);
+    single_calc(&E_new,dEdx_new,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
+		&integrand2c,y_cp,r_cp,conv,itmax,&npoints,
+		last_npoints,ns,max_size);
+
+    last_npoints = npoints;
+
+    reset_p(p,rate,dk);
+
+  }
+
+  free_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
+  free_vector(dEdx_new,1,3);
+  return rate;
 }
 
 bool jumpmin(double frac_tol,double E,double *dEdx,struct params p,
@@ -696,7 +708,7 @@ bool jumpmin(double frac_tol,double E,double *dEdx,struct params p,
   allocate_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
 
   // copy the external r,y arrays into the internal rc,yc arrays
-  copy_arrays(r,y,rc,yc,last_npoints);
+  copy_2_arrays(r,y,rc,yc,last_npoints);
 
 
   p.R = lastR*(1-sign(dEdx[1])*frac_tol);
@@ -724,185 +736,264 @@ bool jumpmin(double frac_tol,double E,double *dEdx,struct params p,
 }
 
 
-
-void single_calc(double *E,double *dEdx,struct params *p,
-		 double ****c,double ***s,double ***y,double **r,
-		 double **rf_,double **integrand1,double **integrand2,
-		 double **y_cp,double *r_cp,double conv,int itmax,
-		 int *npoints,int last_npoints,struct arr_ns *ns,
-		 int max_size)
+void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p)
 {
-  double h;
-  bool successful_qromb=false;
-  bool successful_solvde;
-  int solvde_count;
-  double slopeguess = M_PI/(4.0*p->R);
-  double slowc = 1.0;
-  double scalv[2+1];
+  snprintf(f_err,f_err_size,"data/%s_psivsr_%1.4e_%1.4e_%1.4e_"
+	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",err_type,
+	   p.K33,p.k24,p.Lambda,p.d0,p.omega,p.R,p.eta,
+	   p.delta,p.gamma_s);
+  return;
+}
 
-  scalv[1] = .1;    // guess for magnitude of the psi values
-  scalv[2] = 4.0;   // guess for magnitude of the psi' values
+void write_failure(char *err_type,double *r, double **y,double *rf_,int rlength,struct params p)
+{
+  int i;
+  FILE *broken;
+  int f_err_size = 200;
+  char f_err[f_err_size];
 
-  do {
-    h = p->R/((*npoints)-1);
-    
-    // only executes if the first calculation for the current variable values is unsuccessful
-    if ((*npoints) != last_npoints) {
-      printf("interpolating at R = %e, eta = %e, delta = %e...\n",
-	     p->R,p->eta,p->delta);
-      copy_arrays(*r,*y,r_cp,y_cp,last_npoints); // copy arrays r and y into r_cp and y_cp
-      free_matrices(c,s,y,r,rf_,integrand1,integrand2, // resize all arrays to new npoints size
-		    last_npoints,ns);
-      allocate_matrices(c,s,y,r,rf_,integrand1,integrand2,
-			(*npoints),ns);
-      propagate_r(*r,h,(*npoints));
-      interpolate_array(*r,*y,r_cp,y_cp,(*npoints)); // interpolate old y values (now stored in y_cp)
-      // so that the new y array has an initial guess for solvde.
-      printf("done interpolating.\n");
-      
+  make_f_err(f_err,err_type,f_err_size,p);
+
+  if (strcmp(err_type,"QROMB")==0) {
+      printf("failed to integrate at npoints = %d, with R = %e.\n",rlength,r[rlength]);
+      printf("saving psi(r) shape, and exiting to system.\n");
     }
-    
-    // if last loop was successful with last_xpoint sized arrays, then just
-    // use last y values as initial guess
-    else propagate_r(*r,h,(*npoints));
-    
-    successful_solvde = solvde(itmax,conv,slowc,scalv,
-			       ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
-      //                                                            psi' curves, 
-      
+  broken = fopen(f_err,"w");
 
 
-    if (!successful_solvde) {
-      printf("solvde convergence failed, trying one more time with a "
-	     "linear guess and a final twist angle value of pi/4");
-      linearGuess(*r,*y,slopeguess,h,(*npoints));
-      successful_solvde = solvde(itmax,conv,slowc,scalv,
-				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
-      //                                                            psi' curves, 
-    }
-    if (!successful_solvde) {
-      write_failure("SOLVDE",*r,*y,*rf_,*npoints,*p);
-    return;
-    }
-    
-    // calculate energy, derivatives (see energy.c for code)
-    successful_qromb = energy_stuff(E,dEdx,p,*r,*y,*rf_,
-				    *integrand1,*integrand2,(*npoints));
-    
-    
-    (*npoints) = ((*npoints)-1)*2+1;
-    
+  for (i = 1; i<=rlength; i++) {
+    fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_[i]);
   }
-  while (!successful_qromb && (*npoints) <= max_size);
+  fclose(broken);
+  exit(1);
+  return;
+}
 
-  (*npoints) = ((*npoints)-1)/2+1;
+void save_psi(FILE *psi,double *r, double **y,int mpt)
+{
+  int i;
+
+  for (i = 1; i <= mpt; i++) {
+    fprintf(psi,"%10.8e\t%10.8e\t%10.8e\n",r[i],y[1][i],y[2][i]);
+  }
+  printf("psi(R) = %1.2e\n",y[1][mpt]);
+  return;
+}
+
+void save_energydensity(FILE *energydensity,double *r, double *rf_,int mpt)
+{
+  int i;
+
+  for (i = 1; i <= mpt; i++) {
+    fprintf(energydensity,"%10.8e\t%10.8e\n",r[i],rf_[i]);
+  }
+  return;
+}
+
+void saveEnergy(FILE *energy, double R, double E, double derivative,
+		double observable)
+{
+  fprintf(energy,"%10.8e\t%10.8e\t%10.8e\t%10.8e\n",R,E,
+	  derivative,observable);
+  return;
+}
+
+void interpolate_array(double *r,double **y,double *r_cp,
+		       double **y_cp,int npoints)
+{
+  int i;
+  double dy;
+
+  for (i = 1; i <=npoints; i++) quick_interp(r_cp,y_cp,r[i],y,i);
+  return;
+}
 
 
+void assign_ns(struct arr_ns *ns)
+{
+  int ne = 2;
+  int nb = 1;
+  ns->ne = ne;
+  ns->nb = nb;
+  ns->nsi = ne;
+  ns->nsj = 2*ne+1;
+  ns->nyj = ne;
+  ns->nci = ne;
+  ns->ncj = ne-nb+1;
+  return;
+}
 
-  if (!successful_qromb) { // writes the psi(r), r*f, etc, and exits
-    write_failure("QROMB",*r,*y,*rf_,*npoints,*p);
+void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
+		       double **rf_,double **integrand1,double **integrand2,
+		       double **y_cp,double *r_cp,int npoints,int last_npoints,
+		       struct arr_ns *ns)
+{
+  copy_2_arrays(*r,*y,r_cp,y_cp,last_npoints); // copy arrays r and y into r_cp and y_cp
+  free_matrices(c,s,y,r,rf_,integrand1,integrand2, // resize all arrays to new npoints size
+		last_npoints,ns);
+  allocate_matrices(c,s,y,r,rf_,integrand1,integrand2,
+		    npoints,ns);
+  propagate_r(*r,h,npoints);
+  interpolate_array(*r,*y,r_cp,y_cp,npoints); // interpolate old y values (now stored in y_cp)
+  //                                             so that the new y array has an initial guess
+  //                                             for solvde.
+  return;
+}
+
+void allocate_matrices(double ****c,double ***s,double ***y,double **r,
+		       double **rf_, double **integrand1,
+		       double **integrand2,int npoints,struct arr_ns *ns)
+{
+  *y = matrix(1,ns->nyj,1,npoints);
+  *s = matrix(1,ns->nsi,1,ns->nsj);
+  *c = f3tensor(1,ns->nci,1,ns->ncj,1,npoints+1);
+  *r = vector(1,npoints);
+  *rf_ = vector(1,npoints);
+  *integrand1 = vector(1,npoints);
+  *integrand2 = vector(1,npoints);
+  return;
+}
+
+void free_matrices(double ****c,double ***s,double ***y,double **r,
+		   double **rf_, double **integrand1,
+		   double **integrand2,int npoints,struct arr_ns *ns)
+{
+
+  free_f3tensor(*c,1,ns->nci,1,ns->ncj,1,npoints+1);
+  free_matrix(*s,1,ns->nsi,1,ns->nsj);
+  free_matrix(*y,1,ns->nyj,1,npoints);
+  free_vector(*r,1,npoints);
+  free_vector(*rf_,1,npoints);
+  free_vector(*integrand1,1,npoints);
+  free_vector(*integrand2,1,npoints);
+  return;
+}
+
+void linearGuess(double *r, double **y, double initialSlope,
+		 double h,int mpt)
+{
+  int k;
+  
+  for (k=1;k <=mpt; k++) { // initial guess!
+    r[k] = (k-1)*h;
+    y[1][k] = initialSlope*r[k]; // y1 is psi
+    y[2][k] = initialSlope; // y2 is psi'!!!!!!!!!!!!!!!!!!
+  }
+  return;
+}
+
+void propagate_r(double *r, double h,int mpt)
+{
+  int k;
+  for (k=1;k <=mpt; k++) r[k] = (k-1)*h; // only change r since psi, psi' are stored from last loop
+  return;
+}
+
+void setup_var_pointers(double **var, double *var0,double **dEdvar,
+			double **dEdvarlast,char scan_what[],
+			struct params *p,double *dEdx,double *lastdEdx)
+// convenient way to make a variables (ending in var) that have the  //
+// same addresses as whichever parameter that is specified by        //
+// scan_what.
+{
+
+  if (strcmp(scan_what,"R")==0) {
+    printf("R!\n");
+    *var = &p->R;
+    *var0 = p->R;
+    *dEdvar = &dEdx[1];
+    *dEdvarlast = &lastdEdx[1];
+  }
+  else if (strcmp(scan_what,"eta")==0) {
+    printf("eta!\n");
+    *var = &p->eta;
+    *var0 = p->eta;
+    *dEdvar = &dEdx[2];
+    *dEdvarlast = &lastdEdx[2];
+  }
+  else if (strcmp(scan_what,"delta")==0) {
+    printf("delta!\n");
+    *var = &p->delta;
+    *var0 = p->delta;
+    *dEdvar = &dEdx[3];
+    *dEdvarlast = &lastdEdx[3];
+  }
+  else {
+    printf("Need either R, eta, or delta as argv[n] input."
+	   "Exiting to system.\n");
+    exit(1);
+  }
+  return;
+}
+
+
+void quick_interp(double *xcp,double **ycp,double x,double **y,int i)
+// Given two points of ycp[1][:] (y11cp,x1cp) and y(12cp,x2cp), //
+// and two points of ycp[2][:] (y21cp,x1cp) and (y22cp,x2cp),   //
+// interpolate to determine the value of y between the two
+
+{
+  if (i%2 != 0) {
+    y[1][i] = ycp[1][(i-1)/2+1];
+    y[2][i] = ycp[2][(i-1)/2+1];
+  }
+  else {
+    double slope_1, slope_2;
+    slope_1 = (ycp[1][i/2+1]-ycp[1][i/2])/(xcp[i/2+1]-xcp[i/2]);
+    slope_2 = (ycp[2][i/2+1]-ycp[2][i/2])/(xcp[i/2+1]-xcp[i/2]);
+
+    y[1][i] = slope_1*(x-xcp[i/2])+ycp[1][i/2];
+    y[2][i] = slope_2*(x-xcp[i/2])+ycp[2][i/2];
   }
 
   return;
 }
-  
 
-  
-double backtracker(double beta,double rate,double E,double *dEdx,
-		   struct params *p,double *r,double **y,
-		   double *r_cp,double **y_cp,double conv,
-		   int itmax,int npoints,struct arr_ns *ns,
-		   int last_npoints,int max_size,double min_rate)
-// Implements the standard backtracking routine for gradient descent. If         //
-// x = (R,eta,delta)', E(x) is the energy, and grad = (ddR,ddeta,dddelta)', then //
-// searching for rate such that E(x-rate*grad(E(x)))>E(x)-rate/2*grad(E(x))^2 is //
-// satisfied. This algorithm gives me both the appropriate rate, and then the    //
-// next values of R, eta, and delta. //
+
+int sign(double x) 
 {
-
-  double *rc;
-  double **yc,**sc;
-  double ***cc;
-  double *rf_c, *integrand1c,*integrand2c;
-  double Eold;
-  double *tmpdEdx;
-  double gradEsq;
-
-  tmpdEdx = vector(1,3); 
-
-  // create arrays to manipulate without affecting external arrays
-  allocate_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
-
-  // copy the external r,y arrays into the internal rc,yc arrays
-  copy_arrays(r,y,rc,yc,last_npoints);
-
-  // compute the current value of the gradient of E squared
-  gradEsq = vector_norm(dEdx,3);
-
-  // save the current value of E in Eold
-  Eold = E;
-
-  // calculate the next values of R, eta, and delta, if the rate was just the normal
-  // rate input to this function.
-
-  update_p(p,rate,dEdx);
-  
-  // calculate E, given the new values of R,eta, and delta
-
-  // we don't care about the new derivatives (they don't come into the algorithm),
-  // so can just use temp variables to calculate them
-
-
-
-  array_constant(0,tmpdEdx,3);
-  // setting derivatives to zero flags single_calc function to not waste time
-  // calculating them.
-
-  single_calc(&E,tmpdEdx,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
-	      &integrand2c,y_cp,r_cp,conv,itmax,&npoints,
-	      last_npoints,ns,max_size);
-
-  last_npoints = npoints;
-
-
-
-  reset_p(p,rate,dEdx);
-
-  while (E>=Eold-0.5*rate*gradEsq && rate > min_rate) {
-
-    rate *=beta;
-
-    update_p(p,rate,dEdx);
-    single_calc(&E,tmpdEdx,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
-		&integrand2c,y_cp,r_cp,conv,itmax,&npoints,
-		last_npoints,ns,max_size);
-
-    last_npoints = npoints;
-
-    reset_p(p,rate,dEdx);
-
-  }
-
-  free_matrices(&cc,&sc,&yc,&rc,&rf_c,&integrand1c,&integrand2c,npoints,ns);
-  free_vector(tmpdEdx,1,3);
-  return rate;
+  return (x > 0) - (x < 0);
 }
 
-double beta_k(double *dEdx,double *lastdEdx)
+void arr_cp(double *acp, double *a,int length)
 {
-  double beta=0;
+  int i;
+  for (i = 1; i <= length; i++) acp[i] = a[i];
+  return;
+}
+
+double vector_norm(double *a,int length)
+{
+  int i;
+  double sum = 0;
+  for (i = 1; i <= length; i++) sum += a[i]*a[i];
+
+  return sum;
+}
+
+void array_constant(double constant,double *a,int length)
+{
+  int i;
+  for (i = 1; i <= length; i++) a[i] = constant;
+  return;
+}
+
+bool non_zero_array(double *dEdx,double conv)
+{
+  return (fabs(dEdx[1]) > conv || fabs(dEdx[2]) > conv
+	  || fabs(dEdx[3]) > conv);
+}
+
+void copy_2_arrays(double *r,double **y,double *r_cp,double **y_cp,
+		 int last_npoints)
+{
   int i;
 
-  for (i = 1; i <= 3; i++) beta += (dEdx[i]-lastdEdx[i])*dEdx[i];
+  for (i = 1; i <=last_npoints; i++) {
+    y_cp[1][i] = y[1][i];
+    y_cp[2][i] = y[2][i];
+    r_cp[i] = r[i];
+  }
 
-  beta /= vector_norm(lastdEdx,3);
-
-  return beta;
-}
-
-
-void set_p_k()
-{
-
-
+  return;
 }
