@@ -1,6 +1,4 @@
 /* Functions for computing phase field crystal model of fibrils.
-
-
  */
 
 
@@ -37,7 +35,7 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
   double *var,var0;
   double h;
   double **y,**y_cp,*r,*r_cp, **s, ***c;
-  double *rf_,*integrand1,*integrand2;
+  double *rf_,*integrand1,*integrand2,*hessian;
   double *dEdx, *lastdEdx;
   double initialSlope;
   double E;
@@ -51,6 +49,7 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
   assign_ns(&ns);
   dEdx = vector(1,3);
   lastdEdx = vector(1,3);
+  hessian = vector(1,3*3);
 
   // malloc the relevant arrays
   allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
@@ -78,7 +77,8 @@ void scanE(struct params p,FILE *energy,FILE *psi,double conv,
 
 
     single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
-		y_cp,r_cp,conv,itmax,&npoints,last_npoints,&ns,max_size);
+		y_cp,r_cp,hessian,conv,itmax,&npoints,last_npoints,&ns,max_size,
+		false);
 
     last_npoints = npoints;
 
@@ -135,7 +135,7 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
   double slowc = 1.0;
   double scalv[2+1];
   double **y,**y_cp,*r,*r_cp, **s, ***c;
-  double *rf_,*integrand1,*integrand2;
+  double *rf_,*integrand1,*integrand2,*hessian;
   double initialSlope;
   double E;
   double *dEdx, *lastdEdx;
@@ -150,6 +150,7 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
   assign_ns(&ns);
   dEdx = vector(1,3);
   lastdEdx = vector(1,3);
+  hessian = vector(1,3*3);
 
   // initialize the pointers to the x variable (in E vs x vs y) so that
   // they reference the correct derivatives of E. x is either R,
@@ -194,7 +195,8 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
     while (count_x < num_x) {
 
       single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
-		  y_cp,r_cp,conv,itmax,&npoints,last_npoints,&ns,max_size);
+		  y_cp,r_cp,hessian,conv,itmax,&npoints,
+		  last_npoints,&ns,max_size,false);
 
       last_npoints = npoints;
 

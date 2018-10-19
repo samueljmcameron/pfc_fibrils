@@ -15,12 +15,18 @@
 #include "nrutil.h"
 #include "headerfile.h"
 #include <time.h>
+#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_eigen.h>
 
 
 
 
 
 // conjugate gradient descent tools. //
+
+bool positive_definite(double *hessian);
+
+void hessian_update_p(struct params *p, double *hessian, double *dEdx);
 
 void update_p(struct params *p,double rate,double *arrchange);
 
@@ -71,16 +77,17 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   double h;
   double **y,**y_cp,*r,*r_cp, **s, ***c;
   double *rf_,*integrand1,*integrand2;
+  double *hessian;  // note vector (vs matrix) definition of hessian
   double initialSlope;
   double E;
   double *dEdx, *lastdEdx, *direction;
   double st = 0.7;
-  double Elast = -1e100; // a really large, negative number to start with
-  double min_rate = 1e3*conv;
+  double lastE = -1e100; // a really large, negative number to start with
+  double min_rate = conv;
   double rate = rate0;
-  double lastR = 1e100;
-  double lasteta = 1e100;
-  double lastdelta = 1e100;
+  double lastR = p.R;
+  double lasteta = p.eta;
+  double lastdelta = p.delta;
   double betak;
   int max_size = (mpt-1)*8+1;
   int count = 0;
@@ -88,18 +95,25 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   clock_t begin = clock();
   clock_t end;
 
+  bool positivedef = false;
+  int pos_def_in_a_row = 0;
+
   struct arr_ns ns;
+
+  // allocate space for the arrays which will not be resized
   assign_ns(&ns);
   dEdx = vector(1,3);
   lastdEdx = vector(1,3);
   direction = vector(1,3);
-
-  // malloc the relevant arrays
-  allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
-		    npoints,&ns);
+  hessian = vector(1,3*3);
   // as well as two extra arrays to copy r and y contents into
   y_cp = matrix(1,ns.nyj,1,max_size);
   r_cp = vector(1,max_size);
+
+  // malloc the relevant arrays which may be resized
+  allocate_matrices(&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
+		    npoints,&ns);
+
   
   initialSlope = M_PI/(4.0*p.R);
   h = p.R/(npoints-1);
@@ -114,64 +128,81 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   arr_cp(lastdEdx,dEdx,3);
   array_constant(0,direction,3);
 
+  
+  while (pos_def_in_a_row < 20) {
 
 
-  while (non_zero_array(dEdx,conv)) {
+    if (count % 100 != 0 || count == 0) {
 
+      single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,
+		  &integrand2,y_cp,r_cp,hessian,conv,itmax,
+		  &npoints,last_npoints,&ns,max_size,false);
 
-    single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,&integrand2,
-		y_cp,r_cp,conv,itmax,&npoints,last_npoints,&ns,max_size);
+      betak = polak_betak(dEdx,lastdEdx);
 
-    betak = polak_betak(dEdx,lastdEdx);
+      set_dk(direction,dEdx,betak);
 
-    set_dk(direction,dEdx,betak);
+      rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
+				conv,itmax,npoints,&ns,last_npoints,max_size,
+				min_rate);
 
+      update_p(&p,rate,direction);
+
+    } else {
+
+      single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,
+		  &integrand2,y_cp,r_cp,hessian,conv,itmax,
+		  &npoints,last_npoints,&ns,max_size,true);
+
+      if (positive_definite(hessian)) {
+
+	hessian_update_p(&p,hessian,dEdx);
+
+	pos_def_in_a_row += 1;
+
+	printf("Newton Raphson method worked! number of positive " 
+	       "definite hessians in a row = %d!\n",
+	       pos_def_in_a_row);
+
+      } else {
+
+	betak = polak_betak(dEdx,lastdEdx);
+	
+	set_dk(direction,dEdx,betak);
+
+	rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
+				  conv,itmax,npoints,&ns,last_npoints,max_size,
+				  min_rate);
+	
+
+	update_p(&p,rate,direction);
+
+	pos_def_in_a_row = 0;
+
+	printf("Newton's Raphson method didn't work. Resetting "
+	       "the number of positive definite hessians in "
+	       "a row back to %d.\n",pos_def_in_a_row);
+
+      }
+
+    }
+    
+    fprintf(energy,"%d\t%.8e\n",count,E);
+    fprintf(denergydR,"%.8e\t%.8e\n",lastR,dEdx[1]);
+    fprintf(denergydeta,"%.8e\t%.8e\n",lasteta,dEdx[2]);
+    fprintf(denergyddelta,"%.8e\t%.8e\n",lastdelta,dEdx[3]);
+    fprintf(surfacetwist,"%.8e\t%.8e\n",lastR,y[1][mpt]);
 
     last_npoints = npoints;
-
-    fprintf(energy,"%d\t%.8e\n",count,E);
-    fprintf(denergydR,"%.8e\t%.8e\n",p.R,dEdx[1]);
-    fprintf(denergydeta,"%.8e\t%.8e\n",p.eta,dEdx[2]);
-    fprintf(denergyddelta,"%.8e\t%.8e\n",p.delta,dEdx[3]);
-    fprintf(surfacetwist,"%.8e\t%.8e\n",p.R,y[1][mpt]);
-
-
-    rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
-			      conv,itmax,npoints,&ns,last_npoints,max_size,
-			      min_rate);
-
-    update_p(&p,rate,direction);
-    count += 1;
-    printf("count = %d\n",count);
-
-    /*
-    if (rate <= min_rate) {
-      //      printf("last rate <= min_rate, where min_rate = %e and last "
-      //     " rate = %e.\n",min_rate,rate);
-      if (fabs(lastR-p.R)<conv && fabs(lasteta-p.eta)<conv
-	  && fabs(lastdelta-p.delta)<conv && fabs(Elast-E)<conv) {
-	//printf("changes in R, eta, and delta are smaller than %e.\n",conv);
-	if(jumpmin(frac_tol,E,dEdx,p,c,s,y,r,rf_,integrand1,
-		   integrand2,y_cp,r_cp,conv,itmax,npoints,
-		   last_npoints,&ns,max_size)) break;
-      }
-    }
-    */
     lastR = p.R;
     lasteta = p.eta;
     lastdelta = p.delta;
     arr_cp(lastdEdx,dEdx,3);
-    Elast = E;
-    
+    lastE = E;
 
 
-    if (count == 100000) {
-      end = clock();
-      printf("Elapsed after %d: %lf seconds\n",count,
-	     (double)(end - begin) / CLOCKS_PER_SEC);
-
-      exit(1);
-    }
+    count += 1;
+    printf("count = %d\n",count);
 
     if (p.R <= 0) {
       printf("R is being driven to negative values, R = %e!\n",p.R);
@@ -179,8 +210,68 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     }
       
   }
-  
 
+  printf("\n\n\n\n\n\n"
+	 "moving to (strictly) Newton-Raphson method!"
+	 "\n\n\n\n\n\n");
+
+
+  while (non_zero_array(dEdx,conv)) {
+
+
+    single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,
+		&integrand2,y_cp,r_cp,hessian,conv,itmax,
+		&npoints,last_npoints,&ns,max_size,true);
+
+    if (lastE+1e-14*fabs(lastE) < E) {      
+
+      betak = polak_betak(dEdx,lastdEdx);
+      
+      set_dk(direction,dEdx,betak);
+
+      rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
+				conv,itmax,npoints,&ns,last_npoints,max_size,
+				min_rate);
+      
+      update_p(&p,rate,direction);
+
+      printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
+
+    } else {
+
+      hessian_update_p(&p,hessian,dEdx);
+
+    }
+
+
+    fprintf(energy,"%d\t%.8e\n",count,E);
+    fprintf(denergydR,"%.8e\t%.8e\n",lastR,dEdx[1]);
+    fprintf(denergydeta,"%.8e\t%.8e\n",lasteta,dEdx[2]);
+    fprintf(denergyddelta,"%.8e\t%.8e\n",lastdelta,dEdx[3]);
+    fprintf(surfacetwist,"%.8e\t%.8e\n",lastR,y[1][mpt]);
+    
+
+    last_npoints = npoints;
+    lastR = p.R;
+    lasteta = p.eta;
+    lastdelta = p.delta;
+    arr_cp(lastdEdx,dEdx,3);
+    lastE = E;
+
+    count += 1;
+    printf("count = %d\n",count);
+
+    if (p.R <= 0) {
+      printf("R is being driven to negative values, R = %e!\n",p.R);
+      p.R = 1e-6;
+    }
+      
+  }
+
+  end = clock();
+
+  printf("calculation for %d iterations with Newton descent = %e\n",
+	 count,(double) (end-begin)/CLOCKS_PER_SEC);
 
 
   printf("count = %d\n",count);
@@ -196,7 +287,66 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   free_vector(dEdx,1,3);
   free_vector(lastdEdx,1,3);
   free_vector(direction,1,3);
+  free_vector(hessian,1,3*3);
+
+  return;
+}
+
+bool positive_definite(double *hessian)
+{
+  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,3,3);
+
+  gsl_matrix *mcp = gsl_matrix_alloc(3,3);
   
+  gsl_matrix_memcpy(mcp,&m.matrix);
+
+  gsl_vector *eval = gsl_vector_alloc(3);
+
+  gsl_eigen_symm_workspace *w = gsl_eigen_symm_alloc(3);
+
+  gsl_eigen_symm(mcp,eval,w);
+  
+
+
+  if (gsl_vector_get(eval,0) < 0 || gsl_vector_get(eval,1) < 0
+      || gsl_vector_get(eval,2) < 0) {
+      gsl_vector_free(eval);
+      gsl_eigen_symm_free(w);
+      gsl_matrix_free(mcp);
+      return false;
+  }
+  gsl_vector_free(eval);
+  gsl_eigen_symm_free(w);
+  gsl_matrix_free(mcp);
+
+  return true;
+}
+
+void hessian_update_p(struct params *p, double *hessian, double *dEdx)
+{
+
+  gsl_vector *dx = gsl_vector_alloc(3);
+
+  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,3,3);
+
+
+  gsl_vector_view b = gsl_vector_view_array(dEdx+1,3);
+  int s;
+  gsl_permutation *perm = gsl_permutation_alloc(3);
+
+  //  compute_eigenvalues(hessian);
+
+  gsl_linalg_LU_decomp(&m.matrix,perm,&s);
+
+  gsl_linalg_LU_solve(&m.matrix,perm,&b.vector,dx);
+
+  p->R -= gsl_vector_get(dx,0);
+  p->eta -= gsl_vector_get(dx,1);
+  p->delta -= gsl_vector_get(dx,2);
+
+  gsl_permutation_free(perm);
+  gsl_vector_free(dx);
+
   return;
 }
 
@@ -330,9 +480,10 @@ double armijo_backtracker(double st,double rate,double E,double *dEdx,
   
   // calculate E, given the new values of R,eta, and delta
 
+  // putting dEdx_tmp in as dummy variable for hessian, as hessian is not used
   single_calc(&E_new,dEdx_tmp,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
-	      &integrand2c,y_cp,r_cp,conv,itmax,&npoints,
-	      last_npoints,ns,max_size);
+	      &integrand2c,y_cp,r_cp,dEdx_tmp,conv,itmax,&npoints,
+	      last_npoints,ns,max_size,false);
 
   last_npoints = npoints;
 
@@ -344,9 +495,11 @@ double armijo_backtracker(double st,double rate,double E,double *dEdx,
     rate *=st;
 
     update_p(p,rate,dk);
+
+    // putting dEdx_tmp in as dummy variable for hessian, as hessian is not used
     single_calc(&E_new,dEdx_tmp,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
-		&integrand2c,y_cp,r_cp,conv,itmax,&npoints,
-		last_npoints,ns,max_size);
+		&integrand2c,y_cp,r_cp,dEdx_tmp,conv,itmax,&npoints,
+		last_npoints,ns,max_size,false);
 
     last_npoints = npoints;
 
@@ -395,9 +548,10 @@ double wolfe_backtracker(double st,double rate,double E,double *dEdx,
   
   // calculate E, given the new values of R,eta, and delta
 
+  // putting dEdx_new in as dummy variable for hessian, as hessian is not used
   single_calc(&E_new,dEdx_new,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
-	      &integrand2c,y_cp,r_cp,conv,itmax,&npoints,
-	      last_npoints,ns,max_size);
+	      &integrand2c,y_cp,r_cp,dEdx_new,conv,itmax,&npoints,
+	      last_npoints,ns,max_size,false);
 
   last_npoints = npoints;
 
@@ -409,9 +563,11 @@ double wolfe_backtracker(double st,double rate,double E,double *dEdx,
     rate *=st;
 
     update_p(p,rate,dk);
+
+    // putting dEdx_new in as dummy variable for hessian, as hessian is not used
     single_calc(&E_new,dEdx_new,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
-		&integrand2c,y_cp,r_cp,conv,itmax,&npoints,
-		last_npoints,ns,max_size);
+		&integrand2c,y_cp,r_cp,dEdx_new,conv,itmax,&npoints,
+		last_npoints,ns,max_size,false);
 
     last_npoints = npoints;
 
@@ -435,7 +591,7 @@ bool jumpmin(double frac_tol,double E,double *dEdx,struct params p,
   double lasteta = p.eta;
   double lastdelta = p.delta;
   double *tmpdEdx;
-  double Elast = E;
+  double lastE = E;
   double *rc;
   double **yc,**sc;
   double ***cc;
@@ -456,11 +612,12 @@ bool jumpmin(double frac_tol,double E,double *dEdx,struct params p,
   p.eta = lasteta*(1-sign(dEdx[2])*frac_tol);
   p.delta = lastdelta*(1-sign(dEdx[3])*frac_tol);
 
+  // putting dEdx_tmp in as dummy variable for hessian, as hessian is not used
   single_calc(&E,tmpdEdx,&p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,
-	      &integrand2c,y_cp,r_cp,conv,itmax,&npoints,last_npoints,
-	      ns,max_size);
+	      &integrand2c,y_cp,r_cp,tmpdEdx,conv,itmax,&npoints,last_npoints,
+	      ns,max_size,false);
 
-  printf("lastE = %e, E = %e\n",Elast,E);
+  printf("lastE = %e, E = %e\n",lastE,E);
   for (i = 1; i <= 3; i++) {
     printf("initial dEdx[%d] = %e, new dEdx[%d] = %e,",
 	   i,dEdx[i],i,tmpdEdx[i]);

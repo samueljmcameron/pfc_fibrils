@@ -28,10 +28,12 @@ if __name__=='__main__':
 
     var_array = load_plt_array(str_,load_p)
 
-    colors = sns.color_palette('muted',len(var_array))
+    obss = ['energy','\delta','\eta','R','surfacetwist']
+
+    colors = sns.color_palette('muted',len(obss))
 
 
-    for ylabel in ['energy','\delta','\eta','R','surfacetwist']:
+    for i,ylabel in enumerate(obss):
         edited_ylabel = latex2string(ylabel)
 
         fig,ax = plt.subplots()
@@ -40,11 +42,11 @@ if __name__=='__main__':
         fig.set_size_inches(width,height)
 
         if ylabel != 'energy' and ylabel != 'surfacetwist':
-            plot_obs('dEd%s'%edited_ylabel,ax,colors,d,var_array,params,var_position,
-                     str_,load_p)
+            plot_obs('dEd%s'%edited_ylabel,ax,colors[i],d,
+                     var_array,params,var_position,str_,load_p)
         else:
-            plot_obs(edited_ylabel,ax,colors,d,var_array,params,var_position,
-                     str_,load_p)            
+            plot_obs(edited_ylabel,ax,colors[i],d,var_array,
+                     params,var_position,str_,load_p)
 
         xlabel = sys.argv[1]
         xscale = 'log'

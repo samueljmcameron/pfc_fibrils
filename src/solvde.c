@@ -87,12 +87,14 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
     for (j=1;j<=ne;j++) { //Apply corrections.
       for (k=k1;k<=k2;k++)
 	y[j][k] -= fac*c[j][1][k];
+
     }
     //    printf("\n%8s %9s %9s\n","Iter.","Error","FAC"); //Summary of corrections
     //printf("%6d %12.12f %11.6f\n",it,err,fac);        //for this step.
     if (y[1][2]<0) {
-      //      printf("bad!\n");
-      //printf("psi(%lf) = %e\n",r[m],y[1][m]);
+      printf("likely a maximizing (vs minimizing) solution for psi(r), "
+	     "as y[1][2]=%e  which usually means high energy.\n",y[1][2]);
+      return false;
     }
     if (err < conv) { // Point with largest error for each variable can
                       // be monitored by writing out kmax and

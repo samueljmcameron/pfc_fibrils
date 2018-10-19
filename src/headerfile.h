@@ -78,7 +78,7 @@ bool energy_properties(double *E,double *dEdx,struct params *p,
 bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
 			      double *r,double **y,double *rf_,
 			      double *integrand1,double *integrand2,int mpt,
-			      double **hessian);
+			      double *hessian);
 
 void scanE(struct params p,FILE *energy,FILE *psi,double conv,
 	   int itmax,int mpt,int num_x,char scan_what[]);
@@ -98,14 +98,14 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
 /* files below this point are in shared.c */
 
-// energy calculation function (links this file to energy.c file). //
+// energy (optional hessian) calculation function (links this file to energy.c file). //
 
 void single_calc(double *E,double *dEdx,struct params *p,
 		 double ****c,double ***s,double ***y,double **r,
 		 double **rf_,double **integrand1,double **integrand2,
-		 double **y_cp,double *r_cp,double conv,int itmax,
-		 int *npoints,int last_npoints,struct arr_ns *ns,
-		 int max_size);
+		 double **y_cp,double *r_cp,double *hessian,
+		 double conv,int itmax,int *npoints,int last_npoints,
+		 struct arr_ns *ns,int max_size,bool calc_Hess);
 
 // file I/O functions.
 

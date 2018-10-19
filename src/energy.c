@@ -4,6 +4,8 @@
 #include "nrutil.h"
 #include "headerfile.h"
 
+#define HESS(i,j) hessian[(j)+(i-1)*(3)]
+
 
 // calculation of integrand arrays to be put into qromb for integration. //
 
@@ -373,6 +375,7 @@ bool energy_properties(double *E, double *dEdx,struct params *p,
   // be ignored.
   
   tol2233b1 = fabs(E_R(p,r,y,0,mpt)*p->R*p->R/2.0*tol0);
+  tol2233b1 = tol2233b1 > tol0 ? tol2233b1 : tol0;
   compute_rf2233b1(p,r,y,rf_,mpt);
   integration_2233b1 = qromb(r,rf_,mpt,tol2233b1,&failure);
 
@@ -395,6 +398,7 @@ bool energy_properties(double *E, double *dEdx,struct params *p,
       dEdx[2] = 0;
 
       tol2 = fabs(derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0);
+      tol2 = tol2 > tol0 ? tol2 : tol0;
       compute_integrand2(p,r,y,integrand2,mpt);
       integration2 = qromb(r,integrand2,mpt,tol2,&failure);
       
@@ -423,6 +427,7 @@ bool energy_properties(double *E, double *dEdx,struct params *p,
       }
       
       tol2 = fabs(derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0);
+      tol2 = tol2 > tol0 ? tol2 : tol0;
       compute_integrand2(p,r,y,integrand2,mpt);
       integration2 = qromb(r,integrand2,mpt,tol2,&failure);
       
@@ -454,7 +459,7 @@ bool energy_properties(double *E, double *dEdx,struct params *p,
 bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
 			      double *r,double **y,double *rf_,
 			      double *integrand1,double *integrand2,int mpt,
-			      double **hessian)
+			      double *hessian)
 {
   bool failure = true;
   double integration_2233b1,integration1,integration2;
@@ -472,6 +477,7 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
   // be ignored.
   
   tol2233b1 = fabs(E_R(p,r,y,0,mpt)*p->R*p->R/2.0*tol0);
+  tol2233b1 = tol2233b1 > tol0 ? tol2233b1 : tol0;
   compute_rf2233b1(p,r,y,rf_,mpt);
   integration_2233b1 = qromb(r,rf_,mpt,tol2233b1,&failure);
 
@@ -484,6 +490,7 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
   if (dEdx[1] != 0 || dEdx[2] != 0 || dEdx[3] != 0) {
     
     tol2 = fabs(derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0);
+    tol2 = tol2 > tol0 ? tol2 : tol0;
     compute_integrand2(p,r,y,integrand2,mpt);
     integration2 = qromb(r,integrand2,mpt,tol2,&failure);
     
@@ -498,21 +505,21 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
       
       dEdx[3] = 0;
 
-      hessian[1][2] = hessian[2][1] = 0;
+      HESS(1,2) = HESS(2,1) = 0;
 
-      hessian[1][3] = hessian[3][1] = 0;
+      HESS(1,3) = HESS(3,1) = 0;
 
-      hessian[2][3] = hessian[3][2] = 0;
+      HESS(2,3) = HESS(3,2) = 0;
 
-      hessian[2][2] = 0;
+      HESS(2,2) = 0;
 
     }
     else if (fabs(p->eta) <= tol0) {
       dEdx[2] = 0;
       
-      hessian[1][2] = hessian[2][1] = 0;
+      HESS(1,2) = HESS(2,1) = 0;
 
-      hessian[2][3] = hessian[3][2] = 0;
+      HESS(2,3) = HESS(3,2) = 0;
 
       tol1 = tol0;
       compute_integrand1(p,r,y,integrand1,mpt);
@@ -526,9 +533,9 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
 
       dEdx[3] = derivEddelta(p,integration2);
 
-      hessian[1][3] = hessian[3][1] = ddEddeltadR(p,y,integration2,mpt);
+      HESS(1,3) = HESS(3,1) = ddEddeltadR(p,y,integration2,mpt);
 
-      hessian[2][2] = ddEdetadeta(p,integration1);
+      HESS(2,2) = ddEdetadeta(p,integration1);
 
     }
     else {
@@ -545,6 +552,7 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
       }
       
       tol2 = fabs(derivEddelta(p,0)*p->R*p->R/(p->Lambda*p->delta)*tol0);
+      tol2 = tol2 > tol0 ? tol2 : tol0;
       compute_integrand2(p,r,y,integrand2,mpt);
       integration2 = qromb(r,integrand2,mpt,tol2,&failure);
       
@@ -558,13 +566,13 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
       
       dEdx[3] = derivEddelta(p,integration2);
 
-      hessian[1][2] = hessian[2][1] = ddEdRdeta(p,y,integration1,mpt);
+      HESS(1,2) = HESS(2,1) = ddEdRdeta(p,y,integration1,mpt);
 
-      hessian[1][3] = hessian[3][1] = ddEddeltadR(p,y,integration2,mpt);
+      HESS(1,3) = HESS(3,1) = ddEddeltadR(p,y,integration2,mpt);
 
-      hessian[2][3] = hessian[3][2] = ddEddeltadeta(p,integration1);
+      HESS(2,3) = HESS(3,2) = ddEddeltadeta(p,integration1);
 
-      hessian[2][2] = ddEdetadeta(p,integration1);
+      HESS(2,2) = ddEdetadeta(p,integration1);
 
     }
     
@@ -573,9 +581,9 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
     // the second derivatives with respect to R, and with respect to delta,
     // are both non-zero regardless of parameter values.
 
-    hessian[1][1] = ddEdRdR(p,r,y,integration_2233b1,mpt);
+    HESS(1,1) = ddEdRdR(p,r,y,integration_2233b1,mpt);
 
-    hessian[3][3] = ddEddeltaddelta(p,integration2);
+    HESS(3,3) = ddEddeltaddelta(p,integration2);
 
   }
   *E = E_R(p,r,y,integration_2233b1,mpt);

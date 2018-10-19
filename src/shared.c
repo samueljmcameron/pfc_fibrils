@@ -7,17 +7,19 @@
 #include "headerfile.h"
 #include <time.h>
 
+void sqrtGuess(double *r, double **y, double initialSlope,
+	       double h,int mpt);
+
 void single_calc(double *E,double *dEdx,struct params *p,
 		 double ****c,double ***s,double ***y,double **r,
 		 double **rf_,double **integrand1,double **integrand2,
-		 double **y_cp,double *r_cp,double conv,int itmax,
-		 int *npoints,int last_npoints,struct arr_ns *ns,
-		 int max_size)
+		 double **y_cp,double *r_cp,double *hessian,
+		 double conv,int itmax,int *npoints,int last_npoints,
+		 struct arr_ns *ns,int max_size,bool calc_Hess)
 {
   double h;
   bool successful_qromb=false;
   bool successful_solvde;
-  int solvde_count;
   double slopeguess = M_PI/(4.0*p->R);
   double slowc = 1.0;
   double scalv[2+1];
@@ -38,13 +40,15 @@ void single_calc(double *E,double *dEdx,struct params *p,
       resize_and_interp(h,c,s,y,r,rf_,integrand1,integrand2,y_cp,r_cp,*npoints,
 			last_npoints,ns);
 
-      printf("done interpolating.\n");      
+      printf("done interpolating.\n");
+      last_npoints = *npoints;
     }
     
     // if last loop was successful with last_xpoint sized arrays, then just
     // use last y values as initial guess
     else propagate_r(*r,h,(*npoints));
     
+
     successful_solvde = solvde(itmax,conv,slowc,scalv,
 			       ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
     //                                                            psi' curves, 
@@ -53,8 +57,17 @@ void single_calc(double *E,double *dEdx,struct params *p,
 
     if (!successful_solvde) {
       printf("solvde convergence failed, trying one more time with a "
-	     "linear guess and a final twist angle value of pi/4");
+	     "linear guess and a final twist angle value of pi/4.\n");
       linearGuess(*r,*y,slopeguess,h,(*npoints));
+      successful_solvde = solvde(itmax,conv,slowc,scalv,
+				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
+      //                                                            psi' curves, 
+    }
+    if (!successful_solvde) {
+      slopeguess = M_PI/(2.01*sqrt(p->R));
+      printf("solvde convergence failed, trying one more time with a "
+	     "linear guess and a final twist angle value of pi/(2.05).\n");
+      sqrtGuess(*r,*y,slopeguess,h,(*npoints));
       successful_solvde = solvde(itmax,conv,slowc,scalv,
 				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
       //                                                            psi' curves, 
@@ -63,10 +76,20 @@ void single_calc(double *E,double *dEdx,struct params *p,
       write_failure("SOLVDE",*r,*y,*rf_,*npoints,*p);
       return;
     }
-    
-    // calculate energy, derivatives (see energy.c for code)
-    successful_qromb = energy_properties(E,dEdx,p,*r,*y,*rf_,
-					 *integrand1,*integrand2,(*npoints));
+
+
+    if (calc_Hess) {
+      // calculate energy, derivatives (see energy.c for code)
+      successful_qromb = energy_prop_with_hessian(E,dEdx,p,*r,*y,*rf_,
+						  *integrand1,*integrand2,
+						  (*npoints),hessian);
+    }
+    else {
+      // calculate energy, derivatives (see energy.c for code)
+      successful_qromb = energy_properties(E,dEdx,p,*r,*y,*rf_,
+					   *integrand1,*integrand2,(*npoints));
+    }
+
     
     
     (*npoints) = ((*npoints)-1)*2+1;
@@ -82,6 +105,7 @@ void single_calc(double *E,double *dEdx,struct params *p,
   if (!successful_qromb) { // writes the psi(r), r*f, etc, and exits
     write_failure("QROMB",*r,*y,*rf_,*npoints,*p);
   }
+
 
   return;
 }
@@ -188,7 +212,8 @@ void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
   interpolate_array(*r,*y,r_cp,y_cp,npoints); // interpolate old y values (now stored in y_cp)
   //                                             so that the new y array has an initial guess
   //                                             for solvde.
-  return;
+  
+
 }
 
 void allocate_matrices(double ****c,double ***s,double ***y,double **r,
@@ -219,6 +244,20 @@ void free_matrices(double ****c,double ***s,double ***y,double **r,
   free_vector(*integrand2,1,npoints);
   return;
 }
+
+void sqrtGuess(double *r, double **y, double initialSlope,
+		 double h,int mpt)
+{
+  int k;
+  
+  for (k=1;k <=mpt; k++) { // initial guess!
+    r[k] = (k-1)*h;
+    y[1][k] = initialSlope*sqrt(r[k]); // y1 is psi
+    y[2][k] = initialSlope/(2.0*sqrt(r[k]+0.01)); // y2 is psi'!!!!!!!!!!!!!!!!!!
+  }
+  return;
+}
+
 
 void linearGuess(double *r, double **y, double initialSlope,
 		 double h,int mpt)
