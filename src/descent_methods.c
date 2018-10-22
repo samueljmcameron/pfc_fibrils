@@ -132,7 +132,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   while (pos_def_in_a_row < 20) {
 
 
-    if (count % 100 != 0 || count == 0) {
+    if ((count % 100 != 0 || count == 0)) {
 
       single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,
 		  &integrand2,y_cp,r_cp,hessian,conv,itmax,
@@ -223,24 +223,25 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 		&integrand2,y_cp,r_cp,hessian,conv,itmax,
 		&npoints,last_npoints,&ns,max_size,true);
 
+    
     if (lastE+1e-14*fabs(lastE) < E) {      
-
+      
       betak = polak_betak(dEdx,lastdEdx);
       
       set_dk(direction,dEdx,betak);
-
+      
       rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
 				conv,itmax,npoints,&ns,last_npoints,max_size,
 				min_rate);
       
       update_p(&p,rate,direction);
-
+      
       printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
-
+      
     } else {
-
+      
       hessian_update_p(&p,hessian,dEdx);
-
+      
     }
 
 
@@ -267,6 +268,8 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     }
       
   }
+
+  positive_definite(hessian);
 
   end = clock();
 
@@ -310,11 +313,19 @@ bool positive_definite(double *hessian)
 
   if (gsl_vector_get(eval,0) < 0 || gsl_vector_get(eval,1) < 0
       || gsl_vector_get(eval,2) < 0) {
-      gsl_vector_free(eval);
-      gsl_eigen_symm_free(w);
-      gsl_matrix_free(mcp);
-      return false;
+    
+    printf("first eigenvalue = %1.3e\n",gsl_vector_get(eval,0));
+    printf("second eigenvalue = %1.3e\n",gsl_vector_get(eval,1));
+    printf("third eigenvalue = %1.3e\n",gsl_vector_get(eval,2));
+    gsl_vector_free(eval);
+    gsl_eigen_symm_free(w);
+    gsl_matrix_free(mcp);
+    return false;
   }
+
+  printf("first eigenvalue = %1.3e\n",gsl_vector_get(eval,0));
+  printf("second eigenvalue = %1.3e\n",gsl_vector_get(eval,1));
+  printf("third eigenvalue = %1.3e\n",gsl_vector_get(eval,2));
   gsl_vector_free(eval);
   gsl_eigen_symm_free(w);
   gsl_matrix_free(mcp);
@@ -329,6 +340,9 @@ void hessian_update_p(struct params *p, double *hessian, double *dEdx)
 
   gsl_matrix_view m = gsl_matrix_view_array(hessian+1,3,3);
 
+  gsl_matrix *mcp = gsl_matrix_alloc(3,3);
+  
+  gsl_matrix_memcpy(mcp,&m.matrix);
 
   gsl_vector_view b = gsl_vector_view_array(dEdx+1,3);
   int s;
@@ -336,9 +350,9 @@ void hessian_update_p(struct params *p, double *hessian, double *dEdx)
 
   //  compute_eigenvalues(hessian);
 
-  gsl_linalg_LU_decomp(&m.matrix,perm,&s);
+  gsl_linalg_LU_decomp(mcp,perm,&s);
 
-  gsl_linalg_LU_solve(&m.matrix,perm,&b.vector,dx);
+  gsl_linalg_LU_solve(mcp,perm,&b.vector,dx);
 
   p->R -= gsl_vector_get(dx,0);
   p->eta -= gsl_vector_get(dx,1);
@@ -346,6 +360,7 @@ void hessian_update_p(struct params *p, double *hessian, double *dEdx)
 
   gsl_permutation_free(perm);
   gsl_vector_free(dx);
+  gsl_matrix_free(mcp);
 
   return;
 }
