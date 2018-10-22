@@ -20,7 +20,7 @@ CFLAGS   = -std=c99 -I.
 
 LINKER   = gcc
 # linking flags here
-LFLAGS   = -Wall -I. -lm
+LFLAGS   = -Wall -I. -lm -lgsl -lgslcblas
 
 SRCDIR   = ../../src
 OBJDIR   = ../obj
