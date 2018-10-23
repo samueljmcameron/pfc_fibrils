@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 #include "nrutil.h"
 #include "headerfile.h"
 
-void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
+bool pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
 	   double **s)
 /*Diagonalize the square subsection of the s matrix, and store the recursion coefficients in c; used internally by solvde.*/
 {
@@ -17,7 +18,10 @@ void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
     big=0.0;
     for (j=je1;j<=je2;j++)
       if (fabs(s[i][j]) > big) big=fabs(s[i][j]);
-    if (big == 0.0) nrerror("Singular matrix - row all 0, in pinvs");
+    if (big == 0.0) {
+      printf("Singular matrix - row all 0, in pinvs");
+      return false;
+    }
     pscl[i]=1.0/big;
     indxr[i]=0;
   }
@@ -39,7 +43,10 @@ void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
 	}
       }
     }
-    if (s[ipiv][jpiv] == 0.0) nrerror("Singular matrix in routine pinvs");
+    if (s[ipiv][jpiv] == 0.0) {
+      printf("Singular matrix in routine pinvs");
+      return false;
+    }
     indxr[ipiv]=jpiv; //In place reduction. Save column ordering.
     pivinv=1.0/s[ipiv][jpiv];
     for (j=je1;j<=jsf;j++) s[ipiv][j] *= pivinv; //Normalize pivot row.
@@ -63,4 +70,5 @@ void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
   }
   free_vector(pscl,ie1,ie2);
   free_ivector(indxr,ie1,ie2);
+  return true;
 }

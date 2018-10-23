@@ -63,7 +63,7 @@ void bksub(int ne, int nb, int jf, int k1, int k2, double ***c);
 void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
 	   int ne, double **s, double **y, double *r,
 	   struct params *p, double h, int mpt);
-void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
+bool pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
 	   double **s);
 void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
 	 int ic1, int jc1, int jcf, int kc, double ***c, double **s);

@@ -19,14 +19,17 @@
 #include <gsl/gsl_eigen.h>
 
 
-
+#define EFFECTIVE_ZERO 1e-14
 
 
 // conjugate gradient descent tools. //
 
-bool positive_definite(double *hessian);
+bool positive_eigen(gsl_vector *eigenvals, int num_x);
 
-void hessian_update_p(struct params *p, double *hessian, double *dEdx);
+bool positive_definite(double *hessian, int num_x);
+
+void hessian_update_p(struct params *p, double *hessian, double *dEdx,
+		      int num_x);
 
 void update_p(struct params *p,double rate,double *arrchange);
 
@@ -90,6 +93,7 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   double lastdelta = p.delta;
   double betak;
   int max_size = (mpt-1)*8+1;
+  int num_x = 3;
   int count = 0;
   double frac_tol = 1e-6;
   clock_t begin = clock();
@@ -102,10 +106,10 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
   // allocate space for the arrays which will not be resized
   assign_ns(&ns);
-  dEdx = vector(1,3);
-  lastdEdx = vector(1,3);
-  direction = vector(1,3);
-  hessian = vector(1,3*3);
+  dEdx = vector(1,num_x);
+  lastdEdx = vector(1,num_x);
+  direction = vector(1,num_x);
+  hessian = vector(1,num_x*num_x);
   // as well as two extra arrays to copy r and y contents into
   y_cp = matrix(1,ns.nyj,1,max_size);
   r_cp = vector(1,max_size);
@@ -124,13 +128,15 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
   // using classical gradient descent, try to find minimum.
 
 
-  array_constant(1e100,dEdx,3);
-  arr_cp(lastdEdx,dEdx,3);
-  array_constant(0,direction,3);
+  array_constant(1e100,dEdx,num_x);
+  arr_cp(lastdEdx,dEdx,num_x);
+  array_constant(0,direction,num_x);
 
   
   while (pos_def_in_a_row < 20) {
 
+    if (p.delta <= EFFECTIVE_ZERO) num_x = 1;
+    else num_x = 3;
 
     if ((count % 100 != 0 || count == 0)) {
 
@@ -154,9 +160,9 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 		  &integrand2,y_cp,r_cp,hessian,conv,itmax,
 		  &npoints,last_npoints,&ns,max_size,true);
 
-      if (positive_definite(hessian)) {
+      if (positive_definite(hessian,num_x)) {
 
-	hessian_update_p(&p,hessian,dEdx);
+	hessian_update_p(&p,hessian,dEdx,num_x);
 
 	pos_def_in_a_row += 1;
 
@@ -218,14 +224,17 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 
   while (non_zero_array(dEdx,conv)) {
 
+    if (p.delta <= EFFECTIVE_ZERO) num_x = 1;
+    else num_x = 3;
 
     single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_,&integrand1,
 		&integrand2,y_cp,r_cp,hessian,conv,itmax,
 		&npoints,last_npoints,&ns,max_size,true);
 
     
-    if (lastE+1e-14*fabs(lastE) < E) {      
+    if (!positive_definite(hessian,num_x)) {      
       
+      printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
       betak = polak_betak(dEdx,lastdEdx);
       
       set_dk(direction,dEdx,betak);
@@ -240,8 +249,8 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
       
     } else {
       
-      hessian_update_p(&p,hessian,dEdx);
-      
+      hessian_update_p(&p,hessian,dEdx,num_x);
+
     }
 
 
@@ -262,14 +271,11 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
     count += 1;
     printf("count = %d\n",count);
 
-    if (p.R <= 0) {
-      printf("R is being driven to negative values, R = %e!\n",p.R);
-      p.R = 1e-6;
-    }
+
       
   }
 
-  positive_definite(hessian);
+  positive_definite(hessian,num_x);
 
   end = clock();
 
@@ -287,45 +293,39 @@ void graddesc(struct params p,FILE *energy,FILE *psi,
 		npoints,&ns);
   free_matrix(y_cp,1,ns.nyj,1,max_size);
   free_vector(r_cp,1,max_size);
-  free_vector(dEdx,1,3);
-  free_vector(lastdEdx,1,3);
-  free_vector(direction,1,3);
-  free_vector(hessian,1,3*3);
+  free_vector(dEdx,1,num_x);
+  free_vector(lastdEdx,1,num_x);
+  free_vector(direction,1,num_x);
+  free_vector(hessian,1,num_x*num_x);
 
   return;
 }
 
-bool positive_definite(double *hessian)
+bool positive_definite(double *hessian,int num_x)
 {
-  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,3,3);
 
-  gsl_matrix *mcp = gsl_matrix_alloc(3,3);
-  
+  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,num_x,num_x);
+  gsl_matrix *mcp = gsl_matrix_alloc(num_x,num_x);
+  gsl_vector *eval = gsl_vector_alloc(num_x);
+  gsl_eigen_symm_workspace *w = gsl_eigen_symm_alloc(num_x);
+
+
   gsl_matrix_memcpy(mcp,&m.matrix);
-
-  gsl_vector *eval = gsl_vector_alloc(3);
-
-  gsl_eigen_symm_workspace *w = gsl_eigen_symm_alloc(3);
-
   gsl_eigen_symm(mcp,eval,w);
   
+  int i;
+  for (i = 0; i < num_x; i++) {
+    printf("eigenvalue_%d = %1.3e\n",i,gsl_vector_get(eval,i));
+  }
 
-
-  if (gsl_vector_get(eval,0) < 0 || gsl_vector_get(eval,1) < 0
-      || gsl_vector_get(eval,2) < 0) {
+  if (!positive_eigen(eval,num_x)) {
     
-    printf("first eigenvalue = %1.3e\n",gsl_vector_get(eval,0));
-    printf("second eigenvalue = %1.3e\n",gsl_vector_get(eval,1));
-    printf("third eigenvalue = %1.3e\n",gsl_vector_get(eval,2));
     gsl_vector_free(eval);
     gsl_eigen_symm_free(w);
     gsl_matrix_free(mcp);
     return false;
   }
 
-  printf("first eigenvalue = %1.3e\n",gsl_vector_get(eval,0));
-  printf("second eigenvalue = %1.3e\n",gsl_vector_get(eval,1));
-  printf("third eigenvalue = %1.3e\n",gsl_vector_get(eval,2));
   gsl_vector_free(eval);
   gsl_eigen_symm_free(w);
   gsl_matrix_free(mcp);
@@ -333,20 +333,30 @@ bool positive_definite(double *hessian)
   return true;
 }
 
-void hessian_update_p(struct params *p, double *hessian, double *dEdx)
+bool positive_eigen(gsl_vector *eigenvals, int num_x)
+{
+  int i;
+  for (i = 0; i < num_x; i++) {
+    if (gsl_vector_get(eigenvals,i) < 0) return false;
+  }
+  return true;
+}
+
+void hessian_update_p(struct params *p, double *hessian, double *dEdx,
+		      int num_x)
 {
 
-  gsl_vector *dx = gsl_vector_alloc(3);
+  gsl_vector *dx = gsl_vector_alloc(num_x);
 
-  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,3,3);
+  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,num_x,num_x);
 
-  gsl_matrix *mcp = gsl_matrix_alloc(3,3);
+  gsl_matrix *mcp = gsl_matrix_alloc(num_x,num_x);
   
   gsl_matrix_memcpy(mcp,&m.matrix);
 
-  gsl_vector_view b = gsl_vector_view_array(dEdx+1,3);
+  gsl_vector_view b = gsl_vector_view_array(dEdx+1,num_x);
   int s;
-  gsl_permutation *perm = gsl_permutation_alloc(3);
+  gsl_permutation *perm = gsl_permutation_alloc(num_x);
 
   //  compute_eigenvalues(hessian);
 
@@ -355,12 +365,15 @@ void hessian_update_p(struct params *p, double *hessian, double *dEdx)
   gsl_linalg_LU_solve(mcp,perm,&b.vector,dx);
 
   p->R -= gsl_vector_get(dx,0);
-  p->eta -= gsl_vector_get(dx,1);
-  p->delta -= gsl_vector_get(dx,2);
+  if (p->delta > EFFECTIVE_ZERO) {
+    p->eta -= gsl_vector_get(dx,1);
+    p->delta -= gsl_vector_get(dx,2);
+  }
 
   gsl_permutation_free(perm);
   gsl_vector_free(dx);
   gsl_matrix_free(mcp);
+
 
   return;
 }
@@ -492,6 +505,8 @@ double armijo_backtracker(double st,double rate,double E,double *dEdx,
   // rate input to this function.
 
   update_p(p,rate,dk);
+
+  if (p->R < 0) printf("%e < 0!\n",p->R);
   
   // calculate E, given the new values of R,eta, and delta
 
@@ -510,6 +525,8 @@ double armijo_backtracker(double st,double rate,double E,double *dEdx,
     rate *=st;
 
     update_p(p,rate,dk);
+
+    if (p->R < 0) printf("%e < 0!\n",p->R);
 
     // putting dEdx_tmp in as dummy variable for hessian, as hessian is not used
     single_calc(&E_new,dEdx_tmp,p,&cc,&sc,&yc,&rc,&rf_c,&integrand1c,

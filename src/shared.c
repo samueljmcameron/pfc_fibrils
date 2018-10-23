@@ -28,8 +28,7 @@ void single_calc(double *E,double *dEdx,struct params *p,
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
 
   do {
-    h = p->R/((*npoints)-1);
-    
+    h = p->R/((*npoints)-1);    
 
     if ((*npoints) != last_npoints) {
 
@@ -58,6 +57,7 @@ void single_calc(double *E,double *dEdx,struct params *p,
     if (!successful_solvde) {
       printf("solvde convergence failed, trying one more time with a "
 	     "linear guess and a final twist angle value of pi/4.\n");
+
       linearGuess(*r,*y,slopeguess,h,(*npoints));
       successful_solvde = solvde(itmax,conv,slowc,scalv,
 				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
@@ -66,7 +66,7 @@ void single_calc(double *E,double *dEdx,struct params *p,
     if (!successful_solvde) {
       slopeguess = M_PI/(2.01*sqrt(p->R));
       printf("solvde convergence failed, trying one more time with a "
-	     "linear guess and a final twist angle value of pi/(2.05).\n");
+	     "sqrt(r) guess and a final twist angle value of pi/(2.01).\n");
       sqrtGuess(*r,*y,slopeguess,h,(*npoints));
       successful_solvde = solvde(itmax,conv,slowc,scalv,
 				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
@@ -264,8 +264,10 @@ void linearGuess(double *r, double **y, double initialSlope,
 {
   int k;
   
-  for (k=1;k <=mpt; k++) { // initial guess!
+  for (k=1;k <=mpt; k++) { // initial guess
+    //    printf("r[%d] = %lf\n",k,r[k]);
     r[k] = (k-1)*h;
+    //    printf("r[%d] = %lf\n\n",k,r[k]);
     y[1][k] = initialSlope*r[k]; // y1 is psi
     y[2][k] = initialSlope; // y2 is psi'!!!!!!!!!!!!!!!!!!
   }

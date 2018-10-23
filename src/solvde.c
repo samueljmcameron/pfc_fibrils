@@ -18,7 +18,7 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
 	     int ne, double **s, double **y, double *r,double K33,
 	     double k24, double Lambda, double d0,double eta,
 	     double delta, double h, int mpt);
-  void pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k,
+  bool pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k,
 	     double ***c, double **s);
   void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
 	   int ic1, int jc1, int jcf, int kc, double ***c, double **s);
@@ -53,17 +53,29 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
   for (it=1;it<=itmax;it++) { //Primary iteration loop.
     k=k1; //Boundary conditions at first point.
     difeq(k,k1,k2,j9,ic3,ic4,ne,s,y,r,p,h,m);
-    pinvs(ic3,ic4,j5,j9,jc1,k1,c,s);
+    //    if (isnan(y[1][k])) printf("NAN at first BC!\n");
+    if (!pinvs(ic3,ic4,j5,j9,jc1,k1,c,s)) {
+      printf("failed at first BC!\n");
+      return false;
+    }
     for (k=k1+1;k<=k2;k++) { //Finite difference equations at all point pairs.
       kp=k-1;
       difeq(k,k1,k2,j9,ic1,ic4,ne,s,y,r,p,h,m);
+      //      if (isnan(y[1][k])) printf("NAN at k = %d!\n",k);
       red(ic1,ic4,j1,j2,j3,j4,j9,ic3,jc1,jcf,kp,c,s);
-      pinvs(ic1,ic4,j3,j9,jc1,k,c,s);
+      if (!pinvs(ic1,ic4,j3,j9,jc1,k,c,s)) {
+	printf("failed at point k = %d in finite differences\n",k);
+	return false;
+      }
     }
     k=k2+1;// Final boundary conditions.
     difeq(k,k1,k2,j9,ic1,ic2,ne,s,y,r,p,h,m);
+    //    if (isnan(y[1][k])) printf("NAN at last BC!\n");
     red(ic1,ic2,j5,j6,j7,j8,j9,ic3,jc1,jcf,k2,c,s);
-    pinvs(ic1,ic2,j7,j9,jcf,k2+1,c,s);
+    if (!pinvs(ic1,ic2,j7,j9,jcf,k2+1,c,s)) {
+      printf("failed at last BC!\n");
+      return false;
+    }
     bksub(ne,nb,jcf,k1,k2,c); //Backsubstitution.
     err=0.0;
     for (j=1;j<=ne;j++) { //Convergence check, accumulate average error
@@ -85,9 +97,10 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
     fac=(err > slowc ? slowc/err : 1.0);
     //Reduce correction applied when error is large.
     for (j=1;j<=ne;j++) { //Apply corrections.
-      for (k=k1;k<=k2;k++)
+      for (k=k1;k<=k2;k++) {
 	y[j][k] -= fac*c[j][1][k];
-
+	if (isnan(y[j][k])) printf("NAN!\n");
+      }
     }
     //    printf("\n%8s %9s %9s\n","Iter.","Error","FAC"); //Summary of corrections
     //printf("%6d %12.12f %11.6f\n",it,err,fac);        //for this step.
