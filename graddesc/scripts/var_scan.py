@@ -147,7 +147,8 @@ def variable_graddesc(init_path,params,var,var_position,
             file = ("%s_%s_%s"
                     ".txt")%(init_path,fpart,load_str)
 
-            cmd = "mv " + file + " data/"
+            #cmd = "mv " + file + " data/"
+            cmd = "mv " + file + " " + init_path + fpart + ".txt"
             subprocess.call(cmd,shell=True)
 
     else:

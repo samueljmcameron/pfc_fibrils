@@ -55,6 +55,7 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
     difeq(k,k1,k2,j9,ic3,ic4,ne,s,y,r,p,h,m);
     //    if (isnan(y[1][k])) printf("NAN at first BC!\n");
     if (!pinvs(ic3,ic4,j5,j9,jc1,k1,c,s)) {
+      printf("R = %e\n",p->R);
       printf("failed at first BC!\n");
       return false;
     }
@@ -64,6 +65,7 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
       //      if (isnan(y[1][k])) printf("NAN at k = %d!\n",k);
       red(ic1,ic4,j1,j2,j3,j4,j9,ic3,jc1,jcf,kp,c,s);
       if (!pinvs(ic1,ic4,j3,j9,jc1,k,c,s)) {
+	printf("R = %e\n",p->R);
 	printf("failed at point k = %d in finite differences\n",k);
 	return false;
       }
@@ -73,6 +75,7 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
     //    if (isnan(y[1][k])) printf("NAN at last BC!\n");
     red(ic1,ic2,j5,j6,j7,j8,j9,ic3,jc1,jcf,k2,c,s);
     if (!pinvs(ic1,ic2,j7,j9,jcf,k2+1,c,s)) {
+      printf("R = %e\n",p->R);
       printf("failed at last BC!\n");
       return false;
     }

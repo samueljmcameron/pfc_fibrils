@@ -12,10 +12,9 @@ void sqrtGuess(double *r, double **y, double initialSlope,
 
 void single_calc(double *E,double *dEdx,struct params *p,
 		 double ****c,double ***s,double ***y,double **r,
-		 double **rf_,double **integrand1,double **integrand2,
-		 double **y_cp,double *r_cp,double *hessian,
+		 double **rf_fib,double **y_cp,double *r_cp,double *hessian,
 		 double conv,int itmax,int *npoints,int last_npoints,
-		 struct arr_ns *ns,int max_size,bool calc_Hess)
+		 struct arr_ns *ns,int max_size)
 {
   double h;
   bool successful_qromb=false;
@@ -36,7 +35,7 @@ void single_calc(double *E,double *dEdx,struct params *p,
       printf("interpolating at R = %e, eta = %e, delta = %e...\n",
 	     p->R,p->eta,p->delta);
 
-      resize_and_interp(h,c,s,y,r,rf_,integrand1,integrand2,y_cp,r_cp,*npoints,
+      resize_and_interp(h,c,s,y,r,rf_fib,integrand1,integrand2,y_cp,r_cp,*npoints,
 			last_npoints,ns);
 
       printf("done interpolating.\n");
@@ -73,20 +72,20 @@ void single_calc(double *E,double *dEdx,struct params *p,
       //                                                            psi' curves, 
     }
     if (!successful_solvde) {
-      write_failure("SOLVDE",*r,*y,*rf_,*npoints,*p);
+      write_failure("SOLVDE",*r,*y,*rf_fib,*npoints,*p);
       return;
     }
 
 
     if (calc_Hess) {
       // calculate energy, derivatives (see energy.c for code)
-      successful_qromb = energy_prop_with_hessian(E,dEdx,p,*r,*y,*rf_,
+      successful_qromb = energy_prop_with_hessian(E,dEdx,p,*r,*y,*rf_fib,
 						  *integrand1,*integrand2,
 						  (*npoints),hessian);
     }
     else {
       // calculate energy, derivatives (see energy.c for code)
-      successful_qromb = energy_properties(E,dEdx,p,*r,*y,*rf_,
+      successful_qromb = energy_properties(E,dEdx,p,*r,*y,*rf_fib,
 					   *integrand1,*integrand2,(*npoints));
     }
 
@@ -103,7 +102,7 @@ void single_calc(double *E,double *dEdx,struct params *p,
 
 
   if (!successful_qromb) { // writes the psi(r), r*f, etc, and exits
-    write_failure("QROMB",*r,*y,*rf_,*npoints,*p);
+    write_failure("QROMB",*r,*y,*rf_fib,*npoints,*p);
   }
 
 
@@ -120,7 +119,7 @@ void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p)
   return;
 }
 
-void write_failure(char *err_type,double *r, double **y,double *rf_,int rlength,struct params p)
+void write_failure(char *err_type,double *r, double **y,double *rf_fib,int rlength,struct params p)
 {
   int i;
   FILE *broken;
@@ -137,7 +136,7 @@ void write_failure(char *err_type,double *r, double **y,double *rf_,int rlength,
 
 
   for (i = 1; i<=rlength; i++) {
-    fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_[i]);
+    fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_fib[i]);
   }
   fclose(broken);
   exit(1);
@@ -155,12 +154,12 @@ void save_psi(FILE *psi,double *r, double **y,int mpt)
   return;
 }
 
-void save_energydensity(FILE *energydensity,double *r, double *rf_,int mpt)
+void save_energydensity(FILE *energydensity,double *r, double *rf_fib,int mpt)
 {
   int i;
 
   for (i = 1; i <= mpt; i++) {
-    fprintf(energydensity,"%10.8e\t%10.8e\n",r[i],rf_[i]);
+    fprintf(energydensity,"%10.8e\t%10.8e\n",r[i],rf_fib[i]);
   }
   return;
 }
@@ -199,14 +198,14 @@ void assign_ns(struct arr_ns *ns)
 }
 
 void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
-		       double **rf_,double **integrand1,double **integrand2,
+		       double **rf_fib,double **integrand1,double **integrand2,
 		       double **y_cp,double *r_cp,int npoints,int last_npoints,
 		       struct arr_ns *ns)
 {
   copy_2_arrays(*r,*y,r_cp,y_cp,last_npoints); // copy arrays r and y into r_cp and y_cp
-  free_matrices(c,s,y,r,rf_,integrand1,integrand2, // resize all arrays to new npoints size
+  free_matrices(c,s,y,r,rf_fib,integrand1,integrand2, // resize all arrays to new npoints size
 		last_npoints,ns);
-  allocate_matrices(c,s,y,r,rf_,integrand1,integrand2,
+  allocate_matrices(c,s,y,r,rf_fib,integrand1,integrand2,
 		    npoints,ns);
   propagate_r(*r,h,npoints);
   interpolate_array(*r,*y,r_cp,y_cp,npoints); // interpolate old y values (now stored in y_cp)
@@ -217,21 +216,21 @@ void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
 }
 
 void allocate_matrices(double ****c,double ***s,double ***y,double **r,
-		       double **rf_, double **integrand1,
+		       double **rf_fib, double **integrand1,
 		       double **integrand2,int npoints,struct arr_ns *ns)
 {
   *y = matrix(1,ns->nyj,1,npoints);
   *s = matrix(1,ns->nsi,1,ns->nsj);
   *c = f3tensor(1,ns->nci,1,ns->ncj,1,npoints+1);
   *r = vector(1,npoints);
-  *rf_ = vector(1,npoints);
+  *rf_fib = vector(1,npoints);
   *integrand1 = vector(1,npoints);
   *integrand2 = vector(1,npoints);
   return;
 }
 
 void free_matrices(double ****c,double ***s,double ***y,double **r,
-		   double **rf_, double **integrand1,
+		   double **rf_fib, double **integrand1,
 		   double **integrand2,int npoints,struct arr_ns *ns)
 {
 
@@ -239,7 +238,7 @@ void free_matrices(double ****c,double ***s,double ***y,double **r,
   free_matrix(*s,1,ns->nsi,1,ns->nsj);
   free_matrix(*y,1,ns->nyj,1,npoints);
   free_vector(*r,1,npoints);
-  free_vector(*rf_,1,npoints);
+  free_vector(*rf_fib,1,npoints);
   free_vector(*integrand1,1,npoints);
   free_vector(*integrand2,1,npoints);
   return;
