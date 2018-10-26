@@ -54,10 +54,10 @@ struct params{
   double upperbound_y;
 };
 
-bool solvde(int itmax, double conv, double slowc, double scalv[],
-	    struct arr_ns *ns, int m, double **y, double *r,
-	    double ***c, double **s, struct params *p,
-	    double h);
+void solvde_wrapper(int itmax, double conv, double slowc, double scalv[],
+		    struct arr_ns *ns, int m,int last_m, double **y,
+		    double *r,double ***c, double **s,struct params *p,
+		    double *x,double h);
 
 void bksub(int ne, int nb, int jf, int k1, int k2, double ***c);
 void difeq(int k, int k1, int k2, int jsf, int isl, int isf,

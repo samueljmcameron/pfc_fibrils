@@ -10,127 +10,83 @@
 void sqrtGuess(double *r, double **y, double initialSlope,
 	       double h,int mpt);
 
+bool need_to_interpolate(int mpt, int last_mpt);
+
 void single_calc(double *E,double *dEdx,double *x,struct params *p,
-		 double ****c,double ***s,double ***y,double **r,
-		 double **rf_fib,double **y_cp,double *r_cp,double *hessian,
-		 double conv,int itmax,int *npoints,int last_npoints,
+		 double *x,double ***c,double **s,double **y,double *r,
+		 double *rf_fib,double **y_cp,double *r_cp,double *hessian,
+		 double conv,int itmax,int *mpt,int last_mpt,
 		 struct arr_ns *ns,int max_size)
 {
   double h;
-  bool successful_qromb=false;
-  bool successful_solvde;
-  double slopeguess = M_PI/(4.0*x[1]);
-  double slowc = 1.0;
+
   double scalv[2+1];
 
   scalv[1] = .1;    // guess for magnitude of the psi values
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
 
-  do {
-    h = x[1]/((*npoints)-1);    
+  while ((*mpt) <= max_size) {
 
-    if ((*npoints) != last_npoints) {
+    h = x[1]/((*mpt)-1);    // compute stepsize in r[1..mpt] 
 
-      // if the first calculation for the current variable values is unsuccessful
+    if (need_to_interpolate(*mpt,last_mpt)) {
+
       printf("interpolating at R = %e, eta = %e, delta = %e...\n",
 	     x[1],x[2],x[3]);
 
-      resize_and_interp(h,c,s,y,r,rf_fib,y_cp,r_cp,*npoints,
-			last_npoints,ns);
+      copy_2_arrays(r,y,r_cp,y_cp,last_mpt); // copy arrays r and y into r_cp and y_cp
+      propagate_r(r,h,*mpt);
+      interpolate_array(r,y,r_cp,y_cp,*mpt); // interpolate old y values (now stored in y_cp)
 
-      printf("done interpolating.\n");
-      last_npoints = *npoints;
+
+      last_mpt = *mpt;
     }
+
+    else propagate_r(r,h,(*mpt));
     
-    // if last loop was successful with last_xpoint sized arrays, then just
-    // use last y values as initial guess
-    else propagate_r(*r,h,(*npoints));
-    
+    solvde_wrapper(itmax,conv,scalv,ns,*mpt,y,r,c,s,p,x,h);
 
-    successful_solvde = solvde(itmax,conv,slowc,scalv,
-			       ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
-    //                                                            psi' curves, 
-      
-
-
-    if (!successful_solvde) {
-      printf("solvde convergence failed, trying one more time with a "
-	     "linear guess and a final twist angle value of pi/4.\n");
-
-      linearGuess(*r,*y,slopeguess,h,(*npoints));
-      successful_solvde = solvde(itmax,conv,slowc,scalv,
-				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
-      //                                                            psi' curves, 
-    }
-    if (!successful_solvde) {
-      slopeguess = M_PI/(2.01*sqrt(x[1]));
-      printf("solvde convergence failed, trying one more time with a "
-	     "sqrt(r) guess and a final twist angle value of pi/(2.01).\n");
-      sqrtGuess(*r,*y,slopeguess,h,(*npoints));
-      successful_solvde = solvde(itmax,conv,slowc,scalv,
-				 ns,(*npoints),*y,*r,*c,*s,p,h); // relax to compute psi,
-      //                                                            psi' curves, 
-    }
-    if (!successful_solvde) {
-      write_failure("SOLVDE",*r,*y,*rf_fib,*npoints,*p);
-      return;
-    }
-
-
-    if (calc_Hess) {
-      // calculate energy, derivatives (see energy.c for code)
-      successful_qromb = energy_prop_with_hessian(E,dEdx,p,*r,*y,*rf_fib,
-						  (*npoints),hessian);
-    }
-    else {
-      // calculate energy, derivatives (see energy.c for code)
-      successful_qromb = energy_properties(E,dEdx,p,*r,*y,*rf_fib,
-					   (*npoints));
-    }
+    if(calc_E(E,p,x,r,y,rf_fib,mpt)) return;
 
     
-    
-    (*npoints) = ((*npoints)-1)*2+1;
+    (*mpt) = ((*mpt)-1)*2+1;
     
   }
-  while (!successful_qromb && (*npoints) <= max_size);
 
+  // if it makes it this far, we did not successfully compute E(R)
 
+  write_QROMBfailure(r,y,rf_fib,*mpt,*p,x); // save psi(r), rf_fib(r), and exit
 
-  (*npoints) = ((*npoints)-1)/2+1;
-
-
-  if (!successful_qromb) { // writes the psi(r), r*f, etc, and exits
-    write_failure("QROMB",*r,*y,*rf_fib,*npoints,*p);
-  }
-
-
-  return;
 }
 
+bool need_to_interpolate(int mpt, int last_mpt)
+{
+  return mpt != last_mpt;
+}
 
-void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p)
+void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p,
+		double *x)
 {
   snprintf(f_err,f_err_size,"data/%s_psivsr_%1.4e_%1.4e_%1.4e_"
 	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",err_type,
-	   p.K33,p.k24,p.Lambda,p.d0,p.omega,p.R,p.eta,
-	   p.delta,p.gamma_s);
+	   p.K33,p.k24,p.Lambda,p.d0,p.omega,x[1],x[2],x[3],
+	   p.gamma_s);
   return;
 }
 
-void write_failure(char *err_type,double *r, double **y,double *rf_fib,int rlength,struct params p)
+void write_QROMBfailure(double *r, double **y,double *rf_fib,
+			int mpt,struct params p,double *x)
 {
   int i;
   FILE *broken;
   int f_err_size = 200;
   char f_err[f_err_size];
 
-  make_f_err(f_err,err_type,f_err_size,p);
+  make_f_err(f_err,"QROMB",f_err_size,p,x);
 
-  if (strcmp(err_type,"QROMB")==0) {
-      printf("failed to integrate at npoints = %d, with R = %e.\n",rlength,r[rlength]);
-      printf("saving psi(r) shape, and exiting to system.\n");
-    }
+  printf("failed to integrate with qromb at x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+  printf("saving psi(r) shape, rf_fib(r), and exiting to system.\n");
+
   broken = fopen(f_err,"w");
 
 
@@ -138,6 +94,40 @@ void write_failure(char *err_type,double *r, double **y,double *rf_fib,int rleng
     fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_fib[i]);
   }
   fclose(broken);
+  exit(1);
+  return;
+}
+
+void write_SOLVDEfailure(double *r, double **y,double *r_cp, double **y_cp,
+			 int mpt,int last_mpt,struct params p,double *x)
+{
+  int i;
+  FILE *broken1,*broken2;
+  int f_err_size = 200;
+  char f_err1[f_err_size];
+  char f_err2[f_err_size];
+
+  printf("failed to solve ODE when x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+  printf("saving current psi(r) shape (from failed solvde call), as well as the"
+	 " shape of the initial guess of psi(r) (from previous call of single_calc),"
+	 " and exiting to system.\n");
+
+  make_f_err(f_err1,"SOLVDE_FAIL",f_err_size,p,x);
+  broken1 = fopen(f_err1,"w");
+
+  for (i = 1; i<=mpt; i++) {
+    fprintf(broken,"%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i]);
+  }
+  fclose(broken1);
+
+  make_f_err(f_err2,"SOLVDE_INITGUESS",f_err_size,p,x);
+  broken2 = fopen(f_err2,"w");
+
+  for (i = 1; i<=last_mpt; i++) {
+    fprintf(broken2,"%.8e\t%.8e\t%.8e\n",r_cp[i],y_cp[1][i],y_cp[2][i]);
+  }
+  fclose(broken2);
+
   exit(1);
   return;
 }
@@ -172,12 +162,14 @@ void saveEnergy(FILE *energy, double R, double E, double derivative,
 }
 
 void interpolate_array(double *r,double **y,double *r_cp,
-		       double **y_cp,int npoints)
+		       double **y_cp,int mpt)
 {
   int i;
   double dy;
 
-  for (i = 1; i <=npoints; i++) quick_interp(r_cp,y_cp,r[i],y,i);
+  for (i = 1; i <=mpt; i++) quick_interp(r_cp,y_cp,r[i],y,i);
+  printf("done interpolating.\n");
+
   return;
 }
 
@@ -196,43 +188,27 @@ void assign_ns(struct arr_ns *ns)
   return;
 }
 
-void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
-		       double **rf_fib,double **y_cp,double *r_cp,int npoints,
-		       int last_npoints,struct arr_ns *ns)
-{
-  copy_2_arrays(*r,*y,r_cp,y_cp,last_npoints); // copy arrays r and y into r_cp and y_cp
-  free_matrices(c,s,y,r,rf_fib, // resize all arrays to new npoints size
-		last_npoints,ns);
-  allocate_matrices(c,s,y,r,rf_fib,
-		    npoints,ns);
-  propagate_r(*r,h,npoints);
-  interpolate_array(*r,*y,r_cp,y_cp,npoints); // interpolate old y values (now stored in y_cp)
-  //                                             so that the new y array has an initial guess
-  //                                             for solvde.
-  
-
-}
 
 void allocate_matrices(double ****c,double ***s,double ***y,double **r,
-		       double **rf_fib,int npoints,struct arr_ns *ns)
+		       double **rf_fib,int mpt,struct arr_ns ns)
 {
-  *y = matrix(1,ns->nyj,1,npoints);
-  *s = matrix(1,ns->nsi,1,ns->nsj);
-  *c = f3tensor(1,ns->nci,1,ns->ncj,1,npoints+1);
-  *r = vector(1,npoints);
-  *rf_fib = vector(1,npoints);
+  *y = matrix(1,ns.nyj,1,mpt);
+  *s = matrix(1,ns.nsi,1,ns.nsj);
+  *c = f3tensor(1,ns.nci,1,ns.ncj,1,mpt+1);
+  *r = vector(1,mpt);
+  *rf_fib = vector(1,mpt);
   return;
 }
 
 void free_matrices(double ****c,double ***s,double ***y,double **r,
-		   double **rf_fib,int npoints,struct arr_ns *ns)
+		   double **rf_fib,int mpt,struct arr_ns ns)
 {
 
-  free_f3tensor(*c,1,ns->nci,1,ns->ncj,1,npoints+1);
-  free_matrix(*s,1,ns->nsi,1,ns->nsj);
-  free_matrix(*y,1,ns->nyj,1,npoints);
-  free_vector(*r,1,npoints);
-  free_vector(*rf_fib,1,npoints);
+  free_f3tensor(*c,1,ns.nci,1,ns.ncj,1,mpt+1);
+  free_matrix(*s,1,ns.nsi,1,ns.nsj);
+  free_matrix(*y,1,ns.nyj,1,mpt);
+  free_vector(*r,1,mpt);
+  free_vector(*rf_fib,1,mpt);
   return;
 }
 
@@ -350,11 +326,11 @@ bool non_zero_array(double *dEdx,double conv)
 }
 
 void copy_2_arrays(double *r,double **y,double *r_cp,double **y_cp,
-		 int last_npoints)
+		 int last_mpt)
 {
   int i;
 
-  for (i = 1; i <=last_npoints; i++) {
+  for (i = 1; i <=last_mpt; i++) {
     y_cp[1][i] = y[1][i];
     y_cp[2][i] = y[2][i];
     r_cp[i] = r[i];

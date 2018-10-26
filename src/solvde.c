@@ -6,11 +6,27 @@
 #include "headerfile.h"
 
 
-bool solvde(int itmax, double conv, double slowc, double scalv[],
+bool solvde(int itmax, double conv, double scalv[],
 	    struct arr_ns *ns, int m, double **y, double *r,
-	    double ***c, double **s,struct params *p,
+	    double ***c, double **s,struct params *p,double *x,
 	    double h)
-/*Driver routine for solution of two point boundary value problems by relaxation. itmax is the maximum number of iterations. conv is the convergence criterion (see text). slowc controls the fraction of corrections actually used after each iteration. scalv[1..ne] contains typical sizes for each dependent variable, used to weight errors. indexv[1..ne] lists the column ordering of variables used to construct the matrix s[1..ne][1..2*ne+1] of derivatives. (The nb boundary conditions at the first mesh point must contain some dependence on the first nb variables listed in indexv.) The problem involves ne equations for ne adjustable dependent variables at each point. At the first mesh point there are nb boundary conditions. There are a total of m mesh points. y[1..ne][1..m] is the two-dimensional array that contains the initial guess for all the dependent variables at each mesh point. On each iteration, it is updated by the calculated correction. The arrays c[1..ne][1..ne-nb+1][1..m+1] and s supply dummy storage used by the relaxation code.*/
+/*Driver routine for solution of two point boundary value problems
+  by relaxation. itmax is the maximum number of iterations. conv
+  is the convergence criterion (see text). slowc controls the fraction
+  of corrections actually used after each iteration. scalv[1..ne]
+  contains typical sizes for each dependent variable, used to weight
+  errors. indexv[1..ne] lists the column ordering of variables used to
+  construct the matrix s[1..ne][1..2*ne+1] of derivatives. (The nb
+  boundary conditions at the first mesh point must contain some 
+  dependence on the first nb variables listed in indexv.) The problem
+  involves ne equations for ne adjustable dependent variables at each
+  point. At the first mesh point there are nb boundary conditions. 
+  There are a total of m mesh points. y[1..ne][1..m] is the two-
+  dimensional array that contains the initial guess for all the 
+  dependent variables at each mesh point. On each iteration, it is 
+  updated by the calculated correction. The arrays
+  c[1..ne][1..ne-nb+1][1..m+1] and s supply dummy storage used by the 
+  relaxation code.*/
 {
   /*
   void bksub(int ne, int nb, int jf, int k1, int k2, double ***c);
@@ -29,6 +45,8 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
   int jc1,jcf,k,k1,k2,km,kp,nvars,*kmax;
   int i;
   double err,errj,fac,vmax,vz,*ermax;
+  double slowc = 1.0;
+
   kmax=ivector(1,ne);
   ermax=vector(1,ne);
   k1=1;          //Set up row and column markers.
@@ -52,30 +70,30 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
   int index = 1;
   for (it=1;it<=itmax;it++) { //Primary iteration loop.
     k=k1; //Boundary conditions at first point.
-    difeq(k,k1,k2,j9,ic3,ic4,ne,s,y,r,p,h,m);
+    difeq(k,k1,k2,j9,ic3,ic4,ne,s,y,r,p,x,h,m);
     //    if (isnan(y[1][k])) printf("NAN at first BC!\n");
     if (!pinvs(ic3,ic4,j5,j9,jc1,k1,c,s)) {
-      printf("R = %e\n",p->R);
+      printf("R = %e\n",x[1]);
       printf("failed at first BC!\n");
       return false;
     }
     for (k=k1+1;k<=k2;k++) { //Finite difference equations at all point pairs.
       kp=k-1;
-      difeq(k,k1,k2,j9,ic1,ic4,ne,s,y,r,p,h,m);
+      difeq(k,k1,k2,j9,ic1,ic4,ne,s,y,r,p,x,h,m);
       //      if (isnan(y[1][k])) printf("NAN at k = %d!\n",k);
       red(ic1,ic4,j1,j2,j3,j4,j9,ic3,jc1,jcf,kp,c,s);
       if (!pinvs(ic1,ic4,j3,j9,jc1,k,c,s)) {
-	printf("R = %e\n",p->R);
+	printf("R = %e\n",x[1]);
 	printf("failed at point k = %d in finite differences\n",k);
 	return false;
       }
     }
     k=k2+1;// Final boundary conditions.
-    difeq(k,k1,k2,j9,ic1,ic2,ne,s,y,r,p,h,m);
+    difeq(k,k1,k2,j9,ic1,ic2,ne,s,y,r,p,x,h,m);
     //    if (isnan(y[1][k])) printf("NAN at last BC!\n");
     red(ic1,ic2,j5,j6,j7,j8,j9,ic3,jc1,jcf,k2,c,s);
     if (!pinvs(ic1,ic2,j7,j9,jcf,k2+1,c,s)) {
-      printf("R = %e\n",p->R);
+      printf("R = %e\n",x[1]);
       printf("failed at last BC!\n");
       return false;
     }
@@ -124,3 +142,47 @@ bool solvde(int itmax, double conv, double slowc, double scalv[],
   return false;
 }
 
+void solvde_wrapper(int itmax, double conv, double scalv[],
+		    struct arr_ns *ns, int m,int last_m, double **y,
+		    double *r,double ***c, double **s,struct params *p,
+		    double *x,double h)
+
+// Runs solvde up to three times. The first time using the y form which comes from //
+// previous calculations of y. If that fails, a linear guess for y with a final    //
+// y[1][mpt] = M_PI/4.0 If that fails, a psi(r) = a*sqrt(r) guess is used for y,   //
+// with a = M_PI/(2.01*sqrt(R)). If that fails, give up and exit to system. //
+{
+  double slopeguess;
+
+
+  if (!solvde(itmax,conv,scalv,ns,m,y,r,c,s,p,x,h)) {
+
+    printf("solvde convergence failed, trying one more time with a "
+	   "linear guess and a final twist angle value of pi/4.\n");
+
+    slopeguess = M_PI/(4.0*x[1]);
+    
+    linearGuess(r,y,slopeguess,h,m);
+
+  }
+  if (!solvde(itmax,conv,scalv,ns,m,y,r,c,s,p,x,h)) {
+
+    printf("solvde convergence failed, trying one more time with a "
+	   "sqrt(r) guess and a final twist angle value of pi/(2.01).\n");
+
+    slopeguess = M_PI/(2.01*sqrt(x[1]));
+
+    sqrtGuess(r,y,slopeguess,h,m);
+
+  }
+  if (!solvde(itmax,conv,scalv,ns,m,y,r,c,s,p,x,h)) {
+    
+    // save form of y when solvde failed, rf_fib, and exit.
+
+    write_SOLVDEfailure(r,y,r_cp,y_cp,m,last_m,*p,x);
+
+  }
+  return;
+}
+  
+  

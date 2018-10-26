@@ -6,7 +6,7 @@
 
 void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
 	   int ne, double **s, double **y, double *r,
-	   struct params *p, double h, int mpt)
+	   struct params *p,double *x, double h, int mpt)
 /*Returns matrix s for solvde. See Numerical Recipes in C for details on what s is. */
 {
   double t1,t2, shalf,chalf,sine,cosine;
@@ -35,21 +35,21 @@ void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
     s[1][4] = -0.5*h;
     s[2][1] = -2*h/t1*(2*p->K33/t1*(sine*sine/2.0+shalf*shalf*cosine)
 		       +sine*(1-sine/t1)+cosine*cosine/t1
-		       +0.5*tmp*p->Lambda*p->delta*p->delta*t1
+		       +0.5*tmp*p->Lambda*x[3]*x[3]*t1
 		       //		       *(1+sin(2*eta*L)/(2*eta*L))
 		       *(tmp*shalf*shalf
 			 /(chalf*chalf*chalf*chalf*chalf*chalf)
-			 +0.5*(tmp/(chalf*chalf)-p->eta*p->eta)
+			 +0.5*(tmp/(chalf*chalf)-x[2]*x[2])
 			 *(1.0/(chalf*chalf)+3*shalf*shalf
 			   /(chalf*chalf*chalf*chalf))));
     s[2][2] = h/t1-1;
     s[2][3] = -2*h/t1*(2*p->K33/t1*(sine*sine/2.0+shalf*shalf*cosine)
 		       +sine*(1-sine/t1)+cosine*cosine/t1
-		       +0.5*tmp*p->Lambda*p->delta*p->delta*t1
+		       +0.5*tmp*p->Lambda*x[3]*x[3]*t1
 		       //		       *(1+sin(2*eta*L)/(2*eta*L))
 		       *(tmp*shalf*shalf
 			 /(chalf*chalf*chalf*chalf*chalf*chalf)
-			 +0.5*(tmp/(chalf*chalf)-p->eta*p->eta)
+			 +0.5*(tmp/(chalf*chalf)-x[2]*x[2])
 			 *(1.0/(chalf*chalf)+3*shalf*shalf
 			   /(chalf*chalf*chalf*chalf))));
     s[2][4] = h/t1+1;
@@ -57,9 +57,9 @@ void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
     s[2][jsf] = (-2.0*h/t1*(1-0.5*(y[2][k]+y[2][k-1])
 			    +2*p->K33*shalf*shalf*sine/t1
 			    -cosine*(1-sine/t1)
-			    +0.5*tmp*p->Lambda*p->delta*p->delta
+			    +0.5*tmp*p->Lambda*x[3]*x[3]
 			    //			    *(1+sin(2*eta*L)/(2*eta*L))
-			    *(tmp/(chalf*chalf)-p->eta*p->eta)
+			    *(tmp/(chalf*chalf)-x[2]*x[2])
 			    *shalf*t1/(chalf*chalf*chalf))
 		 +y[2][k]-y[2][k-1]);
   }
