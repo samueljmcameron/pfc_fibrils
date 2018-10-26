@@ -23,17 +23,16 @@ double f2233b1_r(struct params *p,double ri,double sin_yi,
 void compute_rf2233b1(struct params *p,double *r,
 		      double **y, double *rf_fib,int mpt);
 
+// calculation of energy, given that the integral has been calculated. //
 
+double pre_integral_E(struct params *p,double *r,double **y,
+		      double integration_2233b1,int mpt);
 
-// calculation of the energy (requires integral to be calculated). //
+// calculation of the energy, returns true if integral was successfully
+// calculated.
 
-double E_R(struct params *p,double *r,
-	   double **y,double integration_2233b1,int mpt);
-
-
-
-
-
+bool E_R(double *E,struct params *p,double *r,
+	 double **y,double *rf_fib,int mpt);
 
 
 
@@ -69,11 +68,14 @@ void compute_rf2233b1(struct params *p,double *r,
   return;
 }
 
-double E_R(struct params *p,double *r,
-	   double **y,double integration_2233b1,int mpt)
+double pre_integral_E(struct params *p,double *r,double **y,
+		      double integration_2233b1,int mpt)
 {
 
   double E;
+
+
+
   E = 2.0/(p->R*p->R)*integration_2233b1; // first calculate bulk energy per unit length
   // add density fluctuations term
   E = (E+p->delta*p->delta*p->omega*0.5
@@ -89,32 +91,13 @@ double E_R(struct params *p,double *r,
 }
 
 
-
-void fd_dEdx(double *dEdx,double E,double E_last,double *dx,
-	     int num_x)
-{
-  int i;
-  for (i = 1; i<= num_x) {
-    if (fabs(dx[i])>1e-14) dEdx[i] = (E-E_last)/dx[i];
-  }
-  return;
-}
-
-
-
-bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
-			      double *r,double **y,double *rf_fib,
-			      double *hessian,double *dx,int mpt)
+bool E_R(double *E,struct params *p,double *r,
+	 double **y,double *rf_fib,int mpt)
 {
   bool failure = true;
-  double integration_2233b1,integration1,integration2;
+  double integration_2233b1;
   double tol0 = 1e-14;
-  double tol2233b1,tol1,tol2;
-  double E_last = *E;
-  double *dEdx_last;
-
-  dEdx_last = malloc(sizeof(double)*num_x);
-  arr_cp(dEdx_last,dEdx,num_x);
+  double tol2233b1;
 
   // tolerances ("tol...") are to determine how large the energy or 
   // derivative terms are without the integrals (setting them to 0).
@@ -125,8 +108,9 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
   // function that it doesn't change the functions value (up to
   // some tolerance tolblabla), then the lack of convergence can just
   // be ignored.
+
   
-  tol2233b1 = fabs(E_R(p,r,y,0,mpt)*p->R*p->R/2.0*tol0);
+  tol2233b1 = fabs(pre_integral_E(p,r,y,0,mpt)*p->R*p->R/2.0*tol0);
   tol2233b1 = tol2233b1 > tol0 ? tol2233b1 : tol0;
   compute_rf2233b1(p,r,y,rf_fib,mpt);
   integration_2233b1 = qromb(r,rf_fib,mpt,tol2233b1,&failure);
@@ -137,10 +121,8 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
     return false;
   }
   
-  *E = E_R(p,r,y,integration_2233b1,mpt);
+  *E = pre_integral_E(p,r,y,integration_2233b1,mpt);
 
-  fd_dEdx(dEdx,*E,E_last,dx,num_x);
-  
   return true;
 }
 

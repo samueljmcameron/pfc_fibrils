@@ -10,7 +10,7 @@
 void sqrtGuess(double *r, double **y, double initialSlope,
 	       double h,int mpt);
 
-void single_calc(double *E,double *dEdx,struct params *p,
+void single_calc(double *E,double *dEdx,double *x,struct params *p,
 		 double ****c,double ***s,double ***y,double **r,
 		 double **rf_fib,double **y_cp,double *r_cp,double *hessian,
 		 double conv,int itmax,int *npoints,int last_npoints,
@@ -19,7 +19,7 @@ void single_calc(double *E,double *dEdx,struct params *p,
   double h;
   bool successful_qromb=false;
   bool successful_solvde;
-  double slopeguess = M_PI/(4.0*p->R);
+  double slopeguess = M_PI/(4.0*x[1]);
   double slowc = 1.0;
   double scalv[2+1];
 
@@ -27,15 +27,15 @@ void single_calc(double *E,double *dEdx,struct params *p,
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
 
   do {
-    h = p->R/((*npoints)-1);    
+    h = x[1]/((*npoints)-1);    
 
     if ((*npoints) != last_npoints) {
 
       // if the first calculation for the current variable values is unsuccessful
       printf("interpolating at R = %e, eta = %e, delta = %e...\n",
-	     p->R,p->eta,p->delta);
+	     x[1],x[2],x[3]);
 
-      resize_and_interp(h,c,s,y,r,rf_fib,integrand1,integrand2,y_cp,r_cp,*npoints,
+      resize_and_interp(h,c,s,y,r,rf_fib,y_cp,r_cp,*npoints,
 			last_npoints,ns);
 
       printf("done interpolating.\n");
@@ -63,7 +63,7 @@ void single_calc(double *E,double *dEdx,struct params *p,
       //                                                            psi' curves, 
     }
     if (!successful_solvde) {
-      slopeguess = M_PI/(2.01*sqrt(p->R));
+      slopeguess = M_PI/(2.01*sqrt(x[1]));
       printf("solvde convergence failed, trying one more time with a "
 	     "sqrt(r) guess and a final twist angle value of pi/(2.01).\n");
       sqrtGuess(*r,*y,slopeguess,h,(*npoints));
@@ -80,13 +80,12 @@ void single_calc(double *E,double *dEdx,struct params *p,
     if (calc_Hess) {
       // calculate energy, derivatives (see energy.c for code)
       successful_qromb = energy_prop_with_hessian(E,dEdx,p,*r,*y,*rf_fib,
-						  *integrand1,*integrand2,
 						  (*npoints),hessian);
     }
     else {
       // calculate energy, derivatives (see energy.c for code)
       successful_qromb = energy_properties(E,dEdx,p,*r,*y,*rf_fib,
-					   *integrand1,*integrand2,(*npoints));
+					   (*npoints));
     }
 
     
@@ -198,14 +197,13 @@ void assign_ns(struct arr_ns *ns)
 }
 
 void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
-		       double **rf_fib,double **integrand1,double **integrand2,
-		       double **y_cp,double *r_cp,int npoints,int last_npoints,
-		       struct arr_ns *ns)
+		       double **rf_fib,double **y_cp,double *r_cp,int npoints,
+		       int last_npoints,struct arr_ns *ns)
 {
   copy_2_arrays(*r,*y,r_cp,y_cp,last_npoints); // copy arrays r and y into r_cp and y_cp
-  free_matrices(c,s,y,r,rf_fib,integrand1,integrand2, // resize all arrays to new npoints size
+  free_matrices(c,s,y,r,rf_fib, // resize all arrays to new npoints size
 		last_npoints,ns);
-  allocate_matrices(c,s,y,r,rf_fib,integrand1,integrand2,
+  allocate_matrices(c,s,y,r,rf_fib,
 		    npoints,ns);
   propagate_r(*r,h,npoints);
   interpolate_array(*r,*y,r_cp,y_cp,npoints); // interpolate old y values (now stored in y_cp)
@@ -216,22 +214,18 @@ void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
 }
 
 void allocate_matrices(double ****c,double ***s,double ***y,double **r,
-		       double **rf_fib, double **integrand1,
-		       double **integrand2,int npoints,struct arr_ns *ns)
+		       double **rf_fib,int npoints,struct arr_ns *ns)
 {
   *y = matrix(1,ns->nyj,1,npoints);
   *s = matrix(1,ns->nsi,1,ns->nsj);
   *c = f3tensor(1,ns->nci,1,ns->ncj,1,npoints+1);
   *r = vector(1,npoints);
   *rf_fib = vector(1,npoints);
-  *integrand1 = vector(1,npoints);
-  *integrand2 = vector(1,npoints);
   return;
 }
 
 void free_matrices(double ****c,double ***s,double ***y,double **r,
-		   double **rf_fib, double **integrand1,
-		   double **integrand2,int npoints,struct arr_ns *ns)
+		   double **rf_fib,int npoints,struct arr_ns *ns)
 {
 
   free_f3tensor(*c,1,ns->nci,1,ns->ncj,1,npoints+1);
@@ -239,8 +233,6 @@ void free_matrices(double ****c,double ***s,double ***y,double **r,
   free_matrix(*y,1,ns->nyj,1,npoints);
   free_vector(*r,1,npoints);
   free_vector(*rf_fib,1,npoints);
-  free_vector(*integrand1,1,npoints);
-  free_vector(*integrand2,1,npoints);
   return;
 }
 
@@ -280,41 +272,23 @@ void propagate_r(double *r, double h,int mpt)
   return;
 }
 
-void setup_var_pointers(double **var, double *var0,double **dEdvar,
-			double **dEdvarlast,char scan_what[],
-			struct params *p,double *dEdx,double *lastdEdx)
-// convenient way to make a variables (ending in var) that have the  //
-// same addresses as whichever parameter that is specified by        //
-// scan_what.
+int index(char scan_what[])
 {
-
-  if (strcmp(scan_what,"R")==0) {
+  if (strcmp(scan_what,"R")==) {
     printf("R!\n");
-    *var = &p->R;
-    *var0 = p->R;
-    *dEdvar = &dEdx[1];
-    *dEdvarlast = &lastdEdx[1];
-  }
-  else if (strcmp(scan_what,"eta")==0) {
+    return 1;
+  } else if (strcmp(scan_what,"eta")==0) {
     printf("eta!\n");
-    *var = &p->eta;
-    *var0 = p->eta;
-    *dEdvar = &dEdx[2];
-    *dEdvarlast = &lastdEdx[2];
-  }
-  else if (strcmp(scan_what,"delta")==0) {
+    return 2;
+  } else if (strcmp(scan_what,"delta")==0) {
     printf("delta!\n");
-    *var = &p->delta;
-    *var0 = p->delta;
-    *dEdvar = &dEdx[3];
-    *dEdvarlast = &lastdEdx[3];
-  }
-  else {
+    return 3;
+  } else {
     printf("Need either R, eta, or delta as argv[n] input."
 	   "Exiting to system.\n");
     exit(1);
   }
-  return;
+  return 0; // never get here
 }
 
 

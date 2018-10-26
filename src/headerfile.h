@@ -46,9 +46,9 @@ struct params{
   double Lambda;
   double d0;
   double omega;
-  double R;
-  double eta;
-  double delta;
+  //  double R;
+  //  double eta;
+  //  double delta;
   double gamma_s;
   double upperbound_x;
   double upperbound_y;
@@ -82,12 +82,12 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
 			      double *hessian);
 
 void scanE(struct params p,FILE *energy,FILE *psi,double conv,
-	   int itmax,int mpt,int num_x,char scan_what[]);
+	   int itmax,int mpt,int num_scan,char scan_what[]);
 
 void scan2dE(struct params p,FILE *energy,FILE *psi,
 	     FILE *deriv_energy_x,FILE *deriv_energy_y,
 	     FILE *surfacetwist,double conv,int itmax,
-	     int mpt,int num_x, int num_y,
+	     int mpt,int num_scanx, int num_scany,
 	     char scan_what_x[],char scan_what_y[]);
 
 void graddesc(struct params p,FILE *energy,FILE *psi,
