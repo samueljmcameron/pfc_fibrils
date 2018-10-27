@@ -9,7 +9,6 @@
 
 #define HESS(i,j) hessian[(j)+(i-1)*(3)]
 
-
 // free energy density which includes only the terms which require integration //
 // (i.e. the q,K22,K33, and Lambda terms) //
 
@@ -31,9 +30,18 @@ double pre_integral_E(struct params *p,double *x,double *r,double **y,
 // calculation of the energy, returns true if integral was successfully
 // calculated.
 
-bool E_R(double *E,struct params *p,double *x,double *r,
-	 double **y,double *rf_fib,int mpt);
+bool integrate_E(double *E,struct params *p,double *x,double *r,
+		 double **y,double *rf_fib,int mpt);
 
+
+void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p,
+		double *x);
+
+void write_QROMBfailure(double *r, double **y,double *rf_fib,
+			int mpt,struct params p,double *x);
+
+void write_SOLVDEfailure(double *r, double **y,double *r_cp, double **y_cp,
+			 int mpt,int last_mpt,struct params p,double *x);
 
 
 double f2233b1_r(struct params *p,double *x,double ri,double sin_yi,
@@ -92,8 +100,8 @@ double pre_integral_E(struct params *p,double *x,double *r,double **y,
 
 
 
-bool calc_E(double *E,struct params *p,double *x,double *r,
-	    double **y,double *rf_fib,int mpt)
+bool integrate_E(double *E,struct params *p,double *x,double *r,
+		 doxuble **y,double *rf_fib,int mpt)
 // computes E(R) given psi(r) (i.e. y) values //
   
 {
@@ -130,7 +138,121 @@ bool calc_E(double *E,struct params *p,double *x,double *r,
   return true;
 }
 
-double dEdxi(double E_p_dxi, double E_m_dxi,double dxi)
+double E_calc(struct params *p,double *x,double ***c,double **s,
+	      double **y,double *r,double *rf_fib,double **y_cp,
+	      double *r_cp,double conv,int itmax,int *mpt,
+	      int last_mpt,struct arr_ns *ns,int max_size)
 {
-  return (E_p_dxi-E_m_dxi)/(2.0*dxi);
+  double h;
+  double E;
+
+  double scalv[2+1];
+
+  scalv[1] = .1;    // guess for magnitude of the psi values
+  scalv[2] = 4.0;   // guess for magnitude of the psi' values
+
+  while ((*mpt) <= max_size) {
+
+    h = x[1]/((*mpt)-1);    // compute stepsize in r[1..mpt] 
+
+    if (need_to_interpolate(*mpt,last_mpt)) {
+
+      printf("interpolating at R = %e, eta = %e, delta = %e...\n",
+	     x[1],x[2],x[3]);
+
+      copy_2_arrays(r,y,r_cp,y_cp,last_mpt); // copy arrays r and y into r_cp and y_cp
+      propagate_r(r,h,*mpt);
+      interpolate_array(r,y,r_cp,y_cp,*mpt); // interpolate old y values (now stored in y_cp)
+
+
+      last_mpt = *mpt;
+    }
+
+    else propagate_r(r,h,(*mpt));
+    
+    solvde_wrapper(itmax,conv,scalv,ns,*mpt,y,r,c,s,p,x,h);
+
+    if(integrate_E(*E,p,x,r,y,rf_fib,mpt)) return E;
+
+    
+    (*mpt) = ((*mpt)-1)*2+1;
+    
+  }
+
+  // if it makes it this far, we did not successfully compute E(R)
+
+  write_QROMBfailure(r,y,rf_fib,*mpt,*p,x); // save psi(r), rf_fib(r), and exit
+
+  // never get here.
+
+  return 0;
 }
+
+void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p,
+		double *x)
+{
+  snprintf(f_err,f_err_size,"data/%s_psivsr_%1.4e_%1.4e_%1.4e_"
+	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",err_type,
+	   p.K33,p.k24,p.Lambda,p.d0,p.omega,x[1],x[2],x[3],
+	   p.gamma_s);
+  return;
+}
+
+void write_QROMBfailure(double *r, double **y,double *rf_fib,
+			int mpt,struct params p,double *x)
+{
+  int i;
+  FILE *broken;
+  int f_err_size = 200;
+  char f_err[f_err_size];
+
+  make_f_err(f_err,"QROMB",f_err_size,p,x);
+
+  printf("failed to integrate with qromb at x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+  printf("saving psi(r) shape, rf_fib(r), and exiting to system.\n");
+
+  broken = fopen(f_err,"w");
+
+
+  for (i = 1; i<=rlength; i++) {
+    fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_fib[i]);
+  }
+  fclose(broken);
+  exit(1);
+  return;
+}
+
+void write_SOLVDEfailure(double *r, double **y,double *r_cp, double **y_cp,
+			 int mpt,int last_mpt,struct params p,double *x)
+{
+  int i;
+  FILE *broken1,*broken2;
+  int f_err_size = 200;
+  char f_err1[f_err_size];
+  char f_err2[f_err_size];
+
+  printf("failed to solve ODE when x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+  printf("saving current psi(r) shape (from failed solvde call), as well as the"
+	 " shape of the initial guess of psi(r) (from previous call of E_calc),"
+	 " and exiting to system.\n");
+
+  make_f_err(f_err1,"SOLVDE_FAIL",f_err_size,p,x);
+  broken1 = fopen(f_err1,"w");
+
+  for (i = 1; i<=mpt; i++) {
+    fprintf(broken,"%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i]);
+  }
+  fclose(broken1);
+
+  make_f_err(f_err2,"SOLVDE_INITGUESS",f_err_size,p,x);
+  broken2 = fopen(f_err2,"w");
+
+  for (i = 1; i<=last_mpt; i++) {
+    fprintf(broken2,"%.8e\t%.8e\t%.8e\n",r_cp[i],y_cp[1][i],y_cp[2][i]);
+  }
+  fclose(broken2);
+
+  exit(1);
+  return;
+}
+

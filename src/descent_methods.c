@@ -24,15 +24,15 @@
 
 // conjugate gradient descent tools. //
 
-bool positive_eigen(gsl_vector *eigenvals, int num_x);
+bool positive_eigen(gsl_vector *eigenvals, int x_size);
 
-bool positive_definite(double *hessian, int num_x);
+bool positive_definite(double *hessian, int x_size);
 
 void hessian_update_p(struct params *p, double *hessian, double *dEdx,
-		      double *dx,int num_x);
+		      double *dx,int x_size);
 
 void update_p(struct params *p,double rate,double *arrchange,
-	      double *dx, int num_x);
+	      double *dx, int x_size);
 
 
 void reset_p(struct params *p,double *dx);
@@ -55,7 +55,7 @@ double armijo_backtracker(double st,double rate,double E,double *dEdx,
 			  double *r_cp,double **y_cp,double conv,
 			  int itmax,int npoints,struct arr_ns *ns,
 			  int last_npoints,int max_size,double min_rate,
-			  int num_x);
+			  int x_size);
 
 
 void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
@@ -63,15 +63,24 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	      FILE *surfacetwist,FILE *energydensity,double conv,
 	      int itmax,int mpt,double rate0)
 {
-  int npoints = mpt;
-  int last_npoints = mpt;
+
   double h;
-  double **y,**y_cp,*r,*r_cp, **s, ***c;
-  double *rf_fib;
-  double *hessian;  // note vector (vs matrix) definition of hessian
-  double initialSlope;
-  double E;
-  double *dEdx, *lastdEdx, *direction, *dx;
+  double **y;         // y[1][1..mpt] is psi(r), y[2][1..mpt] is psi'(r)
+  double **y_cp;      // y_cp is copy of y
+  double *r,*r_cp;    // r is radial distance from fibril centre
+  double *rf_fib;     // rf_fib is r*free energy density (integrand in model)
+
+  double **s,***c;     // dummy arrays for solvde func (ODE for psi(r))
+  double initialSlope; // slope guess for very first psi(r) form
+  int last_mpt = mpt;  // number of grid points in r and y
+
+  double *x,*x_cp;                // x = (R,eta,delta)
+  double E;                       // E(x) energy of fibrils (cost function)
+  double *dEdx, *lastdEdx;        // gradient vectors for E
+  double *hessian;                // flattened hessian matrix of E
+  double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices passed to derivative calcs
+
+
   double st = 0.7;
   double lastE = -1e100; // a really large, negative number to start with
   double min_rate = conv;
@@ -81,8 +90,8 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   double lastdelta = p.delta;
   double betak;
   int max_size = (mpt-1)*8+1;
-  int num_x0 = 3;
-  int num_x = num_x0;
+  int x_size0 = 3;
+  int x_size = x_size0;
   int count = 0;
   double frac_tol = 1e-6;
   clock_t begin = clock();
@@ -95,46 +104,41 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
   // allocate space for the arrays which will not be resized
   assign_ns(&ns);
-  dEdx = vector(1,num_x0);
-  lastdEdx = vector(1,num_x0);
-  direction = vector(1,num_x0);
-  dx = vector(1,num_x0);
-  hessian = vector(1,num_x0*num_x0);
   // as well as two extra arrays to copy r and y contents into
-  y_cp = matrix(1,ns.nyj,1,max_size);
-  r_cp = vector(1,max_size);
+
 
   // malloc the relevant arrays which may be resized
   allocate_matrices(&c,&s,&y,&r,&rf_fib,max_size,ns);
 
   
   initialSlope = M_PI/(4.0*p.R);
-  h = p.R/(npoints-1);
+  h = p.R/(mpt-1);
   // initial guess for the functional form of psi(r) and psi'(r)
   printf("initial slope for guess = %lf\n", initialSlope);
-  linearGuess(r,y,initialSlope,h,npoints); //linear initial guess 
-  linearGuess(r_cp,y_cp,initialSlope,h,npoints); //linear initial guess 
+  linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
+  linearGuess(r_cp,y_cp,initialSlope,h,mpt); //linear initial guess 
 
   // using classical gradient descent newton raphson hybrid, try to find minimum.
 
 
-  array_constant(1e100,dEdx,num_x0);
-  arr_cp(lastdEdx,dEdx,num_x0);
-  array_constant(0,direction,num_x0);
+  array_constant(1e100,dEdx,x_size0);
+  arr_cp(lastdEdx,dEdx,x_size0);
+  array_constant(0,direction,x_size0);
 
-  
+
+
 
   // start with conjugate gradient descent until hessian seems to look positive definite
 
   while (pos_def_in_a_row < 20 && fabs(dEdx[1])>EFFECTIVE_ZERO) {
 
-    if (p.delta <= EFFECTIVE_ZERO) num_x = 1;
-    else num_x = num_x0;
+    if (p.delta <= EFFECTIVE_ZERO) x_size = 1;
+    else x_size = x_size0;
 
     if (0==1) {//(count % 100 != 0 || count == 0)) {
 
       single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
-		  hessian,conv,itmax,&npoints,last_npoints,
+		  hessian,conv,itmax,&mpt,last_mpt,
 		  &ns,max_size);
 
       betak = polak_betak(dEdx,lastdEdx);
@@ -142,19 +146,19 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
       set_direction(direction,dEdx,betak);
 
       rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
-				conv,itmax,npoints,&ns,last_npoints,max_size,
-				min_rate,num_x);
+				conv,itmax,mpt,&ns,last_mpt,max_size,
+				min_rate,x_size);
 
-      update_p(&p,rate,direction,dx,num_x);
+      update_p(&p,rate,direction,dx,x_size);
 
     } else {
 
       single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
-		  hessian,conv,itmax,&npoints,last_npoints,&ns,max_size);
+		  hessian,conv,itmax,&mpt,last_mpt,&ns,max_size);
 
-      if (positive_definite(hessian,num_x)) {
+      if (positive_definite(hessian,x_size)) {
 
-	hessian_update_p(&p,hessian,dEdx,dx,num_x);
+	hessian_update_p(&p,hessian,dEdx,dx,x_size);
 
 	pos_def_in_a_row += 1;
 
@@ -169,11 +173,11 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	set_direction(direction,dEdx,betak);
 
 	rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
-				  conv,itmax,npoints,&ns,last_npoints,max_size,
-				  min_rate,num_x);
+				  conv,itmax,mpt,&ns,last_mpt,max_size,
+				  min_rate,x_size);
 	
 
-	update_p(&p,rate,direction,dx,num_x);
+	update_p(&p,rate,direction,dx,x_size);
 
 	pos_def_in_a_row = 0;
 
@@ -191,7 +195,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     fprintf(denergyddelta,"%.8e\t%.8e\n",lastdelta,dEdx[3]);
     fprintf(surfacetwist,"%.14e\t%.14e\t%.14e\n",lastR,y[1][mpt],y[2][mpt]);
 
-    last_npoints = npoints;
+    last_mpt = mpt;
     lastR = p.R;
     lasteta = p.eta;
     lastdelta = p.delta;
@@ -216,15 +220,15 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
   while (non_zero_array(dEdx,conv)) {
 
-    if (p.delta <= EFFECTIVE_ZERO) num_x = 1;
-    else num_x = num_x0;
+    if (p.delta <= EFFECTIVE_ZERO) x_size = 1;
+    else x_size = x_size0;
 
     single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
-		hessian,conv,itmax,&npoints,last_npoints,&ns,max_size);
+		hessian,conv,itmax,&mpt,last_mpt,&ns,max_size);
 
     printf("hessian[1][1] = %e\n",hessian[1]);
     
-    if (!positive_definite(hessian,num_x)) {      
+    if (!positive_definite(hessian,x_size)) {      
       
       printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
       betak = polak_betak(dEdx,lastdEdx);
@@ -232,16 +236,16 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
       set_direction(direction,dEdx,betak);
       
       rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
-				conv,itmax,npoints,&ns,last_npoints,max_size,
-				min_rate,num_x);
+				conv,itmax,mpt,&ns,last_mpt,max_size,
+				min_rate,x_size);
       
-      update_p(&p,rate,direction,dx,num_x);
+      update_p(&p,rate,direction,dx,x_size);
       
       printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
       
     } else {
       
-      hessian_update_p(&p,hessian,dEdx,dx,num_x);
+      hessian_update_p(&p,hessian,dEdx,dx,x_size);
 
     }
 
@@ -252,7 +256,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     fprintf(denergyddelta,"%.8e\t%.8e\n",lastdelta,dEdx[3]);
     fprintf(surfacetwist,"%.14e\t%.14e\t%.14e\n",lastR,y[1][mpt],y[2][mpt]);
 
-    last_npoints = npoints;
+    last_mpt = mpt;
     lastR = p.R;
     lasteta = p.eta;
     lastdelta = p.delta;
@@ -268,10 +272,10 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
 
   single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
-	      hessian,conv,itmax,&npoints,last_npoints,
+	      hessian,conv,itmax,&mpt,last_mpt,
 	      &ns,max_size,true);
 
-  positive_definite(hessian,num_x);
+  positive_definite(hessian,x_size);
 
   end = clock();
 
@@ -280,41 +284,36 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
 
   printf("count = %d\n",count);
-  save_psi(psi,r,y,npoints);
-  save_energydensity(energydensity,r,rf_fib,npoints);
+  save_psi(psi,r,y,mpt);
+  save_energydensity(energydensity,r,rf_fib,mpt);
   printf("SAVED!\n");
   printf("E_min-E_chol = %1.2e\n",E);
 
   free_matrices(&c,&s,&y,&r,&rf_fib,max_size,ns);
-  free_matrix(y_cp,1,ns.nyj,1,max_size);
-  free_vector(r_cp,1,max_size);
-  free_vector(dEdx,1,num_x0);
-  free_vector(lastdEdx,1,num_x0);
-  free_vector(direction,1,num_x0);
-  free_vector(dx,1,num_x0);
-  free_vector(hessian,1,num_x0*num_x0);
+
+
 
   return;
 }
 
-bool positive_definite(double *hessian,int num_x)
+bool positive_definite(double *hessian,int x_size)
 {
 
-  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,num_x,num_x);
-  gsl_matrix *mcp = gsl_matrix_alloc(num_x,num_x);
-  gsl_vector *eval = gsl_vector_alloc(num_x);
-  gsl_eigen_symm_workspace *w = gsl_eigen_symm_alloc(num_x);
+  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,x_size,x_size);
+  gsl_matrix *mcp = gsl_matrix_alloc(x_size,x_size);
+  gsl_vector *eval = gsl_vector_alloc(x_size);
+  gsl_eigen_symm_workspace *w = gsl_eigen_symm_alloc(x_size);
 
 
   gsl_matrix_memcpy(mcp,&m.matrix);
   gsl_eigen_symm(mcp,eval,w);
   
   int i;
-  for (i = 0; i < num_x; i++) {
+  for (i = 0; i < x_size; i++) {
     printf("eigenvalue_%d = %.6e\n",i,gsl_vector_get(eval,i));
   }
 
-  if (!positive_eigen(eval,num_x)) {
+  if (!positive_eigen(eval,x_size)) {
     
     gsl_vector_free(eval);
     gsl_eigen_symm_free(w);
@@ -329,30 +328,30 @@ bool positive_definite(double *hessian,int num_x)
   return true;
 }
 
-bool positive_eigen(gsl_vector *eigenvals, int num_x)
+bool positive_eigen(gsl_vector *eigenvals, int x_size)
 {
   int i;
-  for (i = 0; i < num_x; i++) {
+  for (i = 0; i < x_size; i++) {
     if (gsl_vector_get(eigenvals,i) < 0) return false;
   }
   return true;
 }
 
 void hessian_update_p(struct params *p, double *hessian, double *dEdx,
-		      double *dx,int num_x)
+		      double *dx,int x_size)
 {
 
-  gsl_vector_view dxcp = gsl_vector_view_array(dx+1,num_x);
+  gsl_vector_view dxcp = gsl_vector_view_array(dx+1,x_size);
 
-  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,num_x,num_x);
+  gsl_matrix_view m = gsl_matrix_view_array(hessian+1,x_size,x_size);
 
-  gsl_matrix *mcp = gsl_matrix_alloc(num_x,num_x);
+  gsl_matrix *mcp = gsl_matrix_alloc(x_size,x_size);
   
   gsl_matrix_memcpy(mcp,&m.matrix);
 
-  gsl_vector_view b = gsl_vector_view_array(dEdx+1,num_x);
+  gsl_vector_view b = gsl_vector_view_array(dEdx+1,x_size);
   int s;
-  gsl_permutation *perm = gsl_permutation_alloc(num_x);
+  gsl_permutation *perm = gsl_permutation_alloc(x_size);
 
   //  compute_eigenvalues(hessian);
 
@@ -375,10 +374,10 @@ void hessian_update_p(struct params *p, double *hessian, double *dEdx,
 
 
 void update_p(struct params *p,double rate,double *arrchange,
-	      double *dx, int num_x)
+	      double *dx, int x_size)
 {
   int i;
-  for (i = 1; i <= num_x; i++) dx[i] = rate*arrchange[i];
+  for (i = 1; i <= x_size; i++) dx[i] = rate*arrchange[i];
 
   p->R += dx[1];
   p->eta += dx[2];
@@ -477,9 +476,9 @@ bool strong_wolfe(double E,double E_new,double rate,double *dEdx,
 double armijo_backtracker(double st,double rate,double E,double *dEdx,
 			  double *direction,struct params *p,double *r,double **y,
 			  double *r_cp,double **y_cp,double conv,
-			  int itmax,int npoints,struct arr_ns *ns,
-			  int last_npoints,int max_size,double min_rate,
-			  int num_x)
+			  int itmax,int mpt,struct arr_ns *ns,
+			  int last_mpt,int max_size,double min_rate,
+			  int x_size)
 // Using the armijo condition (first Wolfe condition) to determine what the rate //
 // parameter should be. //
 {
@@ -492,28 +491,28 @@ double armijo_backtracker(double st,double rate,double E,double *dEdx,
   double *dEdx_tmp,*dx_tmp;
   double rho = 0.5;
   
-  dx_tmp = vector(1,num_x);
-  dEdx_tmp = vector(1,num_x);
-  array_constant(0,dEdx_tmp,num_x);
+  dx_tmp = vector(1,x_size);
+  dEdx_tmp = vector(1,x_size);
+  array_constant(0,dEdx_tmp,x_size);
 
   // create arrays to manipulate without affecting external arrays
-  allocate_matrices(&cc,&sc,&yc,&rc,&rf_fibc,npoints,ns);
+  allocate_matrices(&cc,&sc,&yc,&rc,&rf_fibc,mpt,ns);
 
   // copy the external r,y arrays into the internal rc,yc arrays
-  copy_2_arrays(r,y,rc,yc,last_npoints);
+  copy_2_arrays(r,y,rc,yc,last_mpt);
 
   // calculate the next values of R, eta, and delta, if the rate was just the normal
   // rate input to this function.
 
-  update_p(p,rate,direction,dx_tmp,num_x);
+  update_p(p,rate,direction,dx_tmp,x_size);
 
   // calculate E, given the new values of R,eta, and delta
 
   // putting dEdx_tmp in as dummy variable for hessian, as hessian is not used
   single_calc(&E_new,dEdx_tmp,p,&cc,&sc,&yc,&rc,&rf_fibc,y_cp,r_cp,
-	      dEdx_tmp,conv,itmax,&npoints,last_npoints,ns,max_size);
+	      dEdx_tmp,conv,itmax,&mpt,last_mpt,ns,max_size);
 
-  last_npoints = npoints;
+  last_mpt = mpt;
 
   reset_p(p,dx_tmp);
 
@@ -522,21 +521,21 @@ double armijo_backtracker(double st,double rate,double E,double *dEdx,
 
     rate *=st;
 
-    update_p(p,rate,direction,dx_tmp,num_x);
+    update_p(p,rate,direction,dx_tmp,x_size);
 
     // putting dEdx_tmp in as dummy variable for hessian, as hessian is not used
     single_calc(&E_new,dEdx_tmp,p,&cc,&sc,&yc,&rc,&rf_fibc,y_cp,r_cp,
-		dEdx_tmp,conv,itmax,&npoints,last_npoints,ns,max_size);
+		dEdx_tmp,conv,itmax,&mpt,last_mpt,ns,max_size);
 
-    last_npoints = npoints;
+    last_mpt = mpt;
 
     reset_p(p,dx_tmp);
 
   }
 
-  free_matrices(&cc,&sc,&yc,&rc,&rf_fibc,npoints,ns);
-  free_vector(dEdx_tmp,1,num_x);
-  free_vector(dx_tmp,1,num_x);
+  free_matrices(&cc,&sc,&yc,&rc,&rf_fibc,mpt,ns);
+  free_vector(dEdx_tmp,1,x_size);
+  free_vector(dx_tmp,1,x_size);
   return rate;
 }
   
@@ -547,8 +546,8 @@ double armijo_backtracker(double st,double rate,double E,double *dEdx,
 double wolfe_backtracker(double st,double rate,double E,double *dEdx,
 			 double *direction,struct params *p,double *r,double **y,
 			 double *r_cp,double **y_cp,double conv,
-			 int itmax,int npoints,struct arr_ns *ns,
-			 int last_npoints,int max_size,double min_rate,
+			 int itmax,int mpt,struct arr_ns *ns,
+			 int last_mpt,int max_size,double min_rate,
 			 bool (*wolfe)(double,double,double,double *,
 				       double*,double*,double,double))
 // Using the strong Wolfe conditions to determine what the rate //
@@ -564,28 +563,28 @@ double wolfe_backtracker(double st,double rate,double E,double *dEdx,
   double rho = 0.01;
   double sigma = 0.1;
 
-  dEdx_new = vector(1,num_x);
-  arr_cp(dEdx_new,dEdx,num_x);
+  dEdx_new = vector(1,x_size);
+  arr_cp(dEdx_new,dEdx,x_size);
 
   // create arrays to manipulate without affecting external arrays
-  allocate_matrices(&cc,&sc,&yc,&rc,&rf_fibc,npoints,ns);
+  allocate_matrices(&cc,&sc,&yc,&rc,&rf_fibc,mpt,ns);
 
   // copy the external r,y arrays into the internal rc,yc arrays
-  copy_2_arrays(r,y,rc,yc,last_npoints);
+  copy_2_arrays(r,y,rc,yc,last_mpt);
 
   // calculate the next values of R, eta, and delta, if the rate was just the normal
   // rate input to this function.
 
-  update_p(p,rate,direction,dx,num_x);
+  update_p(p,rate,direction,dx,x_size);
   
   // calculate E, given the new values of R,eta, and delta
 
   // putting dEdx_new in as dummy variable for hessian, as hessian is not used
   single_calc(&E_new,dEdx_new,p,&cc,&sc,&yc,&rc,&rf_fibc,y_cp,r_cp,
-  dEdx_new,conv,itmax,&npoints,
-  last_npoints,ns,max_size,false);
+  dEdx_new,conv,itmax,&mpt,
+  last_mpt,ns,max_size,false);
 
-  last_npoints = npoints;
+  last_mpt = mpt;
 
   reset_p(p,dx);
 
@@ -594,29 +593,29 @@ double wolfe_backtracker(double st,double rate,double E,double *dEdx,
 
     rate *=st;
 
-    update_p(p,rate,direction,dx,num_x);
+    update_p(p,rate,direction,dx,x_size);
 
     // putting dEdx_new in as dummy variable for hessian, as hessian is not used
     single_calc(&E_new,dEdx_new,p,&cc,&sc,&yc,&rc,&rf_fibc,&integrand1c,
-		&integrand2c,y_cp,r_cp,dEdx_new,conv,itmax,&npoints,
-		last_npoints,ns,max_size,false);
+		&integrand2c,y_cp,r_cp,dEdx_new,conv,itmax,&mpt,
+		last_mpt,ns,max_size,false);
 
-    last_npoints = npoints;
+    last_mpt = mpt;
 
     reset_p(p,dx);
 
   }
 
-  free_matrices(&cc,&sc,&yc,&rc,&rf_fibc,&integrand1c,&integrand2c,npoints,ns);
-  free_vector(dEdx_new,1,num_x);
+  free_matrices(&cc,&sc,&yc,&rc,&rf_fibc,&integrand1c,&integrand2c,mpt,ns);
+  free_vector(dEdx_new,1,x_size);
   return rate;
 }
 
 bool jumpmin(double frac_tol,double E,double *dEdx,struct params p,
 	     double ***c,double **s,double **y,double *r,double *rf_fib,
 	     double *integrand1,double *integrand2,double **y_cp,
-	     double *r_cp,double conv,int itmax,int npoints,
-	     int last_npoints,struct arr_ns *ns,int max_size)
+	     double *r_cp,double conv,int itmax,int mpt,
+	     int last_mpt,struct arr_ns *ns,int max_size)
 {
   int i;
   double lastR = p.R;
@@ -629,28 +628,28 @@ bool jumpmin(double frac_tol,double E,double *dEdx,struct params p,
   double ***cc;
   double *rf_fibc, *integrand1c,*integrand2c;
 
-  tmpdEdx = vector(1,num_x);
-  arr_cp(tmpdEdx,dEdx,num_x);
+  tmpdEdx = vector(1,x_size);
+  arr_cp(tmpdEdx,dEdx,x_size);
 
 
   // create arrays to manipulate without affecting external arrays
-  allocate_matrices(&cc,&sc,&yc,&rc,&rf_fibc,&integrand1c,&integrand2c,npoints,ns);
+  allocate_matrices(&cc,&sc,&yc,&rc,&rf_fibc,&integrand1c,&integrand2c,mpt,ns);
 
   // copy the external r,y arrays into the internal rc,yc arrays
-  copy_2_arrays(r,y,rc,yc,last_npoints);
+  copy_2_arrays(r,y,rc,yc,last_mpt);
 
 
   p.R = lastR*(1-sign(dEdx[1])*frac_tol);
   p.eta = lasteta*(1-sign(dEdx[2])*frac_tol);
-  p.delta = lastdelta*(1-sign(dEdx[num_x])*frac_tol);
+  p.delta = lastdelta*(1-sign(dEdx[x_size])*frac_tol);
 
   // putting dEdx_tmp in as dummy variable for hessian, as hessian is not used
   single_calc(&E,tmpdEdx,&p,&cc,&sc,&yc,&rc,&rf_fibc,&integrand1c,
-	      &integrand2c,y_cp,r_cp,tmpdEdx,conv,itmax,&npoints,last_npoints,
+	      &integrand2c,y_cp,r_cp,tmpdEdx,conv,itmax,&mpt,last_mpt,
 	      ns,max_size,false);
 
   printf("lastE = %e, E = %e\n",lastE,E);
-  for (i = 1; i <= num_x; i++) {
+  for (i = 1; i <= x_size; i++) {
     printf("initial dEdx[%d] = %e, new dEdx[%d] = %e,",
 	   i,dEdx[i],i,tmpdEdx[i]);
   }
