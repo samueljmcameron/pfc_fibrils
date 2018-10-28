@@ -17,13 +17,12 @@
 #define NCK (M+1)              // # number of points in tensor c, c[:][m][n]
 
 #define X_SIZE 3
-
-
+#define ITMAX  10000
+#define CONV   1e-10
+#define MAX_SIZE_M (8)*(M-1)+(1)
 
 int main(int argc, char **argv)
 {
-  int itmax = 10000;
-  double conv = 1.0e-10;
   struct params p;
   char scan_what[20];
   char path[200];
@@ -59,7 +58,7 @@ int main(int argc, char **argv)
   printf("eta = %lf\n",x[2]);
   printf("delta = %lf\n",x[3]);
   printf("gamma_s = %lf\n",p.gamma_s);
-  printf("rateR = %lf\n",rate);
+  printf("rate = %lf\n",rate);
   
 
   snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
@@ -90,7 +89,8 @@ int main(int argc, char **argv)
   energydensity = fopen(f7,"w");
 
   graddesc(p,x,energy,psi,denergydR,denergydeta,denergyddelta,
-	   surfacetwist,energydensity,conv,itmax,M,rate);
+	   surfacetwist,energydensity,CONV,ITMAX,M,MAX_SIZE_M,
+	   rate,X_SIZE);
   
 
   free_vector(x,1,X_SIZE);
