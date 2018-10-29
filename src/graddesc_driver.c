@@ -153,11 +153,9 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     if (x[2] <= EFFECTIVE_ZERO) x_size = 1;
     else x_size = x_size0;
 
-    if (0==1) {//(count % 100 != 0 || count == 0)) {
+    E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_size);
 
-      single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
-		  hessian,conv,itmax,&mpt,last_mpt,
-		  &ns,max_size);
+    if (0==1) {//(count % 100 != 0 || count == 0)) {
 
       betak = polak_betak(dEdx,lastdEdx);
 
@@ -170,6 +168,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
       update_p(&p,rate,direction,dx,x_size);
 
     } else {
+
 
       single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
 		  hessian,conv,itmax,&mpt,last_mpt,&ns,max_size);
@@ -313,3 +312,5 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
   return;
 }
+
+

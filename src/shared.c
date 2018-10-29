@@ -7,15 +7,47 @@
 #include "headerfile.h"
 #include <time.h>
 
-void sqrtGuess(double *r, double **y, double initialSlope,
-	       double h,int mpt);
-
-bool need_to_interpolate(int mpt, int last_mpt);
 
 
-bool need_to_interpolate(int mpt, int last_mpt)
+void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p,
+		double *x)
+/*==============================================================================
+
+  Purpose: This function writes a string to the char array f_err. f_err will be
+  the file name of a file which stores e.g. psi(r) if the calculation of E(x)
+  fails.
+
+  ------------------------------------------------------------------------------
+
+  Parameters:
+
+  f_err -- The char array where the file name is stored.
+
+  err_type -- A string that is inputted to the function, and written to the
+  f_err file name. The string identifies the type of error that caused the
+  calculation to fail. The two possible types of errors are that the ODE
+  solver solvde_wrapper fails to find psi(r) - err_type = "SOLVDE", or that
+  the calculation of E(x) fails as the integration cannot be done with a 
+  sufficiently low error - err_type = "QROMB".
+
+  f_err_size -- Approximate size of the f_err char array.
+
+  p -- This struct has all of the constant parameter info (e.g. K33, k24).
+
+  x -- This vector holds the variable parameters x = (R,eta,delta)'.
+
+  ------------------------------------------------------------------------------
+
+  Returns: Does not return a value, it just saves the file name to the f_err 
+  char array.
+  ============================================================================*/
+  
 {
-  return mpt != last_mpt;
+  snprintf(f_err,f_err_size,"data/%s_psivsr_%1.4e_%1.4e_%1.4e_"
+	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",err_type,
+	   p.K33,p.k24,p.Lambda,p.d0,p.omega,x[1],x[2],x[3],
+	   p.gamma_s);
+  return;
 }
 
 
@@ -48,16 +80,30 @@ void saveEnergy(FILE *energy, double R, double E, double derivative,
   return;
 }
 
-void interpolate_array(double *r,double **y,double *r_cp,
-		       double **y_cp,int mpt)
+
+
+
+
+
+
+
+int index(char scan_what[])
 {
-  int i;
-  double dy;
-
-  for (i = 1; i <=mpt; i++) quick_interp(r_cp,y_cp,r[i],y,i);
-  printf("done interpolating.\n");
-
-  return;
+  if (strcmp(scan_what,"R")==) {
+    printf("R!\n");
+    return 1;
+  } else if (strcmp(scan_what,"eta")==0) {
+    printf("eta!\n");
+    return 2;
+  } else if (strcmp(scan_what,"delta")==0) {
+    printf("delta!\n");
+    return 3;
+  } else {
+    printf("Need either R, eta, or delta as argv[n] input."
+	   "Exiting to system.\n");
+    exit(1);
+  }
+  return 0; // never get here
 }
 
 
@@ -75,10 +121,10 @@ void assign_ns(struct arr_ns *ns)
   return;
 }
 
-void allocate_vectors(double x_size,double **x, double **dEdx, double **lastdEdx,
+void allocate_vectors(double x_size,double **x,double **dEdx,double **lastdEdx,
 		      double **direction, double **hessian, double **x_cp,
-		      double **E_p, double **E_m, double **E_pij,
-		      double **E_mij)
+		      double **E_p,double **E_m,double **E_pij,double **E_mij)
+
 {
 
   // these vectors are meaningful
@@ -100,10 +146,10 @@ void allocate_vectors(double x_size,double **x, double **dEdx, double **lastdEdx
   return;
 }
 
-void free_vectors(double x_size,double **x, double **dEdx, double **lastdEdx,
+void free_vectors(double x_size,double **x,double **dEdx,double **lastdEdx,
 		  double **direction, double **hessian, double **x_cp,
-		  double **E_p, double **E_m, double **E_pij,
-		  double **E_mij)
+		  double **E_p,double **E_m,double **E_pij,double **E_mij)
+
 {
   free_vector(x,1,x_size);
   free_vector(dEdx,1,x_size);
@@ -149,83 +195,7 @@ void free_matrices(struct arr_ns ns,double ****c,double ***s,
   return;
 }
 
-void sqrtGuess(double *r, double **y, double initialSlope,
-		 double h,int mpt)
-{
-  int k;
-  
-  for (k=1;k <=mpt; k++) { // initial guess!
-    r[k] = (k-1)*h;
-    y[1][k] = initialSlope*sqrt(r[k]); // y1 is psi
-    y[2][k] = initialSlope/(2.0*sqrt(r[k]+0.01)); // y2 is psi'!!!!!!!!!!!!!!!!!!
-  }
-  return;
-}
 
-
-void linearGuess(double *r, double **y, double initialSlope,
-		 double h,int mpt)
-{
-  int k;
-  
-  for (k=1;k <=mpt; k++) { // initial guess
-    //    printf("r[%d] = %lf\n",k,r[k]);
-    r[k] = (k-1)*h;
-    //    printf("r[%d] = %lf\n\n",k,r[k]);
-    y[1][k] = initialSlope*r[k]; // y1 is psi
-    y[2][k] = initialSlope; // y2 is psi'!!!!!!!!!!!!!!!!!!
-  }
-  return;
-}
-
-void propagate_r(double *r, double h,int mpt)
-{
-  int k;
-  for (k=1;k <=mpt; k++) r[k] = (k-1)*h; // only change r since psi, psi' are stored from last loop
-  return;
-}
-
-int index(char scan_what[])
-{
-  if (strcmp(scan_what,"R")==) {
-    printf("R!\n");
-    return 1;
-  } else if (strcmp(scan_what,"eta")==0) {
-    printf("eta!\n");
-    return 2;
-  } else if (strcmp(scan_what,"delta")==0) {
-    printf("delta!\n");
-    return 3;
-  } else {
-    printf("Need either R, eta, or delta as argv[n] input."
-	   "Exiting to system.\n");
-    exit(1);
-  }
-  return 0; // never get here
-}
-
-
-void quick_interp(double *xcp,double **ycp,double x,double **y,int i)
-// Given two points of ycp[1][:] (y11cp,x1cp) and y(12cp,x2cp), //
-// and two points of ycp[2][:] (y21cp,x1cp) and (y22cp,x2cp),   //
-// interpolate to determine the value of y between the two
-
-{
-  if (i%2 != 0) {
-    y[1][i] = ycp[1][(i-1)/2+1];
-    y[2][i] = ycp[2][(i-1)/2+1];
-  }
-  else {
-    double slope_1, slope_2;
-    slope_1 = (ycp[1][i/2+1]-ycp[1][i/2])/(xcp[i/2+1]-xcp[i/2]);
-    slope_2 = (ycp[2][i/2+1]-ycp[2][i/2])/(xcp[i/2+1]-xcp[i/2]);
-
-    y[1][i] = slope_1*(x-xcp[i/2])+ycp[1][i/2];
-    y[2][i] = slope_2*(x-xcp[i/2])+ycp[2][i/2];
-  }
-
-  return;
-}
 
 
 int sign(double x) 
