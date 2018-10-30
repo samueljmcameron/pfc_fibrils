@@ -1,5 +1,4 @@
-/* Functions for computing phase field crystal model of fibrils.
-
+/* Second order methods of finding the minimum of E(x).
 
  */
 
@@ -19,21 +18,29 @@
 #include <gsl/gsl_eigen.h>
 
 
-#define EFFECTIVE_ZERO 1e-14
-
-
-// conjugate gradient descent tools. //
-
-bool positive_eigen(gsl_vector *eigenvals, int x_size);
-
-bool positive_definite(double *hessian, int x_size);
-
-void hessian_update_p(struct params *p, double *hessian, double *dEdx,
-		      double *dx,int x_size);
-
 
 bool positive_definite(double *hessian,int x_size)
+/*==============================================================================
+
+  Purpose: Determine whether the hessian matrix is positive definite or not by
+  computing its eigenvalues.
+
+  ------------------------------------------------------------------------------
+
+  Parameters:
+
+  hessian[1..x_size*x_size] -- the flattened Hessian matrix of E(x).
+
+  x_size -- the number of relevant x vectors in the calculation.
+
+  ------------------------------------------------------------------------------
+
+  Returns: true if the Hessian matrix is positive definite, false otherwise.
+
+  ============================================================================*/
 {
+
+  bool positive_eigen(gsl_vector *eigenvals, int x_size);
 
   gsl_matrix_view m = gsl_matrix_view_array(hessian+1,x_size,x_size);
   gsl_matrix *mcp = gsl_matrix_alloc(x_size,x_size);
@@ -65,6 +72,24 @@ bool positive_definite(double *hessian,int x_size)
 }
 
 bool positive_eigen(gsl_vector *eigenvals, int x_size)
+/*==============================================================================
+
+  Purpose: Given a vector of eigenvalues, determine whether they are all
+  greater than zero or not.
+
+  ------------------------------------------------------------------------------
+
+  Parameters:
+
+  eigenvals[1..x_size] -- A vector of eigenvalues.
+
+  x_size -- The number of eigenvalues.
+
+  ------------------------------------------------------------------------------
+
+  Returns: true if all the eigenvalues are positive, and false otherwise.
+
+  ============================================================================*/
 {
   int i;
   for (i = 0; i < x_size; i++) {
@@ -73,32 +98,51 @@ bool positive_eigen(gsl_vector *eigenvals, int x_size)
   return true;
 }
 
-void hessian_update_p(struct params *p, double *hessian, double *dEdx,
-		      double *dx,int x_size)
-{
+void hessian_update_x(double *x,double *hessian, double *dEdx,int x_size)
+/*==============================================================================
 
-  gsl_vector_view dxcp = gsl_vector_view_array(dx+1,x_size);
+  Purpose: Update the vector x[1..x_size] by solving the matrix equation Adx=b,
+  where A is the hessian, dx is the change that will be added to x, and b is
+  the gradient vector.
+
+  ------------------------------------------------------------------------------
+
+  Parameters:
+
+  x[1..x_size] -- The vector x = (R,eta,delta)' which will be updated.
+
+  hessian[1..x_size*x_size] -- The Hessian of E(x).
+
+  dEdx[1..x_size] -- The gradient of E(x).
+
+  x_size -- The number of relevant quantities in the vector x.
+
+  ------------------------------------------------------------------------------
+
+  Returns: Does not explicitly return anything, but updates the vector x.
+
+  ============================================================================*/
+{
+  int s;
+  int i;
+
+  gsl_vector *dx = gsl_vector_alloc(x_size);
 
   gsl_matrix_view m = gsl_matrix_view_array(hessian+1,x_size,x_size);
 
   gsl_matrix *mcp = gsl_matrix_alloc(x_size,x_size);
-  
-  gsl_matrix_memcpy(mcp,&m.matrix);
 
   gsl_vector_view b = gsl_vector_view_array(dEdx+1,x_size);
-  int s;
   gsl_permutation *perm = gsl_permutation_alloc(x_size);
 
-  //  compute_eigenvalues(hessian);
+  gsl_matrix_memcpy(mcp,&m.matrix);
 
   gsl_linalg_LU_decomp(mcp,perm,&s);
 
-  gsl_linalg_LU_solve(mcp,perm,&b.vector,&dxcp.vector);
+  gsl_linalg_LU_solve(mcp,perm,&b.vector,dx);
 
-  p->R -= gsl_vector_get(&dxcp.vector,0);
-  if (p->delta > EFFECTIVE_ZERO) {
-    p->eta -= gsl_vector_get(&dxcp.vector,1);
-    p->delta -= gsl_vector_get(&dxcp.vector,2);
+  for (i = 1; i <= x_size; i++) {
+    x[i] -= gsl_vector_get(dx,i-1);
   }
 
   gsl_permutation_free(perm);

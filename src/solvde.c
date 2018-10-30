@@ -312,14 +312,14 @@ void write_SOLVDEfailure(double *r,double **y,double **y_guess,int mpt,
   broken1 = fopen(f_err1,"w");
 
   for (i = 1; i<=mpt; i++) {
-    fprintf(broken,"%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i]);
+    fprintf(broken1,"%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i]);
   }
   fclose(broken1);
 
   make_f_err(f_err2,"SOLVDE_INITGUESS",f_err_size,p,x);
   broken2 = fopen(f_err2,"w");
 
-  for (i = 1; i<=last_mpt; i++) {
+  for (i = 1; i<=mpt; i++) {
     fprintf(broken2,"%.8e\t%.8e\t%.8e\n",r[i],y_guess[1][i],y_guess[2][i]);
   }
   fclose(broken2);

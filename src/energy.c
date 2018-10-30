@@ -3,6 +3,7 @@
 
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>
 #include "nrutil.h"
@@ -35,10 +36,6 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
 
   x -- This vector holds the variable parameters x = (R,eta,delta)'.
 
-  c -- This is a tensor used in solvde_wrapper, c[1..2][1..2][1..max_mpt+1].
-
-  s -- This is a tensor used by solvde_wrapper, s[1..2][1..5].
-
   r[1..max_mpt] -- This vector holds the grid points for psi(r). Only the 
   first mpt values, with r[mpt] = R (= x[1]) are used, but the remaining grid
   values are there in case interpolation needs to occur.
@@ -50,6 +47,10 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
   rf_fib[1..max_mpt] -- This is the array which the integrand r*f_fibril is
   stored in. Again, only the first mpt values are used until interpolation is 
   necessary.
+
+  c -- This is a tensor used in solvde_wrapper, c[1..2][1..2][1..max_mpt+1].
+
+  s -- This is a tensor used by solvde_wrapper, s[1..2][1..5].
 
   r_cp,y_cp -- copies of r and psi(r).
 
@@ -82,8 +83,13 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
 
   void propagate_r(double *r, double h,int mpt);
 
+  void interpolate_array(double *r,double **y,double *r_cp,double **y_cp,int mpt);
+
   bool successful_E_count(double *E,struct params *p,double *x,double *r,
 			  double **y,double *rf_fib,int mpt);
+
+  void write_QROMBfailure(double *r, double **y,double *rf_fib,int mpt,
+			  struct params p,double *x);
 
   double h;
   double E;
@@ -104,7 +110,7 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
       printf("interpolating at R = %e, eta = %e, delta = %e...\n",
 	     x[1],x[2],x[3]);
 
-      copy_2_arrays(r,y,r_cp,y_cp,last_mpt); // copy arrays r and y into r_cp and y_cp
+      copy_2_arrays(r_cp,y_cp,r,y,last_mpt); // copy arrays r and y into r_cp and y_cp
       propagate_r(r,h,*mpt);
       interpolate_array(r,y,r_cp,y_cp,*mpt); // interpolate old y values (now stored in y_cp)
 
@@ -116,7 +122,7 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
     
     solvde_wrapper(itmax,conv,scalv,ns,*mpt,r,y,y_cp,c,s,p,x,h);
 
-    if(successful_E_count(*E,p,x,r,y,rf_fib,mpt)) return E;
+    if(successful_E_count(&E,p,x,r,y,rf_fib,*mpt)) return E;
 
     
     (*mpt) = ((*mpt)-1)*2+1;
@@ -230,7 +236,7 @@ void write_QROMBfailure(double *r, double **y,double *rf_fib,int mpt,
   broken = fopen(f_err,"w");
 
 
-  for (i = 1; i<=rlength; i++) {
+  for (i = 1; i<=mpt; i++) {
     fprintf(broken,"%.8e\t%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i],rf_fib[i]);
   }
   fclose(broken);
@@ -307,8 +313,8 @@ bool successful_E_count(double *E,struct params *p,double *x,double *r,
   integration_2233b1 = qromb(r,rf_fib,mpt,tol2233b1,&failure);
   
   if (failure) {
-    printf("failed to integrate at x = (%e,%e,%e)\n"
-	   x[1],x[2],x[3],mpt);
+    printf("failed to integrate at x = (%e,%e,%e)\n",
+	   x[1],x[2],x[3]);
     return false;
   }
 

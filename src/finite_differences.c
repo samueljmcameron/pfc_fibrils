@@ -38,8 +38,8 @@ void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
 {
 
   void compute_hessian(double *hessian,double E,struct params *p,double *x,
-		       double *r,double **y,double *rf_fib,double *r_cp,
-		       double **y_cp,double ***c,double **s,double conv,
+		       double *r,double **y,double *rf_fib,double ***c,
+		       double **s,double *r_cp,double **y_cp,double conv,
 		       int itmax,int *mpt,struct arr_ns *ns,int max_mpt,
 		       int x_size,double *E_p,double *E_m,double *E_pij,
 		       double *E_mij,double dx);
@@ -72,7 +72,7 @@ void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
   }
   
   if (calc_hess) {
-    compute_hessian(hessian,E,p,x,r,y,rf_fib,r_cp,y_cp,c,s,conv,itmax,mpt,
+    compute_hessian(hessian,E,p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,
 		    ns,max_mpt,x_size,E_p,E_m,E_pij,E_mij,dx);
   }    
   return;
@@ -80,8 +80,8 @@ void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
 }
 
 void compute_hessian(double *hessian,double E,struct params *p,double *x,
-		     double *r,double **y,double *rf_fib,double *r_cp,
-		     double **y_cp,double ***c,double **s,double conv,
+		     double *r,double **y,double *rf_fib,double ***c,
+		     double **s,double *r_cp,double **y_cp,double conv,
 		     int itmax,int *mpt,struct arr_ns *ns,int max_mpt,
 		     int x_size,double *E_p,double *E_m,double *E_pij,
 		     double *E_mij,double dx)

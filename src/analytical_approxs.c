@@ -2,7 +2,7 @@
   This file is no longer of use! The gradients of E cannot be computed
   analytically!! IGNORE THIS FILE!!
 
-*/
+
 
 
 
@@ -518,7 +518,7 @@ bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
   return true;
 }
 
-/*
+
 // retired functions which use analytical derivatives. These don't work, as you need to know
 // dy(r,R)/dR, which is not a known quantity.
 

@@ -25,7 +25,7 @@
 void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	      FILE *denergydR,FILE *denergydeta,FILE *denergyddelta,
 	      FILE *surfacetwist,FILE *energydensity,const double conv,
-	      const int itmax,int mpt,const int max_mpt,double rate0,
+	      const int itmax,int mpt,const int max_mpt,double rate,
 	      const int x_size0)
 
 /*==============================================================================
@@ -73,7 +73,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   max_mpt -- maximum allowed grid size for r, psi(r) (still of the form 
   2^n+1)
   
-  rate0 -- maximum rate size in dR = -rate0*(descent direction).
+  rate -- maximum rate of descent considered.
 
   x_size0 -- size of the vector x. Since x = (R,eta,delta), this is 3.
 
@@ -86,28 +86,26 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   
 {
 
-
   double **y;         // y[1][1..mpt] is psi(r), y[2][1..mpt] is psi'(r)
   double **y_cp;      // y_cp is copy of y
-  double *r,*r_cp;    // r is radial distance from fibril centre
+  double *r;          // r is radial distance from fibril centre
+  double *r_cp;       // r_cp is a copy of r
   double *rf_fib;     // rf_fib is r*free energy density (integrand in model)
   double h;           // step spacing between points in r
   
   double **s,***c;     // dummy arrays for solvde func (ODE for psi(r))
   double initialSlope; // slope guess for very first psi(r) form
-  int last_mpt = mpt;  // number of grid points in r and y
-
-  int max_size = (mpt-1)*8+1; // maximum number of grid points for r and y
   
   int x_size = x_size0;           // x_size can change to 1 if delta goes to zero
   double E;                       // E(x) energy of fibrils (cost function)
+  double lastE = 1e100;           // E(x) at previous value of x
   double *dEdx, *lastdEdx;        // gradient vectors for E
+  double *direction;              // direction of descent
+  double *lastx;                  // will store a copy of x at its previous value
   double *hessian;                // flattened hessian matrix of E
   double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices passed to derivative calcs
 
-  double rate = rate0;            // current value of rate in dx = -rate*dEdx
   const double min_rate = 1e-10;  // minimum value of rate
-  double betak;                   // parameter in conjugate gradient descent
 
   int count = 0;           // count how many times we descend before minimum reached
 
@@ -121,112 +119,103 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   assign_ns(&ns);           // set struct values
 
 
-  // malloc the relevant arrays which may be resized
-  allocate_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,max_size);
+  // malloc the relevant arrays 
+  allocate_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,max_mpt);
 
   // malloc the vectors of size x_size0 or x_size0*x_size0
-  allocate_vectors(x_size0,&x,&dEdx,&lastdEdx,&direction,&hessian,
+  allocate_vectors(x_size0,&lastx,&dEdx,&lastdEdx,&direction,&hessian,
 		   &E_p,&E_m,&E_pij,&E_mij);
   
   initialSlope = M_PI/(4.0*x[1]);
   h = x[1]/(mpt-1);
 
   linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
-  linearGuess(r_cp,y_cp,initialSlope,h,mpt); //linear initial guess 
 
-  // using classical gradient descent newton raphson hybrid, try to find minimum.
-
-
+  copy_2_arrays(r_cp,y_cp,r,y,mpt);
   array_constant(1e100,dEdx,x_size0);
   arr_cp(lastdEdx,dEdx,x_size0);
   array_constant(0,direction,x_size0);
 
 
 
-
+  // using classical gradient descent newton raphson hybrid, try to find minimum.
   // start with conjugate gradient descent until hessian seems to look positive definite
 
-  while (pos_def_in_a_row < 20 && fabs(dEdx[1])>conv) {
+  while (pos_def_in_a_row < 20) {
 
-    if (x[2] <= EFFECTIVE_ZERO) x_size = 1;
-    else x_size = x_size0;
+    arr_cp(lastx,x,x_size0);
 
-    E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_size);
+    //    if (x[2] <= EFFECTIVE_ZERO) x_size = 1;
+    //    else x_size = x_size0;
 
-    if (0==1) {//(count % 100 != 0 || count == 0)) {
+    E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
 
-      derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,mpt,&ns,
+    if (count % 100 != 0 || count == 0) {
+
+      derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
 		     max_mpt,x_size,hessian,false,E_p,E_m,E_pij,E_mij);
       
-      betak = polak_betak(dEdx,lastdEdx);
 
-      set_direction(direction,dEdx,betak);
+      set_direction(direction,dEdx,lastdEdx,x_size);
 
-      rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
-				conv,itmax,mpt,&ns,last_mpt,max_size,
-				min_rate,x_size);
-
-      update_p(&p,rate,direction,dx,x_size);
+      armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
+			 conv,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
 
     } else {
 
+      derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
+		     max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
-      single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
-		  hessian,conv,itmax,&mpt,last_mpt,&ns,max_size);
+
 
       if (positive_definite(hessian,x_size)) {
-
-	hessian_update_p(&p,hessian,dEdx,dx,x_size);
-
-	pos_def_in_a_row += 1;
 
 	printf("Newton Raphson method worked! number of positive " 
 	       "definite hessians in a row = %d!\n",
 	       pos_def_in_a_row);
 
+	pos_def_in_a_row += 1;
+
       } else {
-
-	betak = polak_betak(dEdx,lastdEdx);
-	
-	set_direction(direction,dEdx,betak);
-
-	rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
-				  conv,itmax,mpt,&ns,last_mpt,max_size,
-				  min_rate,x_size);
-	
-
-	update_p(&p,rate,direction,dx,x_size);
-
-	pos_def_in_a_row = 0;
-
 	printf("Newton's Raphson method didn't work. Resetting "
 	       "the number of positive definite hessians in "
 	       "a row back to %d.\n",pos_def_in_a_row);
 
+	pos_def_in_a_row = 0;
+	
       }
+      set_direction(direction,dEdx,lastdEdx,x_size);
+      
+      armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
+			 conv,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
+
+
 
     }
-    
+
+    printf("dEdx[1] = %e\t",dEdx[1]);
+    printf("dEdx[2] = %e\t",dEdx[2]);
+    printf("dEdx[3] = %e\n",dEdx[3]);
+
     fprintf(energy,"%d\t%.8e\n",count,E);
-    fprintf(denergydR,"%.14e\t%.14e\t%.14e\t%.14e\n",lastR,E,dEdx[1],hessian[1]);
-    fprintf(denergydeta,"%.8e\t%.8e\n",lasteta,dEdx[2]);
-    fprintf(denergyddelta,"%.8e\t%.8e\n",lastdelta,dEdx[3]);
-    fprintf(surfacetwist,"%.14e\t%.14e\t%.14e\n",lastR,y[1][mpt],y[2][mpt]);
 
-    last_mpt = mpt;
-    lastR = p.R;
-    lasteta = p.eta;
-    lastdelta = p.delta;
-    arr_cp(lastdEdx,dEdx,3);
-    lastE = E;
+    fprintf(denergydR,"%.14e\t%.14e\t%.14e\t%.14e\n",lastx[1],E,dEdx[1],
+	    hessian[1]);
 
+    fprintf(denergydeta,"%.8e\t%.8e\n",lastx[2],dEdx[2]);
 
+    fprintf(denergyddelta,"%.8e\t%.8e\n",lastx[3],dEdx[3]);
+
+    fprintf(surfacetwist,"%.14e\t%.14e\t%.14e\n",lastx[1],y[1][mpt],
+	    y[2][mpt]);
+
+    arr_cp(lastdEdx,dEdx,x_size0);
     count += 1;
     printf("count = %d\n",count);
 
-    if (p.R <= 0) {
-      printf("R is being driven to negative values, R = %e!\n",p.R);
-      p.R = 1e-6;
+    if (x[1] <= 0) {
+      printf("R is being driven to negative values, R = %e!\n",x[1]);
+      x[1] = 1e-6;
     }
       
   }
@@ -236,49 +225,58 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	 "\n\n\n\n\n\n");
 
 
-  while (non_zero_array(dEdx,conv)) {
+  while (non_zero_array(dEdx,conv,x_size)) {
 
-    if (p.delta <= EFFECTIVE_ZERO) x_size = 1;
-    else x_size = x_size0;
+    arr_cp(lastx,x,x_size0);
 
-    single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
-		hessian,conv,itmax,&mpt,last_mpt,&ns,max_size);
+    //    if (x[3] <= EFFECTIVE_ZERO) x_size = 1;
+    //    else x_size = x_size0;
+
+    E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
+
+    derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
+		   max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
     printf("hessian[1][1] = %e\n",hessian[1]);
     
     if (!positive_definite(hessian,x_size)) {      
       
       printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
-      betak = polak_betak(dEdx,lastdEdx);
       
-      set_direction(direction,dEdx,betak);
+      set_direction(direction,dEdx,lastdEdx,x_size);
       
-      rate = armijo_backtracker(st,rate0,E,dEdx,direction,&p,r,y,r_cp,y_cp,
-				conv,itmax,mpt,&ns,last_mpt,max_size,
-				min_rate,x_size);
-      
-      update_p(&p,rate,direction,dx,x_size);
+      armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
+			 conv,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
       
       printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
       
     } else {
       
-      hessian_update_p(&p,hessian,dEdx,dx,x_size);
+      hessian_update_x(x,hessian,dEdx,x_size);
 
     }
 
 
-    fprintf(energy,"%d\t%.8e\n",count,E);
-    fprintf(denergydR,"%.14e\t%.14e\t%.14e\t%.14e\n",lastR,E,dEdx[1],hessian[1]);
-    fprintf(denergydeta,"%.8e\t%.8e\n",lasteta,dEdx[2]);
-    fprintf(denergyddelta,"%.8e\t%.8e\n",lastdelta,dEdx[3]);
-    fprintf(surfacetwist,"%.14e\t%.14e\t%.14e\n",lastR,y[1][mpt],y[2][mpt]);
 
-    last_mpt = mpt;
-    lastR = p.R;
-    lasteta = p.eta;
-    lastdelta = p.delta;
-    arr_cp(lastdEdx,dEdx,3);
+    fprintf(energy,"%d\t%.8e\n",count,E);
+
+    fprintf(denergydR,"%.14e\t%.14e\t%.14e\t%.14e\n",lastx[1],E,dEdx[1],
+	    hessian[1]);
+
+    fprintf(denergydeta,"%.8e\t%.8e\n",lastx[2],dEdx[2]);
+
+    fprintf(denergyddelta,"%.8e\t%.8e\n",lastx[3],dEdx[3]);
+
+    fprintf(surfacetwist,"%.14e\t%.14e\t%.14e\n",lastx[1],y[1][mpt],
+	    y[2][mpt]);
+
+
+    printf("dEdx[1] = %e\t",dEdx[1]);
+    printf("dEdx[2] = %e\t",dEdx[2]);
+    printf("dEdx[3] = %e\n",dEdx[3]);
+
+
+    arr_cp(lastdEdx,dEdx,x_size0);
     lastE = E;
 
     count += 1;
@@ -288,10 +286,10 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
       
   }
 
+  E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
 
-  single_calc(&E,dEdx,&p,&c,&s,&y,&r,&rf_fib,y_cp,r_cp,
-	      hessian,conv,itmax,&mpt,last_mpt,
-	      &ns,max_size,true);
+  derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
+		 max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
   positive_definite(hessian,x_size);
 
@@ -307,7 +305,11 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   printf("SAVED!\n");
   printf("E_min-E_chol = %1.2e\n",E);
 
-  free_matrices(&c,&s,&y,&r,&rf_fib,max_size,ns);
+
+  free_vectors(x_size0,&lastx,&dEdx,&lastdEdx,&direction,&hessian,
+	       &E_p,&E_m,&E_pij,&E_mij);
+
+  free_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,max_mpt);
 
 
 
