@@ -121,9 +121,10 @@ void assign_ns(struct arr_ns *ns)
   return;
 }
 
-void allocate_vectors(double x_size,double **x,double **dEdx,double **lastdEdx,
-		      double **direction, double **hessian, double **x_cp,
-		      double **E_p,double **E_m,double **E_pij,double **E_mij)
+void allocate_vectors(double x_size,double **x,double **dEdx,
+		      double **lastdEdx,double **direction,double **hessian,
+		      double **E_p,double **E_m,double **E_pij,
+		      double **E_mij)
 
 {
 
@@ -136,7 +137,6 @@ void allocate_vectors(double x_size,double **x,double **dEdx,double **lastdEdx,
 
   // these vectors are just dummy vectors to use in calculating
   // derivatives
-  x_cp = vector(1,x_size);
   E_p = vector(1,x_size);
   E_m = vector(1,x_size);
   E_pij = vector(1,x_size);
@@ -147,8 +147,8 @@ void allocate_vectors(double x_size,double **x,double **dEdx,double **lastdEdx,
 }
 
 void free_vectors(double x_size,double **x,double **dEdx,double **lastdEdx,
-		  double **direction, double **hessian, double **x_cp,
-		  double **E_p,double **E_m,double **E_pij,double **E_mij)
+		  double **direction,double **hessian,double **E_p,
+		  double **E_m,double **E_pij,double **E_mij)
 
 {
   free_vector(x,1,x_size);
@@ -166,8 +166,8 @@ void free_vectors(double x_size,double **x,double **dEdx,double **lastdEdx,
 }
 
 void allocate_matrices(struct arr_ns ns,double ****c,double ***s,
-		       double ***y,double **r,double ***y_cp,
-		       double **r_cp,double **rf_fib,int mpt)
+		       double **r,double ***y,double **r_cp,
+		       double ***y_cp,double **rf_fib,int mpt)
 {
   *y = matrix(1,ns.nyj,1,mpt);
   *s = matrix(1,ns.nsi,1,ns.nsj);

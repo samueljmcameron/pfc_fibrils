@@ -69,42 +69,6 @@ bool armijo(double E,double E_new,double rate,double *dEdx,
   return cond1;
 }
 
-bool weak_wolfe(double E,double E_new,double rate,double *dEdx,
-		double *dEdx_new,double *direction, double rho,double sigma)
-{
-  int i;
-  double gkTdirection = 0;
-  double gkTdirection_new = 0;
-  for (i = 1; i <= 3; i++) {
-    gkTdirection += dEdx[i]*direction[i];
-    gkTdirection_new += dEdx_new[i]*direction[i];
-  }
-
-  bool cond1 = (E_new-E <= rho*rate*gkTdirection);
-  bool cond2 = (gkTdirection_new >= sigma*gkTdirection);
-
-
-  return cond1 && cond2;
-}
-
-bool strong_wolfe(double E,double E_new,double rate,double *dEdx,
-		  double *dEdx_new,double *direction, double rho,double sigma)
-{
-  int i;
-  double gkTdirection = 0;
-  double gkTdirection_new = 0;
-  for (i = 1; i <= 3; i++) {
-    gkTdirection += dEdx[i]*direction[i];
-    gkTdirection_new += dEdx_new[i]*direction[i];
-  }
-
-  bool cond1 = (E_new-E <= rho*rate*gkTdirection);
-  bool cond2 = (fabs(gkTdirection_new) <= sigma*fabs(gkTdirection));
-
-  //  if (cond1 && cond2) printf("strong wolfe!\n");
-  return cond1 && cond2;
-}
-
   
 double armijo_backtracker(double st,double rate,double E,double *dEdx,
 			  double *direction,struct params *p,double *r,double **y,

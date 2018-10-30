@@ -72,15 +72,6 @@ void polint(double xa[], double ya[], int, double, double *, double *);
 double qromb(double *,double *, int,double tol,bool *failure);
 
 
-bool energy_properties(double *E,double *dEdx,struct params *p,
-		       double *r,double **y,double *rf_,
-		       double *integrand1,double *integrand2,int mpt);
-
-bool energy_prop_with_hessian(double *E, double *dEdx,struct params *p,
-			      double *r,double **y,double *rf_,
-			      double *integrand1,double *integrand2,int mpt,
-			      double *hessian);
-
 void scanE(struct params p,FILE *energy,FILE *psi,double conv,
 	   int itmax,int mpt,int num_scan,char scan_what[]);
 
@@ -90,11 +81,33 @@ void scan2dE(struct params p,FILE *energy,FILE *psi,
 	     int mpt,int num_scanx, int num_scany,
 	     char scan_what_x[],char scan_what_y[]);
 
-void graddesc(struct params p,FILE *energy,FILE *psi,
-	      FILE *denergydR,FILE *denergydeta,
-	      FILE *denergyddelta,FILE *surfacetwist,
-	      FILE *energydensity,double conv,int itmax,
-	      int mpt,double rate0);
+void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
+	      FILE *denergydR,FILE *denergydeta,FILE *denergyddelta,
+	      FILE *surfacetwist,FILE *energydensity,const double conv,
+	      const int itmax,int mpt,const int max_mpt,double rate0
+	      const int x_size0);
+
+
+/* files from energy.c */
+
+double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
+	      double ***c,double **s,double *r_cp,double **y_cp,double conv,
+	      int itmax,int *mpt,struct arr_ns *ns,int max_mpt);
+
+/* files from finite_differences.c */
+
+void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
+		    double ***c,double **s,double *r,double **y,double *rf_fib,
+		    double *r_cp,double **y_cp,double conv,int itmax,int *mpt,
+		    struct arr_ns *ns,int max_mpt,int x_size,double *hessian,
+		    bool calc_hess,double *E_p,double *E_m, double *E_pij,
+		    double *E_mij);
+
+/* files from conj_grad.c */
+
+double polak_betak(double *dEdx,double *lastdEdx);
+
+void set_direction(double *direction,double *dEdx,double betak);
 
 
 /* files below this point are in shared.c */
@@ -122,6 +135,8 @@ void save_energydensity(FILE *energydensity,double *r, double *rf_,int mpt);
 void saveEnergy(FILE *energy, double R, double E, double derivative,
 		double observable);
 
+void linearGuess(double *r, double **y, double initialSlope,double h,
+		 int mpt);
 
 
 // array and utility functions which are specific to algorithms being used. //
@@ -133,9 +148,14 @@ void resize_and_interp(double h,double ****c,double ***s,double ***y,double **r,
 		       double **y_cp,double *r_cp,int npoints,int last_npoints,
 		       struct arr_ns *ns);
 
-void allocate_matrices(double ****c,double ***s,double ***y,double **r,
-		       double **rf_, double **integrand1,
-		       double **integrand2,int npoints,struct arr_ns *ns);
+void allocate_vectors(double x_size,double **x,double **dEdx,
+		      double **lastdEdx,double **direction,double **hessian,
+		      double **E_p,double **E_m,double **E_pij,
+		      double **E_mij);
+
+void allocate_matrices(struct arr_ns ns,double ****c,double ***s,
+		       double **r,double ***y,double **r_cp,
+		       double ***y_cp,double **rf_fib,int mpt);
 
 void free_matrices(double ****c,double ***s,double ***y,double **r,
 		   double **rf_, double **integrand1,

@@ -100,7 +100,6 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   int max_size = (mpt-1)*8+1; // maximum number of grid points for r and y
   
   int x_size = x_size0;           // x_size can change to 1 if delta goes to zero
-  double *x_cp;                   // copy of x = (R,eta,delta)
   double E;                       // E(x) energy of fibrils (cost function)
   double *dEdx, *lastdEdx;        // gradient vectors for E
   double *hessian;                // flattened hessian matrix of E
@@ -123,15 +122,14 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
 
   // malloc the relevant arrays which may be resized
-  allocate_matrices(&c,&s,&y,&r,&rf_fib,max_size,ns);
+  allocate_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,max_size);
 
   // malloc the vectors of size x_size0 or x_size0*x_size0
   allocate_vectors(x_size0,&x,&dEdx,&lastdEdx,&direction,&hessian,
-		   &x_cp,&E_p,&E_m,&E_pij,&E_mij);
+		   &E_p,&E_m,&E_pij,&E_mij);
   
   initialSlope = M_PI/(4.0*x[1]);
   h = x[1]/(mpt-1);
-  // initial guess for the functional form of psi(r) and psi'(r)
 
   linearGuess(r,y,initialSlope,h,mpt); //linear initial guess 
   linearGuess(r_cp,y_cp,initialSlope,h,mpt); //linear initial guess 
@@ -157,6 +155,9 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     if (0==1) {//(count % 100 != 0 || count == 0)) {
 
+      derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,mpt,&ns,
+		     max_mpt,x_size,hessian,false,E_p,E_m,E_pij,E_mij);
+      
       betak = polak_betak(dEdx,lastdEdx);
 
       set_direction(direction,dEdx,betak);

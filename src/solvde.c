@@ -34,9 +34,6 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
 	      double *r, double **y,double ***c, double **s,struct params *p,
 	      double *x,double h);
 
-  void linearGuess(double *r, double **y, double initialSlope,double h,
-		   int mpt);
-
   void sqrtGuess(double *r, double **y, double initialSlope,double h,int mpt);
 
   void write_SOLVDEfailure(double *r,double **y,double **y_guess,int mpt,
