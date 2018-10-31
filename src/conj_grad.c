@@ -178,7 +178,9 @@ void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 
   update_x(x,rate,direction,x_size);
 
-  // calculate E(x
+  // calculate E(x)
+
+
 
   E_new = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,ns,
 		 max_mpt);

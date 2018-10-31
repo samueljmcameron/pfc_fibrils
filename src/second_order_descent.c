@@ -93,7 +93,7 @@ bool positive_eigen(gsl_vector *eigenvals, int x_size)
 {
   int i;
   for (i = 0; i < x_size; i++) {
-    if (gsl_vector_get(eigenvals,i) < 0) return false;
+    if (gsl_vector_get(eigenvals,i) <= 0) return false;
   }
   return true;
 }

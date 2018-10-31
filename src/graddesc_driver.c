@@ -21,6 +21,8 @@
 
 #define EFFECTIVE_ZERO 1e-14
 
+#define HESS(i,j) hessian[(j)+(i-1)*(3)]
+
 
 void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	      FILE *denergydR,FILE *denergydeta,FILE *denergyddelta,
@@ -86,6 +88,8 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   
 {
 
+  void print_x_dEdx(double *x, double *dEdx,double *hessian,double x_size);
+
   double **y;         // y[1][1..mpt] is psi(r), y[2][1..mpt] is psi'(r)
   double **y_cp;      // y_cp is copy of y
   double *r;          // r is radial distance from fibril centre
@@ -108,6 +112,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   const double min_rate = 1e-10;  // minimum value of rate
 
   int count = 0;           // count how many times we descend before minimum reached
+
 
   clock_t begin = clock(); // timing function stuff
   clock_t end;
@@ -141,7 +146,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   // using classical gradient descent newton raphson hybrid, try to find minimum.
   // start with conjugate gradient descent until hessian seems to look positive definite
 
-  while (pos_def_in_a_row < 20) {
+  while (pos_def_in_a_row < 20 && non_zero_array(dEdx,conv,x_size)) {
 
     arr_cp(lastx,x,x_size0);
 
@@ -150,11 +155,13 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
 
+
+
     if (count % 100 != 0 || count == 0) {
 
       derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
 		     max_mpt,x_size,hessian,false,E_p,E_m,E_pij,E_mij);
-      
+
 
       set_direction(direction,dEdx,lastdEdx,x_size);
 
@@ -165,7 +172,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
       derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
 		     max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
-
+      print_x_dEdx(x,dEdx,hessian,x_size);
 
 
       if (positive_definite(hessian,x_size)) {
@@ -193,20 +200,18 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     }
 
-    printf("dEdx[1] = %e\t",dEdx[1]);
-    printf("dEdx[2] = %e\t",dEdx[2]);
-    printf("dEdx[3] = %e\n",dEdx[3]);
+
 
     fprintf(energy,"%d\t%.8e\n",count,E);
 
-    fprintf(denergydR,"%.14e\t%.14e\t%.14e\t%.14e\n",lastx[1],E,dEdx[1],
-	    hessian[1]);
+    fprintf(denergydR,"%.8e\t%.8e\t%.8e\n",lastx[1],dEdx[1],
+	    HESS(1,1));
 
-    fprintf(denergydeta,"%.8e\t%.8e\n",lastx[2],dEdx[2]);
+    fprintf(denergydeta,"%.8e\t%.8e\t%.8e\n",lastx[2],dEdx[2],HESS(2,2));
 
-    fprintf(denergyddelta,"%.8e\t%.8e\n",lastx[3],dEdx[3]);
+    fprintf(denergyddelta,"%.8e\t%.8e\t%.8e\n",lastx[3],dEdx[3],HESS(3,3));
 
-    fprintf(surfacetwist,"%.14e\t%.14e\t%.14e\n",lastx[1],y[1][mpt],
+    fprintf(surfacetwist,"%.8e\t%.8e\t%.8e\n",lastx[1],y[1][mpt],
 	    y[2][mpt]);
 
     arr_cp(lastdEdx,dEdx,x_size0);
@@ -237,43 +242,36 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
 		   max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
-    printf("hessian[1][1] = %e\n",hessian[1]);
+    print_x_dEdx(x,dEdx,hessian,x_size);
     
     if (!positive_definite(hessian,x_size)) {      
       
       printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
       
-      set_direction(direction,dEdx,lastdEdx,x_size);
+      //      set_direction(direction,dEdx,lastdEdx,x_size);
       
-      armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
-			 conv,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
+      //armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
+      //			 conv,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
       
-      printf("at count %d, energy got bigger by %e.\n",count,E-lastE);
       
-    } else {
+    }// else {
       
-      hessian_update_x(x,hessian,dEdx,x_size);
-
-    }
+    hessian_update_x(x,hessian,dEdx,x_size);
+      //}
 
 
 
     fprintf(energy,"%d\t%.8e\n",count,E);
 
-    fprintf(denergydR,"%.14e\t%.14e\t%.14e\t%.14e\n",lastx[1],E,dEdx[1],
-	    hessian[1]);
+    fprintf(denergydR,"%.8e\t%.8e\t%.8e\n",lastx[1],dEdx[1],
+	    HESS(1,1));
 
-    fprintf(denergydeta,"%.8e\t%.8e\n",lastx[2],dEdx[2]);
+    fprintf(denergydeta,"%.8e\t%.8e\t%.8e\n",lastx[2],dEdx[2],HESS(2,2));
 
-    fprintf(denergyddelta,"%.8e\t%.8e\n",lastx[3],dEdx[3]);
+    fprintf(denergyddelta,"%.8e\t%.8e\t%.8e\n",lastx[3],dEdx[3],HESS(3,3));
 
-    fprintf(surfacetwist,"%.14e\t%.14e\t%.14e\n",lastx[1],y[1][mpt],
+    fprintf(surfacetwist,"%.8e\t%.8e\t%.8e\n",lastx[1],y[1][mpt],
 	    y[2][mpt]);
-
-
-    printf("dEdx[1] = %e\t",dEdx[1]);
-    printf("dEdx[2] = %e\t",dEdx[2]);
-    printf("dEdx[3] = %e\n",dEdx[3]);
 
 
     arr_cp(lastdEdx,dEdx,x_size0);
@@ -317,3 +315,21 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 }
 
 
+void print_x_dEdx(double *x, double *dEdx,double *hessian,double x_size)
+{
+  int i,j;
+
+  //  for (i = 1; i <= x_size; i++) {
+      //    printf("x[%d] = %e\tdEdx[%d] = %e\tHESS[%d][%d] = %e\n",
+      //   i,x[i],i,dEdx[i],i,i,HESS(i,i));
+  // }
+
+  for (i = 1; i <= x_size; i++) {
+    for (j = 1; j <= x_size; j++) {
+      printf("%e\t",HESS(i,j));
+    }
+    printf("\n");
+  }
+  return;
+
+}

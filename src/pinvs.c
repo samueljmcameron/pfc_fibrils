@@ -19,7 +19,7 @@ bool pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
     for (j=je1;j<=je2;j++)
       if (fabs(s[i][j]) > big) big=fabs(s[i][j]);
     if (big == 0.0) {
-      printf("Singular matrix - row all 0, in pinvs");
+      printf("Singular matrix - row all 0, in pinvs\n");
       return false;
     }
     pscl[i]=1.0/big;
@@ -44,7 +44,7 @@ bool pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
       }
     }
     if (s[ipiv][jpiv] == 0.0) {
-      printf("Singular matrix in routine pinvs");
+      printf("Singular matrix in routine pinvs\n");
       return false;
     }
     indxr[ipiv]=jpiv; //In place reduction. Save column ordering.

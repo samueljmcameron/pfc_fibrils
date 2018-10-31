@@ -43,6 +43,7 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
   double slopeguess;
 
 
+
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
 
     printf("solvde convergence failed, trying one more time with a "

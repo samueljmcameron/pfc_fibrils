@@ -103,6 +103,8 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
 
   while ((*mpt) <= max_mpt) {
 
+
+
     h = x[1]/((*mpt)-1);    // compute stepsize in r[1..mpt] 
 
     if (*mpt != last_mpt) {
@@ -119,6 +121,7 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
     }
 
     else propagate_r(r,h,(*mpt));
+
     
     solvde_wrapper(itmax,conv,scalv,ns,*mpt,r,y,y_cp,c,s,p,x,h);
 
