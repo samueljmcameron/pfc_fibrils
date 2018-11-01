@@ -91,6 +91,7 @@ void scanE(struct params p,double *x,FILE *energy,FILE *psi,const double conv,
   double *direction;              // direction of descent
   double *lastx;                  // will store a copy of x at its previous value
   double *hessian;                // flattened hessian matrix of E
+  double dx;                      // spacing used to calculate derivatives
   double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices passed to derivative calcs
 
   struct arr_ns ns;         // used to set array sizes (for e.g. y, c, s)
@@ -133,7 +134,9 @@ void scanE(struct params p,double *x,FILE *energy,FILE *psi,const double conv,
 
     E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
 
-    derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
+    dx = compute_dx(E,1e-8);
+
+    derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,dx,itmax,&mpt,&ns,
 		   max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
     // save var,E, and surface twist
@@ -241,6 +244,7 @@ void scan2dE(struct params p,double *x,FILE *energy,FILE *psi,
   double *direction;              // direction of descent
   double *lastx;                  // will store a copy of x at its previous value
   double *hessian;                // flattened hessian matrix of E
+  double dx;                      // spacing used to calculate derivatives
   double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices passed to derivative calcs
 
   struct arr_ns ns;         // used to set array sizes (for e.g. y, c, s)
@@ -293,7 +297,9 @@ void scan2dE(struct params p,double *x,FILE *energy,FILE *psi,
 
       E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
 
-      derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,itmax,&mpt,&ns,
+      dx = compute_dx(E,1e-8);
+
+      derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,dx,itmax,&mpt,&ns,
 		     max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
       if (count_x == 0) initialSlope = 0.1*y[2][mpt];

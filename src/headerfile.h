@@ -95,24 +95,27 @@ bool non_zero_array(double *dEdx,double conv,int x_size);
 
 void linearGuess(double *r, double **y, double initialSlope,double h,int mpt);
 
-void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
+void solvde_wrapper(int itmax, double convODE, double scalv[],struct arr_ns *ns,
 		    int mpt,double *r,double **y,double **y_guess,double ***c,
 		    double **s,struct params *p,double *x,double h);
 
 /* from file energy.c */
 
 double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
-	      double ***c,double **s,double *r_cp,double **y_cp,double conv,
+	      double ***c,double **s,double *r_cp,double **y_cp,double convODE,
 	      int itmax,int *mpt,struct arr_ns *ns,int max_mpt);
 
 /* from file finite_differences.c */
 
 void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
 		    double ***c,double **s,double *r,double **y,double *rf_fib,
-		    double *r_cp,double **y_cp,double conv,int itmax,int *mpt,
-		    struct arr_ns *ns,int max_mpt,int x_size,double *hessian,
-		    bool calc_hess,double *E_p,double *E_m, double *E_pij,
-		    double *E_mij);
+		    double *r_cp,double **y_cp,double convODE,double dx,
+		    int itmax,int *mpt,struct arr_ns *ns,int max_mpt,
+		    int x_size,double *hessian,bool calc_hess,double *E_p,
+		    double *E_m, double *E_pij,double *E_mij);
+
+double compute_dx(double E,double convMIN);
+
 
 /* from file conj_grad.c */
 
@@ -121,7 +124,7 @@ void set_direction(double *direction,double *dEdx,double *lastdEdx,int x_size);
 void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 			struct params *p,double *x,double *r,double **y,
 			double *rf_fib, double ***c, double **s,double *r_cp,
-			double **y_cp,double conv,int itmax,int *mpt,
+			double **y_cp,double convODE,int itmax,int *mpt,
 			struct arr_ns *ns,int max_mpt,double min_rate,
 			int x_size);
 
@@ -135,9 +138,9 @@ void hessian_update_x(double *x,double *hessian, double *dEdx,int x_size);
 
 void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	      FILE *denergydR,FILE *denergydeta,FILE *denergyddelta,
-	      FILE *surfacetwist,FILE *energydensity,const double conv,
-	      const int itmax,int mpt,const int max_mpt,double rate,
-	      const int x_size0);
+	      FILE *surfacetwist,FILE *energydensity,const double convODE,
+	      const double convMIN,const int itmax,int mpt,const int max_mpt,
+	      double rate,const int x_size0);
 
 
 /* functions from Numerical Recipes, in files matching function names. */

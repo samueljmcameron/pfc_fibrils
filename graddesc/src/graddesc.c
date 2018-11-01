@@ -16,9 +16,10 @@
 #define NCJ (NE-NB+1)          // # of columns in storage matrix within c[m][:][:]
 #define NCK (M+1)              // # number of points in tensor c, c[:][m][n]
 
-#define X_SIZE 3
-#define ITMAX  10000
-#define CONV   1e-10
+#define X_SIZE     3
+#define ITMAX      10000
+#define CONV_ODE   1e-10
+#define CONV_MIN   1e-8
 #define MAX_SIZE_M (8)*(M-1)+(1)
 
 int main(int argc, char **argv)
@@ -88,9 +89,8 @@ int main(int argc, char **argv)
   surfacetwist = fopen(f6,"w");
   energydensity = fopen(f7,"w");
 
-  graddesc(p,x,energy,psi,denergydR,denergydeta,denergyddelta,
-	   surfacetwist,energydensity,CONV,ITMAX,M,MAX_SIZE_M,
-	   rate,X_SIZE);
+  graddesc(p,x,energy,psi,denergydR,denergydeta,denergyddelta,surfacetwist,
+	   energydensity,CONV_ODE,CONV_MIN,ITMAX,M,MAX_SIZE_M,rate,X_SIZE);
   
 
   free_vector(x,1,X_SIZE);

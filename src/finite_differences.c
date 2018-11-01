@@ -22,10 +22,10 @@ double ddEdxidxj(double E_p_dxi_p_dxj,double E_m_dxi_m_dxj,double E_p_dxi,
 
 void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
 		    double ***c,double **s,double *r,double **y,double *rf_fib,
-		    double *r_cp,double **y_cp,double conv,int itmax,int *mpt,
-		    struct arr_ns *ns,int max_mpt,int x_size,double *hessian,
-		    bool calc_hess,double *E_p,double *E_m, double *E_pij,
-		    double *E_mij)
+		    double *r_cp,double **y_cp,double convODE,double dx,
+		    int itmax,int *mpt,struct arr_ns *ns,int max_mpt,
+		    int x_size,double *hessian,bool calc_hess,double *E_p,
+		    double *E_m, double *E_pij,double *E_mij)
 /*==============================================================================
 
   Compute first order partial derivatives at the point x, and store them
@@ -39,30 +39,26 @@ void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
 
   void compute_hessian(double *hessian,double E,struct params *p,double *x,
 		       double *r,double **y,double *rf_fib,double ***c,
-		       double **s,double *r_cp,double **y_cp,double conv,
+		       double **s,double *r_cp,double **y_cp,double convODE,
 		       int itmax,int *mpt,struct arr_ns *ns,int max_mpt,
 		       int x_size,double *E_p,double *E_m,double *E_pij,
 		       double *E_mij,double dx);
 
   
-  double dx;
 
   int i; 
-
-  
-  dx = compute_dx(E,conv);
   
   for (i = 1; i <= x_size; i++) {
     
     x[i] += dx; // add a small step
     
-    E_p[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,
+    E_p[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,
 		    mpt,ns,max_mpt); // compute E for this small step dx
     
     
     x[i] -= 2*dx; // remove small step, and then subtract another
     
-    E_m[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,
+    E_m[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,
 		    mpt,ns,max_mpt); // compute E for this small step dx
     
     x[i] += dx; // reset x to its original form
@@ -72,7 +68,7 @@ void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
   }
   
   if (calc_hess) {
-    compute_hessian(hessian,E,p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,
+    compute_hessian(hessian,E,p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,mpt,
 		    ns,max_mpt,x_size,E_p,E_m,E_pij,E_mij,dx);
   }    
   return;
@@ -81,7 +77,7 @@ void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
 
 void compute_hessian(double *hessian,double E,struct params *p,double *x,
 		     double *r,double **y,double *rf_fib,double ***c,
-		     double **s,double *r_cp,double **y_cp,double conv,
+		     double **s,double *r_cp,double **y_cp,double convODE,
 		     int itmax,int *mpt,struct arr_ns *ns,int max_mpt,
 		     int x_size,double *E_p,double *E_m,double *E_pij,
 		     double *E_mij,double dx)
@@ -119,8 +115,8 @@ void compute_hessian(double *hessian,double E,struct params *p,double *x,
 
   c, s -- used by solvde_wrapper to find psi(r) at each xi+-dxi.
 
-  conv -- The convergence criterion for solving the ODE for psi(r) (once psi
-  changes less than conv at each grid points r[1..mpt]).
+  convODE -- The convergence criterion for solving the ODE for psi(r) (once psi
+  changes less than convODE at each grid points r[1..mpt]).
 
   itmax -- maximum number of iterations allowed when solving ODE for psi(r).
 
@@ -164,13 +160,13 @@ void compute_hessian(double *hessian,double E,struct params *p,double *x,
 
       x[i] += dx; // add a small steps
       x[j] += dx;
-      E_pij[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,
+      E_pij[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,mpt,
 			ns,max_mpt); // compute E for these small steps dx
 
       x[i] -= 2*dx; // remove small steps, and then subtract another small step
       x[j] -= 2*dx;
 
-      E_mij[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,
+      E_mij[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,mpt,
 			ns,max_mpt); // compute E for these small steps -dx
 
       x[i] += dx; // reset x to its original form
@@ -188,7 +184,7 @@ void compute_hessian(double *hessian,double E,struct params *p,double *x,
   return;
 }
 
-double compute_dx(double E,double conv)
+double compute_dx(double E,double convMIN)
 /*==============================================================================
 
   Purpose: Calculates the maximum round off error by subtracting E(x+a) from
@@ -222,7 +218,7 @@ double compute_dx(double E,double conv)
 {
   double C = 1e-16;
 
-  return fabs(E)*C/(0.5*conv);
+  return fabs(E)*C/(0.05*convMIN);
 }
 
 

@@ -172,15 +172,20 @@ void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 	      double *direction, double rho,int x_size);
 
   const double st = 0.7;
+
+  const double keep_R_positive = 0.98;
   
   double E_new;
   const double rho = 0.5;
 
   update_x(x,rate,direction,x_size);
 
-  // calculate E(x)
-
-
+  while (x[1] <= 0) {
+    printf("x[1] <= 0!\n");
+    reset_x(x,rate,direction,x_size);
+    rate *= keep_R_positive;
+    update_x(x,rate,direction,x_size);
+  }
 
   E_new = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,ns,
 		 max_mpt);
@@ -196,10 +201,14 @@ void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 
     update_x(x,rate,direction,x_size);
 
+
+
     E_new = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,ns,
 		   max_mpt);
 
   }
+
+  if (rate <= min_rate) printf("rate is too small!\n");
 
   return;
 }
