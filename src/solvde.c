@@ -45,7 +45,6 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
 
 
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
-
     printf("solvde convergence failed, trying one more time with a "
 	   "linear guess and a final twist angle value of pi/4.\n");
 
@@ -53,9 +52,10 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
     
     linearGuess(r,y,slopeguess,h,mpt);
 
-  }
+  } else return;
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
 
+    
     printf("solvde convergence failed, trying one more time with a "
 	   "sqrt(r) guess and a final twist angle value of pi/(2.01).\n");
 
@@ -63,15 +63,17 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
 
     sqrtGuess(r,y,slopeguess,h,mpt);
 
-  }
+  } else return;
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
     
     // save form of y when solvde failed, rf_fib, and exit.
 
-    write_SOLVDEfailure(r,y,y_guess,mpt,*p,x);
 
-  }
-  return;
+    write_SOLVDEfailure(r,y,y_guess,mpt,*p,x);
+    
+
+
+  } else return;
 }
 
 bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
@@ -189,14 +191,16 @@ bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
     }
     //    printf("\n%8s %9s %9s\n","Iter.","Error","FAC"); //Summary of corrections
     //printf("%6d %12.12f %11.6f\n",it,err,fac);        //for this step.
-    if (y[1][2]<0) {
-      printf("likely a maximizing (vs minimizing) solution for psi(r), "
-	     "as y[1][2]=%e  which usually means high energy.\n",y[1][2]);
-      return false;
-    }
     if (err < conv) { // Point with largest error for each variable can
                       // be monitored by writing out kmax and
                       // ermax.
+
+      if (y[1][2]<=-1e-15) {
+	printf("likely a maximizing (vs minimizing) solution for psi(r), "
+	       "as y[1][2]=%e  which usually means high energy.\n",y[1][2]);
+	return false;
+      }
+
       free_vector(ermax,1,ne);
       free_ivector(kmax,1,ne);
       return true;

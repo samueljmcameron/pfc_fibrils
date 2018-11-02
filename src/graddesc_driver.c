@@ -153,10 +153,11 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   calc_hess = true;
   while (pos_def_in_a_row < 20 && non_zero_array(dEdx,convMIN,x_size)) {
 
+
     arr_cp(lastx,x,x_size0);
 
     x_size = 3;
-
+    /*
     if (count != 0 && count % 100 == 0) {
       calc_hess = true;
 
@@ -166,15 +167,25 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
       calc_hess = false;
 
     }
-    
+    */
 
+    printf("start of loop,x[1] = %e\n",x[1]);
     E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
 
+    printf("calculated E_calc, x[1] = %e\n",x[1]);
+
+    printf("E = %e\n",E);
     dx = compute_dx(E,convMIN);
+    dx = (x[1]-dx>0) ? dx : x[1]-1e-5;
+
+    printf("dx = %e\n",dx);
+
 
     derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,convODE,dx,itmax,
 		   &mpt,&ns,max_mpt,x_size,hessian,calc_hess,E_p,E_m,E_pij,
 		   E_mij);
+
+    printf("passed derivative calc\n");
      
     if (fabs(x[3])<=convMIN) {
       x_size = 1;
@@ -190,6 +201,8 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	       "definite hessians in a row = %d!\n",
 	       pos_def_in_a_row);
 
+	//hessian_update_x(x,hessian,dEdx,x_size);
+
 	pos_def_in_a_row += 1;
       
       } else {
@@ -199,14 +212,18 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	printf("Newton's Raphson method didn't work. Resetting "
 	       "the number of positive definite hessians in "
 	       "a row back to %d.\n",pos_def_in_a_row);
-	
+
+
       }
     }
 
     set_direction(direction,dEdx,lastdEdx,x_size);    
+
+    printf("direction[1] = %e\n",direction[1]);
+	
     armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
 		       convODE,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
-
+	
 
 
     fprintf(energy,"%d\t%.8e\n",count,E);
@@ -223,7 +240,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     arr_cp(lastdEdx,dEdx,x_size0);
     count += 1;
-    printf("count = %d\n",count);
+    printf("count = %d, x_size = %d\n",count,x_size);
       
   }
 
@@ -233,6 +250,8 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   
 
   while (non_zero_array(dEdx,convMIN,x_size)) {
+
+
 
     x_size = 3;
 
@@ -287,7 +306,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     lastE = E;
 
     count += 1;
-    printf("count = %d\n",count);
+    printf("count = %d, x_size = %d\n",count,x_size);
 
 
       

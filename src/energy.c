@@ -120,7 +120,10 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
       last_mpt = *mpt;
     }
 
-    else propagate_r(r,h,(*mpt));
+    else {
+      propagate_r(r,h,(*mpt));
+      copy_2_arrays(r_cp,y_cp,r,y,*mpt); // copy arrays r and y into r_cp and y_cp
+    }
 
     
     solvde_wrapper(itmax,conv,scalv,ns,*mpt,r,y,y_cp,c,s,p,x,h);
@@ -134,7 +137,7 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
 
   // if it makes it this far, we did not successfully compute E(R)
 
-  write_QROMBfailure(r,y,rf_fib,*mpt,*p,x); // save psi(r), rf_fib(r), and exit
+  write_QROMBfailure(r,y,rf_fib,last_mpt,*p,x); // save psi(r), rf_fib(r), and exit
 
   // never get here.
 

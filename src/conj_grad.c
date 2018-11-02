@@ -180,8 +180,8 @@ void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 
   update_x(x,rate,direction,x_size);
 
+
   while (x[1] <= 0) {
-    printf("x[1] <= 0!\n");
     reset_x(x,rate,direction,x_size);
     rate *= keep_R_positive;
     update_x(x,rate,direction,x_size);
@@ -189,8 +189,6 @@ void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 
   E_new = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,ns,
 		 max_mpt);
-
-
 
   while (!armijo(E,E_new,rate,dEdx,direction,rho,x_size)
 	 && rate > min_rate) {
@@ -207,7 +205,6 @@ void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 		   max_mpt);
 
   }
-
   if (rate <= min_rate) printf("rate is too small!\n");
 
   return;

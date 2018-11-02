@@ -218,7 +218,7 @@ double compute_dx(double E,double convMIN)
 {
   double C = 1e-16;
 
-  return fabs(E)*C/(0.05*convMIN);
+  return fabs(E)*C/(0.001*convMIN);
 }
 
 

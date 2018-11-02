@@ -43,10 +43,13 @@ void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p,
   ============================================================================*/
   
 {
-  snprintf(f_err,f_err_size,"data/%s_psivsr_%1.4e_%1.4e_%1.4e_"
+  /*
+  snprintf(f_err,f_err_size,"../../tmp_data/%s_psivsr_%1.4e_%1.4e_%1.4e_"
 	   "%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_%1.4e.txt",err_type,
 	   p.K33,p.k24,p.Lambda,p.d0,p.omega,x[1],x[2],x[3],
 	   p.gamma_s);
+  */
+  snprintf(f_err,f_err_size,"../../tmp_data/%s_psivsr.txt",err_type);
   return;
 }
 
