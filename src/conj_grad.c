@@ -175,13 +175,14 @@ void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 
   const double keep_R_positive = 0.98;
   
+
   double E_new;
   const double rho = 0.5;
 
   update_x(x,rate,direction,x_size);
 
 
-  while (x[1] <= 0) {
+  while (x[1] <= 0 || x[1] > 7.0) {
     reset_x(x,rate,direction,x_size);
     rate *= keep_R_positive;
     update_x(x,rate,direction,x_size);
@@ -189,6 +190,8 @@ void armijo_backtracker(double rate,double E,double *dEdx,double *direction,
 
   E_new = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,ns,
 		 max_mpt);
+  printf("done E calc in conj_grad, x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+  printf("y[1][mpt] = %e\n",y[1][*mpt]);
 
   while (!armijo(E,E_new,rate,dEdx,direction,rho,x_size)
 	 && rate > min_rate) {

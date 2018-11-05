@@ -45,8 +45,9 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
 
 
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
-    printf("solvde convergence failed, trying one more time with a "
-	   "linear guess and a final twist angle value of pi/4.\n");
+    printf("solvde convergence failed when x = (%e,%e,%e). Trying one more "
+	   "time with a linear guess and a final twist angle value of "
+	   "pi/4.\n",x[1],x[2],x[3]);
 
     slopeguess = M_PI/(4.0*x[1]);
     
@@ -55,9 +56,9 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
   } else return;
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
 
-    
-    printf("solvde convergence failed, trying one more time with a "
-	   "sqrt(r) guess and a final twist angle value of pi/(2.01).\n");
+    printf("solvde convergence failed when x = (%e,%e,%e). Trying one more "
+	   "time with a sqrt(r) guess and a final twist angle value of "
+	   "pi/2.01.\n",x[1],x[2],x[3]);
 
     slopeguess = M_PI/(2.01*sqrt(x[1]));
 
@@ -189,8 +190,6 @@ bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
 	if (isnan(y[j][k])) printf("NAN!\n");
       }
     }
-    //    printf("\n%8s %9s %9s\n","Iter.","Error","FAC"); //Summary of corrections
-    //printf("%6d %12.12f %11.6f\n",it,err,fac);        //for this step.
     if (err < conv) { // Point with largest error for each variable can
                       // be monitored by writing out kmax and
                       // ermax.

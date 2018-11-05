@@ -113,7 +113,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices passed to derivative calcs
   bool calc_hess = false;
 
-  const double min_rate = EFFECTIVE_ZERO;  // minimum value of rate
+  const double min_rate = 1e3*EFFECTIVE_ZERO;  // minimum value of rate
 
   int count = 0;           // count how many times we descend before minimum reached
 
@@ -151,32 +151,21 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   // start with conjugate gradient descent until hessian seems to look positive definite
 
   calc_hess = true;
-  while (pos_def_in_a_row < 20 && non_zero_array(dEdx,convMIN,x_size)) {
+  while (non_zero_array(dEdx,convMIN,x_size)) {
 
 
     arr_cp(lastx,x,x_size0);
 
     x_size = 3;
-    /*
-    if (count != 0 && count % 100 == 0) {
-      calc_hess = true;
-
-
-    } else {
-
-      calc_hess = false;
-
-    }
-    */
 
     printf("start of loop,x[1] = %e\n",x[1]);
     E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
 
-    printf("calculated E_calc, x[1] = %e\n",x[1]);
+    printf("calculated E_calc, x = (%e,%e,%e)\n",x[1],x[2],x[3]);
 
     printf("E = %e\n",E);
     dx = compute_dx(E,convMIN);
-    dx = (x[1]-dx>0) ? dx : x[1]-1e-5;
+    dx = (x[1]-dx>0) ? dx : x[1]-x[1]/2.0;
 
     printf("dx = %e\n",dx);
 
@@ -218,13 +207,11 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     }
 
     set_direction(direction,dEdx,lastdEdx,x_size);    
-
-    printf("direction[1] = %e\n",direction[1]);
 	
     armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
 		       convODE,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
 	
-
+    printf("direction[1] = %e\n",direction[1]);
 
     fprintf(energy,"%d\t%.8e\n",count,E);
 
