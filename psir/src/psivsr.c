@@ -28,9 +28,8 @@ int main(int argc, char **argv)
   char scan_what[20];
   char path[200];
   char suffix[200];
-  char f1[200],f2[200],f3[200],f4[200],f5[200],f6[200],f7[200];
-  FILE *energy,*psi,*denergydR,*denergydeta;
-  FILE *denergyddelta,*surfacetwist,*energydensity;
+  char f1[200],f2[200];
+  FILE *bc,*energy;
   double rate;
   double *x;
 
@@ -66,42 +65,21 @@ int main(int argc, char **argv)
 	   "%1.4e_%1.4e_%1.4e_%1.4e.txt",
 	   p.K33,p.k24,p.Lambda,p.d0,p.omega,x[1],x[2],x[3],p.gamma_s);
 
-  snprintf(f1,sizeof(f1),"%s_energy_%s",
+  snprintf(f1,sizeof(f1),"%s_bcvspsip0_%s",
 	   path,suffix);
-  snprintf(f2,sizeof(f2),"%s_psivsr_%s",
-	   path,suffix);
-  snprintf(f3,sizeof(f3),"%s_dEdR_%s",
-	   path,suffix);
-  snprintf(f4,sizeof(f4),"%s_dEdeta_%s",
-	   path,suffix);
-  snprintf(f5,sizeof(f5),"%s_dEddelta_%s",
-	   path,suffix);
-  snprintf(f6,sizeof(f6),"%s_surfacetwist_%s",
-	   path,suffix);
-  snprintf(f7,sizeof(f7),"%s_energydensity_%s",
+  snprintf(f2,sizeof(f2),"%s_Evspsip0_%s",
 	   path,suffix);
 
-  energy = fopen(f1,"w");
-  psi = fopen(f2,"w");
-  denergydR = fopen(f3,"w");
-  denergydeta = fopen(f4,"w");
-  denergyddelta = fopen(f5,"w");
-  surfacetwist = fopen(f6,"w");
-  energydensity = fopen(f7,"w");
+  bc = fopen(f1,"w");
+  energy = fopen(f2,"w");
 
-  graddesc(p,x,energy,psi,denergydR,denergydeta,denergyddelta,surfacetwist,
-	   energydensity,CONV_ODE,CONV_MIN,ITMAX,M,MAX_SIZE_M,rate,X_SIZE);
+  shoot_driver(p,x,bc,energy,M);
   
 
   free_vector(x,1,X_SIZE);
 
-  fclose(energy); // close file!
-  fclose(psi);
-  fclose(denergydR);
-  fclose(denergydeta);
-  fclose(denergyddelta);
-  fclose(surfacetwist);
-  fclose(energydensity);
+  fclose(bc); // close file!
+  fclose(energy);
 
   return 0;
 }

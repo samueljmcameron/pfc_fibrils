@@ -21,8 +21,61 @@ double jacobian(double F1,double psip0,double *r,double **y,struct params *p,dou
 double brent(double psip01,double psip02,double tol,int itmax,double *r,
 	     double **y, struct params *p, double *x,double h, int mpt);
 
+void initialize_r(double *r, double h, int mpt);
+void save_psi(FILE *output,double *r, double **y, int mpt);
 
 #define EPS 1.0e-14
+
+void shoot_driver(struct params p, double *x, FILE *bc, FILE *energy)
+{
+  double *r;
+  double **y;
+  double psip0,psip01,psip02;
+  double h;
+
+  y = matrix(1,2,1,mpt);
+  r = vector(1,mpt);
+
+  h = x[1]/(mpt-1);
+
+  initialize_r(r,h,mpt);
+
+  double f;
+  for (psip0 = 0.0792911108; psip0 <=0.0792911109; psip0 += 1e-13) {
+    f = F_bound(psip0,r,y,&p,x,h,mpt);
+    fprintf(bc,"%.12e\t%.12e\n",psip0,f);
+  }
+
+  //  brent(&psip0,0,7.929111088700e-02,1e-14,1000,r,y,&p,x,h,mpt);
+  printf("psip0 = %e\n",psip0);
+  save_psi(output,r,y,mpt);
+
+  free_matrix(y,1,2,1,mpt);
+  free_vector(r,1,mpt);
+
+  return 0;
+}
+
+
+void save_psi(FILE *output,double *r, double **y, int mpt)
+{
+  int i;
+
+  for (i = 1; i <= mpt; i++) {
+    fprintf(output,"%e\t%e\t%e\n",r[i],y[1][i],y[2][i]);
+  }
+  return;
+}
+
+void initialize_r(double *r, double h, int mpt)
+{
+  int i;
+
+  for (i = 1; i <= mpt; i++) r[i] = (i-1)*h;
+
+  return;
+}
+
 
 double brent(double psip01,double psip02,double tol,int itmax,double *r,
 	     double **y, struct params *p, double *x,double h, int mpt)

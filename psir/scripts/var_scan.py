@@ -134,7 +134,7 @@ def variable_graddesc(init_path,params,var,var_position,
 
     args = argv_list(init_path,params,var,var_position)
 
-    cmd = "../../bin/graddesc " + args
+    cmd = "../../bin/psivsr " + args
 
     if(subprocess.call(cmd,shell=True,
                        stderr=subprocess.STDOUT)==0):
@@ -142,13 +142,12 @@ def variable_graddesc(init_path,params,var,var_position,
         successful_calc_list.append(var)
         load_str = loadfile_list(params[:-1],var,var_position)
 
-        for fpart in ['energy','psivsr','dEdR','dEdeta','dEddelta',
-                      'surfacetwist','energydensity']:
+        for fpart in ['bcvspsip0','Evspsip0']:
             file = ("%s_%s_%s"
                     ".txt")%(init_path,fpart,load_str)
 
-            #cmd = "mv " + file + " data/"
-            cmd = "mv " + file + " " + init_path + fpart + ".txt"
+            cmd = "mv " + file + " data/"
+            #cmd = "mv " + file + " " + init_path + fpart + ".txt"
             subprocess.call(cmd,shell=True)
 
     else:
