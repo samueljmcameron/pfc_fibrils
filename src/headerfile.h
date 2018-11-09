@@ -105,6 +105,9 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
 	      double ***c,double **s,double *r_cp,double **y_cp,double convODE,
 	      int itmax,int *mpt,struct arr_ns *ns,int max_mpt);
 
+bool successful_E_count(double *E,struct params *p,double *x,double *r,
+			double **y,double *rf_fib,int mpt);
+
 /* from file finite_differences.c */
 
 void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
@@ -142,6 +145,8 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	      const double convMIN,const int itmax,int mpt,const int max_mpt,
 	      double rate,const int x_size0);
 
+/* from shooting.c */
+void shoot_driver(struct params p, double *x, FILE *bc, FILE *energy,int mpt);
 
 /* functions from Numerical Recipes, in files matching function names. */
 

@@ -3,7 +3,7 @@
 #include <math.h>
 #include <time.h>
 #include "nrutil.h"
-
+#include "headerfile.h"
 
 void rk4driver(double *r,double **y,struct params *p,double *x,double h,
 	       int mpt);
@@ -26,37 +26,41 @@ void save_psi(FILE *output,double *r, double **y, int mpt);
 
 #define EPS 1.0e-14
 
-void shoot_driver(struct params p, double *x, FILE *bc, FILE *energy)
+void shoot_driver(struct params p, double *x, FILE *bc, FILE *energy,int mpt)
 {
   double *r;
   double **y;
+  double *rf_fib;
   double psip0,psip01,psip02;
   double h;
+  double E;
 
   y = matrix(1,2,1,mpt);
   r = vector(1,mpt);
+  rf_fib = vector(1,mpt);
 
   h = x[1]/(mpt-1);
 
   initialize_r(r,h,mpt);
 
   double f;
-  for (psip0 = 0.0792911108; psip0 <=0.0792911109; psip0 += 1e-13) {
+  for (psip0 = 0.079; psip0 <=0.0801; psip0 += 1e-6) {
     f = F_bound(psip0,r,y,&p,x,h,mpt);
+    if(!successful_E_count(&E,&p,x,r,y,rf_fib,mpt)) E = 0;
     fprintf(bc,"%.12e\t%.12e\n",psip0,f);
+    fprintf(energy,"%.12e\t%.12e\n",psip0,E);
   }
 
   //  brent(&psip0,0,7.929111088700e-02,1e-14,1000,r,y,&p,x,h,mpt);
-  printf("psip0 = %e\n",psip0);
-  save_psi(output,r,y,mpt);
+  //  printf("psip0 = %e\n",psip0);
+  //save_psi(output,r,y,mpt);
 
   free_matrix(y,1,2,1,mpt);
   free_vector(r,1,mpt);
-
-  return 0;
+  free_vector(rf_fib,1,mpt);
 }
 
-
+/*
 void save_psi(FILE *output,double *r, double **y, int mpt)
 {
   int i;
@@ -66,7 +70,7 @@ void save_psi(FILE *output,double *r, double **y, int mpt)
   }
   return;
 }
-
+*/
 void initialize_r(double *r, double h, int mpt)
 {
   int i;

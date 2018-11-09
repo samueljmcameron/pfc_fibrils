@@ -46,7 +46,6 @@ int main(int argc, char **argv)
   sscanf(argv[8],"%lf",&x[2]);
   sscanf(argv[9],"%lf",&x[3]);
   sscanf(argv[10],"%lf",&p.gamma_s);
-  sscanf(argv[11],"%lf",&rate);
 
 
   printf("K33 = %lf\n",p.K33);
@@ -58,7 +57,6 @@ int main(int argc, char **argv)
   printf("eta = %lf\n",x[2]);
   printf("delta = %lf\n",x[3]);
   printf("gamma_s = %lf\n",p.gamma_s);
-  printf("rate = %lf\n",rate);
   
 
   snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
