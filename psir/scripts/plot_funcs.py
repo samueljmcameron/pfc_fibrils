@@ -43,29 +43,39 @@ def ax_config(xlabel,ylabel,xscale,yscale,ax):
     return
 
 
-def plot_desc(what_plot,ax,colors,d,var_array,params,
-              var_position,varied_param_name,load_p):
+def plot_bcs(axarr,colors,d,var_array,params,
+             var_position,varied_param_name,load_p):
 
     # plots E vs d['scan_what'], for all the values of 
     # var in the array var_array. varied_param_name is
     # the name (a string) of var. load_p is the path
     # which the data for the plots is loaded from.
 
+    max_psip0s = np.empty([0],float)
+
     for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params[:-1],var,var_position)
-        fname= ("%s_%s_%s")%(load_p,what_plot,load_str)
+        load_str = loadfile_list(params,var,var_position)
+        fname= ("%s_%s_%s")%(load_p,"bcvspsip0",load_str)
 
         legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
                                           var)
 
         # load and plot y vs x
-        yvsx = np.loadtxt(fname + ".txt")
-        xs = yvsx[:,0]
-        ys = yvsx[:,1]
+        data = np.loadtxt(fname + ".txt")
+        psip0s = data[:,0]
+        bcs = data[:,1]
+        Es = data[:,2]
+        if (len(psip0s)>len(max_psip0s)):
+            max_psip0s = psip0s
 
-        ax.plot(xs,ys,'-o',lw = 2,color = colors[i],
-                label = r"$%s$"%legend_label)
+        axarr[0].plot(psip0s,bcs,'-.',lw = 2,color = colors[i],
+                      label = r"$%s$"%legend_label)
+
+        axarr[1].plot(psip0s,Es,'-.',lw = 2,color = colors[i],
+                      label = r"$%s$"%legend_label)
+
+    axarr[0].plot(max_psip0s,0*max_psip0s,'--',color = 'k')
 
     return
 
@@ -86,7 +96,7 @@ def plot_descpsi(ax,colors,d,var_array,params,
 
     for i,var in enumerate(var_array):
 
-        load_str = loadfile_list(params[:-1],var,var_position)
+        load_str = loadfile_list(params,var,var_position)
         fname= ("%s_psivsr_%s")%(load_p,load_str)
 
         legend_label = "%s=\SI{%1.1e}{}"%(varied_param_name,
@@ -129,42 +139,3 @@ def plot_descpsi(ax,colors,d,var_array,params,
                 j += 1
     return
 
-def plot_obs(what_plot,ax,color,d,var_array,params,
-             var_position,varied_param_name,load_p,
-             label=None):
-
-    # plots some observable (E,delta,eta,etc) vs all 
-    # var in the array var_array. varied_param_name is
-    # the name (a string) of var. load_p is the path
-    # which the data for the plots is loaded from.
-    # e.g. if var_array was a bunch of Lambda values,
-    # and what_plot = 'dEddelta' (which contains the
-    # equilibrium delta value), then the plot would be
-    # delta_eq vs Lambda
-
-    # create array to store values in
-    observables = np.copy(var_array)*0
-    
-    for i,var in enumerate(var_array):
-
-        load_str = loadfile_list(params[:-1],var,var_position)
-        fname= ("%s_%s_%s")%(load_p,what_plot,load_str)
-
-
-        # load and plot y vs x
-        yvsx = np.loadtxt(fname + ".txt")
-        xs = yvsx[:,0]
-        ys = yvsx[:,1]
-
-
-        if what_plot == 'energy' or what_plot == 'surfacetwist':
-            #since energy file has E vs t
-            observables[i] = ys[-1]
-        else:
-            #since deriv files have observables vs deriv
-            observables[i] = xs[-1]
-
-
-    ax.plot(var_array,observables,'-o',label = label,lw = 2,color = color)
-
-    return

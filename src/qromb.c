@@ -73,7 +73,8 @@ method of order 2K, where, e.g., K=2 is Simpsons rule. */
 not just a polynomial in h.*/
   }
 
-  printf("ss=%e, lastss = %e\n",ss,lastss);
+  printf("ss=%.12e, lastss = %.12e\n",ss,lastss);
+  printf("tol = %.12e\n",tol);
   *failure = true;
   return 0.0; // this return value doesn't matter, as failure signals that convergence failed.
 }

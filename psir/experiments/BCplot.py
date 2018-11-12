@@ -8,7 +8,7 @@ sys.path.append('../../../scripts')
 sys.path.append('../../scripts')
 from fig_settings import configure_fig_settings
 from var_scan import loadfile_list, load_const_params,latex2string
-from plot_funcs import plot_desc, ax_config, check_data
+from plot_funcs import plot_bcs, ax_config, check_data
 from plot_funcs import load_plt_array
 import seaborn as sns
 
@@ -30,27 +30,29 @@ if __name__=='__main__':
 
     colors = sns.color_palette('muted',len(var_array))
 
-    fig,ax = plt.subplots()
+
+
+    fig,axarr = plt.subplots(2,sharex=True)
     width  = 3.487
-    height = width
+    height = 2*width
     fig.set_size_inches(width,height)
 
-    plot_desc('energy',ax,colors,d,var_array,params,var_position,
-               str_,load_p)
-
-    ylabel = "E"
-    xlabel = "t"
+    
+    plot_bcs(axarr,colors,d,var_array,params[:-3],
+             var_position,str_,load_p)
+    
+    xlabel = '\\psi^{\prime}_0'
+    ylabel1 = '\\mathrm{BC}'
+    ylabel2 = 'E'
     xscale = 'log'
     yscale = 'linear'
-
-    # ax.set_ylim(-2,-1)
-
-    ax_config(xlabel,ylabel,xscale,yscale,ax)
-
-
+        
+    ax_config(xlabel,ylabel1,xscale,yscale,axarr[0])
+    ax_config(xlabel,ylabel2,xscale,yscale,axarr[1])
+    
     edited_str_ = latex2string(str_)
-
-    sname = "Evst-%ss"%(edited_str_)
-
+    
+    sname = "BCsvspsip0s-%ss"%(edited_str_)
+    
     fig.tight_layout()
     fig.savefig(save_p + sname + ".pdf")

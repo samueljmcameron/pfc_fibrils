@@ -26,14 +26,20 @@ void save_psi(FILE *output,double *r, double **y, int mpt);
 
 #define EPS 1.0e-14
 
-void shoot_driver(struct params p, double *x, FILE *bc, FILE *energy,int mpt)
+void shoot_driver(struct params p, double *x, FILE *bc,double psip01,double psip02,
+		  int numpoints,int mpt)
 {
   double *r;
   double **y;
   double *rf_fib;
-  double psip0,psip01,psip02;
+  int i;
+
+  double psip0,dpsip0;
   double h;
+  double f;
   double E;
+
+  dpsip0 = (psip02-psip01)/(numpoints-1);
 
   y = matrix(1,2,1,mpt);
   r = vector(1,mpt);
@@ -43,12 +49,14 @@ void shoot_driver(struct params p, double *x, FILE *bc, FILE *energy,int mpt)
 
   initialize_r(r,h,mpt);
 
-  double f;
-  for (psip0 = 0.079; psip0 <=0.0801; psip0 += 1e-6) {
+  for (i = 0; i < numpoints; i++) {
+    psip0 = psip01 + i*dpsip0;
     f = F_bound(psip0,r,y,&p,x,h,mpt);
-    if(!successful_E_count(&E,&p,x,r,y,rf_fib,mpt)) E = 0;
-    fprintf(bc,"%.12e\t%.12e\n",psip0,f);
-    fprintf(energy,"%.12e\t%.12e\n",psip0,E);
+    if(!successful_E_count(&E,&p,x,r,y,rf_fib,mpt)) {
+      fprintf(bc,"%.12e\t%.12s\t%.12s\n",psip0,"nan","nan");
+    } else {
+      fprintf(bc,"%.12e\t%.12e\t%.12e\n",psip0,f,E);
+    }
   }
 
   //  brent(&psip0,0,7.929111088700e-02,1e-14,1000,r,y,&p,x,h,mpt);

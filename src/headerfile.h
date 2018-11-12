@@ -146,7 +146,8 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	      double rate,const int x_size0);
 
 /* from shooting.c */
-void shoot_driver(struct params p, double *x, FILE *bc, FILE *energy,int mpt);
+void shoot_driver(struct params p, double *x, FILE *bc,double psip01,double psip02,
+		  int numpoints,int mpt);
 
 /* functions from Numerical Recipes, in files matching function names. */
 

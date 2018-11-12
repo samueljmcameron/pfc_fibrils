@@ -6,7 +6,7 @@
 #include "../../src/headerfile.h"
 
 #define NE 2                   // # of 1st order DEs
-#define M 2*2*2*2*2*2*2*2*2*2*2+1  // # of mesh points (2^M+1 for romberg integration)
+#define M 2*2*2*2*2*2*2*2*2*2*2*2+1  // # of mesh points (2^M+1 for romberg integration)
 #define NB 1                   // # of BCs at first boundary (k = 1)
 #define NSI NE                 // max # i of S_i,j
 #define NSJ (2*NE+1)           // max # j of S_i,j
@@ -28,9 +28,10 @@ int main(int argc, char **argv)
   char scan_what[20];
   char path[200];
   char suffix[200];
-  char f1[200],f2[200];
-  FILE *bc,*energy;
-  double rate;
+  char f1[200];
+  FILE *bc;
+  double psip01,psip02;
+  int numpoints;
   double *x;
 
   x = vector(1,X_SIZE);
@@ -46,6 +47,9 @@ int main(int argc, char **argv)
   sscanf(argv[8],"%lf",&x[2]);
   sscanf(argv[9],"%lf",&x[3]);
   sscanf(argv[10],"%lf",&p.gamma_s);
+  sscanf(argv[11],"%lf",&psip01);
+  sscanf(argv[12],"%lf",&psip02);
+  sscanf(argv[13],"%d",&numpoints);
 
 
   printf("K33 = %lf\n",p.K33);
@@ -65,19 +69,15 @@ int main(int argc, char **argv)
 
   snprintf(f1,sizeof(f1),"%s_bcvspsip0_%s",
 	   path,suffix);
-  snprintf(f2,sizeof(f2),"%s_Evspsip0_%s",
-	   path,suffix);
 
   bc = fopen(f1,"w");
-  energy = fopen(f2,"w");
 
-  shoot_driver(p,x,bc,energy,M);
+  shoot_driver(p,x,bc,psip01,psip02,numpoints,M);
   
 
   free_vector(x,1,X_SIZE);
 
   fclose(bc); // close file!
-  fclose(energy);
 
   return 0;
 }

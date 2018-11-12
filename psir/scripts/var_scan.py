@@ -100,8 +100,8 @@ def one_run(var):
     init_path = "../../tmp_data/"
     
         
-    # run graddesc executable for var
-    variable_graddesc(init_path,params,var,var_position,successful_var)
+    # run shooting executable for var
+    shooting(init_path,params,var,var_position,successful_var)
 
     # store whichever calculations were successful into
     # a .dat file in the results folder
@@ -121,15 +121,7 @@ def latex2string(str_):
     return edited
 
 
-def variable_graddesc(init_path,params,var,var_position,
-                      successful_calc_list):
-
-    # For a specified set of constant params, as well
-    # as the parameter you are varying to see its
-    # effect on 'Evs%s'%_what (i.e. var in the
-    # argument list above), attempt to compute 
-    # the data for E vs '%s'%scan_what. If it fails,
-    # return the stdout of the run.
+def shooting(init_path,params,var,var_position,successful_calc_list):
 
 
     args = argv_list(init_path,params,var,var_position)
@@ -140,14 +132,14 @@ def variable_graddesc(init_path,params,var,var_position,
                        stderr=subprocess.STDOUT)==0):
 
         successful_calc_list.append(var)
-        load_str = loadfile_list(params,var,var_position)
+        load_str = loadfile_list(params[:-3],var,var_position)
 
-        for fpart in ['bcvspsip0','Evspsip0']:
+        for fpart in ['bcvspsip0']:
             file = ("%s_%s_%s"
                     ".txt")%(init_path,fpart,load_str)
 
-            #cmd = "mv " + file + " data/"
-            cmd = "mv " + file + " " + init_path + fpart + ".txt"
+            cmd = "mv " + file + " data/"
+            #cmd = "mv " + file + " " + init_path + fpart + ".txt"
             subprocess.call(cmd,shell=True)
 
     else:
