@@ -13,7 +13,10 @@ void derivs(double *dydrj,double r_j,double *y,struct params *p,double *x);
 
 double F_bound(double psip0,double *r,double **y,struct params *p,double *x,
 	       double h,int mpt);
-double bound_eq(double psiR,double psipR,double R,struct params *p);
+
+double F_solve(double psip0,double *r,double **y,struct params *p,double *x,
+	       double h,int mpt);
+double F_eq(double psiR,double psipR,double R,struct params *p);
 
 double jacobian(double F1,double psip0,double *r,double **y,struct params *p,double *x,
 		double h,int mpt);
@@ -26,8 +29,61 @@ void save_psi(FILE *output,double *r, double **y, int mpt);
 
 #define EPS 1.0e-14
 
-void shoot_driver(struct params p, double *x, FILE *bc,double psip01,double psip02,
-		  int numpoints,int mpt)
+void shootsolve_driver(struct params p, double *x, FILE *psivsr,double psip01,
+		       double psip02,int mpt)
+{
+  double *r;
+  double **y;
+  double psip0;
+  double h;
+
+  
+  int itmax = 10000;
+  double conv = 1e-10;
+  double *scalv;
+  struct arr_ns ns;
+  double ***c;
+  double **s;
+  double *r_cp,*rf_fib;
+  double **y_cp;
+
+  printf("hi\n");
+  assign_ns(&ns);
+
+  scalv = vector(1,2);
+  scalv[1] = 0.1;
+  scalv[2] = 4.0;
+
+  allocate_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,mpt);
+
+  h = x[1]/(mpt-1);
+
+  initialize_r(r,h,mpt);
+
+
+  psip01 = brent(psip01,psip02,EPS,1000,r,y,&p,x,h,mpt);
+  printf("y[1][mpt] = %e, x[3] = %e\n",y[1][mpt],x[3]);
+  while (fabs(y[1][mpt])>=M_PI/2.0 && x[3] != 0) {
+    psip01 -= 2e-2;
+    psip02 -= 1e-2;
+    printf("hi\n");
+    psip01 = brent(psip01,psip02,EPS,1000,r,y,&p,x,h,mpt);
+    y[1][1] = 0;
+    y[2][1] = psip0;
+    rk4driver(r,y,&p,x,h,mpt);
+    solvde(itmax,conv,scalv,&ns,mpt,r,y,c,s,&p,x,h);
+  }
+  save_psi(psivsr,r,y,mpt);
+
+  allocate_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,mpt);
+
+
+  return;
+}
+
+
+void shootscan_driver(struct params p, double *x, FILE *bc,double psip01,
+		      double psip02,int numpoints,int mpt)
 {
   double *r;
   double **y;
@@ -51,34 +107,19 @@ void shoot_driver(struct params p, double *x, FILE *bc,double psip01,double psip
 
   for (i = 0; i < numpoints; i++) {
     psip0 = psip01 + i*dpsip0;
-    f = F_bound(psip0,r,y,&p,x,h,mpt);
+    f = F_solve(psip0,r,y,&p,x,h,mpt);
     if(!successful_E_count(&E,&p,x,r,y,rf_fib,mpt)) {
-      fprintf(bc,"%.12e\t%.12s\t%.12s\n",psip0,"nan","nan");
+      fprintf(bc,"%.14e\t%.14e\t%.14s\t%.14e\n",psip0,f,"nan",y[1][mpt]);
     } else {
-      fprintf(bc,"%.12e\t%.12e\t%.12e\n",psip0,f,E);
+      fprintf(bc,"%.14e\t%.14e\t%.14e\t%.14e\n",psip0,f,E,y[1][mpt]);
     }
   }
-
-  //  brent(&psip0,0,7.929111088700e-02,1e-14,1000,r,y,&p,x,h,mpt);
-  //  printf("psip0 = %e\n",psip0);
-  //save_psi(output,r,y,mpt);
 
   free_matrix(y,1,2,1,mpt);
   free_vector(r,1,mpt);
   free_vector(rf_fib,1,mpt);
 }
 
-/*
-void save_psi(FILE *output,double *r, double **y, int mpt)
-{
-  int i;
-
-  for (i = 1; i <= mpt; i++) {
-    fprintf(output,"%e\t%e\t%e\n",r[i],y[1][i],y[2][i]);
-  }
-  return;
-}
-*/
 void initialize_r(double *r, double h, int mpt)
 {
   int i;
@@ -104,7 +145,8 @@ double brent(double psip01,double psip02,double tol,int itmax,double *r,
 
   if ((fa > 0 && fb > 0) || (fa < 0 && fb < 0)) {
     printf("root isn't bracketed!\n");
-    exit(1);
+    return b;
+    //    exit(1);
   }
   for (iter = 1; iter <= itmax; iter++) {
     if ((fb > 0 && fc > 0 ) || (fb < 0 && fc < 0)) {
@@ -122,7 +164,10 @@ double brent(double psip01,double psip02,double tol,int itmax,double *r,
     }
     tol1 = 2.0*EPS*fabs(b)+0.5*tol;
     psip0m = 0.5*(c-b);
-    if (fabs(psip0m) <= tol1 || fb == 0) return b;
+    if (fabs(psip0m) <= tol1 || fb == 0) {
+      printf("psip0 = %e\n",b);
+      return b;
+    }
     if (fabs(e) >= tol1 && fabs(fa) > fabs(fb)) {
       s=fb/fa;
       if (a==c) {
@@ -170,7 +215,7 @@ double jacobian(double F1,double psip0,double *r,double **y,struct params *p,dou
   double F2;
   double dv = 1e-4*psip0;
 
-  F2 = F_bound(psip0+dv,r,y,p,x,h,mpt);
+  F2 = F_solve(psip0+dv,r,y,p,x,h,mpt);
 
   return (F2-F1)/dv;
 
@@ -180,14 +225,34 @@ double jacobian(double F1,double psip0,double *r,double **y,struct params *p,dou
 double F_bound(double psip0,double *r,double **y,struct params *p,double *x,
 	       double h,int mpt)
 {
+  double f;
   y[1][1] = 0;
   y[2][1] = psip0;
   rk4driver(r,y,p,x,h,mpt);
 
-  return bound_eq(y[1][mpt],y[2][mpt],x[1],p);
+  f = F_eq(y[1][mpt],y[2][mpt],x[1],p);
+
+  if ((fabs(y[1][mpt])>= M_PI/2.0 || fabs(f) >=10)
+      && x[3] != 0) {
+    printf("crazy value of BC!\n");
+    return 10;
+  }
+  else return f;
 }
 
-double bound_eq(double psiR,double psipR,double R,struct params *p)
+
+double F_solve(double psip0,double *r,double **y,struct params *p,double *x,
+	       double h,int mpt)
+{
+  y[1][1] = 0;
+  y[2][1] = psip0;
+  rk4driver(r,y,p,x,h,mpt);
+
+  return F_eq(y[1][mpt],y[2][mpt],x[1],p);
+}
+
+
+double F_eq(double psiR,double psipR,double R,struct params *p)
 {
   return psipR-1-0.5*p->k24*sin(2*psiR)/R;
 }

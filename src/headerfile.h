@@ -99,6 +99,10 @@ void solvde_wrapper(int itmax, double convODE, double scalv[],struct arr_ns *ns,
 		    int mpt,double *r,double **y,double **y_guess,double ***c,
 		    double **s,struct params *p,double *x,double h);
 
+bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
+	    double *r, double **y,double ***c, double **s,struct params *p,
+	    double *x,double h);
+
 /* from file energy.c */
 
 double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
@@ -146,8 +150,12 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	      double rate,const int x_size0);
 
 /* from shooting.c */
-void shoot_driver(struct params p, double *x, FILE *bc,double psip01,double psip02,
-		  int numpoints,int mpt);
+void shootsolve_driver(struct params p, double *x, FILE *psivsr,double psip01,
+		       double psip02,int mpt);
+
+void shootscan_driver(struct params p, double *x, FILE *bc,double psip01,
+		      double psip02,int numpoints,int mpt);
+
 
 /* functions from Numerical Recipes, in files matching function names. */
 
