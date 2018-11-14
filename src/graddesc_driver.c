@@ -102,28 +102,29 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   double **s,***c;     // dummy arrays for solvde func (ODE for psi(r))
   double initialSlope; // slope guess for very first psi(r) form
   
-  int x_size = x_size0;           // x_size can change to 1 if delta goes to zero
+  int x_size = x_size0;           // x_size changes to 1 if x[3] = zero
   double E;                       // E(x) energy of fibrils (cost function)
   double lastE = 1e100;           // E(x) at previous value of x
   double *dEdx, *lastdEdx;        // gradient vectors for E
   double *direction;              // direction of descent
-  double *lastx;                  // will store a copy of x at its previous value
+  double *lastx;                  // stores copy of x at its previous value
   double *hessian;                // flattened hessian matrix of E
-  double dx;                      // spacing used when calculating finite differences
-  double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices passed to derivative calcs
+  double dx;                      // spacing in finite difference calcs
+  double cushion = 100;           // derivative error ~ 1/cushion*convMIN
+  double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices for derivative calcs
   bool calc_hess = false;
 
-  const double min_rate = 1e3*EFFECTIVE_ZERO;  // minimum value of rate
+  const double min_rate = EFFECTIVE_ZERO;  // minimum value of rate
 
-  int count = 0;           // count how many times we descend before minimum reached
+  int count = 0;  // count how many times we descend before minimum reached
 
 
   clock_t begin = clock(); // timing function stuff
   clock_t end;
 
-  int pos_def_in_a_row = 0; // count number of positive definite hessians in a row
+  int pos_def_in_a_row = 0; // number of pos def hessians in a row
 
-  struct arr_ns ns;         // used to set array sizes (for e.g. y, c, s)
+  struct arr_ns ns;   // used to set array sizes (for e.g. y, c, s)
 
   assign_ns(&ns);           // set struct values
 
@@ -158,13 +159,11 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     x_size = 3;
 
-    printf("start of loop,x[1] = %e\n",x[1]);
     E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
 
-    printf("calculated E_calc, x = (%e,%e,%e)\n",x[1],x[2],x[3]);
 
     printf("E = %e\n",E);
-    dx = compute_dx(E,convMIN);
+    dx = compute_dx(E,convMIN,cushion);
     dx = (x[1]-dx>0) ? dx : x[1]-x[1]/2.0;
 
     printf("dx = %e\n",dx);
@@ -173,9 +172,8 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,convODE,dx,itmax,
 		   &mpt,&ns,max_mpt,x_size,hessian,calc_hess,E_p,E_m,E_pij,
 		   E_mij);
-
-    printf("passed derivative calc\n");
-     
+    printf("dEdx = (%e,%e,%e)\n",dEdx[1],dEdx[2],dEdx[3]);
+    
     if (fabs(x[3])<=convMIN) {
       x_size = 1;
     } else {
@@ -186,10 +184,11 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
       
       if (positive_definite(hessian,x_size)) {
 
+	/*
 	printf("Newton Raphson method worked! number of positive " 
 	       "definite hessians in a row = %d!\n",
 	       pos_def_in_a_row);
-
+	*/
 	//hessian_update_x(x,hessian,dEdx,x_size);
 
 	pos_def_in_a_row += 1;
@@ -197,12 +196,12 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
       } else {
 
 	pos_def_in_a_row = 0;
-
+	/*
 	printf("Newton's Raphson method didn't work. Resetting "
 	       "the number of positive definite hessians in "
 	       "a row back to %d.\n",pos_def_in_a_row);
-
-
+	*/
+	
       }
     }
 
@@ -210,8 +209,8 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	
     armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
 		       convODE,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
-	
-    printf("direction[1] = %e\n",direction[1]);
+
+
 
     fprintf(energy,"%d\t%.8e\n",count,E);
 
@@ -228,7 +227,9 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     arr_cp(lastdEdx,dEdx,x_size0);
     count += 1;
     printf("count = %d, x_size = %d\n",count,x_size);
-      
+    printf("x = (%e,%e,%e)\n",x[1],x[2],x[3]);
+    printf("direction = (%e,%e,%e)\n",direction[1],direction[2],direction[3]);
+    
   }
 
   printf("\n\n\n\n\n\n"
@@ -246,7 +247,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
 
-    dx = compute_dx(E,convMIN);
+    dx = compute_dx(E,convMIN,cushion);
 
     derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,convODE,dx,itmax,
 		   &mpt,&ns,max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
@@ -303,7 +304,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
   E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
 
-  dx = compute_dx(E,convMIN);
+  dx = compute_dx(E,convMIN,cushion);
 
   derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,convODE,dx,itmax,
 		 &mpt,&ns,max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);

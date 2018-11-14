@@ -72,7 +72,39 @@ int main(int argc, char **argv)
 
   bc = fopen(f1,"w");
 
-  shootscan_driver(p,x,bc,psip01,psip02,numpoints,M);
+  double *r;
+  double **y;
+  double *rf_fib;
+  int i;
+
+  double psip0,dpsip0;
+  double h;
+  double f;
+  double E;
+
+  dpsip0 = (psip02-psip01)/(numpoints-1);
+
+  y = matrix(1,2,1,M);
+  r = vector(1,M);
+  rf_fib = vector(1,M);
+
+  h = x[1]/(M-1);
+
+  propagate_r(r,h,M);
+
+  for (i = 0; i < numpoints; i++) {
+    psip0 = psip01 + i*dpsip0;
+    f = F_solve(psip0,r,y,&p,x,h,M);
+    if(!successful_E_count(&E,&p,x,r,y,rf_fib,M)) {
+      fprintf(bc,"%.14e\t%.14e\t%.14s\t%.14e\n",psip0,f,"nan",y[1][M]);
+    } else {
+      fprintf(bc,"%.14e\t%.14e\t%.14e\t%.14e\n",psip0,f,E,y[1][M]);
+    }
+  }
+
+  free_matrix(y,1,2,1,M);
+  free_vector(r,1,M);
+  free_vector(rf_fib,1,M);
   
 
   free_vector(x,1,X_SIZE);

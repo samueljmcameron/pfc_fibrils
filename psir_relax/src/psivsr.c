@@ -6,7 +6,7 @@
 #include "../../src/headerfile.h"
 
 #define NE 2                   // # of 1st order DEs
-#define M 2*2*2*2*2*2*2*2*2*2*2*2+1  // # of mesh points (2^M+1 for romberg integration)
+#define M 2*2*2*2*2*2*2*2*2*2*2*2*2*2+1  // # of mesh points (2^M+1 for romberg integration)
 #define NB 1                   // # of BCs at first boundary (k = 1)
 #define NSI NE                 // max # i of S_i,j
 #define NSJ (2*NE+1)           // max # j of S_i,j
@@ -21,6 +21,7 @@
 #define CONV_ODE   1e-10
 #define CONV_MIN   1e-8
 #define MAX_SIZE_M (8)*(M-1)+(1)
+#define EPS        1e-14
 
 int main(int argc, char **argv)
 {
@@ -46,8 +47,6 @@ int main(int argc, char **argv)
   sscanf(argv[8],"%lf",&x[2]);
   sscanf(argv[9],"%lf",&x[3]);
   sscanf(argv[10],"%lf",&p.gamma_s);
-  sscanf(argv[11],"%lf",&psip01);
-  sscanf(argv[12],"%lf",&psip02);
 
 
   printf("K33 = %lf\n",p.K33);
@@ -70,7 +69,61 @@ int main(int argc, char **argv)
 
   psivsr = fopen(f1,"w");
 
-  shootsolve_driver(p,x,psivsr,psip01,psip02,M);
+  double *r;
+  double **y;
+  double psip0;
+  double h;
+
+  
+  int itmax = 1000;
+  double conv = 1e-14;
+  double *scalv;
+  struct arr_ns ns;
+  double ***c;
+  double **s;
+  double *r_cp,*rf_fib;
+  double **y_cp;
+  double E;
+  bool solv = false;
+  bool Ecalc;
+
+  assign_ns(&ns);
+
+  scalv = vector(1,2);
+  scalv[1] = 0.1;
+  scalv[2] = 4.0;
+
+  allocate_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,M);
+
+  h = x[1]/(M-1);
+
+  propagate_r(r,h,M);
+
+  psip01 = 0.0;
+  psip02 = M_PI/(0.01*x[1]);
+  psip0 = brent(psip01,psip02,EPS,1000,r,y,&p,x,h,M);
+
+  printf("before solvde, y[2][1] = %.12e, y[1][M] = %e\n",y[2][1],y[1][M]);
+  printf("f = %.12e\n",F_eq(y[1][M],y[2][M],x[1],&p));
+  Ecalc = successful_E_count(&E,&p,x,r,y,rf_fib,M);
+  printf("E calc success: %d, E = %e\n",Ecalc,E);
+  solv = solvde(itmax,conv,scalv,&ns,M,r,y,c,s,&p,x,h);
+  printf("after solvde, y[2][1] = %.12e, y[1][M] = %e\n",y[2][1],y[1][M]);
+  printf("f = %.12e\n",F_eq(y[1][M],y[2][M],x[1],&p));
+  Ecalc = successful_E_count(&E,&p,x,r,y,rf_fib,M);
+  printf("E calc success: %d, E = %e\n",Ecalc,E);
+  if (!solv) {
+    printf("calculation failed!\n");
+    exit(1);
+  }
+  
+  psip0 = y[2][1];
+  printf("psip0 =  %e\n",psip0);
+
+  save_psi(psivsr,r,y,M);
+
+  free_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,M);
+
   
   free_vector(x,1,X_SIZE);
 

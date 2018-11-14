@@ -5,7 +5,7 @@
 #include "nrutil.h"
 #include "headerfile.h"
 
-
+#define EPS 1.0e-14
 
 void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
 		    int mpt,double *r,double **y,double **y_guess,double ***c,
@@ -41,13 +41,15 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
 
 
   double slopeguess;
-
+  double psip01 = 0;
+  double psip02;
 
 
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
-    printf("solvde convergence failed when x = (%e,%e,%e). Trying one more "
-	   "time with a linear guess and a final twist angle value of "
-	   "pi/4.\n",x[1],x[2],x[3]);
+
+    printf("solvde convergence failed when x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+    printf("Retrying with a linear guess and a final twist angle value of "
+	   "pi/4.\n");
 
     slopeguess = M_PI/(4.0*x[1]);
     
@@ -56,25 +58,35 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
   } else return;
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
 
-    printf("solvde convergence failed when x = (%e,%e,%e). Trying one more "
-	   "time with a sqrt(r) guess and a final twist angle value of "
-	   "pi/2.01.\n",x[1],x[2],x[3]);
+    printf("Retrying with a sqrt(r) guess and a final twist angle value of "
+	   "pi/2.01.\n");
 
     slopeguess = M_PI/(2.01*sqrt(x[1]));
 
     sqrtGuess(r,y,slopeguess,h,mpt);
 
   } else return;
+
+  if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
+
+    printf("Retrying using a hybrid shooting/relaxing method.\n");
+    
+    if (x[2] > 7.0) psip02 = M_PI/(0.01*x[1]);
+    else psip02 = M_PI/(2.0*x[1]);
+    
+    brent(psip01,psip02,EPS,1000,r,y,p,x,h,mpt);
+
+  } else return;
+
   if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h)) {
     
     // save form of y when solvde failed, rf_fib, and exit.
 
 
     write_SOLVDEfailure(r,y,y_guess,mpt,*p,x);
-    
-
-
   } else return;
+
+  
 }
 
 bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,

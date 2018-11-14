@@ -9,7 +9,7 @@
 
 #define HESS(i,j) hessian[(j)+(i-1)*(3)]
 
-double compute_dx(double E,double conv);
+double compute_dx(double E,double convMIN,double cushion);
 
 double dEdxi(double E_p_dxi, double E_m_dxi,double dxi);
 
@@ -184,7 +184,7 @@ void compute_hessian(double *hessian,double E,struct params *p,double *x,
   return;
 }
 
-double compute_dx(double E,double convMIN)
+double compute_dx(double E,double convMIN,double cushion)
 /*==============================================================================
 
   Purpose: Calculates the maximum round off error by subtracting E(x+a) from
@@ -194,10 +194,10 @@ double compute_dx(double E,double convMIN)
   derivatives, the largest error from round off in this calculation will be
   ~2*C*fabs(E)/(2*dx). That means that the size of the convergence criteria on
   gradient descent, conv, must be larger than this round off error,
-  conv > 2*C*fabs(E)/(2*dx). To be safe, I've made dx = C*fabs(E)/(0.5*conv),
-  which ensures the error is half the size of the convergence criterion. Note
-  that I'm not considering truncation error (from finite-difference's Taylor
-  expansion) in this calculation.
+  conv > 2*C*fabs(E)/(2*dx). To be safe, I've made dx = cushion*C*fabs(E)/conv,
+  which ensures the error is smaller than the convergence criterion by some
+  amount 1/cushion. Note that I'm not considering truncation error (from 
+  finite-difference's Taylor expansion) in this calculation.
 
   ------------------------------------------------------------------------------
 
@@ -207,6 +207,9 @@ double compute_dx(double E,double convMIN)
 
   conv -- the convergence criterion for the minimization. If all derivatives
   fabs(dEdxi) < conv, then the minimum of E(x) is said to have been reached.
+
+  cushion -- the amount of cushion allowed between round off errors and the 
+  convergence criterion (error ~ 1/cushion *convMIN).
 
   ------------------------------------------------------------------------------
 
@@ -218,7 +221,7 @@ double compute_dx(double E,double convMIN)
 {
   double C = 1e-16;
 
-  return fabs(E)*C/(0.001*convMIN);
+  return cushion*fabs(E)*C/convMIN;
 }
 
 

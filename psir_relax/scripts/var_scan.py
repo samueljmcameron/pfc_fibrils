@@ -132,7 +132,7 @@ def shooting(init_path,params,var,var_position,successful_calc_list):
                        stderr=subprocess.STDOUT)==0):
 
         successful_calc_list.append(var)
-        load_str = loadfile_list(params[:-2],var,var_position)
+        load_str = loadfile_list(params,var,var_position)
 
         for fpart in ['psivsr']:
             file = ("%s_%s_%s"

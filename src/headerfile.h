@@ -112,6 +112,8 @@ double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
 bool successful_E_count(double *E,struct params *p,double *x,double *r,
 			double **y,double *rf_fib,int mpt);
 
+void propagate_r(double *r, double h,int mpt);
+
 /* from file finite_differences.c */
 
 void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
@@ -121,7 +123,7 @@ void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
 		    int x_size,double *hessian,bool calc_hess,double *E_p,
 		    double *E_m, double *E_pij,double *E_mij);
 
-double compute_dx(double E,double convMIN);
+double compute_dx(double E,double convMIN,double cushion);
 
 
 /* from file conj_grad.c */
@@ -150,12 +152,18 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 	      double rate,const int x_size0);
 
 /* from shooting.c */
-void shootsolve_driver(struct params p, double *x, FILE *psivsr,double psip01,
-		       double psip02,int mpt);
 
-void shootscan_driver(struct params p, double *x, FILE *bc,double psip01,
-		      double psip02,int numpoints,int mpt);
+double brent(double psip01,double psip02,double tol,int itmax,double *r,
+	     double **y, struct params *p, double *x,double h, int mpt);
 
+
+double F_solve(double psip0,double *r,double **y,struct params *p,double *x,
+	       double h,int mpt);
+
+double F_eq(double psiR,double psipR,double R,struct params *p);
+
+void rk4driver(double *r,double **y,struct params *p,double *x,double h,
+	       int mpt);
 
 /* functions from Numerical Recipes, in files matching function names. */
 

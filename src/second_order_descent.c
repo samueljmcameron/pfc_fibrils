@@ -52,10 +52,11 @@ bool positive_definite(double *hessian,int x_size)
   gsl_eigen_symm(mcp,eval,w);
   
   int i;
+
   for (i = 0; i < x_size; i++) {
     printf("eigenvalue_%d = %.6e\n",i,gsl_vector_get(eval,i));
   }
-
+  
   if (!positive_eigen(eval,x_size)) {
     
     gsl_vector_free(eval);

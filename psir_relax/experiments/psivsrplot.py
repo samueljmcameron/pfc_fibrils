@@ -38,7 +38,7 @@ if __name__=='__main__':
     fig.set_size_inches(width,height)
 
     
-    plot_psivsr(ax,colors,d,var_array,params[:-2],
+    plot_psivsr(ax,colors,d,var_array,params,
                 var_position,str_,load_p)
     
     xlabel = 'r'
