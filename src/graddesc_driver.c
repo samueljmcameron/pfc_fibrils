@@ -108,6 +108,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   double *dEdx, *lastdEdx;        // gradient vectors for E
   double *direction;              // direction of descent
   double *lastx;                  // stores copy of x at its previous value
+  double *x_scale;                // scaled x values.
   double *hessian;                // flattened hessian matrix of E
   double dx;                      // spacing in finite difference calcs
   double cushion = 100;           // derivative error ~ 1/cushion*convMIN
@@ -135,6 +136,12 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
   // malloc the vectors of size x_size0 or x_size0*x_size0
   allocate_vectors(x_size0,&lastx,&dEdx,&lastdEdx,&direction,&hessian,
 		   &E_p,&E_m,&E_pij,&E_mij);
+
+  x_scale = vector(1,x_size0);
+
+  x_scale[1] = x[1]/p.Rscale;
+  x_scale[2] = x[2]/p.etascale;
+  x_scale[3] = x[3]/p.deltascale;
   
   initialSlope = M_PI/(4.0*x[1]);
   h = x[1]/(mpt-1);
@@ -159,22 +166,22 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     x_size = 3;
 
-    E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
+    E = F_calc(&p,x_scale,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
 
 
     printf("E = %e\n",E);
     dx = compute_dx(E,convMIN,cushion);
-    dx = (x[1]-dx>0) ? dx : x[1]-x[1]/2.0;
+    dx = (x_scale[1]-dx>0) ? dx : x_scale[1]-x_scale[1]/2.0;
 
     printf("dx = %e\n",dx);
 
 
-    derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,convODE,dx,itmax,
+    derivatives_fd(dEdx,E,&p,x_scale,c,s,r,y,rf_fib,r_cp,y_cp,convODE,dx,itmax,
 		   &mpt,&ns,max_mpt,x_size,hessian,calc_hess,E_p,E_m,E_pij,
 		   E_mij);
     printf("dEdx = (%e,%e,%e)\n",dEdx[1],dEdx[2],dEdx[3]);
     
-    if (fabs(x[3])<=convMIN) {
+    if (fabs(x_scale[3])<=convMIN) {
       x_size = 1;
     } else {
       x_size = 3;
@@ -207,7 +214,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     set_direction(direction,dEdx,lastdEdx,x_size);    
 	
-    armijo_backtracker(rate,E,dEdx,direction,&p,x,r,y,rf_fib,c,s,r_cp,y_cp,
+    armijo_backtracker(rate,E,dEdx,direction,&p,x_scale,r,y,rf_fib,c,s,r_cp,y_cp,
 		       convODE,itmax,&mpt,&ns,max_mpt,min_rate,x_size);
 
 
@@ -227,6 +234,9 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
     arr_cp(lastdEdx,dEdx,x_size0);
     count += 1;
     printf("count = %d, x_size = %d\n",count,x_size);
+    x[1] = x_scale[1]*p.Rscale;
+    x[2] = x_scale[2]*p.etascale;
+    x[3] = x_scale[3]*p.deltascale;
     printf("x = (%e,%e,%e)\n",x[1],x[2],x[3]);
     printf("direction = (%e,%e,%e)\n",direction[1],direction[2],direction[3]);
     
@@ -245,7 +255,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
     arr_cp(lastx,x,x_size0);
 
-    E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
+    E = F_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
 
     dx = compute_dx(E,convMIN,cushion);
 
@@ -302,11 +312,11 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
   arr_cp(lastx,x,x_size0);
 
-  E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
+  E = F_calc(&p,x_scale,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,&mpt,&ns,max_mpt);
 
   dx = compute_dx(E,convMIN,cushion);
 
-  derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,convODE,dx,itmax,
+  derivatives_fd(dEdx,E,&p,x_scale,c,s,r,y,rf_fib,r_cp,y_cp,convODE,dx,itmax,
 		 &mpt,&ns,max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
 
@@ -344,7 +354,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
   free_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,max_mpt);
 
-
+  free_vector(x_scale,1,x_size0);
 
   return;
 }

@@ -52,13 +52,13 @@ void derivatives_fd(double *dEdx,double E,struct params *p,double *x,
     
     x[i] += dx; // add a small step
     
-    E_p[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,
+    E_p[i] = F_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,
 		    mpt,ns,max_mpt); // compute E for this small step dx
     
     
     x[i] -= 2*dx; // remove small step, and then subtract another
     
-    E_m[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,
+    E_m[i] = F_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,
 		    mpt,ns,max_mpt); // compute E for this small step dx
     
     x[i] += dx; // reset x to its original form
@@ -97,7 +97,8 @@ void compute_hessian(double *hessian,double E,struct params *p,double *x,
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
 
-  x -- This vector holds the variable parameters x = (R,eta,delta)'.
+  x -- This vector holds the variable parameters x = (R/p.Rscale,
+  eta/p.etascale,delta/p.deltascale)'.
 
   r[1..max_mpt] -- This vector holds the grid points for psi(r). Only the 
   first mpt values, with r[mpt] = R (= x[1]) are used, but the remaining grid
@@ -160,13 +161,13 @@ void compute_hessian(double *hessian,double E,struct params *p,double *x,
 
       x[i] += dx; // add a small steps
       x[j] += dx;
-      E_pij[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,mpt,
+      E_pij[i] = F_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,mpt,
 			ns,max_mpt); // compute E for these small steps dx
 
       x[i] -= 2*dx; // remove small steps, and then subtract another small step
       x[j] -= 2*dx;
 
-      E_mij[i] = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,mpt,
+      E_mij[i] = F_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,convODE,itmax,mpt,
 			ns,max_mpt); // compute E for these small steps -dx
 
       x[i] += dx; // reset x to its original form
@@ -219,7 +220,7 @@ double compute_dx(double E,double convMIN,double cushion)
   ============================================================================*/
   
 {
-  double C = 1e-16;
+  double C = 3e-16;
 
   return cushion*fabs(E)*C/convMIN;
 }

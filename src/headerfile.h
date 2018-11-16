@@ -46,9 +46,9 @@ struct params{
   double Lambda;
   double d0;
   double omega;
-  //  double R;
-  //  double eta;
-  //  double delta;
+  double Rscale;
+  double etascale;
+  double deltascale;
   double gamma_s;
   double upperbound_x;
   double upperbound_y;
@@ -105,9 +105,10 @@ bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
 
 /* from file energy.c */
 
-double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
-	      double ***c,double **s,double *r_cp,double **y_cp,double convODE,
+double F_calc(struct params *p,double *x_scale,double *r,double **y,double *rf_fib,
+	      double ***c,double **s,double *r_cp,double **y_cp,double conv,
 	      int itmax,int *mpt,struct arr_ns *ns,int max_mpt);
+
 
 bool successful_E_count(double *E,struct params *p,double *x,double *r,
 			double **y,double *rf_fib,int mpt);

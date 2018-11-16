@@ -43,12 +43,15 @@ int main(int argc, char **argv)
   sscanf(argv[4],"%lf",&p.Lambda);
   sscanf(argv[5],"%lf",&p.d0);
   sscanf(argv[6],"%lf",&p.omega);
-  sscanf(argv[7],"%lf",&x[1]);
-  sscanf(argv[8],"%lf",&x[2]);
-  sscanf(argv[9],"%lf",&x[3]);
+  sscanf(argv[7],"%lf",&p.Rscale);
+  sscanf(argv[8],"%lf",&p.etascale);
+  sscanf(argv[9],"%lf",&p.deltascale);
   sscanf(argv[10],"%lf",&p.gamma_s);
   sscanf(argv[11],"%lf",&rate);
 
+  x[1] = p.Rscale;
+  x[2] = p.etascale;
+  x[3] = p.deltascale;
 
   printf("K33 = %lf\n",p.K33);
   printf("k24 = %lf\n",p.k24);

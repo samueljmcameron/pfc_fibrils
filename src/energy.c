@@ -11,8 +11,36 @@
 
 #define HESS(i,j) hessian[(j)+(i-1)*(3)]
 
+double F_calc(struct params *p,double *x_scale,double *r,double **y,double *rf_fib,
+	      double ***c,double **s,double *r_cp,double **y_cp,double conv,
+	      int itmax,int *mpt,struct arr_ns *ns,int max_mpt)
 
+{
 
+  double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
+		double ***c,double **s,double *r_cp,double **y_cp,double convODE,
+		int itmax,int *mpt,struct arr_ns *ns,int max_mpt);
+  
+  double *x;
+  double E;
+  
+  x = vector(1,3);
+
+  x[1] = x_scale[1]*p->Rscale;
+  x[2] = x_scale[2]*p->etascale;
+  x[3] = x_scale[3]*p->deltascale;
+
+  if (x[1] <= 0 || x[1] >= 10.0 || x[2] <= 0 || x[2] >= 7.0
+      || fabs(x[3]) >= 1.0) E = 1e300;
+  else {
+    
+    E = E_calc(p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,mpt,ns,max_mpt);
+
+  }
+  
+  free_vector(x,1,3);
+  return E;
+}
 
 double E_calc(struct params *p,double *x,double *r,double **y,double *rf_fib,
 	      double ***c,double **s,double *r_cp,double **y_cp,double conv,

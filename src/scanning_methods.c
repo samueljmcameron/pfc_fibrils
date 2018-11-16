@@ -90,8 +90,10 @@ void scanE(struct params p,double *x,FILE *energy,FILE *psi,const double conv,
   double *dEdx, *lastdEdx;        // gradient vectors for E
   double *direction;              // direction of descent
   double *lastx;                  // will store a copy of x at its previous value
+  double *x_scale;                // (R/p.Rscale,eta/p.etascale,delta/p.deltascale)'
   double *hessian;                // flattened hessian matrix of E
   double dx;                      // spacing used to calculate derivatives
+  double cushion = 10.0;
   double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices passed to derivative calcs
 
   struct arr_ns ns;         // used to set array sizes (for e.g. y, c, s)
@@ -114,6 +116,8 @@ void scanE(struct params p,double *x,FILE *energy,FILE *psi,const double conv,
   // malloc the vectors of size x_size or x_size*x_size
   allocate_vectors(x_size,&lastx,&dEdx,&lastdEdx,&direction,&hessian,
 		   &E_p,&E_m,&E_pij,&E_mij);
+
+  x_scale = vector(1,3);
   
   initialSlope = M_PI/(4.0*x[1]);
   h = x[1]/(mpt-1);
@@ -130,13 +134,17 @@ void scanE(struct params p,double *x,FILE *energy,FILE *psi,const double conv,
 
   while (count_x <= num_scan) {
 
+    x_scale[1] = x[1]/p.Rscale;
+    x_scale[2] = x[2]/p.etascale;
+    x_scale[3] = x[3]/p.deltascale;
+    
     // for each value of x (i.e *var) in E vs x
 
-    E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
+    E = F_calc(&p,x_scale,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
 
-    dx = compute_dx(E,1e-8);
+    dx = compute_dx(E,1e-8,cushion);
 
-    derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,dx,itmax,&mpt,&ns,
+    derivatives_fd(dEdx,E,&p,x_scale,c,s,r,y,rf_fib,r_cp,y_cp,conv,dx,itmax,&mpt,&ns,
 		   max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
     // save var,E, and surface twist
@@ -163,6 +171,8 @@ void scanE(struct params p,double *x,FILE *energy,FILE *psi,const double conv,
 	       &E_p,&E_m,&E_pij,&E_mij);
 
   free_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,max_mpt);
+
+  free_vector(x_scale,1,3);
 
   return;
 }
@@ -243,8 +253,10 @@ void scan2dE(struct params p,double *x,FILE *energy,FILE *psi,
   double *dEdx, *lastdEdx;        // gradient vectors for E
   double *direction;              // direction of descent
   double *lastx;                  // will store a copy of x at its previous value
+  double *x_scale;                // (R/p.Rscale,eta/p.etascale,delta/p.deltascale)'
   double *hessian;                // flattened hessian matrix of E
   double dx;                      // spacing used to calculate derivatives
+  double cushion = 10;            //
   double *E_p,*E_m,*E_pij,*E_mij; // dummy matrices passed to derivative calcs
 
   struct arr_ns ns;         // used to set array sizes (for e.g. y, c, s)
@@ -270,6 +282,8 @@ void scan2dE(struct params p,double *x,FILE *energy,FILE *psi,
   // malloc the vectors of size x_size or x_size*x_size
   allocate_vectors(x_size,&lastx,&dEdx,&lastdEdx,&direction,&hessian,
 		   &E_p,&E_m,&E_pij,&E_mij);
+
+  x_scale = vector(1,3);
   
   array_constant(1e100,dEdx,x_size);
   arr_cp(lastdEdx,dEdx,x_size);
@@ -283,6 +297,9 @@ void scan2dE(struct params p,double *x,FILE *energy,FILE *psi,
     count_x = 0;
     x[x_index] = x0;
 
+    x_scale[1] = x[1]/p.Rscale;
+    x_scale[2] = x[2]/p.etascale;
+    x_scale[3] = x[3]/p.deltascale;
 
     printf("initial slope for guess = %lf\n", initialSlope);
 
@@ -295,11 +312,11 @@ void scan2dE(struct params p,double *x,FILE *energy,FILE *psi,
     
     while (count_x < num_scanx) {
 
-      E = E_calc(&p,x,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
+      E = F_calc(&p,x_scale,r,y,rf_fib,c,s,r_cp,y_cp,conv,itmax,&mpt,&ns,max_mpt);
 
-      dx = compute_dx(E,1e-8);
+      dx = compute_dx(E,1e-8,cushion);
 
-      derivatives_fd(dEdx,E,&p,x,c,s,r,y,rf_fib,r_cp,y_cp,conv,dx,itmax,&mpt,&ns,
+      derivatives_fd(dEdx,E,&p,x_scale,c,s,r,y,rf_fib,r_cp,y_cp,conv,dx,itmax,&mpt,&ns,
 		     max_mpt,x_size,hessian,true,E_p,E_m,E_pij,E_mij);
 
       if (count_x == 0) initialSlope = 0.1*y[2][mpt];
@@ -335,6 +352,9 @@ void scan2dE(struct params p,double *x,FILE *energy,FILE *psi,
 	       &E_p,&E_m,&E_pij,&E_mij);
 
   free_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,max_mpt);
+
+  free_vector(x_scale,1,3);
+
   
   return;
 }
