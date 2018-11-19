@@ -7,9 +7,7 @@
 
 #define EPS 1.0e-14
 
-void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
-		    int mpt,double *r,double **y,double **y_guess,double ***c,
-		    double **s,struct params *p,double *x,double h)
+void solvde_wrapper(double scalv[],struct params *p,const double *x,double h)
 /*==============================================================================
 
   Purpose: Runs solvde up to three times. The first time using the y form which
@@ -30,14 +28,16 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
   ============================================================================*/
 {
 
-  bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
-	      double *r, double **y,double ***c, double **s,struct params *p,
-	      double *x,double h,bool flag);
+  bool solvde(double scalv[],struct params *p,const double *x,double h,bool flag);
 
   void sqrtGuess(double *r, double **y, double initialSlope,double h,int mpt);
 
-  void write_SOLVDEfailure(double *r,double **y,double **y_guess,int mpt,
-			   struct params p,double *x);
+  void linearGuess(double *r, double **y, double initialSlope,double h,int mpt);
+
+  void write_SOLVDEfailure(struct params *p,const double *x);
+
+  bool success_brent(double *psip01,double psip02,struct params *p,
+		     const double *x,double h);
 
 
   double slopeguess;
@@ -46,7 +46,7 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
   bool flag = true;
 
 
-  if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h,flag)) {
+  if (!solvde(scalv,p,x,h,flag)) {
 
     flag = false;
     printf("solvde convergence failed when x = (%e,%e,%e).\n",x[1],x[2],x[3]);
@@ -55,11 +55,11 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
     if (x[2] > 7.0) psip02 = M_PI/(0.01*x[1]);
     else psip02 = M_PI/(2.0*x[1]);
     
-    brent(psip01,psip02,EPS,1000,r,y,p,x,h,mpt);
+    success_brent(&psip01,psip02,p,x,h);
 
   } else return;
   
-  if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h,flag)) {
+  if (!solvde(scalv,p,x,h,flag)) {
 
     flag = true;
     printf("Retrying with a linear guess and a final twist angle value of "
@@ -67,10 +67,10 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
 
     slopeguess = M_PI/(4.0*x[1]);
     
-    linearGuess(r,y,slopeguess,h,mpt);
+    linearGuess(p->r,p->y,slopeguess,h,p->mpt);
 
   } else return;
-  if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h,flag)) {
+  if (!solvde(scalv,p,x,h,flag)) {
 
     flag = true;
     printf("Retrying with a sqrt(r) guess and a final twist angle value of "
@@ -78,25 +78,23 @@ void solvde_wrapper(int itmax, double conv, double scalv[],struct arr_ns *ns,
 
     slopeguess = M_PI/(2.01*sqrt(x[1]));
 
-    sqrtGuess(r,y,slopeguess,h,mpt);
+    sqrtGuess(p->r,p->y,slopeguess,h,p->mpt);
 
   } else return;
 
 
-  if (!solvde(itmax,conv,scalv,ns,mpt,r,y,c,s,p,x,h,flag)) {
+  if (!solvde(scalv,p,x,h,flag)) {
     
     // save form of y when solvde failed, rf_fib, and exit.
 
 
-    write_SOLVDEfailure(r,y,y_guess,mpt,*p,x);
+    write_SOLVDEfailure(p,x);
   } else return;
 
   
 }
 
-bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
-	    double *r, double **y,double ***c, double **s,struct params *p,
-	    double *x,double h,bool flag)
+bool solvde(double scalv[],struct params *p, const double *x,double h,bool flag)
 /*==============================================================================
   Driver routine for solution of two point boundary value problems
   by relaxation. itmax is the maximum number of iterations. conv
@@ -116,78 +114,79 @@ bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
   c[1..ne][1..ne-nb+1][1..m+1] and s supply dummy storage used by the 
   relaxation code.*/
 {
-  /*
+
   void bksub(int ne, int nb, int jf, int k1, int k2, double ***c);
-  bool pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k,
-	     double ***c, double **s);
+  void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
+	     struct params *p,const double *x, double h);
+  bool pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
+	     double **s);
   void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
 	   int ic1, int jc1, int jcf, int kc, double ***c, double **s);
-  */
-  int ne = ns->ne;
-  int nb = ns->nb;
+
+
   int ic1,ic2,ic3,ic4,it,j,j1,j2,j3,j4,j5,j6,j7,j8,j9;
   int jc1,jcf,k,k1,k2,km,kp,nvars,*kmax;
   int i;
   double err,errj,fac,vmax,vz,*ermax;
   double slowc = 1.0;
 
-  kmax=ivector(1,ne);
-  ermax=vector(1,ne);
+  kmax=ivector(1,NE);
+  ermax=vector(1,NE);
   k1=1;          //Set up row and column markers.
-  k2=m;
-  nvars=ne*m;
+  k2=p->mpt;
+  nvars=NE*p->mpt;
   j1=1;
-  j2=nb;
-  j3=nb+1;
-  j4=ne;
+  j2=NB;
+  j3=NB+1;
+  j4=NE;
   j5=j4+j1;
   j6=j4+j2;
   j7=j4+j3;
   j8=j4+j4;
   j9=j8+j1;
   ic1=1;
-  ic2=ne-nb;
+  ic2=NE-NB;
   ic3=ic2+1;
-  ic4=ne;
+  ic4=NE;
   jc1=1;
   jcf=ic3;
-  int index = 1;
-  for (it=1;it<=itmax;it++) { //Primary iteration loop.
+
+  for (it=1;it<=ITMAX;it++) { //Primary iteration loop.
     k=k1; //Boundary conditions at first point.
-    difeq(k,k1,k2,j9,ic3,ic4,ne,s,y,r,p,x,h,m);
+    difeq(k,k1,k2,j9,ic3,ic4,p,x,h);
     //    if (isnan(y[1][k])) printf("NAN at first BC!\n");
-    if (!pinvs(ic3,ic4,j5,j9,jc1,k1,c,s)) {
+    if (!pinvs(ic3,ic4,j5,j9,jc1,k1,p->c,p->s)) {
       printf("R = %e\n",x[1]);
       printf("failed at first BC!\n");
       return false;
     }
     for (k=k1+1;k<=k2;k++) { //Finite difference equations at all point pairs.
       kp=k-1;
-      difeq(k,k1,k2,j9,ic1,ic4,ne,s,y,r,p,x,h,m);
+      difeq(k,k1,k2,j9,ic1,ic4,p,x,h);
       //      if (isnan(y[1][k])) printf("NAN at k = %d!\n",k);
-      red(ic1,ic4,j1,j2,j3,j4,j9,ic3,jc1,jcf,kp,c,s);
-      if (!pinvs(ic1,ic4,j3,j9,jc1,k,c,s)) {
+      red(ic1,ic4,j1,j2,j3,j4,j9,ic3,jc1,jcf,kp,p->c,p->s);
+      if (!pinvs(ic1,ic4,j3,j9,jc1,k,p->c,p->s)) {
 	printf("R = %e\n",x[1]);
 	printf("failed at point k = %d in finite differences\n",k);
 	return false;
       }
     }
     k=k2+1;// Final boundary conditions.
-    difeq(k,k1,k2,j9,ic1,ic2,ne,s,y,r,p,x,h,m);
+    difeq(k,k1,k2,j9,ic1,ic2,p,x,h);
     //    if (isnan(y[1][k])) printf("NAN at last BC!\n");
-    red(ic1,ic2,j5,j6,j7,j8,j9,ic3,jc1,jcf,k2,c,s);
-    if (!pinvs(ic1,ic2,j7,j9,jcf,k2+1,c,s)) {
+    red(ic1,ic2,j5,j6,j7,j8,j9,ic3,jc1,jcf,k2,p->c,p->s);
+    if (!pinvs(ic1,ic2,j7,j9,jcf,k2+1,p->c,p->s)) {
       printf("R = %e\n",x[1]);
       printf("failed at last BC!\n");
       return false;
     }
-    bksub(ne,nb,jcf,k1,k2,c); //Backsubstitution.
+    bksub(NE,NB,jcf,k1,k2,p->c); //Backsubstitution.
     err=0.0;
-    for (j=1;j<=ne;j++) { //Convergence check, accumulate average error
+    for (j=1;j<=NE;j++) { //Convergence check, accumulate average error
       errj=vmax=0.0;
       km=0;
       for (k=k1;k<=k2;k++) {// Find point with largest error, for each dependent variable
-	vz=fabs(c[j][1][k]);
+	vz=fabs(p->c[j][1][k]);
 	if (vz > vmax) {
 	  vmax=vz;
 	  km=k;
@@ -195,32 +194,32 @@ bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
 	errj += vz;
       }
       err += errj/scalv[j]; //Note weighting for each dependent variable.
-      ermax[j]=c[j][1][km]/scalv[j];
+      ermax[j]=p->c[j][1][km]/scalv[j];
       kmax[j]=km;
     }
     err /= nvars;
     fac=(err > slowc ? slowc/err : 1.0);
     //Reduce correction applied when error is large.
-    for (j=1;j<=ne;j++) { //Apply corrections.
+    for (j=1;j<=NE;j++) { //Apply corrections.
       for (k=k1;k<=k2;k++) {
-	y[j][k] -= fac*c[j][1][k];
-	if (isnan(y[j][k])) printf("NAN!\n");
+	p->y[j][k] -= fac*p->c[j][1][k];
+	//if (isnan(p->y[j][k])) printf("NAN!\n");
       }
     }
-    if (err < conv) { // Point with largest error for each variable can
+    if (err < CONV_ODE) { // Point with largest error for each variable can
                       // be monitored by writing out kmax and
                       // ermax.
 
       if (flag) {
-	if (y[1][2]<=-1e-15) {
+	if (p->y[1][2]<=-1e-15) {
 	  printf("likely a maximizing (vs minimizing) solution for psi(r), "
-		 "as y[1][2]=%e  which usually means high energy.\n",y[1][2]);
+		 "as y[1][2]=%e  which usually means high energy.\n",p->y[1][2]);
 	  return false;
 	}
       }
 
-      free_vector(ermax,1,ne);
-      free_ivector(kmax,1,ne);
+      free_vector(ermax,1,NE);
+      free_ivector(kmax,1,NE);
       return true;
     }
   }
@@ -281,8 +280,7 @@ void linearGuess(double *r, double **y, double initialSlope,double h,int mpt)
   return;
 } 
   
-void write_SOLVDEfailure(double *r,double **y,double **y_guess,int mpt,
-			 struct params p,double *x)
+void write_SOLVDEfailure(struct params *p,const double *x)
 /*==============================================================================
   
   Purpose: This function saves the current forms of r and psi(r) (which has
@@ -293,18 +291,6 @@ void write_SOLVDEfailure(double *r,double **y,double **y_guess,int mpt,
   ------------------------------------------------------------------------------
 
   Parameters:
-
-  r[1..max_mpt] -- This vector holds the grid points for psi(r). Only the 
-  first mpt values, with r[mpt] = R (= x[1]) are used, but the remaining grid
-  values are there in case interpolation needs to occur.
-
-  y[1..2][1..max_mpt] -- This 2d matrix holds psi(r) in y[1][:] and dpsi/dr in
-  y[2][:]. Again, only the first mpt values are used until interpolation is 
-  necessary.
-
-  y_guess -- Array with the initial guess of psi(r) and dpsi/dr.
-
-  mpt -- The number of grid points in the r and psi(r) discretization.
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
 
@@ -318,7 +304,8 @@ void write_SOLVDEfailure(double *r,double **y,double **y_guess,int mpt,
 
 {
 
-
+  void make_f_err(char *f_err,char *err_type,int f_err_size,struct params *p,
+		  const double *x);
 
   int i;
   FILE *broken1,*broken2;
@@ -334,16 +321,16 @@ void write_SOLVDEfailure(double *r,double **y,double **y_guess,int mpt,
   make_f_err(f_err1,"SOLVDE_FAIL",f_err_size,p,x);
   broken1 = fopen(f_err1,"w");
 
-  for (i = 1; i<=mpt; i++) {
-    fprintf(broken1,"%.8e\t%.8e\t%.8e\n",r[i],y[1][i],y[2][i]);
+  for (i = 1; i<=p->mpt; i++) {
+    fprintf(broken1,"%.8e\t%.8e\t%.8e\n",p->r[i],p->y[1][i],p->y[2][i]);
   }
   fclose(broken1);
 
   make_f_err(f_err2,"SOLVDE_INITGUESS",f_err_size,p,x);
   broken2 = fopen(f_err2,"w");
 
-  for (i = 1; i<=mpt; i++) {
-    fprintf(broken2,"%.8e\t%.8e\t%.8e\n",r[i],y_guess[1][i],y_guess[2][i]);
+  for (i = 1; i<=p->mpt; i++) {
+    fprintf(broken2,"%.8e\t%.8e\t%.8e\n",p->r[i],p->y_cp[1][i],p->y_cp[2][i]);
   }
   fclose(broken2);
 

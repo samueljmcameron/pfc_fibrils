@@ -101,7 +101,7 @@ void solvde_wrapper(int itmax, double convODE, double scalv[],struct arr_ns *ns,
 
 bool solvde(int itmax, double conv, double scalv[],struct arr_ns *ns, int m,
 	    double *r, double **y,double ***c, double **s,struct params *p,
-	    double *x,double h);
+	    double *x,double h,bool flag);
 
 /* from file energy.c */
 
