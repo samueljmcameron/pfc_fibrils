@@ -26,9 +26,9 @@ int main(int argc, char **argv)
   p.Lambda = 10.0;
   p.d0 = 1.0;
   p.omega = 10.0;
-  p.Rscale = 0.02;
-  p.etascale = 6.3;
-  p.deltascale = 0.8;
+  p.Rscale = 0.0326;
+  p.etascale = 6.297;
+  p.deltascale = 0.815;
   p.gamma_s = 0.02;
   p.mpt = (MAX_M-1)/8+1;
 
@@ -69,8 +69,17 @@ int main(int argc, char **argv)
     iter ++;
     status = gsl_multimin_fdfminimizer_iterate(s);
     if (status) {
-      printf ("error: %s\n", gsl_strerror (status));
-      break;
+      printf("attempting to restart minimization\n");
+      gsl_multimin_fdfminimizer_restart(s);
+      status = gsl_multimin_fdfminimizer_iterate(s);
+      if (status) {
+	printf("%5lu %e %e %e %.16e %e\n",iter,gsl_vector_get(s->x,0)*p.Rscale,
+	       gsl_vector_get(s->x,1)*p.etascale,
+	       gsl_vector_get(s->x,2)*p.deltascale,s->f,
+	       gsl_blas_dnrm2(s->gradient));
+	printf ("error: %s\n", gsl_strerror (status));
+	break;
+      }
     }
 
     status = gsl_multimin_test_gradient(s->gradient,CONV_MIN*5);
@@ -78,13 +87,13 @@ int main(int argc, char **argv)
     if (status == GSL_SUCCESS)
       printf("minimum found at:\n");
 
-    printf("%5lu %e %e %e %e %e\n",iter,gsl_vector_get(s->x,0)*p.Rscale,
+    printf("%5lu %e %e %e %.16e %e\n",iter,gsl_vector_get(s->x,0)*p.Rscale,
 	   gsl_vector_get(s->x,1)*p.etascale,
 	   gsl_vector_get(s->x,2)*p.deltascale,s->f,
 	   gsl_blas_dnrm2(s->gradient));
   }
 
-  while (status == GSL_CONTINUE && iter < 1000);
+  while (status == GSL_CONTINUE && iter < 10000);
   
   gsl_multimin_fdfminimizer_free(s);
   gsl_vector_free(x_scale);

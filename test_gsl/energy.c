@@ -29,7 +29,7 @@ void df(const gsl_vector *x,void *ps,gsl_vector *g)
 	       int i,void *ps,double h,double *result,double *abserr);
   double f(const gsl_vector *x_scale,void *ps);
   
-  double h = 5e-5;
+  double h = 1e-4;
   int i;
   double result,abserr;
 
