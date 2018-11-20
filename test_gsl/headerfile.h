@@ -29,6 +29,7 @@ typedef struct {
 #include <gsl/gsl_math.h>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_deriv.h>
+#include <gsl/gsl_vector.h>
 
 #if defined(__STDC__) || defined(ANSI) || defined(NRANSI) /* ANSI */
 
@@ -46,7 +47,9 @@ typedef struct {
 #define X_SIZE     3
 #define ITMAX      5000
 #define CONV_ODE   1e-10
-#define CONV_MIN   1e-8
+#define CONV_MIN   1e-7
+
+
 
 struct params{
   double K33;
@@ -54,9 +57,12 @@ struct params{
   double Lambda;
   double d0;
   double omega;
-  double Rscale;
-  double etascale;
-  double deltascale;
+  double Rupper;
+  double Rlower;
+  double etaupper;
+  double etalower;
+  double deltaupper;
+  double deltalower;
   double gamma_s;
   double upperbound_x;
   double upperbound_y;
@@ -74,6 +80,11 @@ struct params{
 /* from file energy.c */
 
 double E_calcwrap(double *x_scale,void *ps);
+
+/* from file scaling.c */
+
+void scale_forward(gsl_vector *y,const double *x,struct params *p);
+void scale_backward(const gsl_vector *y, double *x,struct params *p);
 
 
 #endif /* ANSI */

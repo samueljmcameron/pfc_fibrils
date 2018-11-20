@@ -29,14 +29,14 @@ void df(const gsl_vector *x,void *ps,gsl_vector *g)
 	       int i,void *ps,double h,double *result,double *abserr);
   double f(const gsl_vector *x_scale,void *ps);
   
-  double h = 1e-4;
+  double h = 1e-5;
   int i;
   double result,abserr;
 
   for (i = 0; i < 3; i++) {
     deriv_xi(f,x,i,ps,h,&result,&abserr);
     gsl_vector_set(g,i,result);
-    if (abserr >= CONV_MIN) printf("abserr is %e, but CONV_min is %e!\n",
+    if (abserr >= 0.5*CONV_MIN) printf("abserr is %e, but CONV_min is %e!\n",
 				   abserr,CONV_MIN);
   }
   return;
@@ -57,9 +57,7 @@ double f(const gsl_vector *x_scale,void *ps)
   
   x = vector(1,3);
 
-  x[1] = gsl_vector_get(x_scale,0)*p->Rscale;
-  x[2] = gsl_vector_get(x_scale,1)*p->etascale;
-  x[3] = gsl_vector_get(x_scale,2)*p->deltascale;
+  scale_backward(x_scale,x,p);
     
   E = E_calc(x,p);
 

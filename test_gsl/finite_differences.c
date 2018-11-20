@@ -93,8 +93,6 @@ int deriv_xi(double (*f)(const gsl_vector *,void *),const gsl_vector *x_scale,
       if (error_opt < error && fabs (r_opt - r_0) < 4.0 * error) {
 	r_0 = r_opt;
 	error = error_opt;
-      } else {
-	printf("error is not smaller with smaller h!\n");
       }
     }
 

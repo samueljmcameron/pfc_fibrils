@@ -3,8 +3,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <gsl/gsl_vector.h>
-#include <gsl/gsl_multimin.h>
 #include <gsl/gsl_blas.h>
+#include "gsl_multimin.h"
 #include "nrutil.h"
 #include "headerfile.h"
 
@@ -23,12 +23,15 @@ int main(int argc, char **argv)
 
   p.K33 = 30.0;
   p.k24 = 0.8;
-  p.Lambda = 10.0;
+  p.Lambda = 1000.0;
   p.d0 = 1.0;
-  p.omega = 10.0;
-  p.Rscale = 0.0326;
-  p.etascale = 6.297;
-  p.deltascale = 0.815;
+  p.omega = 1000.0;
+  p.Rupper = 0.04;
+  p.Rlower = 0.02;
+  p.etaupper = 6.3;
+  p.etalower = 6.29;
+  p.deltaupper = 0.83;
+  p.deltalower = 0.76;
   p.gamma_s = 0.02;
   p.mpt = (MAX_M-1)/8+1;
 
@@ -46,6 +49,7 @@ int main(int argc, char **argv)
   const gsl_multimin_fdfminimizer_type *T;
   gsl_multimin_fdfminimizer *s;
 
+  double *x;
   gsl_vector *x_scale;
   gsl_multimin_function_fdf my_func;
 
@@ -56,11 +60,13 @@ int main(int argc, char **argv)
   my_func.params = &p;
 
   x_scale = gsl_vector_alloc(X_SIZE);
-  gsl_vector_set(x_scale,0,1.0);
-  gsl_vector_set(x_scale,1,1.0);
-  gsl_vector_set(x_scale,2,1.0);
+  x = vector(1,X_SIZE);
+  x[1] = 0.03;
+  x[2] = 6.295;
+  x[3] = 0.815;
+  scale_forward(x_scale,x,&p);
 
-  T = gsl_multimin_fdfminimizer_conjugate_fr;
+  T = gsl_multimin_fdfminimizer_vector_bfgs2;
   s = gsl_multimin_fdfminimizer_alloc(T,X_SIZE);
 
   gsl_multimin_fdfminimizer_set(s,&my_func,x_scale,0.01,0.01);
@@ -69,28 +75,23 @@ int main(int argc, char **argv)
     iter ++;
     status = gsl_multimin_fdfminimizer_iterate(s);
     if (status) {
-      printf("attempting to restart minimization\n");
-      gsl_multimin_fdfminimizer_restart(s);
-      status = gsl_multimin_fdfminimizer_iterate(s);
-      if (status) {
-	printf("%5lu %e %e %e %.16e %e\n",iter,gsl_vector_get(s->x,0)*p.Rscale,
-	       gsl_vector_get(s->x,1)*p.etascale,
-	       gsl_vector_get(s->x,2)*p.deltascale,s->f,
-	       gsl_blas_dnrm2(s->gradient));
-	printf ("error: %s\n", gsl_strerror (status));
-	break;
-      }
+      printf ("error: %s\n", gsl_strerror (status));
+      break;
     }
 
-    status = gsl_multimin_test_gradient(s->gradient,CONV_MIN*5);
+    status = gsl_multimin_test_gradient(s->gradient,CONV_MIN);
 
     if (status == GSL_SUCCESS)
       printf("minimum found at:\n");
 
-    printf("%5lu %e %e %e %.16e %e\n",iter,gsl_vector_get(s->x,0)*p.Rscale,
-	   gsl_vector_get(s->x,1)*p.etascale,
-	   gsl_vector_get(s->x,2)*p.deltascale,s->f,
+    scale_backward(s->x,x,&p);
+    printf("%5lu %e %e %e %e %e %e %e %e\n",iter,x[1],x[2],x[3],s->f,
+	   gsl_vector_get(s->gradient,0),
+	   gsl_vector_get(s->gradient,1),
+	   gsl_vector_get(s->gradient,2),
 	   gsl_blas_dnrm2(s->gradient));
+
+
   }
 
   while (status == GSL_CONTINUE && iter < 10000);
@@ -98,7 +99,7 @@ int main(int argc, char **argv)
   gsl_multimin_fdfminimizer_free(s);
   gsl_vector_free(x_scale);
 
-
+  free_vector(x,1,X_SIZE);
   free_vector(p.r,1,MAX_M);
   free_matrix(p.y,1,NE,1,MAX_M);
   free_vector(p.r_cp,1,MAX_M);
