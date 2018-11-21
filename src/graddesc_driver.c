@@ -343,7 +343,7 @@ void graddesc(struct params p,double *x,FILE *energy,FILE *psi,
 
 
   printf("count = %d\n",count);
-  save_psi(psi,r,y,mpt);
+  save_psi(psi,r,y,rf_fib,mpt);
   save_energydensity(energydensity,r,rf_fib,mpt);
   printf("SAVED!\n");
   printf("E_min-E_chol = %1.2e\n",E);

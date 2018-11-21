@@ -54,12 +54,12 @@ void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p,
 }
 
 
-void save_psi(FILE *psi,double *r, double **y,int mpt)
+void save_psi(FILE *psi,double *r, double **y,double *rf_fib,int mpt)
 {
   int i;
 
   for (i = 1; i <= mpt; i++) {
-    fprintf(psi,"%10.8e\t%10.8e\t%10.8e\n",r[i],y[1][i],y[2][i]);
+    fprintf(psi,"%10.8e\t%10.8e\t%10.8e\t%10.8e\n",r[i],y[1][i],y[2][i],rf_fib[i]);
   }
   printf("psi(R) = %1.2e\n",y[1][mpt]);
   return;

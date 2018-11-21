@@ -26,13 +26,13 @@ int main(int argc, char **argv)
   p.Lambda = 1000.0;
   p.d0 = 1.0;
   p.omega = 1000.0;
-  p.Rupper = 0.04;
-  p.Rlower = 0.02;
-  p.etaupper = 6.3;
-  p.etalower = 6.29;
+  p.Rupper = 0.1;
+  p.Rlower = 0.05;
+  p.etaupper = 6.35;
+  p.etalower = 6.28;
   p.deltaupper = 0.83;
   p.deltalower = 0.76;
-  p.gamma_s = 0.02;
+  p.gamma_s = 0.05;
   p.mpt = (MAX_M-1)/8+1;
 
   p.r = vector(1,MAX_M);
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 
   x_scale = gsl_vector_alloc(X_SIZE);
   x = vector(1,X_SIZE);
-  x[1] = 0.03;
+  x[1] = 0.07;
   x[2] = 6.295;
   x[3] = 0.815;
   scale_forward(x_scale,x,&p);
@@ -69,7 +69,7 @@ int main(int argc, char **argv)
   T = gsl_multimin_fdfminimizer_vector_bfgs2;
   s = gsl_multimin_fdfminimizer_alloc(T,X_SIZE);
 
-  gsl_multimin_fdfminimizer_set(s,&my_func,x_scale,0.01,0.01);
+  gsl_multimin_fdfminimizer_set(s,&my_func,x_scale,0.001,0.01);
 
   do {
     iter ++;
@@ -95,7 +95,16 @@ int main(int argc, char **argv)
   }
 
   while (status == GSL_CONTINUE && iter < 10000);
-  
+
+  printf("y[1][mpt] = %e\n",p.y[1][p.mpt]);
+  printf("y[2][1] = %e\n",p.y[2][1]);
+  int i;
+  FILE *output;
+  output = fopen("psivsr.txt","w");
+  for (i = 1; i<=p.mpt; i++) {
+    fprintf(output,"%e\t%e\t%e\n",p.r[i],p.y[1][i],p.y[2][i]);
+  }
+  fclose(output);
   gsl_multimin_fdfminimizer_free(s);
   gsl_vector_free(x_scale);
 

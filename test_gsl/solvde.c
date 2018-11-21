@@ -7,7 +7,8 @@
 
 #define EPS 1.0e-14
 
-void solvde_wrapper(double scalv[],struct params *p,const double *x,double h)
+void solvde_wrapper(double scalv[],struct params *p,const double *x,double h,
+		    bool ignore_first_y)
 /*==============================================================================
 
   Purpose: Runs solvde up to three times. The first time using the y form which
@@ -38,6 +39,8 @@ void solvde_wrapper(double scalv[],struct params *p,const double *x,double h)
 
   bool success_brent(double *psip01,double psip02,struct params *p,
 		     const double *x,double h);
+  
+  void constantGuess(double *r,double **y,double val,double h,int mpt);
 
 
   double slopeguess;
@@ -46,16 +49,17 @@ void solvde_wrapper(double scalv[],struct params *p,const double *x,double h)
   bool flag = true;
 
 
-  if (!solvde(scalv,p,x,h,flag)) {
+  if (!solvde(scalv,p,x,h,flag) || ignore_first_y) {
 
-    flag = false;
+    flag = true;//false;
     printf("solvde convergence failed when x = (%e,%e,%e).\n",x[1],x[2],x[3]);
-    printf("Retrying using a hybrid shooting/relaxing method.\n");
+    //printf("Retrying using a hybrid shooting/relaxing method.\n");
+    printf("Retrying using a constant y value\n");
     
-    if (x[2] > 7.0) psip02 = M_PI/(0.01*x[1]);
-    else psip02 = M_PI/(2.0*x[1]);
-    
-    success_brent(&psip01,psip02,p,x,h);
+    //  if (x[2] > 6.32) psip02 = M_PI/(0.01*x[1]);
+    //else psip02 = M_PI/(2.0*x[1]);
+    //success_brent(&psip01,psip02,p,x,h);
+    constantGuess(p->r,p->y,0.3,h,p->mpt);
 
   } else return;
   
@@ -227,6 +231,16 @@ bool solvde(double scalv[],struct params *p, const double *x,double h,bool flag)
   return false;
 }
 
+void constantGuess(double *r,double **y,double val,double h,int mpt)
+{
+  int k;
+  for (k = 1; k <= mpt; k++) {
+    r[k] = (k-1)*h;
+    y[1][k] = val;
+    y[2][k] = 0.0;
+  }
+  return;
+}
 
 void sqrtGuess(double *r, double **y, double initialSlope,double h,int mpt)
 /*==============================================================================

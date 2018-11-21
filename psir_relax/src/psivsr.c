@@ -6,7 +6,7 @@
 #include "../../src/headerfile.h"
 
 #define NE 2                   // # of 1st order DEs
-#define M 2*2*2*2*2*2*2*2*2*2*2*2*2*2+1  // # of mesh points (2^M+1 for romberg integration)
+#define M (2*2*2*2*2*2*2*2*2*2*2*2*2*2+1)  // # of mesh points (2^M+1 for romberg integration)
 #define NB 1                   // # of BCs at first boundary (k = 1)
 #define NSI NE                 // max # i of S_i,j
 #define NSJ (2*NE+1)           // max # j of S_i,j
@@ -100,14 +100,20 @@ int main(int argc, char **argv)
   propagate_r(r,h,M);
 
   psip01 = 0.0;
-  psip02 = M_PI/(0.01*x[1]);
+  psip02 = 1.093262;//M_PI/(2*x[1]);
   psip0 = brent(psip01,psip02,EPS,1000,r,y,&p,x,h,M);
 
-  printf("before solvde, y[2][1] = %.12e, y[1][M] = %e\n",y[2][1],y[1][M]);
-  printf("f = %.12e\n",F_eq(y[1][M],y[2][M],x[1],&p));
-  Ecalc = successful_E_count(&E,&p,x,r,y,rf_fib,M);
-  printf("E calc success: %d, E = %e\n",Ecalc,E);
-  solv = solvde(itmax,conv,scalv,&ns,M,r,y,c,s,&p,x,h);
+  //  printf("before solvde, y[2][1] = %.12e, y[1][M] = %e\n",y[2][1],y[1][M]);
+  //printf("f = %.12e\n",F_eq(y[1][M],y[2][M],x[1],&p));
+  //Ecalc = successful_E_count(&E,&p,x,r,y,rf_fib,M);
+  //  printf("E calc success: %d, E = %e\n",Ecalc,E);
+  //  printf("y[1][mpt] = %e\n",y[1][M]);
+  int i;
+  for (i = 1; i<=M; i++) {
+    y[1][i] = 0.3;
+    y[2][i] = 0.01;
+  }
+  solv = solvde(itmax,conv,scalv,&ns,M,r,y,c,s,&p,x,h,false);
   printf("after solvde, y[2][1] = %.12e, y[1][M] = %e\n",y[2][1],y[1][M]);
   printf("f = %.12e\n",F_eq(y[1][M],y[2][M],x[1],&p));
   Ecalc = successful_E_count(&E,&p,x,r,y,rf_fib,M);
@@ -120,11 +126,11 @@ int main(int argc, char **argv)
   psip0 = y[2][1];
   printf("psip0 =  %e\n",psip0);
 
-  save_psi(psivsr,r,y,M);
+  save_psi(psivsr,r,y,rf_fib,M);
 
   free_matrices(ns,&c,&s,&r,&y,&r_cp,&y_cp,&rf_fib,M);
 
-  
+  free_vector(scalv,1,2);
   free_vector(x,1,X_SIZE);
 
   fclose(psivsr); // close file!

@@ -53,7 +53,7 @@ not just a polynomial in h.*/
   printf("ss=%.12e, lastss = %.12e\n",ss,lastss);
   printf("tol = %.12e\n",tol);
   *failure = true;
-  return 0.0; // this return value doesn't matter, as failure signals that convergence failed.
+  return ss; // this return value doesn't matter, as failure signals that convergence failed.
 }
 
 

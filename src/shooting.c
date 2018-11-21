@@ -24,9 +24,6 @@ double jacobian(double F1,double psip0,double *r,double **y,struct params *p,dou
 double brent(double psip01,double psip02,double tol,int itmax,double *r,
 	     double **y, struct params *p, double *x,double h, int mpt);
 
-
-void save_psi(FILE *output,double *r, double **y, int mpt);
-
 #define EPS 1.0e-14
 
 

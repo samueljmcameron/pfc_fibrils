@@ -11,6 +11,7 @@
 #include "headerfile.h"
 
 #define HESS(i,j) hessian[(j)+(i-1)*(3)]
+#define LRG_NBR 1e10
 
 
 void my_fdf(const gsl_vector *x,void *params, double *func,gsl_vector *grad)
@@ -106,7 +107,8 @@ double E_calc(const double *x,struct params *p)
   void copy_2_arrays(double *r_cp,double **y_cp,double *r,double **y,
 		     int last_mpt);
 
-  void solvde_wrapper(double scalv[],struct params *p,const double *x,double h);
+  void solvde_wrapper(double scalv[],struct params *p,const double *x,double h,
+		      bool ignore_first_y);
   
   bool successful_E_count(double *E,struct params *p,const double *x);
 
@@ -156,9 +158,13 @@ double E_calc(const double *x,struct params *p)
     }
 
     
-    solvde_wrapper(scalv,p,x,h);
+    solvde_wrapper(scalv,p,x,h,false);
 
     if(successful_E_count(&E,p,x)) return E;
+    else if (E > LRG_NBR) {
+      solvde_wrapper(scalv,p,x,h,true);
+      if(successful_E_count(&E,p,x)) return E;
+    }
     
     p->mpt = (p->mpt-1)*2+1;
     
@@ -328,8 +334,12 @@ bool successful_E_count(double *E,struct params *p,const double *x)
   integration_2233b1 = qromb(p->r,p->rf_fib,p->mpt,tol2233b1,&failure);
   
   if (failure) {
-    printf("failed to integrate at x = (%e,%e,%e)\n",
-	   x[1],x[2],x[3]);
+    if (integration_2233b1>LRG_NBR) {
+      *E = integration_2233b1;
+    } else {
+      printf("failed to integrate at x = (%e,%e,%e)\n",
+	     x[1],x[2],x[3]);
+    }
     return false;
   }
 

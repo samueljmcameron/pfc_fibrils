@@ -31,7 +31,7 @@ void scanE(struct params p,double *x,FILE *energy,FILE *psi,const double conv,
   ------------------------------------------------------------------------------
 
   Parameters:
-
+n
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
 
   x -- This vector x = (R,eta,delta)' has the parameters which can be varied to
@@ -154,7 +154,7 @@ void scanE(struct params p,double *x,FILE *energy,FILE *psi,const double conv,
 
     // if a minimum has been found, save the psi(r) curve
     if (positive_definite(hessian,x_size) && !non_zero_array(dEdx,conv,x_size)) {
-      save_psi(psi,r,y,mpt);
+      save_psi(psi,r,y,rf_fib,mpt);
       printf("SAVED!\n");
       printf("E_min-E_chol = %1.2e\n",E);
       Emin = E;
@@ -327,7 +327,7 @@ void scan2dE(struct params p,double *x,FILE *energy,FILE *psi,
       fprintf(surfacetwist,"%.8e\t",y[1][mpt]);
 
       if (positive_definite(hessian,x_size) && !non_zero_array(dEdx,conv,x_size)) {
-	save_psi(psi,r,y,mpt);
+	save_psi(psi,r,y,rf_fib,mpt);
 	printf("SAVED!\n");
 	printf("E_min-E_chol = %1.2e\n",E);
 	Emin = E;

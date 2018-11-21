@@ -84,7 +84,7 @@ void copy_2_arrays(double *r,double **y,double *r_cp,double **y_cp,
 void make_f_err(char *f_err,char *err_type,int f_err_size,struct params p,
 		double *x);
 
-void save_psi(FILE *psi,double *r, double **y,int mpt);
+void save_psi(FILE *psi,double *r, double **y,double *rf_fib,int mpt);
 
 void save_energydensity(FILE *energydensity,double *r, double *rf_fib,
 			int mpt);
