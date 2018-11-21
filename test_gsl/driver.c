@@ -26,13 +26,13 @@ int main(int argc, char **argv)
   p.Lambda = 1000.0;
   p.d0 = 1.0;
   p.omega = 1000.0;
-  p.Rupper = 0.1;
-  p.Rlower = 0.05;
-  p.etaupper = 6.35;
+  p.Rupper = 10.0;
+  p.Rlower = 1.0;
+  p.etaupper = 6.4;
   p.etalower = 6.28;
   p.deltaupper = 0.83;
   p.deltalower = 0.76;
-  p.gamma_s = 0.05;
+  p.gamma_s = 0.09;
   p.mpt = (MAX_M-1)/8+1;
 
   p.r = vector(1,MAX_M);
@@ -61,9 +61,9 @@ int main(int argc, char **argv)
 
   x_scale = gsl_vector_alloc(X_SIZE);
   x = vector(1,X_SIZE);
-  x[1] = 0.07;
-  x[2] = 6.295;
-  x[3] = 0.815;
+  x[1] = 2.5;
+  x[2] = 6.38;
+  x[3] = 0.816;
   scale_forward(x_scale,x,&p);
 
   T = gsl_multimin_fdfminimizer_vector_bfgs2;
