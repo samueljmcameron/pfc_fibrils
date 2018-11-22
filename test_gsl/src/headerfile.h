@@ -57,13 +57,16 @@ struct params{
   double Lambda;
   double d0;
   double omega;
+  double gamma_s;
+  double Rguess;
+  double etaguess;
+  double deltaguess;
   double Rupper;
   double Rlower;
   double etaupper;
   double etalower;
   double deltaupper;
   double deltalower;
-  double gamma_s;
   double upperbound_x;
   double upperbound_y;
   double *r;

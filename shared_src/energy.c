@@ -165,7 +165,6 @@ double E_calc(const double *x,struct params *p)
       solvde_wrapper(scalv,p,x,h,true);
       if(successful_E_count(&E,p,x)) return E;
     }
-    
     p->mpt = (p->mpt-1)*2+1;
     
   }
@@ -334,12 +333,9 @@ bool successful_E_count(double *E,struct params *p,const double *x)
   integration_2233b1 = qromb(p->r,p->rf_fib,p->mpt,tol2233b1,&failure);
   
   if (failure) {
-    if (integration_2233b1>LRG_NBR) {
-      *E = integration_2233b1;
-    } else {
-      printf("failed to integrate at x = (%e,%e,%e)\n",
-	     x[1],x[2],x[3]);
-    }
+    *E = integration_2233b1;
+    printf("failed to integrate at x = (%e,%e,%e)\n",
+	   x[1],x[2],x[3]);
     return false;
   }
 

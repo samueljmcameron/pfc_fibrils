@@ -6,7 +6,7 @@ TARGET = driver
 
 BINDIR = ../bin
 GSL_SRCDIR = edited_gsl_src
-SHARED_SRCDIR = ../shared_src
+SHARED_SRCDIR = ../../shared_src
 OBJDIR = ../obj
 
 LOCAL_SRC = driver.c
