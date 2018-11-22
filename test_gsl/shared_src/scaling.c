@@ -1,7 +1,6 @@
 #include <stdlib.h>
 #include <gsl/gsl_vector.h>
 #include "headerfile.h"
-#include "gsl_multimin.h"
 
 
 void scale_forward(gsl_vector *y,const double *x,struct params *p)

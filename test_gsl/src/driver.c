@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_blas.h>
-#include "gsl_multimin.h"
-#include "nrutil.h"
+#include "edited_gsl_src/gsl_multimin.h"
+#include "../shared_src/nrutil.h"
 #include "headerfile.h"
 
 
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
   p.etalower = 6.28;
   p.deltaupper = 0.83;
   p.deltalower = 0.76;
-  p.gamma_s = 0.09;
+  p.gamma_s = 0.08;
   p.mpt = (MAX_M-1)/8+1;
 
   p.r = vector(1,MAX_M);
