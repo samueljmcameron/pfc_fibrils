@@ -54,47 +54,6 @@ void make_f_err(char *f_err,char *err_type,int f_err_size,struct params *p,
 }
 
 
-void save_psi(FILE *psi,double *r, double **y,double *rf_fib,int mpt)
-{
-  int i;
-
-  for (i = 1; i <= mpt; i++) {
-    fprintf(psi,"%12.6e\t%12.6e\t%12.6e\t%12.6e\n",r[i],y[1][i],y[2][i],rf_fib[i]);
-  }
-  printf("psi(R) = %1.2e\n",y[1][mpt]);
-  return;
-}
-
-void save_energydensity(FILE *energydensity,double *r, double *rf_fib,
-			int mpt)
-{
-  int i;
-
-  for (i = 1; i <= mpt; i++) {
-    fprintf(energydensity,"%10.8e\t%10.8e\n",r[i],rf_fib[i]);
-  }
-  return;
-}
-
-int x_index(char scan_what[])
-{
-  if (strcmp(scan_what,"R")==0) {
-    printf("R!\n");
-    return 1;
-  } else if (strcmp(scan_what,"eta")==0) {
-    printf("eta!\n");
-    return 2;
-  } else if (strcmp(scan_what,"delta")==0) {
-    printf("delta!\n");
-    return 3;
-  } else {
-    printf("Need either R, eta, or delta as argv[n] input."
-	   "Exiting to system.\n");
-    exit(1);
-  }
-  return 0; // never get here
-}
-
 
 
 bool non_zero_array(double *dEdx,double conv,int x_size)
