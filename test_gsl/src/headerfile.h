@@ -34,7 +34,7 @@ typedef struct {
 #if defined(__STDC__) || defined(ANSI) || defined(NRANSI) /* ANSI */
 
 #define NE 2                    // # of 1st order DEs
-#define MAX_M ((256)*(256)+(1)) // max # of mesh points (2^M+1 for romberg integration)
+#define MAX_M ((512)*(512)+(1)) // max # of mesh points (2^M+1 for romberg integration)
 #define NB 1                    // # of BCs at first boundary (k = 1)
 #define NSI NE                  // max # i of S_i,j
 #define NSJ (2*NE+1)            // max # j of S_i,j

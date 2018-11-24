@@ -129,7 +129,7 @@ double E_calc(const double *x,struct params *p)
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
 
 
-  if (x[1] <= 0 || x[1] >= 10.0 || x[2] <= 0 || x[2] >= 7.0
+  if (x[1] <= 0 || x[1] >= 20.0 || x[2] <= 0 || x[2] >= 8.0
       || fabs(x[3]) >= 1.0) return 1e300;
   
   

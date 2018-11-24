@@ -23,11 +23,11 @@ int main(int argc, char **argv)
 
   void save_psivsr(FILE *psivsr,struct params *p);
 
-  void set_x_NAN(double *x,int xsize);
+  void set_x_NAN(double *E,double *x,int xsize);
 
-  void save_xvals(FILE *xvals,double *x,struct params *p);
+  void save_xvals(FILE *xvals,double E,double *x,struct params *p);
 
-  bool drive(struct params *p,double *x,FILE *energy);
+  bool drive(double *E,struct params *p,double *x,FILE *energy);
   
   struct params p; 
   initialize_params(&p,argv);
@@ -43,11 +43,12 @@ int main(int argc, char **argv)
   FILE *psivsr;
   initialize_file(&psivsr,argv[1],"psivsr",p);
 
+  double E;
 
-  if (drive(&p,x,(NULL))) save_psivsr(psivsr,&p);
-  else set_x_NAN(x,X_SIZE);
+  if (drive(&E,&p,x,(NULL))) save_psivsr(psivsr,&p);
+  else set_x_NAN(&E,x,X_SIZE);
 
-  save_xvals(xvals,x,&p);
+  save_xvals(xvals,E,x,&p);
 
   free_vector(x,1,X_SIZE);
   free_vector(p.r,1,MAX_M);
@@ -80,17 +81,24 @@ void save_psivsr(FILE *psivsr,struct params *p)
   return;
 }
 
-void save_xvals(FILE *xvals,double *x,struct params *p)
+void save_xvals(FILE *xvals,double E,double *x,struct params *p)
 {
-  fprintf(xvals,"%13.6e\t%13.6e\t%13.6e\t%13.6e\n",x[1],x[2],x[3],p->y[1][p->mpt]);
+  if (fabs(x[3]) <=1e-5) {
+    x[2] = sqrt(-1);
+  }
+  if (p->omega == 0) {
+    x[2] = x[3] = sqrt(-1);
+  }
+  fprintf(xvals,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",E,x[1],x[2],x[3],p->y[1][p->mpt]);
   return;
 }
 
 
-void set_x_NAN(double *x,int xsize)
+void set_x_NAN(double *E,double *x,int xsize)
 {
   int i;
   for (i = 1; i <= xsize; i++) x[i] = sqrt(-1);
+  *E = sqrt(-1);
   return;
 }
 

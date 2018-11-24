@@ -163,7 +163,7 @@ def variable_driver(init_path,params,var,var_position,
 
     args = argv_list(init_path,params,var,var_position)
 
-    cmd = "../../bin/driver " + args
+    cmd = "../../bin/k24_gamma_space " + args
 
     if(subprocess.call(cmd,shell=True,
                        stderr=subprocess.STDOUT)==0):

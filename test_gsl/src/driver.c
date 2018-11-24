@@ -11,7 +11,7 @@
 #include "headerfile.h"
 
 
-bool drive(struct params *p,double *x,FILE *energy)
+bool drive(double *E,struct params *p,double *x,FILE *energy)
 {
   void my_fdf(const gsl_vector *x,void *params, double *func,gsl_vector *grad);
 
@@ -75,6 +75,8 @@ bool drive(struct params *p,double *x,FILE *energy)
 
   while (status == GSL_CONTINUE && iter < 10000);
 
+  *E = s->f;
+  
   clock_t end = clock();
 
   printf("time taken = %e\n",(double)(end-begin)/CLOCKS_PER_SEC);
