@@ -25,7 +25,7 @@ int main(int argc, char **argv)
 
   void set_x_NAN(double *E,double *x,int xsize);
 
-  void save_xvals(FILE *xvals,double E,double *x,struct params *p);
+  void save_observables(FILE *observables,double E,double *x,struct params *p);
 
   bool drive(double *E,struct params *p,double *x,FILE *energy);
   
@@ -37,8 +37,8 @@ int main(int argc, char **argv)
   x = vector(1,X_SIZE);
   initialize_x(x,p);
 
-  FILE *xvals;
-  initialize_file(&xvals,argv[1],"xvals",p);
+  FILE *observables;
+  initialize_file(&observables,argv[1],"observables",p);
 
   FILE *psivsr;
   initialize_file(&psivsr,argv[1],"psivsr",p);
@@ -48,7 +48,7 @@ int main(int argc, char **argv)
   if (drive(&E,&p,x,(NULL))) save_psivsr(psivsr,&p);
   else set_x_NAN(&E,x,X_SIZE);
 
-  save_xvals(xvals,E,x,&p);
+  save_observables(observables,E,x,&p);
 
   free_vector(x,1,X_SIZE);
   free_vector(p.r,1,MAX_M);
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
   free_f3tensor(p.c,1,NCI,1,NCJ,1,MAX_M+1);
 
   fclose(psivsr);
-  fclose(xvals);
+  fclose(observables);
 
   return 0;
 
@@ -81,7 +81,7 @@ void save_psivsr(FILE *psivsr,struct params *p)
   return;
 }
 
-void save_xvals(FILE *xvals,double E,double *x,struct params *p)
+void save_observables(FILE *observables,double E,double *x,struct params *p)
 {
   if (fabs(x[3]) <=1e-5) {
     x[2] = sqrt(-1);
@@ -89,7 +89,8 @@ void save_xvals(FILE *xvals,double E,double *x,struct params *p)
   if (p->omega == 0) {
     x[2] = x[3] = sqrt(-1);
   }
-  fprintf(xvals,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",E,x[1],x[2],x[3],p->y[1][p->mpt]);
+  fprintf(observables,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	  E,x[1],x[2],x[3],p->y[1][p->mpt]);
   return;
 }
 

@@ -69,16 +69,16 @@ class SingleRun(object):
 
         return
 
-    def concatenate_xvals(self):
+    def concatenate_observables(self):
 
         xval_params = [self.params[0],self.params[1],self.params[3],
                        self.params[5]]
 
-        newfname = f"data/_xvals_{self.write_suffix(xval_params)}.txt"
+        newfname = f"data/_observables_{self.write_suffix(xval_params)}.txt"
 
         with open(newfname,"a+") as f1:
     
-            fname = f"data/_xvals_{self.write_suffix(self.params[:6])}.txt"
+            fname = f"data/_observables_{self.write_suffix(self.params[:6])}.txt"
 
             with open(fname) as f2:
             

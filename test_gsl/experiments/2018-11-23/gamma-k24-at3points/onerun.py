@@ -1,7 +1,8 @@
 import numpy as np
 import subprocess
 import sys
-from local_packages.singlerun import SingleRun
+sys.path.append('../../local_packages/')
+from singlerun import SingleRun
 
 if __name__=="__main__":
 
@@ -11,6 +12,6 @@ if __name__=="__main__":
 
     run.mv_file('psivsr')
 
-    run.mv_file('xvals')
+    run.mv_file('observables')
 
-    run.concatenate_xvals()
+    run.concatenate_observables()
