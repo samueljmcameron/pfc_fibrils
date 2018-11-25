@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 class PlotObservables(object):
 
-    def __init__(self,gamma,k24,data=None,K33=30.0,d0=1.0,lpath="data/",
+    def __init__(self,gamma,k24,scan_dir="",data=None,K33=30.0,d0=1.0,lpath="data/",
                  spath="results/",plot_format="pdf"):
 
         self.gamma = gamma
@@ -14,6 +14,7 @@ class PlotObservables(object):
         self.spath = spath
         self.lpath = lpath
         self.plot_format = plot_format
+        self.scan_dir = f"_{scan_dir}"
         if (data==None):
             self.data = np.loadtxt(self.observables_fname())
         else:
@@ -24,7 +25,7 @@ class PlotObservables(object):
         suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{self.d0:.4e}"
                   f"_{self.gamma:.4e}")
     
-        return f"{self.lpath}_observables{suffix}.txt"
+        return f"{self.lpath}_observables{self.scan_dir}{suffix}.txt"
     
     def observable_sname(self,varname):
 
@@ -68,5 +69,13 @@ class PlotObservables(object):
         y = self.data[:,self.str_to_column(yvar_str)]
 
         ax.plot(x,y,markertype,label=label)
+
+        return
+
+    def sort_observables(self):
+
+        self.data = self.data[self.data[:,0].argsort()]
+
+        np.savetxt(self.observables_fname(),self.data,fmt='%13.6e',delimiter = '\t')
 
         return
