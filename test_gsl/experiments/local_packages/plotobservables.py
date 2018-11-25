@@ -63,15 +63,19 @@ class PlotObservables(object):
         return
 
     def plot_observable_omega_eq_Lambda(self,ax,yvar_str,label=None,
-                                        markertype='.'):
+                                        markertype='.',color=None,
+                                        switch_ysign=1):
 
         x = self.data[:,0]
-        y = self.data[:,self.str_to_column(yvar_str)]
+        y = switch_ysign*self.data[:,self.str_to_column(yvar_str)]
 
-        ax.plot(x,y,markertype,label=label)
+        if color == None:
+            ax.plot(x,y,markertype,label=label)
+        else:
+            ax.plot(x,y,markertype,label=label,color=color)
 
         return
-
+    
     def sort_observables(self):
 
         self.data = self.data[self.data[:,0].argsort()]

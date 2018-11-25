@@ -52,12 +52,22 @@ typedef struct {
 
 
 struct params{
+  // these 14 parameters are necessary to specify in all cases
   double K33;
   double k24;
   double Lambda;
   double d0;
   double omega;
   double gamma_s;
+  double *r;
+  double **y;
+  double *rf_fib;
+  double *r_cp;
+  double **y_cp;
+  double **s;
+  double ***c;
+  int mpt;
+  // these 9 parameters are necessary to specify for finding minima
   double Rguess;
   double etaguess;
   double deltaguess;
@@ -67,16 +77,18 @@ struct params{
   double etalower;
   double deltaupper;
   double deltalower;
+  // these 2 parameters are necessary for scanning across a set parameter
+  // (e.g. along R while holding eta and delta constant)
   double upperbound_x;
   double upperbound_y;
-  double *r;
-  double **y;
-  double *rf_fib;
-  double *r_cp;
-  double **y_cp;
-  double **s;
-  double ***c;
-  int mpt;
+  // these 6 parameters are necessary for scanning across a line, where
+  // x(t)=x0+t*(x1-x0)/|x1-x0|.
+  double R0;
+  double R1;
+  double eta0;
+  double eta1;
+  double delta0;
+  double delta1;
 };
 
 

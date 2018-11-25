@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+import seaborn as sns
 sys.path.append('../../../../scripts/')
 from fig_settings import configure_fig_settings
 sys.path.append('../../local_packages/')
@@ -39,23 +40,37 @@ for observable in observable_list:
     fig[observable].set_size_inches(width,height)
 
 
-for coordinate in coordinates:
+colors = sns.color_palette()
 
-    gamma,k24 = coordinate
-    obs = PlotObservables(gamma,k24,scan_dir="scanbackward")
-    obs.sort_observables()
-    
-    for observable in observable_list:
-        obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
-                                            fr'$\gamma_s,k_{{24}}={gamma},{k24}$',
-                                            'o-')
-
+for scan_dir in ["scanforward","scanbackward"]:
+    for i,coordinate in enumerate(coordinates):
+        
+        gamma,k24 = coordinate
+        obs = PlotObservables(gamma,k24,scan_dir=scan_dir)
+        obs.sort_observables()
+        
+        for observable in observable_list:
+            if observable == 'E':
+                switch_ysign = -1
+            else:
+                switch_ysign = 1
+            if scan_dir == "scanforward":
+                obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
+                                                    label=fr'$\gamma_s,k_{{24}}={gamma},{k24}$',
+                                                    markertype='.',color=colors[i],
+                                                    switch_ysign=switch_ysign)
+            else:
+                obs.plot_observable_omega_eq_Lambda(ax[observable],observable,markertype='.',
+                                                    color=colors[i],switch_ysign=switch_ysign)
 xlabel = r'$\omega=\Lambda$'
 
 for observable in observable_list:
 
     if observable == 'surfacetwist':
         ylabel = r'$\psi(R)$'
+    elif observable == 'E':
+        ylabel = r'$-E$'
+        ax[observable].set_yscale('log')
     elif len(observable) > 1:
         ylabel = fr'$\{observable}$'
     else:

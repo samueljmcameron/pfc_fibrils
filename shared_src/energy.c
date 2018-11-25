@@ -135,8 +135,6 @@ double E_calc(const double *x,struct params *p)
   
   while (p->mpt <= MAX_M) {
 
-
-
     h = x[1]/(p->mpt-1);    // compute stepsize in r[1..mpt] 
 
     if (p->mpt != last_mpt) {
