@@ -30,11 +30,14 @@ class PlotPsi(object):
                   f"_{self.gamma:.4e}")
         return f"{self.spath}_psivsr{suffix}.{self.plot_format}"
 
-    def plot_psivsr(self,omega,Lambda,label=None):
+    def plot_psivsr(self,omega,Lambda,label=None,color=None):
 
         data = np.loadtxt(self.psivsr_fname(omega,Lambda))
         rs = data[:,0]
         psis = data[:,1]
-        self.ax.plot(rs,psis,'-',label=label)
+        if color == None:
+            self.ax.plot(rs,psis,'-',label=label)
+        else:
+            self.ax.plot(rs,psis,'-',label=label,color = color)
 
         return

@@ -29,4 +29,9 @@ if __name__=="__main__":
 
 
     ax.legend(frameon=False)
-    plt.show()
+    ax.set_xlabel(r'$t$')
+    ax.set_ylabel(r'$E$')
+    ax.get_yaxis().set_ticks([])
+    ax.get_xaxis().set_ticks([0,1])
+
+    fig.savefig(pdw.sname())

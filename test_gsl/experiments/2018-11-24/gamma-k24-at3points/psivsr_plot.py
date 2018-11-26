@@ -5,6 +5,9 @@ sys.path.append('../../../../scripts/')
 from fig_settings import configure_fig_settings
 sys.path.append('../../local_packages/')
 from plotpsi import PlotPsi
+import seaborn as sns
+
+colors = sns.color_palette()
 
 configure_fig_settings()
 
@@ -31,7 +34,8 @@ pl = PlotPsi(*coordinate,fig,ax)
 
 for ome_Lam in omegaLambdas:
     pl.plot_psivsr(ome_Lam,ome_Lam,
-                   fr'$\omega=\Lambda=\num{{{ome_Lam:.1e}}}$')
+                   fr'$\omega=\Lambda=\num{{{ome_Lam:.1e}}}$',
+                   color=colors[1])
 
 ax.set_xlabel(r'$r$')
 ax.set_ylabel(r'$\psi(r)$')

@@ -49,7 +49,7 @@ for scan_dir in ["scanforward","scanbackward"]:
         obs = PlotObservables(gamma,k24,scan_dir=scan_dir)
         obs.sort_observables()
         
-        for observable in observable_list:
+        for j,observable in enumerate(observable_list):
             if observable == 'E':
                 switch_ysign = -1
             else:
@@ -57,11 +57,11 @@ for scan_dir in ["scanforward","scanbackward"]:
             if scan_dir == "scanforward":
                 obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
                                                     label=fr'$\gamma_s,k_{{24}}={gamma},{k24}$',
-                                                    markertype='.',color=colors[i],
+                                                    markertype='.',color=colors[j],
                                                     switch_ysign=switch_ysign)
             else:
                 obs.plot_observable_omega_eq_Lambda(ax[observable],observable,markertype='.',
-                                                    color=colors[i],switch_ysign=switch_ysign)
+                                                    color=colors[j],switch_ysign=switch_ysign)
 xlabel = r'$\omega=\Lambda$'
 
 for observable in observable_list:
