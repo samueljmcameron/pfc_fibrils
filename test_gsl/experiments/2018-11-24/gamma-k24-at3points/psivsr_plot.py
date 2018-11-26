@@ -34,8 +34,8 @@ pl = PlotPsi(*coordinate,fig,ax)
 
 for ome_Lam in omegaLambdas:
     pl.plot_psivsr(ome_Lam,ome_Lam,
-                   fr'$\omega=\Lambda=\num{{{ome_Lam:.1e}}}$',
-                   color=colors[1])
+                   fr'$\omega=\Lambda={ome_Lam:.1f}$',
+                   color=colors[2])
 
 ax.set_xlabel(r'$r$')
 ax.set_ylabel(r'$\psi(r)$')

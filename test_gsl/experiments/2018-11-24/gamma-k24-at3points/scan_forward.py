@@ -12,7 +12,7 @@ if __name__=="__main__":
 
     #omegas_Lambdas = np.array(o_L_input.split(','),float)
 
-    omegas_Lambdas = np.linspace(0,100,num=101,endpoint=True)
+    omegas_Lambdas = np.linspace(21.5,21.5,num=1,endpoint=True)
 
     scan = {}
 
@@ -52,6 +52,6 @@ if __name__=="__main__":
                 scan['deltalower'] = '0.81'
 
 
-        run.concatenate_observables_with_direction('forward')
+        #run.concatenate_observables_with_direction('forward')
 
 
