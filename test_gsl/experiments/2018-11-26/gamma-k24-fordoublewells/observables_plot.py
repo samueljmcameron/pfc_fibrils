@@ -50,21 +50,27 @@ for scan_dir in ["scanforward","scanbackward"]:
         obs.sort_observables()
         
         for j,observable in enumerate(observable_list):
+            if observable == 'E':
+                switch_ysign = -1
+            else:
+                switch_ysign = 1
             if scan_dir == "scanforward":
                 obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
                                                     label=fr'$\gamma_s,k_{{24}}={gamma},{k24}$',
-                                                    color=colors[j],start_ms=22,
-                                                    end_ms=25)
+                                                    markertype='.',color=colors[j],
+                                                    switch_ysign=switch_ysign)
             else:
-                obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
-                                                    color=colors[j],start_ms=19,
-                                                    end_ms=22)
+                obs.plot_observable_omega_eq_Lambda(ax[observable],observable,markertype='.',
+                                                    color=colors[j],switch_ysign=switch_ysign)
 xlabel = r'$\omega=\Lambda$'
 
 for observable in observable_list:
 
     if observable == 'surfacetwist':
         ylabel = r'$\psi(R)$'
+    elif observable == 'E':
+        ylabel = r'$-E$'
+        ax[observable].set_yscale('log')
     elif len(observable) > 1:
         ylabel = fr'$\{observable}$'
     else:

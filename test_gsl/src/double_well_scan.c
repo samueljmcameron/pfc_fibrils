@@ -35,6 +35,7 @@ int main(int argc, char **argv)
   int set_numpoints(char **args);
 
   void initialize_psi_and_r(double R,struct params *p);
+
   
   struct params p; 
   initialize_params(&p,argv);
@@ -68,6 +69,7 @@ int main(int argc, char **argv)
   x_of_t(x,t_start,x0,x1,X_SIZE);
 
   initialize_psi_and_r(x[1],&p);
+
 
   for (iter = 0; iter < numpoints; iter++) {
 
@@ -160,7 +162,6 @@ void initialize_psi_and_r(double R,struct params *p)
   
   double h = R/(p->mpt-1);
   double slopeguess = M_PI/(4.0*R);
-  
   linearGuess(p->r,p->y,slopeguess,h,p->mpt); //linear initial guess for psi(r)
   
   return;

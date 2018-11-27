@@ -1,11 +1,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 
 class PlotObservables(object):
 
     def __init__(self,gamma,k24,scan_dir="",data=None,K33=30.0,d0=1.0,lpath="data/",
-                 spath="results/",plot_format="pdf"):
+                 spath="results/",plot_format="pdf",colors = sns.color_palette()):
 
         self.gamma = gamma
         self.k24 = k24
@@ -15,6 +16,7 @@ class PlotObservables(object):
         self.lpath = lpath
         self.plot_format = plot_format
         self.scan_dir = f"_{scan_dir}"
+        self.colors = colors
         if (data==None):
             self.data = np.loadtxt(self.observables_fname())
         else:
@@ -63,16 +65,26 @@ class PlotObservables(object):
         return
 
     def plot_observable_omega_eq_Lambda(self,ax,yvar_str,label=None,
-                                        markertype='.',color=None,
-                                        switch_ysign=1):
+                                        markertype='.',ms_markertype='-',
+                                        color=None,switch_ysign=1,
+                                        start_ms=None,end_ms=None):
 
         x = self.data[:,0]
         y = switch_ysign*self.data[:,self.str_to_column(yvar_str)]
 
+        if start_ms==None:
+            start_ms=len(x)
+        if end_ms==None:
+            end_ms=len(x)
         if color == None:
-            ax.plot(x,y,markertype,label=label)
-        else:
-            ax.plot(x,y,markertype,label=label,color=color)
+            color = self.colors[0]
+
+        ax.plot(x[:start_ms],y[:start_ms],markertype,
+                label=label,color = color)
+        ax.plot(x[start_ms:end_ms],y[start_ms:end_ms],ms_markertype,
+                color=color)
+        ax.plot(x[end_ms:],y[end_ms:],markertype,color=color)
+
 
         return
     

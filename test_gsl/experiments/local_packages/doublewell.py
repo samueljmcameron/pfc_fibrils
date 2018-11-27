@@ -56,7 +56,7 @@ class DoubleWell(object):
         # run c executable to determine psi(r), R, delta, etc.
 
         if valgrind:
-            subprocess.run(['valgrind',self.executable,self.tmp_path,
+            subprocess.run(['valgrind','--track-origins=yes',self.executable,self.tmp_path,
                             *self.params],check=True)
         else:
             subprocess.run([self.executable,self.tmp_path,*self.params],check=True)
