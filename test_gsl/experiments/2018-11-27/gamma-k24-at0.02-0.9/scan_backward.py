@@ -12,7 +12,7 @@ if __name__=="__main__":
 
     #omegas_Lambdas = np.array(o_L_input.split(','),float)
 
-    omegas_Lambdas = np.linspace(21.5,21.5,num=1,endpoint=True)
+    omegas_Lambdas = np.linspace(0,100000,101,endpoint=True)
 
     scan = {}
 

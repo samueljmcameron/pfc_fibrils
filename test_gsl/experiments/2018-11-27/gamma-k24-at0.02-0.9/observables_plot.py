@@ -42,7 +42,7 @@ for observable in observable_list:
 
 colors = sns.color_palette()
 
-for scan_dir in ["scanforward","scanbackward"]:
+for scan_dir in ["scanforward"]:
     for i,coordinate in enumerate(coordinates):
         
         gamma,k24 = coordinate
@@ -53,15 +53,13 @@ for scan_dir in ["scanforward","scanbackward"]:
             if scan_dir == "scanforward":
                 obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
                                                     label=fr'$\gamma_s,k_{{24}}={gamma},{k24}$',
-                                                    color=colors[j],start_ms=22,
-                                                    end_ms=25)
+                                                    color=colors[j])
             else:
                 obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
-                                                    color=colors[j],start_ms=19,
-                                                    end_ms=22)
+                                                    color=colors[j])
 xlabel = r'$\omega=\Lambda$'
 
-ppfor observable in observable_list:
+for observable in observable_list:
 
     if observable == 'surfacetwist':
         ylabel = r'$\psi(R)$'
