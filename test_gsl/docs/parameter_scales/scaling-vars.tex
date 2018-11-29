@@ -1,0 +1,80 @@
+\documentclass[12pt]{article}
+%\usepackage{helvet}
+%\renewcommand{\familydefault}{\sfdefault}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{braket}
+\usepackage{titlesec}
+\usepackage{siunitx}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage[font={small}]{caption}
+\usepackage{subcaption}
+%\titlespacing*{\section}{0pt}{4pt}{4pt}
+\usepackage[letterpaper, margin=2cm]{geometry}
+
+
+\begin{document}
+\pagenumbering{arabic}
+\spacing{1.5}
+
+%%%%%%%%%%%
+% Begin Document
+%%%%%%%%%%%
+
+\section{Scaled vs unscaled model}
+I will denote all unscaled variables with a hat over top of them,and all scaled variables without (i.e. $\hat{R}$ has units, $R$ does not).
+
+In its most general form, the unscaled model is
+\begin{align}\label{eq:general}
+\hat{E}(\hat{R},\hat{L};\hat{\psi}(\hat{r}),\delta\hat{\rho}(\hat{z}))&=\frac{2\pi}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\left[\frac{1}{2}\hat{K}_{22}\left(\hat{\psi}'+\frac{\sin2\hat{\psi}}{2\hat{r}}-\hat{q}\right)^2+\frac{1}{2}\hat{K}_{33}\frac{\sin^4\hat{\psi}}{\hat{r}^2}\right]\nonumber\\
+&\phantom{=}+\frac{\hat{\Lambda}}{2}\frac{2\pi}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\delta\hat{\rho}\left(\frac{4\pi^2}{\hat{d}^2_0\cos^2\hat{\psi}}+\frac{\partial^2}{\partial\hat{z}^2}\right)^2\delta\hat{\rho}\nonumber\\
+&\phantom{=}+\hat{\omega}\frac{\pi\hat{R}^2}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\delta\hat{\rho}^2\left(\delta\hat{\rho}^2-\hat{\chi}^2\right)-\frac{(\hat{K}_{22}+\hat{k}_{24})}{\hat{R}^2}\sin\hat{\psi}(\hat{R})+\frac{2\hat{\gamma}}{\hat{R}}\nonumber\\
+&=\frac{2}{\hat{R}^2}\int_0^{\hat{R}}\hat{r}d\hat{r}\left[\frac{1}{2}\hat{K}_{22}\left(\hat{\psi}'+\frac{\sin2\hat{\psi}}{2\hat{r}}-\hat{q}\right)^2+\frac{1}{2}\hat{K}_{33}\frac{\sin^4\hat{\psi}}{\hat{r}^2}\right]\nonumber\\
+&\phantom{=}+\frac{\hat{\Lambda}}{\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\delta\hat{\rho}\left(\frac{4\pi^2}{\hat{d}^2_0\cos^2\hat{\psi}}+\frac{\partial^2}{\partial\hat{z}^2}\right)^2\delta\hat{\rho}\nonumber\\
+&\phantom{=}+\frac{\hat{\omega}}{\hat{L}}\int_0^{\hat{L}}d\hat{z}\delta\hat{\rho}^2\left(\delta\hat{\rho}^2-\hat{\chi}^2\right)-\frac{(\hat{K}_{22}+\hat{k}_{24})}{\hat{R}^2}\sin\hat{\psi}(\hat{R})+\frac{2\hat{\gamma}}{\hat{R}}\nonumber\\
+\end{align}
+where I have ignored any surface contributions from the ends of the fibril. I have assumed that $\hat{\chi}^2>0$, as the density amplitude term (pre-factor $\hat{\omega}$) would be positive definite if not, meaning no density modulations would occur. The units of $\hat{\Lambda}$ are $\si{\pico\newton\cdot\micro\meter^8}$, the units of $\hat{\omega}$ are $\si{\pico\newton\cdot\micro\meter^{10}}$, and the units of $\hat{\chi}^2$ are $\si{\micro\meter^{-6}}$. If I divide both side of \ref{eq:general} by $\hat{K}_{22}\hat{q}^2$, I can make the system dimensionless and reduce to the form
+\begin{align}
+E(R,L;\psi(r),\delta\rho(z))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
+&\phantom{=}+\frac{\Lambda}{R^2L}\int_0^{L}dz\int_0^{R}rdr\delta\rho\left(\frac{4\pi^2}{d_0^2\cos^2\psi}+\frac{\partial^2}{\partial z^2}\right)^2\delta\rho\nonumber\\
+&\phantom{=}+\frac{\omega}{L}\int_0^{L}dz\delta\rho^2\left(\delta\rho^2-\chi^2\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}\nonumber\\.
+\end{align}
+The following is a list of the redefined, dimensionless quantites:
+\begin{align}
+&E=\frac{\hat{E}}{\hat{K}_{22}\hat{q}^2}\\
+&R=\hat{R}\hat{q}\\
+&r=\hat{r}\hat{q}\\
+&\psi(r)=\hat{\psi}(\hat{r})\\
+&K_{33}=\frac{\hat{K}_{33}}{\hat{K}_{22}}\\
+&L=\hat{L}\hat{q}\\
+&\Lambda=\frac{\hat{\Lambda}\hat{q}^8}{\hat{K}_{22}}\\
+&\delta\rho=\frac{\delta\hat{\rho}}{\hat{q}^3}\\
+&d_0=\hat{d}_0\hat{q}\\
+&\omega=\frac{\hat{\omega}\hat{q}^{10}}{\hat{K}_{22}}\\
+&\chi^2=\frac{\hat{\chi}^2}{\hat{q}^6}\\
+&\gamma=\frac{\hat{\gamma}}{\hat{K}_{22}\hat{q}}
+\end{align}
+
+
+
+ \cite{Elder:2004ct} \cite{Odijk:liqcryst1986},
+
+%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%
+\clearpage
+\bibliography{scaling-vars}
+\bibliographystyle{unsrt}
+
+\end{document}
+\grid
