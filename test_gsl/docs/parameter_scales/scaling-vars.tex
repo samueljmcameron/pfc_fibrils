@@ -12,15 +12,14 @@
 \usepackage[nottoc,numbib]{tocbibind}
 \usepackage{graphicx}
 \usepackage{float}
-\usepackage{braket}
 \usepackage{titlesec}
 \usepackage{siunitx}
 \usepackage{mathtools}
-\usepackage{tikz}
 \usepackage[font={small}]{caption}
 \usepackage{subcaption}
-%\titlespacing*{\section}{0pt}{4pt}{4pt}
+\usepackage{enumitem}
 \usepackage[letterpaper, margin=2cm]{geometry}
+\DeclareSIUnit{\calorie}{cal}
 
 
 \begin{document}
@@ -31,44 +30,80 @@
 % Begin Document
 %%%%%%%%%%%
 
-\section{Scaled vs unscaled model}
+\section{Dimensional vs dimensionless model}
 I will denote all unscaled variables with a hat over top of them,and all scaled variables without (i.e. $\hat{R}$ has units, $R$ does not).
 
 In its most general form, the unscaled model is
-\begin{align}\label{eq:general}
-\hat{E}(\hat{R},\hat{L};\hat{\psi}(\hat{r}),\delta\hat{\rho}(\hat{z}))&=\frac{2\pi}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\left[\frac{1}{2}\hat{K}_{22}\left(\hat{\psi}'+\frac{\sin2\hat{\psi}}{2\hat{r}}-\hat{q}\right)^2+\frac{1}{2}\hat{K}_{33}\frac{\sin^4\hat{\psi}}{\hat{r}^2}\right]\nonumber\\
-&\phantom{=}+\frac{\hat{\Lambda}}{2}\frac{2\pi}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\delta\hat{\rho}\left(\frac{4\pi^2}{\hat{d}^2_0\cos^2\hat{\psi}}+\frac{\partial^2}{\partial\hat{z}^2}\right)^2\delta\hat{\rho}\nonumber\\
-&\phantom{=}+\hat{\omega}\frac{\pi\hat{R}^2}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\delta\hat{\rho}^2\left(\delta\hat{\rho}^2-\hat{\chi}^2\right)-\frac{(\hat{K}_{22}+\hat{k}_{24})}{\hat{R}^2}\sin\hat{\psi}(\hat{R})+\frac{2\hat{\gamma}}{\hat{R}}\nonumber\\
+\begin{align}\label{eq:generalunits}
+\hat{E}(\hat{R},\hat{L};\hat{\psi}(\hat{r}),\hat{\rho}_{\delta}(\hat{z}))&=\frac{2\pi}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\left[\frac{1}{2}\hat{K}_{22}\left(\hat{\psi}'+\frac{\sin2\hat{\psi}}{2\hat{r}}-\hat{q}\right)^2+\frac{1}{2}\hat{K}_{33}\frac{\sin^4\hat{\psi}}{\hat{r}^2}\right]\nonumber\\
+&\phantom{=}+\frac{\hat{\Lambda}}{2}\frac{2\pi}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\hat{\rho}_{\delta}\left(\frac{4\pi^2}{\hat{d}^2_0\cos^2\hat{\psi}}+\frac{\partial^2}{\partial\hat{z}^2}\right)^2\hat{\rho}_{\delta}\nonumber\\
+&\phantom{=}+\hat{\omega}\frac{\pi\hat{R}^2}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\hat{\rho}_{\delta}^2\left(\hat{\rho}_{\delta}^2-\hat{\chi}^2\right)-\frac{(\hat{K}_{22}+\hat{k}_{24})}{\hat{R}^2}\sin\hat{\psi}(\hat{R})+\frac{2\hat{\gamma}}{\hat{R}}\nonumber\\
 &=\frac{2}{\hat{R}^2}\int_0^{\hat{R}}\hat{r}d\hat{r}\left[\frac{1}{2}\hat{K}_{22}\left(\hat{\psi}'+\frac{\sin2\hat{\psi}}{2\hat{r}}-\hat{q}\right)^2+\frac{1}{2}\hat{K}_{33}\frac{\sin^4\hat{\psi}}{\hat{r}^2}\right]\nonumber\\
-&\phantom{=}+\frac{\hat{\Lambda}}{\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\delta\hat{\rho}\left(\frac{4\pi^2}{\hat{d}^2_0\cos^2\hat{\psi}}+\frac{\partial^2}{\partial\hat{z}^2}\right)^2\delta\hat{\rho}\nonumber\\
-&\phantom{=}+\frac{\hat{\omega}}{\hat{L}}\int_0^{\hat{L}}d\hat{z}\delta\hat{\rho}^2\left(\delta\hat{\rho}^2-\hat{\chi}^2\right)-\frac{(\hat{K}_{22}+\hat{k}_{24})}{\hat{R}^2}\sin\hat{\psi}(\hat{R})+\frac{2\hat{\gamma}}{\hat{R}}\nonumber\\
+&\phantom{=}+\frac{\hat{\Lambda}\hat{\chi}^2}{\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\left(\frac{\hat{\rho}_{\delta}}{\hat{\chi}}\right)\left(\frac{4\pi^2}{\hat{d}^2_0\cos^2\hat{\psi}}+\frac{\partial^2}{\partial\hat{z}^2}\right)^2\left(\frac{\hat{\rho}_{\delta}}{\hat{\chi}}\right)\nonumber\\
+&\phantom{=}+\frac{\hat{\omega}\hat{\chi}^4}{\hat{L}}\int_0^{\hat{L}}d\hat{z}\left(\frac{\hat{\rho}_{\delta}}{\hat{\chi}}\right)^2\left[\left(\frac{\hat{\rho}_{\delta}}{\hat{\chi}}\right)^2-1\right]-\frac{(\hat{K}_{22}+\hat{k}_{24})}{\hat{R}^2}\sin\hat{\psi}(\hat{R})+\frac{2\hat{\gamma}}{\hat{R}}\nonumber\\
 \end{align}
-where I have ignored any surface contributions from the ends of the fibril. I have assumed that $\hat{\chi}^2>0$, as the density amplitude term (pre-factor $\hat{\omega}$) would be positive definite if not, meaning no density modulations would occur. The units of $\hat{\Lambda}$ are $\si{\pico\newton\cdot\micro\meter^8}$, the units of $\hat{\omega}$ are $\si{\pico\newton\cdot\micro\meter^{10}}$, and the units of $\hat{\chi}^2$ are $\si{\micro\meter^{-6}}$. If I divide both side of \ref{eq:general} by $\hat{K}_{22}\hat{q}^2$, I can make the system dimensionless and reduce to the form
-\begin{align}
-E(R,L;\psi(r),\delta\rho(z))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
-&\phantom{=}+\frac{\Lambda}{R^2L}\int_0^{L}dz\int_0^{R}rdr\delta\rho\left(\frac{4\pi^2}{d_0^2\cos^2\psi}+\frac{\partial^2}{\partial z^2}\right)^2\delta\rho\nonumber\\
-&\phantom{=}+\frac{\omega}{L}\int_0^{L}dz\delta\rho^2\left(\delta\rho^2-\chi^2\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}\nonumber\\.
+where I have ignored any surface contributions from the ends of the fibril, and $\hat{L}$ is some multiple of the periodic structure along the $\hat{z}$ axis. I have assumed that $\hat{\chi}^2>0$, as the density amplitude term (pre-factor $\hat{\omega}$) would be positive definite if not, meaning no density modulations would occur. The units of $\hat{\Lambda}$ are $\si{\pico\newton\cdot\micro\meter^8}$, the units of $\hat{\omega}$ are $\si{\pico\newton\cdot\micro\meter^{10}}$, and the units of $\hat{\chi}^2$ are $\si{\micro\meter^{-6}}$. If I divide both side of eqn \ref{eq:generalunits} by $\hat{K}_{22}\hat{q}^2$, I can make the system dimensionless and reduce to the form
+\begin{align}\label{eq:general}
+E(R,L;\psi(r),\rho_{\delta}(z))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
+&\phantom{=}+\frac{\Lambda}{R^2L}\int_0^{L}dz\int_0^{R}rdr\rho_{\delta}\left(\frac{4\pi^2}{d_0^2\cos^2\psi}+\frac{\partial^2}{\partial z^2}\right)^2\rho_{\delta}\nonumber\\
+&\phantom{=}+\frac{\omega}{L}\int_0^{L}dz\rho_{\delta}^2\left(\rho_{\delta}^2-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
+\end{align}
+
+In general, the liquid crystal elastic constants $\hat{K}_{ii}$, $\hat{q}=\hat{k}_{2}/\hat{K}_{22}$, and $\hat{k}_{24}$ depend on the density of the system \cite{Odijk:liqcryst1986}. Therefore, any density modulations $\hat{\rho}_{\delta}$ from some reference density $\hat{\rho}_0$ must be small. For systems with periodicity in only a single axis, it is reasonable to take a single mode approximation to the density modulations of the form
+\begin{equation}\label{eq:rho_units}
+\begin{array}{lr}
+	\hat{\rho}_{\delta}=\delta\cos(\hat{\eta}\hat{z}), &\hat{\delta}\ll\hat{\rho}_0.
+\end{array}
+\end{equation}
+For collagen fibrils, $\hat{\delta}\sim0.1\hat{\rho}_0$. Inserting the eqn \ref{eq:rho_units} in dimensionless form into eqn \ref{eq:general} and noting that the period of this structure will be $L=2\pi/\eta$, I get
+\begin{align}\label{eq:final}
+E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
+&\phantom{=}+\frac{\Lambda}{R^2{\frac{2\pi}{\eta}}}\int_0^{{\frac{2\pi}{\eta}}}dz\int_0^{R}rdr\delta^2\cos^2(\eta z)\left(\frac{4\pi^2}{d_0^2\cos^2\psi}-\eta^2\right)^2\nonumber\\
+&\phantom{=}+\frac{\omega}{{\frac{2\pi}{\eta}}}\int_0^{{\frac{2\pi}{\eta}}}dz\delta^2\cos^2(\eta z)\left(\delta^2\cos^2(\eta z)-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}\nonumber\\
+&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
+&\phantom{=}+\frac{\Lambda\delta^2}{2R^2}\int_0^{R}rdr\left(\frac{4\pi^2}{d_0^2\cos^2\psi}-\eta^2\right)^2\nonumber\\
+&\phantom{=}+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
 \end{align}
 The following is a list of the redefined, dimensionless quantites:
 \begin{align}
-&E=\frac{\hat{E}}{\hat{K}_{22}\hat{q}^2}\\
-&R=\hat{R}\hat{q}\\
-&r=\hat{r}\hat{q}\\
-&\psi(r)=\hat{\psi}(\hat{r})\\
-&K_{33}=\frac{\hat{K}_{33}}{\hat{K}_{22}}\\
-&L=\hat{L}\hat{q}\\
-&\Lambda=\frac{\hat{\Lambda}\hat{q}^8}{\hat{K}_{22}}\\
-&\delta\rho=\frac{\delta\hat{\rho}}{\hat{q}^3}\\
-&d_0=\hat{d}_0\hat{q}\\
-&\omega=\frac{\hat{\omega}\hat{q}^{10}}{\hat{K}_{22}}\\
-&\chi^2=\frac{\hat{\chi}^2}{\hat{q}^6}\\
-&\gamma=\frac{\hat{\gamma}}{\hat{K}_{22}\hat{q}}
+&E=\frac{\hat{E}}{\hat{K}_{22}\hat{q}^2},\\
+&R=\hat{R}\hat{q},\\
+&r=\hat{r}\hat{q},\\
+&\psi(r)=\hat{\psi}(\hat{r}),\\
+&K_{33}=\frac{\hat{K}_{33}}{\hat{K}_{22}},\\
+&L=\hat{L}\hat{q},\\
+&\Lambda=\frac{\hat{\Lambda}\hat{\chi}^2\hat{q}^2}{\hat{K}_{22}},\\
+&\rho_{\delta}=\frac{\hat{\rho}_{\delta}}{\hat{\chi}},\\
+&\delta=\frac{\hat{\delta}}{\hat{\chi}},\\
+&\eta=\frac{\hat{\eta}}{\hat{q}},\\
+&d_0=\hat{d}_0\hat{q},\\
+&\omega=\frac{\hat{\omega}\hat{\chi}^4}{\hat{K}_{22}\hat{q}^2},\\
+&\gamma=\frac{\hat{\gamma}}{\hat{K}_{22}\hat{q}}.
 \end{align}
-
-
-
- \cite{Elder:2004ct} \cite{Odijk:liqcryst1986},
-
+\section{Approximating coefficients}
+\subsection{Approximating $\hat{\chi}$}
+To begin with, I will determine the value of $\hat{\chi}$ with two assumptions: 
+\begin{enumerate}
+\item \label{1} The standard d-band model holds, where gap regions have $4/5$ the density of filled regions and so $\hat{\delta}=0.1\hat{\rho}_0$.
+\item \label{2} As the d-banding strength increases, our model is consistent with the standard d-band model, i.e. the dimensional version of $\delta(\omega\to\infty)=\sqrt{2/3}$ is always $0.1\hat{\rho}_0$.
+\end{enumerate}
+Taking a hexagonal packing of collagen molecules within the fibril with intermolecular spacings of $\SI{1.53}{\nano\meter}$ (cross section) and $\sim\SI{35}{\nano\meter}$ (axial), the primitive unit cell of a fibril has lattice vectors $\bm{a}=\SI{1.53}{\nano\meter}\,\hat{\bm{x}}$, $\bm{b}=\SI{1.53}{\nano\meter}(0.5\,\hat{\bm{x}}+0.866\,\hat{\bm{y}})$, and $\bm{c}\sim\SI{330}{\nano\meter}\,\hat{\bm{z}}$, giving a molecular number density $\hat{\rho}_0\sim\SI{1.67e6}{\micro\meter^{-3}}$, and so $\hat{\delta}\sim\SI{1.67e5}{\micro\meter^{-3}}$ using assumption \ref{1}. above. By assumption \ref{2}, this implies
+\begin{equation}\label{eq:chi}
+\hat{\chi}=\sqrt{\frac{3}{2}}\hat{\delta}\sim\SI{2e5}{\micro\meter^{-3}}.
+\end{equation}
+\subsection{Approximating $\omega$}
+In approximating $\omega$, we can utilize experimental work \cite{Laurentspaper} which measures the Gibbs free energy of type I collagen molecules polymerizing into fibrils as $\SI{13}{\kilo\calorie\per\mole}\sim\SI{2e5}{\pico\newton\per\micro\meter\squared}$. If we assume that most of this energy comes from formation of the d-band, then we can take this value as an estimate for $\hat{\omega}\hat{\chi}^4$. From there, the approximation relies on the estimates of $\hat{K}_{22}$ and $\hat{q}$, which have been estimated in our previous work \cite{ourpaper}. If we choose $\hat{K}_{22}=\SI{6}{\pico\newton}$ and $\hat{q}=\SI{10}{\per\micro\meter}$, our estimate of $\omega$ is
+\begin{equation}\label{eq:omega}
+\omega=\frac{\SI{2e5}{\pico\newton\per\micro\meter\squared}}{\SI{6}{\pico\newton}\left(\SI{10}{\per\micro\meter}\right)^2}\sim300.
+\end{equation}
+\subsection{Approximating $\Lambda$}
+In order to approximate $\Lambda$, we can look at how our model will respond to a small strain on the periodic spacing (i.e. the d-band), a method that has been applied in determining the bulk modulus of contribution in phase field crystal models \cite{Elder:2004ct}. If I define $\eta=2\pi/d$, with $d$ being the perturbed d-band spacing from it's equilibrium, then expanding our free energy in terms of the applied strain $u=(d-d_0)/d_0$ will provide a dimensionless bulk modulus, $K=1/2\partial^2E/\partial u^2$, from the definition
+\begin{equation}\label{eq:strain_taylor}
+E(u)=E(0)+\frac{1}{2}\left.\frac{\partial^2E}{\partial u^2}\right|_{u=0}\!\!\!\!\!\!\!\!\!u^2+\mathcal{O}(u^3).
+\end{equation}
+Inserting the strain eqn \ref{eq:final},
+\begin{equation}\label{eq:fe_strain}
+\end{equation}
 %%%%%%%%%%%%%%%
 % Bibliography
 %%%%%%%%%%%%%%%
@@ -77,4 +112,3 @@ The following is a list of the redefined, dimensionless quantites:
 \bibliographystyle{unsrt}
 
 \end{document}
-\grid
