@@ -72,12 +72,12 @@ The following is a list of the redefined, dimensionless quantites:
 &\psi(r)=\hat{\psi}(\hat{r}),\\
 &K_{33}=\frac{\hat{K}_{33}}{\hat{K}_{22}},\\
 &L=\hat{L}\hat{q},\\
-&\Lambda=\frac{\hat{\Lambda}\hat{\chi}^2\hat{q}^2}{\hat{K}_{22}},\\
+&\Lambda=\frac{\hat{\Lambda}\hat{\chi}^2\hat{q}^2}{\hat{K}_{22}},\label{eq:dimensionlessLambda}\\
 &\rho_{\delta}=\frac{\hat{\rho}_{\delta}}{\hat{\chi}},\\
 &\delta=\frac{\hat{\delta}}{\hat{\chi}},\\
 &\eta=\frac{\hat{\eta}}{\hat{q}},\\
 &d_0=\hat{d}_0\hat{q},\\
-&\omega=\frac{\hat{\omega}\hat{\chi}^4}{\hat{K}_{22}\hat{q}^2},\\
+&\omega=\frac{\hat{\omega}\hat{\chi}^4}{\hat{K}_{22}\hat{q}^2},\label{eq:dimensionlessomega}\\
 &\gamma=\frac{\hat{\gamma}}{\hat{K}_{22}\hat{q}}.
 \end{align}
 \section{Approximating coefficients}
@@ -119,11 +119,20 @@ where I have assumed that the last term is fairly close to $3$, which is reasona
 \hat{K}=\frac{16\pi^4\hat{\Lambda}\hat{\delta}_{eq}^2}{\hat{d}_{eq}^4}.
 \end{equation}
 
-To approximate the bulk modulus, there are two options. The first is to gauge an approximation from the relationship between hydrostatic pressure and molecular spacing (cite paper Laurent mentioned). The second is to assume that any distribution of d-banding observed in fibrils through e.g. diffraction measurements arise from a thermodynamic distribution with Boltzmann factor $\exp(-\beta\Delta E)$, where $\Delta E$ is the energy difference between the equilibrium d-band configuration and a configuration with a slight strain. In the latter case, the distribution of fibrils can be fit with a probability distribution function of the form
+To approximate the bulk modulus, there are two options. The first is to gauge an approximation from the relationship between hydrostatic pressure and molecular spacing (cite paper Laurent mentioned). The second is to assume that any distribution of d-banding observed in fibrils through e.g. diffraction measurements arise from a thermodynamic distribution with Boltzmann factor $\exp(-\hat{\beta}\Delta E)$, where $\Delta E$ is the energy difference between the equilibrium d-band configuration and a configuration with a slight strain. In the latter case, the distribution of fibrils can be fit with a probability distribution function of the form
 \begin{equation}\label{eq:dbandpdf}
 P(u)=P_0\exp\left(\frac{-\beta\hat{K}u^2}{\hat{\rho}_0}\right).
 \end{equation}
-Using the full-width half-max of distribution, you can determine the value of $\hat{K}$ at a given temperature $\beta$ and density $\hat{\rho}_0=\SI{1.67e6}{\per\micro\meter^{-3}}$. The measurement of $\hat{K}$ will then inform $\Lambda$.
+Using the full-width half-max (FWHM), $sigma$ of a d-band distribution, the modulus $\hat{K}$ can be determined by
+\begin{equation}\label{eq:FWHM}
+\hat{K}=\frac{4\ln2\hat{\rho}_0}{\hat{\beta}\sigma^2}
+\end{equation}
+at a given inverse temperature $\hat{\beta}$ and density $\hat{\rho}_0=\SI{1.67e6}{\per\micro\meter^{-3}}$. Using results from (cite paper with width of $\SI{0.13}{\nano\meter}$) where $\sigma=\SI{0.13}{\nano\meter}/\SI{67}{\nano\meter}=\num{1.94e-3}$, the resulting modulus is $\hat{K}=\SI{5.2e9}{\pico\newton\per\micro\meter\squared}=\SI{5.2}{\giga\pascal}$, which is within a reasonable range of values for a collagen fibril.
+
+Using this value in eqn \ref{eq:bulk_dimensional}, I get $\hat{\Lambda}=\SI{2.4e-9}{\pico\newton\micro\meter^8}$, and so from eqn \ref{eq:dimensionlessLambda}, \begin{equation}\label{eq:Lambda}
+\Lambda=\frac{\SI{2.4e-9}{\pico\newton\micro\meter^8}(\SI{2e5}{\micro\meter^{-3}})^2(\SI{10}{\per\micro\meter})^2}{\SI{6}{\pico\newton}}\sim1500
+\end{equation}
+(using the same values of $\hat{q}=\SI{10}{\per\micro\meter}$ and $\hat{K}_{22}=\SI{6}{\pico\newton}$ as I used above in the $\omega$ calculation).
 %%%%%%%%%%%%%%%
 % Bibliography
 %%%%%%%%%%%%%%%
