@@ -31,7 +31,7 @@
 %%%%%%%%%%%
 
 \section{Dimensional vs dimensionless model}
-I will denote all unscaled variables with a hat over top of them,and all scaled variables without (i.e. $\hat{R}$ has units, $R$ does not).
+I will denote all unscaled variables with a hat over top of them, and all scaled variables without (i.e. $\hat{R}$ has units, $R$ does not).
 
 In its most general form, the unscaled model is
 \begin{align}\label{eq:generalunits}
@@ -92,9 +92,9 @@ Taking a hexagonal packing of collagen molecules within the fibril with intermol
 \hat{\chi}=\sqrt{\frac{3}{2}}\hat{\delta}\sim\SI{2e5}{\micro\meter^{-3}}.
 \end{equation}
 \subsection{Approximating $\omega$}
-In approximating $\omega$, we can utilize experimental work \cite{Kadler:1987ui} which measures the Gibbs free energy of type I collagen molecules polymerizing into fibrils as $\SI{13}{\kilo\calorie\per\mole}\sim\SI{2e5}{\pico\newton\per\micro\meter\squared}$. EXPLAIN THIS NEXT PART BETTER Other work has calculated this energy to be $\sim\SI{3.5}{\kilo\calorie\per\mole}\sim\SI{5.4e4}{\pico\newton\per\micro\meter\squared}$ \cite{Leikin:1995id}. We assume that the d-band contribution to this energy is within the range of one hundredth to one tenth of the total energy (anything slightly outside of this range is not unreasonable, but perhaps surprising). If we choose $\hat{K}_{22}=\SI{6}{\pico\newton}$ and $\hat{q}=\SI{10}{\per\micro\meter}$ \cite{Cameron:2018kq}, our estimate of $\omega$ is
+The main difficulty in approximating $\omega$ comes from determining the energy scale of $\hat{\omega}\hat{\chi}^4$. An estimate of this energy scale could be through experimental work \cite{Kadler:1987ui} which measures the Gibbs free energy of type I collagen molecules polymerizing into fibrils as $\SI{13}{\kilo\calorie\per\mole}\sim\SI{2e5}{\pico\newton\per\micro\meter\squared}$. A different study found $\sim\SI{3.5}{\kilo\calorie\per\mole}\sim\SI{5.4e4}{\pico\newton\per\micro\meter\squared}$ \cite{Leikin:1995id}. We assume that the d-band contribution to this energy is within the range of one hundredth to one tenth of the total energy (anything slightly outside of this range is not unreasonable, but perhaps surprising). If we choose $\hat{K}_{22}=\SI{6}{\pico\newton}$ and $\hat{q}=\SI{10}{\per\micro\meter}$ \cite{Cameron:2018kq}, our estimate of $\omega$ using eqn \ref{eq:dimensionlessomega} is
 \begin{equation}\label{eq:omega}
-\frac{\SI{5.3e2}{\pico\newton\per\micro\meter\squared}}{\SI{6}{\pico\newton}\left(\SI{10}{\per\micro\meter}\right)^2}\sim1.0<\omega<\frac{\SI{2e4}{\pico\newton\per\micro\meter\squared}}{\SI{6}{\pico\newton}\left(\SI{10}{\per\micro\meter}\right)^2}\sim30.
+1.0\lesssim\omega\lesssim30.
 \end{equation}
 \subsection{Approximating $\Lambda$}
 In order to approximate $\Lambda$, we can look at how our model will respond to a small strain on the periodic spacing (i.e. the d-band), a method that has been applied in determining the bulk modulus of contribution in phase field crystal models \cite{Elder:2004ct}. If I define $\eta_{eq}=2\pi/d_{eq}$, with $d_{eq}$ being the equilibrium d-band spacing, then expanding our free energy in terms of the applied strain $u=(d-d_{eq})/d_{eq}$ will provide a dimensionless bulk modulus, $K=1/2\partial^2E/\partial u^2$, from the definition
@@ -119,19 +119,19 @@ where I have assumed that the last term is fairly close to $3$, which is reasona
 \hat{K}=\frac{16\pi^4\hat{\Lambda}\hat{\delta}_{eq}^2}{\hat{d}_{eq}^4}.
 \end{equation}
 
-To approximate the 1D bulk modulus, there are two options. The first is to gauge an approximation from the Young's modulus (which is approximately a 1D "bulk" modulus) of fibrils without crosslinks, which is $\sim\SI{32}{\mega\pascal}=\SI{3.2e7}{\pico\newton\per\micro\meter^2}$ for in vitro assembled type I fibrils \cite{Yang:2008gk}. The second is to assume that any distribution of d-banding observed in fibrils through e.g. diffraction measurements arise from a thermodynamic distribution with Boltzmann factor $\exp(-\hat{\beta}\Delta E)$, where $\Delta E$ is the energy difference between the equilibrium d-band configuration and a configuration with a slight strain. In the latter case, the distribution of fibrils can be fit with a probability distribution function of the form
+To approximate the 1D bulk modulus, there are two options. The first is to gauge an approximation from the Young's modulus (which is approximately a 1D "bulk" modulus) of fibrils. Without crosslinks, the Young's modulus is $\sim\SI{32}{\mega\pascal}=\SI{3.2e7}{\pico\newton\per\micro\meter^2}$ for in vitro assembled type I fibrils \cite{Graham:2004bl}. With cross-linking present, the modulus is 10 times larger, $\sim\SI{200}{\mega\pascal}$ \cite{vanderRijt:2006bt}. The second is to assume that any distribution of d-banding observed in fibrils through e.g. diffraction measurements arise from a thermodynamic distribution with Boltzmann factor $\exp(-\hat{\beta}\Delta E)$, where $\Delta E$ is the energy difference between the equilibrium d-band configuration and a configuration with a slight strain. In the latter case, the distribution of fibrils can be fit with a probability distribution function of the form
 \begin{equation}\label{eq:dbandpdf}
 P(u)=P_0\exp\left(\frac{-\beta\hat{K}u^2}{\hat{\rho}_0}\right).
 \end{equation}
-Using the full-width half-max (FWHM), $sigma$ of a d-band distribution, the modulus $\hat{K}$ can be determined by
+Using the full-width half-max (FWHM), $\sigma$ of a d-band distribution, the modulus $\hat{K}$ can be determined by
 \begin{equation}\label{eq:FWHM}
 \hat{K}=\frac{4\ln2\hat{\rho}_0}{\hat{\beta}\sigma^2}
 \end{equation}
-at a given inverse temperature $\hat{\beta}$ and density $\hat{\rho}_0=\SI{1.67e6}{\per\micro\meter^{-3}}$. Using results from a d-band distribution of cross-linked rat tail tendon fibrils in phosphate buffer \cite{Berenguer:2014fe} where $\sigma=\SI{0.13}{\nano\meter}/\SI{67}{\nano\meter}=\num{1.94e-3}$, the resulting modulus is $\hat{K}=\SI{5.2e9}{\pico\newton\per\micro\meter\squared}=\SI{5.2}{\giga\pascal}$, which is much larger than we would expect for a wet fibril, but the appropriate order of magnitude for dry fibrils. It is also unclear whether this method of determining the modulus can be applied to cross-linked fibrils, as our model does not included elastomeric effectss.
+at a given inverse temperature $\hat{\beta}$ and density $\hat{\rho}_0=\SI{1.67e6}{\per\micro\meter^{-3}}$. Using results from a d-band distribution of bundled, cross-linked, rat tail tendon fibrils in phosphate buffer measured using coherent x-ray scattering \cite{Berenguer:2014fe}, $\sigma=\SI{0.13}{\nano\meter}/\SI{67}{\nano\meter}=\num{1.94e-3}$. The resulting modulus is $\hat{K}=\SI{5.2e9}{\pico\newton\per\micro\meter\squared}=\SI{5.2}{\giga\pascal}$, which is much larger than we would expect for a wet fibril, but the appropriate order of magnitude for dry fibrils. AFM measurements of (individual) self-assembled type I fibrils with no cross-links give a FWHM $\sigma=\SI{1.5}{\nano\meter}/\SI{66}{\nano\meter}=\num{2.27e-2}$ \cite{Fang:2013ba}, and so $\hat{K}=\SI{3.8e7}{\pico\newton\per\micro\meter^2}$, a value much more in line with the hydrated, cross-link free modulus measured above. I am hesitant in using the upper bound determined using the bundled tendon fibrils as it is much larger than any experimental measure of Young's modulus, so I will take the upper estimate of the bulk modulus to be $\hat{K}=\SI{1e9}{\pico\newton\per\micro\meter\squared}$.
 
-Using a lower value of $\SI{3.2e7}{\pico\newton\per\micro\meter^2}$ and upper value of $\SI{5.2e9}{\pico\newton\per\micro\meter^2}$ and inserting these values into eqn \ref{eq:bulk_dimensional}, I get lower and upper values $\hat{\Lambda}_l=\SI{1.5e-11}{\pico\newton\micro\meter^8}$ and $\hat{\Lambda}_u=\SI{2.4e-9}{\pico\newton\micro\meter^8}$, respectively. Putting these limits into eqn \ref{eq:dimensionlessLambda},
+Using a lower value of $\SI{3.2e7}{\pico\newton\per\micro\meter^2}$ and upper value of $\SI{1e9}{\pico\newton\per\micro\meter^2}$ and inserting these values into eqn \ref{eq:bulk_dimensional}, the lower and upper values $\hat{\Lambda}_l=\SI{1.5e-11}{\pico\newton\micro\meter^8}$ and $\hat{\Lambda}_u=\SI{4.8e-10}{\pico\newton\micro\meter^8}$, respectively. Putting these limits into eqn \ref{eq:dimensionlessLambda},
 \begin{equation}\label{eq:Lambda}
-10\lesssim\Lambda\lesssim1500
+10\lesssim\Lambda\lesssim300
 \end{equation}
 (using the same values of $\hat{q}=\SI{10}{\per\micro\meter}$ and $\hat{K}_{22}=\SI{6}{\pico\newton}$ as I used above in the $\omega$ calculation).
 %%%%%%%%%%%%%%%
