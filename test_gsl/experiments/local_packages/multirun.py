@@ -17,7 +17,7 @@ class MultiRun(object):
     #  executable - the executable that creates and writes the output files
     
     def __init__(self,datfile,scan,params=None,tmp_path="../../../tmp_data/",
-                 executable="../../../bin/k24_gamma_space"):
+                 executable="../../../bin/gamma_k24_singlepoint"):
 
         self.datfile = datfile
         self.tmp_path = tmp_path
