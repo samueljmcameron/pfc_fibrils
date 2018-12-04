@@ -180,6 +180,8 @@ void initialize_params(struct params *p,char **args)
   printf("upper bound estimate of delta = %e\n",p->deltaupper);
   printf("lower bound estimate of delta = %e\n",p->deltalower);
 
+
+
   return;
 
 }

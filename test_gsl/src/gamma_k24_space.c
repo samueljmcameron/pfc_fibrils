@@ -25,8 +25,15 @@ int main(int argc, char **argv)
 
   bool drive(double *E,struct params *p,double *x,FILE *energy);
 
-  int i,j;
+  void set_scanning_values(double *gammalow,double *gammahigh,int *num_gamma,
+			   double *k24low,double *k24high,int *num_k24,char **args);
+
+  double gamma_j(int j, double gammalow, double gammahigh,int num_gamma);
+
+  double k24_i(int i, double k24low, double k24high,int num_k24);
   
+
+
   struct params p; 
   initialize_params(&p,argv);
   initialize_param_vectors(&p);
@@ -44,20 +51,62 @@ int main(int argc, char **argv)
   FILE *radius;
   initialize_file(&radius,argv[1],"radius",p);
 
-  FILE *delta;
-  initialize_file(&delta,argv[1],"delta",p);
-
   FILE *eta;
   initialize_file(&eta,argv[1],"eta",p);
 
+  FILE *delta;
+  initialize_file(&delta,argv[1],"delta",p);
+
+  double gammalow,gammahigh,k24low,k24high;
+  int num_gamma,num_k24;
+  set_scanning_values(&gammalow,&gammahigh,&num_gamma,
+		      &k24low,&k24high,&num_k24,argv);
+
+
   double E;
+  int i,j;
+
+  for (i = 0; i < num_k24; i++) {
+
+    p.k24 = k24_i(i,k24low,k24high,num_k24);
+
+    set_scalings(Rtemp,etatemp,deltatemp,&p);
+
+    for (j = 0; j < num_gamma; j++) {
 
 
+      // need to define this function, but want to set Rupper etc after each
+      // successful calculation of R etc.
+      set_scalings(Rtemp,etatemp,deltatemp,&p);
+      
+      p.gamma = gamma_j(j,gammalow,gammahigh,num_gamma);
   
-  if (drive(&E,&p,x,(NULL))) save_psivsr(psivsr,&p);
-  else set_x_NAN(&E,x,X_SIZE);
+      if (drive(&E,&p,x,(NULL))) {
 
-  save_observables(observables,E,x,&p);
+	fprintf(energy,"%e\t",E);
+	fprintf(surfacetwist,"%e\t",y[1][p.mpt]);
+	fprintf(radius,"%e\t",x[1]);
+	fprintf(eta,"%e\t",x[2]);
+	fprintf(delta,"%e\t",x[3]);
+
+      } else {
+
+	fprintf(energy,"%e\t",sqrt(-1));
+	fprintf(surfacetwist,"%e\t",sqrt(-1));
+	fprintf(radius,"%e\t",sqrt(-1));
+	fprintf(eta,"%e\t",sqrt(-1));
+	fprintf(delta,"%e\t",sqrt(-1));
+
+      }
+    }
+
+    fprintf(energy,"\n");
+    fprintf(surfacetwist,"\n");
+    fprintf(radius,"\n");
+    fprintf(eta,"\n");
+    fprintf(delta,"\n");
+
+  }
 
   free_vector(x,1,X_SIZE);
   free_vector(p.r,1,MAX_M);
@@ -68,14 +117,40 @@ int main(int argc, char **argv)
   free_matrix(p.s,1,NSI,1,NSJ);
   free_f3tensor(p.c,1,NCI,1,NCJ,1,MAX_M+1);
 
-  fclose(psivsr);
-  fclose(observables);
+  fclose(energy);
+  fclose(surfacetwist);
+  fclose(radius);
+  fclose(eta);
+  fclose(delta);
 
   return 0;
 
 }
 
+double gamma_j(int j, double gammalow, double gammahigh,int num_gamma)
+{
+  dgamma = (gammahigh-gammalow)/(num-1);
+  return j*dgamma+gammalow;
+}
 
+
+double k24_i(int i, double k24low, double k24high,int num_k24)
+{
+  dk24 = (k24high-k24low)/(num-1);
+  return i*dk24+k24low;
+}
+
+void set_scanning_values(double *gammalow,double *gammahigh,int *num_gamma,
+			 double *k24low,double *k24high,int *num_k24,char **args)
+{
+  sscanf(args[17],"%lf",gammalow);
+  sscanf(args[18],"%lf",gammahigh);
+  sscanf(args[19],"%d",num_gamma);
+  sscanf(args[20],"%lf",k24low);
+  sscanf(args[21],"%lf",k24high);
+  sscanf(args[22],"%d",num_k24);
+  return;
+}
 
 
 void save_psivsr(FILE *psivsr,struct params *p)
@@ -89,20 +164,6 @@ void save_psivsr(FILE *psivsr,struct params *p)
   printf("psi(R) = %1.2e\n",p->y[1][p->mpt]);
   return;
 }
-
-void save_observables(FILE *observables,double E,double *x,struct params *p)
-{
-  if (fabs(x[3]) <=1e-5) {
-    x[2] = sqrt(-1);
-  }
-  if (p->omega == 0) {
-    x[2] = x[3] = sqrt(-1);
-  }
-  fprintf(observables,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	  E,x[1],x[2],x[3],p->y[1][p->mpt]);
-  return;
-}
-
 
 void set_x_NAN(double *E,double *x,int xsize)
 {
@@ -200,8 +261,8 @@ void initialize_file(FILE **output,char *path,char *fname,struct params p)
   char suffix[num_chars];
   char f[num_chars];
 
-  snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_%1.4e_%1.4e_"
-	   "%1.4e.txt",p.K33,p.k24,p.Lambda,p.d0,p.omega,p.gamma_s);
+  snprintf(suffix,sizeof(suffix),"%1.4e_%1.4e_%1.4e_"
+	   "%1.4e.txt",p.K33,p.Lambda,p.d0,p.omega);
   snprintf(f,sizeof(f),"%s_%s_%s",path,fname,suffix);
   *output = fopen(f,"w");
 

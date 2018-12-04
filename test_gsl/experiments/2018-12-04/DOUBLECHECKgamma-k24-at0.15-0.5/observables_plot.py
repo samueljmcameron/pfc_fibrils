@@ -1,9 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+import seaborn as sns
 sys.path.append('../../../../scripts/')
 from fig_settings import configure_fig_settings
-sys.path.append('../../gammak24_singlepoint/')
+sys.path.append('../../local_packages/')
 from plotobservables import PlotObservables
 
 
@@ -11,12 +12,13 @@ from plotobservables import PlotObservables
 # see user_inputs.md for details on what typically goes in these inputs.
 c_1 = input("please type the first gamma k24 coordinate, with a comma delimiter: ")
 
-c_2 = input("please type the second gamma k24 coordinate, with a comma delimiter: ")
+#c_2 = input("please type the second gamma k24 coordinate, with a comma delimiter: ")
 
-c_3 = input("please type the third gamma k24 coordinate, with a comma delimiter: ")
+#c_3 = input("please type the third gamma k24 coordinate, with a comma delimiter: ")
 
-c_list = [c_1,c_2,c_3]
+#c_list = [c_1,c_2,c_3]
 
+c_list = [c_1]
 
 coordinates = np.array([[float(s) for s in arg.split(',')] for arg in c_list],float)
 
@@ -38,16 +40,23 @@ for observable in observable_list:
     fig[observable].set_size_inches(width,height)
 
 
-for coordinate in coordinates:
+colors = sns.color_palette()
 
-    gamma,k24 = coordinate
-    obs = PlotObservables(gamma,k24)
-
-    for observable in observable_list:
-        obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
-                                            fr'$\gamma_s,k_{{24}}={gamma},{k24}$',
-                                            'o-')
-
+for scan_dir in ["scanforward","scanbackward"]:
+    for i,coordinate in enumerate(coordinates):
+        
+        gamma,k24 = coordinate
+        obs = PlotObservables(gamma,k24,scan_dir=scan_dir)
+        obs.sort_observables()
+        
+        for j,observable in enumerate(observable_list):
+            if scan_dir == "scanforward":
+                obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
+                                                    label=fr'$\gamma_s,k_{{24}}={gamma},{k24}$',
+                                                    color=colors[j])
+            else:
+                obs.plot_observable_omega_eq_Lambda(ax[observable],observable,
+                                                    color=colors[j])
 xlabel = r'$\omega=\Lambda$'
 
 for observable in observable_list:

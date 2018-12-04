@@ -67,7 +67,7 @@ struct params{
   double **s;
   double ***c;
   int mpt;
-  // these 9 parameters are necessary to specify for finding minima
+  // these 10 parameters are necessary to specify for finding minima
   double Rguess;
   double etaguess;
   double deltaguess;
@@ -77,6 +77,7 @@ struct params{
   double etalower;
   double deltaupper;
   double deltalower;
+  double Escale;
   // these 2 parameters are necessary for scanning across a set parameter
   // (e.g. along R while holding eta and delta constant)
   double upperbound_x;
@@ -100,7 +101,8 @@ double E_calcwrap(double *x_scale,void *ps);
 
 void scale_forward(gsl_vector *y,const double *x,struct params *p);
 void scale_backward(const gsl_vector *y, double *x,struct params *p);
-
+void scale_E_backward(const double F,double *E,struct params *p);
+void scale_dEdx_backward(const gsl_vector *dFdy,double *dEdx,struct params *p);
 
 #endif /* ANSI */
 

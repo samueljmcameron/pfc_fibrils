@@ -33,12 +33,18 @@ void df(const gsl_vector *x,void *ps,gsl_vector *g)
   double h = 1e-5;
   int i;
   double result,abserr;
+  struct params *p = ps;
 
   for (i = 0; i < 3; i++) {
     deriv_xi(f,x,i,ps,h,&result,&abserr);
     gsl_vector_set(g,i,result);
-    if (abserr >= 0.5*CONV_MIN) printf("abserr is %e, but CONV_min is %e!\n",
-				   abserr,CONV_MIN);
+    if (abserr >= 0.5*CONV_MIN*(1+p->Escale)) {
+      if (p->Escale != 0) {
+	printf("abserr is %e, but the convergence criterion "
+	       "CONV_min*(1+p->Escale) is %e!\n",
+	       abserr,CONV_MIN*(1+p->Escale));
+      }
+    }
   }
   return;
   
