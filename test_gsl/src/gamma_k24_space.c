@@ -17,11 +17,11 @@ int main(int argc, char **argv)
 
   void initialize_param_vectors(struct params *p);
 
-  void initialize_x(double *x,struct params p);
+  void initialize_x(double *x,struct params *p);
 
   void initialize_file(FILE **output,char *path,char *fname,struct params p);
 
-  void set_x_NAN(double *E,double *x,int xsize);
+  void linearGuess(double *r, double **y, double initialSlope,double h,int mpt);
 
   bool drive(double *E,struct params *p,double *x,FILE *energy);
 
@@ -32,15 +32,23 @@ int main(int argc, char **argv)
 
   double k24_i(int i, double k24low, double k24high,int num_k24);
   
-
+  void set_scalings(double Rtemp, double etatemp, double deltatemp,struct params *p);
 
   struct params p; 
   initialize_params(&p,argv);
   initialize_param_vectors(&p);
+  p.mpt = (MAX_M-1)/8+1;
+
 
   double *x;
   x = vector(1,X_SIZE);
-  initialize_x(x,p);
+  initialize_x(x,&p);
+
+  //make a linear initial guess for psi(r)
+  double h = x[1]/(p.mpt-1);
+  double slopeguess = M_PI/(4.0*x[1]);
+  linearGuess(p.r,p.y,slopeguess,h,p.mpt);
+
 
   FILE *energy;
   initialize_file(&energy,argv[1],"energy",p);
@@ -62,6 +70,24 @@ int main(int argc, char **argv)
   set_scanning_values(&gammalow,&gammahigh,&num_gamma,
 		      &k24low,&k24high,&num_k24,argv);
 
+  // temp_i variables are stored values from i-1 iteration. Since k24
+  // is the i iterate, this means everytime gamma = gammalow, the guess
+  // variable used is from k24 = (k24high-k24low)/(num_k24-1)*(i-1).
+  double Rtemp_i = x[1];
+  double etatemp_i = x[2];
+  double deltatemp_i = x[3];
+
+
+  // temp_j variables are stored values from j-1 iteration. Since gamma
+  // is the j iterate, this means everytime the scan is moving at constant
+  // k24, the guess variable is used from the previous gamma's solution.
+  double Rtemp_j = x[1];
+  double etatemp_j = x[2];
+  double deltatemp_j = x[3];
+
+
+
+
 
   double E;
   int i,j;
@@ -70,34 +96,64 @@ int main(int argc, char **argv)
 
     p.k24 = k24_i(i,k24low,k24high,num_k24);
 
-    set_scalings(Rtemp,etatemp,deltatemp,&p);
+
+    if (i != 0) {
+
+      // if not first calculation, use xvalues at the 0,i-1 grid point, as well
+      // as a linear guess for the form of y[1][1..p.mpt] = psi(r) and
+      // y[2][1..p.mpt] = psi'(r).
+
+      set_scalings(Rtemp_i,etatemp_i,deltatemp_i,&p);
+      p.mpt = (MAX_M-1)/8+1;
+      h = Rtemp_i/(p.mpt-1);
+      linearGuess(p.r,p.y,slopeguess,h,p.mpt);
+    }
 
     for (j = 0; j < num_gamma; j++) {
 
+      p.gamma_s = gamma_j(j,gammalow,gammahigh,num_gamma);
 
-      // need to define this function, but want to set Rupper etc after each
-      // successful calculation of R etc.
-      set_scalings(Rtemp,etatemp,deltatemp,&p);
+
+      // if not first calculation at the current i value, use xvalues at 
+      // the j-1,i grid point
+      if (j != 0) set_scalings(Rtemp_j,etatemp_j,deltatemp_j,&p);
       
-      p.gamma = gamma_j(j,gammalow,gammahigh,num_gamma);
+      initialize_x(x,&p);
   
       if (drive(&E,&p,x,(NULL))) {
+	
+	if (j == 0) {
 
-	fprintf(energy,"%e\t",E);
-	fprintf(surfacetwist,"%e\t",y[1][p.mpt]);
-	fprintf(radius,"%e\t",x[1]);
-	fprintf(eta,"%e\t",x[2]);
-	fprintf(delta,"%e\t",x[3]);
+	  // if at gamma=gammalow, then save the equilibrium x values, and
+	  // the initial slope of psi(r), to use as guesses for 0,i+1.
+
+	  Rtemp_i = x[1];
+	  etatemp_i = x[2];
+	  deltatemp_i = x[3];
+	  slopeguess = p.y[2][1];
+	}
+	
+	
+	Rtemp_j = x[1];
+	etatemp_j = x[2];
+	deltatemp_j = x[3];
+
+	fprintf(energy,"%13.6e\t",E);
+	fprintf(surfacetwist,"%13.6e\t",p.y[1][p.mpt]);
+	fprintf(radius,"%13.6e\t",x[1]);
+	fprintf(eta,"%13.6e\t",x[2]);
+	fprintf(delta,"%13.6e\t",x[3]);
 
       } else {
 
-	fprintf(energy,"%e\t",sqrt(-1));
-	fprintf(surfacetwist,"%e\t",sqrt(-1));
-	fprintf(radius,"%e\t",sqrt(-1));
-	fprintf(eta,"%e\t",sqrt(-1));
-	fprintf(delta,"%e\t",sqrt(-1));
+	fprintf(energy,"%13.6e\t",sqrt(-1));
+	fprintf(surfacetwist,"%13.6e\t",sqrt(-1));
+	fprintf(radius,"%13.6e\t",sqrt(-1));
+	fprintf(eta,"%13.6e\t",sqrt(-1));
+	fprintf(delta,"%13.6e\t",sqrt(-1));
 
       }
+
     }
 
     fprintf(energy,"\n");
@@ -127,16 +183,31 @@ int main(int argc, char **argv)
 
 }
 
+void set_scalings(double Rtemp, double etatemp, double deltatemp,struct params *p)
+{
+  p->Rguess = Rtemp;
+  p->Rupper = Rtemp*1.5;
+  p->Rlower = Rtemp*0.75;
+  p->etaguess = etatemp;
+  p->etaupper = etatemp+0.1;
+  p->etalower = etatemp-0.02;
+  p->deltaguess = deltatemp;
+  p->deltaupper = 0.817;
+  p->deltalower = 0.95*deltatemp;
+
+  return;
+}
+
 double gamma_j(int j, double gammalow, double gammahigh,int num_gamma)
 {
-  dgamma = (gammahigh-gammalow)/(num-1);
+  double dgamma = (gammahigh-gammalow)/(num_gamma-1);
   return j*dgamma+gammalow;
 }
 
 
 double k24_i(int i, double k24low, double k24high,int num_k24)
 {
-  dk24 = (k24high-k24low)/(num-1);
+  double dk24 = (k24high-k24low)/(num_k24-1);
   return i*dk24+k24low;
 }
 
@@ -153,38 +224,16 @@ void set_scanning_values(double *gammalow,double *gammahigh,int *num_gamma,
 }
 
 
-void save_psivsr(FILE *psivsr,struct params *p)
+void initialize_x(double *x,struct params *p)
 {
-  int i;
-
-  for (i = 1; i <= p->mpt; i++) {
-    fprintf(psivsr,"%13.6e\t%13.6e\t%13.6e\t%13.6e\n",p->r[i],p->y[1][i],p->y[2][i],
-	    p->rf_fib[i]);
-  }
-  printf("psi(R) = %1.2e\n",p->y[1][p->mpt]);
-  return;
-}
-
-void set_x_NAN(double *E,double *x,int xsize)
-{
-  int i;
-  for (i = 1; i <= xsize; i++) x[i] = sqrt(-1);
-  *E = sqrt(-1);
-  return;
-}
-
-void initialize_x(double *x,struct params p)
-{
-  x[1] = p.Rguess;
-  x[2] = p.etaguess;
-  x[3] = p.deltaguess;
+  x[1] = p->Rguess;
+  x[2] = p->etaguess;
+  x[3] = p->deltaguess;
   return;
 }
 
 void initialize_param_vectors(struct params *p)
 {
-
-  void linearGuess(double *r, double **y, double initialSlope,double h,int mpt);
 
   p->r = vector(1,MAX_M);
   p->y = matrix(1,NE,1,MAX_M);
@@ -193,11 +242,6 @@ void initialize_param_vectors(struct params *p)
   p->rf_fib = vector(1,MAX_M);
   p->s = matrix(1,NSI,1,NSJ);
   p->c = f3tensor(1,NCI,1,NCJ,1,MAX_M+1);
-
-
-  double h = p->Rguess/(p->mpt-1);
-  double slopeguess = M_PI/(4.0*p->Rguess);
-  linearGuess(p->r,p->y,slopeguess,h,p->mpt); //linear initial guess for psi(r)
 
   return;
 }
@@ -221,8 +265,6 @@ void initialize_params(struct params *p,char **args)
   sscanf(args[14],"%lf",&p->etalower);
   sscanf(args[15],"%lf",&p->deltaupper);
   sscanf(args[16],"%lf",&p->deltalower);
-
-  p->mpt = (MAX_M-1)/8+1;
 
   printf("parameter values for minimization:\n");
 

@@ -82,7 +82,7 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
 
   }
 
-  while (status == GSL_CONTINUE && iter < 10000);
+  while (status == GSL_CONTINUE && iter < 100);
   
   clock_t end = clock();
 

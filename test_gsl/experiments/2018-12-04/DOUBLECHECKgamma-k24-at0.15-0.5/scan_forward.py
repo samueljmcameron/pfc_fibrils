@@ -1,8 +1,8 @@
 import numpy as np
 import subprocess
 import sys
-sys.path.append('../../local_packages/')
-from multirun import MultiRun
+sys.path.append('../../modules_gammak24/')
+from singlerun import SingleRun
 
 if __name__=="__main__":
 
@@ -21,7 +21,7 @@ if __name__=="__main__":
         scan['\omega'] = str(o_L)
         scan['\Lambda'] = str(o_L)
         
-        run = MultiRun("data/input.dat",scan)
+        run = SingleRun("data/input.dat",scan)
 
         run.run_exe()
 
@@ -52,6 +52,6 @@ if __name__=="__main__":
                 scan['deltalower'] = '0.81'
 
 
-        run.concatenate_observables_with_direction('forward')
+        run.concatenate_observables(scan_dir='scanforward')
 
 

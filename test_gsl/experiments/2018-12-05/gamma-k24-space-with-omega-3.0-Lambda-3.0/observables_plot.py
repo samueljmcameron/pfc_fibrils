@@ -4,7 +4,7 @@ import sys
 import seaborn as sns
 sys.path.append('../../../../scripts/')
 from fig_settings import configure_fig_settings
-sys.path.append('../../local_packages/')
+sys.path.append('../../modules_gammak24/')
 from plotobservables import PlotObservables
 
 

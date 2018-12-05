@@ -47,7 +47,7 @@ typedef struct {
 #define X_SIZE     3
 #define ITMAX      5000
 #define CONV_ODE   1e-10
-#define CONV_MIN   1e-7
+#define CONV_MIN   1e-8
 
 
 
