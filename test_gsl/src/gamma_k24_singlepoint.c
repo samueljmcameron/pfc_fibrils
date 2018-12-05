@@ -83,12 +83,7 @@ void save_psivsr(FILE *psivsr,struct params *p)
 
 void save_observables(FILE *observables,double E,double *x,struct params *p)
 {
-  if (fabs(x[3]) <=1e-5) {
-    x[2] = sqrt(-1);
-  }
-  if (p->omega == 0) {
-    x[2] = x[3] = sqrt(-1);
-  }
+
   fprintf(observables,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
 	  E,x[1],x[2],x[3],p->y[1][p->mpt]);
   return;

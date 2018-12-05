@@ -34,6 +34,8 @@ int main(int argc, char **argv)
   
   void set_scalings(double Rtemp, double etatemp, double deltatemp,struct params *p);
 
+  clock_t begin = clock();
+
   struct params p; 
   initialize_params(&p,argv);
   initialize_param_vectors(&p);
@@ -154,6 +156,8 @@ int main(int argc, char **argv)
 
       }
 
+      printf("gamma,k24 = %e,%e\n",p.gamma_s,p.k24);
+
     }
 
     fprintf(energy,"\n");
@@ -178,6 +182,10 @@ int main(int argc, char **argv)
   fclose(radius);
   fclose(eta);
   fclose(delta);
+
+  clock_t end = clock();
+
+  printf("time taken = %e\n",(double)(end-begin)/CLOCKS_PER_SEC);
 
   return 0;
 

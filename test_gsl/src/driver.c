@@ -73,8 +73,6 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
     scale_dEdx_backward(s->gradient,dEdx,p);
     *E = s->f;
     p->Escale = fabs(*E);
-    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
     if (energy) {
       fprintf(energy,"%lu\t%13.6e\t%13.6e\n",iter,*E,calc_norm2(dEdx));
     }
@@ -84,9 +82,6 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
 
   while (status == GSL_CONTINUE && iter < 100);
   
-  clock_t end = clock();
-
-  printf("time taken = %e\n",(double)(end-begin)/CLOCKS_PER_SEC);
 
   free_vector(dEdx,1,X_SIZE);
   gsl_multimin_fdfminimizer_free(s);
@@ -94,10 +89,22 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
 
 
   if (status == GSL_SUCCESS) {
-    return true;
-  }
-  return false;
+    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
 
+    if (fabs(x[3] <= 1e-5)) x[2] = sqrt(-1);
+
+    if (p->omega == 0) x[2]=x[3]= sqrt(-1);
+    
+    return true;
+    
+  } else {
+
+    printf("Did not successfully find a minimum. Exceeded %d iterations.\n",iter);
+
+    return false;
+
+  }
 
 }
 
