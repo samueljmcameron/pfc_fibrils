@@ -1,0 +1,5 @@
+I'm looking at the k24 vs gamma space, similar to in the polymorphism paper, except with omega = Lambda != 0.
+
+Yesterday (2018-12-05), I attempted this calculation, but ran out of time for omega=Lambda=1 and omega=Lambda=3. My code broke for omega=Lambda=0 because I forgot to reset the next guess of eta and delta if they are NAN. My code broke for omega=Lambda=10.0 and omega=Lambda=30.0 because the radius was being driven above 20 for large gamma values (as expected), which is where I have my sharp cutoff limits (I set E=1e100 if R<0 or R>20).
+
+Today, I will do similar calculations with less points, and fixing the omega=Lambda=1 and omega=Lambda=3 cases (reducing the number of grid points), and the omega=Lambda=0 case (by resetting eta and delta correctly). I will not attempt the large omega and Lambda cases until I have fixed the bug with evaluating the R>20.
