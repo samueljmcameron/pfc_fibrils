@@ -1,0 +1,50 @@
+Restoring modules from user's standard_modules
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 5.000000e-01
+Lambda = 0.000000e+00
+d0 = 1.000000e+00
+omega = 0.000000e+00
+gamma_s = 1.500000e-01
+initial guesses for R, eta, and delta:
+guess for R = 8.000000e-02
+guess for eta = 6.290000e+00
+guess for delta = 6.000000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.000000e-01
+lower bound estimate of R = 1.000000e-02
+upper bound estimate of eta = 6.270000e+00
+lower bound estimate of eta = 6.320000e+00
+upper bound estimate of delta = 8.170000e-01
+lower bound estimate of delta = 5.000000e-01
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+minimum found at:
+            2	 1.466331e-01	 6.290000e+00	 6.000000e-01	-2.627781e-01	 6.764137e-09	 7.401487e-11	 0.000000e+00	 6.764542e-09
+gamma,k24 = 1.000000e-02,0.000000e+00
+Singular matrix - row all 0, in pinvs
+R = 1.466331e-01
+failed at point k = 2 in finite differences
+solvde convergence failed when x = (1.466331e-01,-nan,-nan).
+Retrying using a constant y value
+Singular matrix - row all 0, in pinvs
+R = 1.466331e-01
+failed at point k = 2 in finite differences
+Retrying with a linear guess and a final twist angle value of pi/4.
+Singular matrix - row all 0, in pinvs
+R = 1.466331e-01
+failed at point k = 2 in finite differences
+Retrying with a sqrt(r) guess and a final twist angle value of pi/2.01.
+Singular matrix - row all 0, in pinvs
+R = 1.466331e-01
+failed at point k = 2 in finite differences
+failed to solve ODE when x = (1.466331e-01,-nan,-nan).
+saving current psi(r) shape (from failed solvde call), as well as the shape of the initial guess of psi(r) (from previous call of E_calc), and exiting to system.
+['30.', '0.5', '0.0', '1.0', '0.0', '0.15', '0.08', '6.29', '0.6', '0.1', '0.01', '6.27', '6.32', '0.817', '0.5', '0.01', '0.2', '96', '0.0', '0.95', '96']
+Traceback (most recent call last):
+  File "raster_scan.py", line 17, in <module>
+    run.run_exe()
+  File "../../modules_gammak24/singlerun.py", line 76, in run_exe
+    subprocess.run([self.executable,self.tmp_path,*self.params],check=True)
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2017/Core/python/3.6.3/lib/python3.6/subprocess.py", line 418, in run
+    output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['../../../bin/gamma_k24_space', '../../../tmp_data/', '30.', '0.5', '0.0', '1.0', '0.0', '0.15', '0.08', '6.29', '0.6', '0.1', '0.01', '6.27', '6.32', '0.817', '0.5', '0.01', '0.2', '96', '0.0', '0.95', '96']' returned non-zero exit status 1.
