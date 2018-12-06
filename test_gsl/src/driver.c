@@ -92,7 +92,7 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
     printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
 	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
 
-    if (fabs(x[3] <= 1e-5)) x[2] = sqrt(-1);
+    if (fabs(x[3]) <= 1e-5) x[2] = sqrt(-1);
 
     if (p->omega == 0) x[2]=x[3]= sqrt(-1);
     
@@ -100,7 +100,7 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
     
   } else {
 
-    printf("Did not successfully find a minimum. Exceeded %d iterations.\n",iter);
+    printf("Did not successfully find a minimum. Exceeded %zu iterations.\n",iter);
 
     return false;
 

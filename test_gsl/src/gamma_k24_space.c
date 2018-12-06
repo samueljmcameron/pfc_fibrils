@@ -34,6 +34,8 @@ int main(int argc, char **argv)
   
   void set_scalings(double Rtemp, double etatemp, double deltatemp,struct params *p);
 
+  void set_tempvars(double *Rtemp, double *etatemp, double *deltatemp,double *x);
+
   clock_t begin = clock();
 
   struct params p; 
@@ -75,17 +77,16 @@ int main(int argc, char **argv)
   // temp_i variables are stored values from i-1 iteration. Since k24
   // is the i iterate, this means everytime gamma = gammalow, the guess
   // variable used is from k24 = (k24high-k24low)/(num_k24-1)*(i-1).
-  double Rtemp_i = x[1];
-  double etatemp_i = x[2];
-  double deltatemp_i = x[3];
+  double Rtemp_i,etatemp_i,deltatemp_i;
+  set_tempvars(&Rtemp_i,&etatemp_i,&deltatemp_i,x);
 
 
   // temp_j variables are stored values from j-1 iteration. Since gamma
   // is the j iterate, this means everytime the scan is moving at constant
   // k24, the guess variable is used from the previous gamma's solution.
-  double Rtemp_j = x[1];
-  double etatemp_j = x[2];
-  double deltatemp_j = x[3];
+  double Rtemp_j,etatemp_j,deltatemp_j;
+  set_tempvars(&Rtemp_j,&etatemp_j,&deltatemp_j,x);
+
 
 
 
@@ -129,16 +130,11 @@ int main(int argc, char **argv)
 	  // if at gamma=gammalow, then save the equilibrium x values, and
 	  // the initial slope of psi(r), to use as guesses for 0,i+1.
 
-	  Rtemp_i = x[1];
-	  etatemp_i = x[2];
-	  deltatemp_i = x[3];
+	  set_tempvars(&Rtemp_i,&etatemp_i,&deltatemp_i,x);
 	  slopeguess = p.y[2][1];
 	}
 	
-	
-	Rtemp_j = x[1];
-	etatemp_j = x[2];
-	deltatemp_j = x[3];
+	set_tempvars(&Rtemp_j,&etatemp_j,&deltatemp_j,x);	
 
 	fprintf(energy,"%13.6e\t",E);
 	fprintf(surfacetwist,"%13.6e\t",p.y[1][p.mpt]);
@@ -190,6 +186,15 @@ int main(int argc, char **argv)
   return 0;
 
 }
+
+void set_tempvars(double *Rtemp, double *etatemp, double *deltatemp,double *x)
+{
+  *Rtemp = x[1];
+  if (x[2] == x[2]) *etatemp = x[2];
+  if (x[3] == x[3]) *deltatemp = x[3];
+  return;
+}
+
 
 void set_scalings(double Rtemp, double etatemp, double deltatemp,struct params *p)
 {
