@@ -5,7 +5,8 @@ import seaborn as sns
 
 class PlotObservables2d(object):
 
-    def __init__(self,Lambda,omega,scan_dir="",data=None,K33=30.0,d0=1.0,lpath="data/",
+    def __init__(self,Lambda,omega,gamma_min,gamma_max,k24_min,k24_max,
+                 scan_dir="",data=None,K33=30.0,d0=1.0,lpath="data/",
                  spath="results/",plot_format="pdf",colors = sns.color_palette()):
 
         self.Lambda = Lambda
@@ -18,6 +19,10 @@ class PlotObservables2d(object):
         self.scan_dir = f"_{scan_dir}"
         self.colors = colors
         self.data = data
+        self.gamma_min = gamma_min
+        self.gamma_max = gamma_max
+        self.k24_min = k24_min
+        self.k24_max = k24_max
 
     def load_data(self,varname):
 
@@ -50,7 +55,19 @@ class PlotObservables2d(object):
                 else:
                     stuff[i,j] = self.data[i,j]
                     """
-        s=ax.imshow(stuff,interpolation='nearest',origin='lower')
+        num_gamma = stuff.shape[0]
+        num_k24 = stuff.shape[1]
+        gammas = np.linspace(self.gamma_min,self.gamma_max,num=num_gamma,
+                             endpoint=True)
+        k24s = np.linspace(self.k24_min,self.k24_max,num=num_k24,
+                           endpoint=True)
+
+        aspect = (self.gamma_max-self.gamma_min)/(self.k24_max-self.k24_min)
+        s=ax.imshow(stuff,interpolation='nearest',origin='lower',
+                    extent = [self.gamma_min,self.gamma_max,self.k24_min,
+                              self.k24_max],aspect=aspect)
+        #gammas,k24s = np.meshgrid(gammas,k24s)
+        ax.contour(gammas,k24s,stuff,colors='k')
 
         return s
 

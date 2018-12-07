@@ -25,11 +25,15 @@ for observable in observable_list:
     fig[observable].set_size_inches(width,height)
 
 
-Lambda = omega = 3.0
+Lambda = float(sys.argv[1])
+omega = float(sys.argv[2])
+gamma_min,gamma_max = 0.01,0.2
+k24_min,k24_max = 0.0,0.95
+
 
 colors = sns.color_palette()
 
-obs = PlotObservables2d(Lambda,omega)
+obs = PlotObservables2d(Lambda,omega,gamma_min,gamma_max,k24_min,k24_max)
 
 xlabel=r'$\gamma$'
 ylabel=r'$k_{24}$'

@@ -1,0 +1,1 @@
+In this experiment, I am producing plots of observables for different gamma values, at constant k24, omega, and Lambda. These plots will hopefully be more insightful than full on 2d gamma,k24 space plots.

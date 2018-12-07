@@ -24,10 +24,10 @@ class PlotPsi(object):
     
         return f"{self.lpath}_psivsr{suffix}.txt"
     
-    def psivsr_sname(self):
+    def psivsr_sname(self,omega,Lambda):
 
-        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{self.d0:.4e}"
-                  f"_{self.gamma:.4e}")
+        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{omega:.4e}_{self.d0:.4e}"
+                  f"_{Lambda:.4e}")
         return f"{self.spath}_psivsr{suffix}.{self.plot_format}"
 
     def plot_psivsr(self,omega,Lambda,label=None,color=None):

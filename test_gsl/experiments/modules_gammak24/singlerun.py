@@ -21,16 +21,17 @@ class SingleRun(object):
     #  tmp_path - the path of where the output files are stored initially
     #  executable - the executable that creates and writes the output files
     
-    def __init__(self,datfile,scan={},params=None,tmp_path="../../../tmp_data/",
-                 executable="../../../bin/gamma_k24_singlepoint",
-                 suffixlist=["K_{33}","k_{24}","\\Lambda","d_0",
-                             "\\omega","\\gamma_s"]):
+    def __init__(self,datfile="data/input.dat",scan={},tmp_path="../../../tmp_data/",
+                 params=None,executable="../../../bin/gamma_k24_singlepoint",
+                 loadsuf=["K_{33}","k_{24}","\\Lambda","d_0","\\omega","\\gamma_s"],
+                 savesuf=["K_{33}","k_{24}","d_0","\\gamma_s"]):
 
         self.datfile = datfile
         self.tmp_path = tmp_path
         self.executable = executable
         self.scan = scan
-        self.suffixlist = suffixlist
+        self.loadsuf = loadsuf
+        self.savesuf = savesuf
         if (params == None):
             self.params = self.read_params()
         else:
@@ -54,9 +55,10 @@ class SingleRun(object):
     def read_params(self):
         # read input parameters from datfile, unless the input parameter
         # is specified in self.scan dictionary, in which case, read it
-        # from there.
+        # from there. return a dictionary with parameter labels and names.
+        # NOTE since this is running python 3.7 (or later), dicts are ordered.
         
-        params = []
+        params = {}
         
         with open(self.datfile) as f:
 
@@ -64,47 +66,37 @@ class SingleRun(object):
 
                 (key,val) = line.split()
 
-                params.append(self.set_param(key,val))
-
-        print(params)
+                params[key]=self.set_param(key,val)
 
         return params
 
     def run_exe(self):
         # run c executable to determine psi(r), R, delta, etc.
 
-        subprocess.run([self.executable,self.tmp_path,*self.params],check=True)
+        subprocess.run([self.executable,self.tmp_path,*self.params.values()],check=True)
 
         return
 
-    def make_plist(self):
+    def write_suffix(self,suffix_type="load"):
+        # write the ending "suffix" of the file name (all of the trailing parameter values
+        # in the filename. e.g. if fname = "energy_3.00000e+00_5.32000e-01.txt", then the
+        # suffix="3.00000e+00_5.32000e-01", WITHOUT the ".txt".
 
-        plist = []
+        if (suffix_type=="save"):
+            cpylist = self.savesuf
+        else:
+            cpylist = self.loadsuf
 
-        with open(self.datfile) as f:
-
-            for line in f:
-
-                (key,val) = line.split()
-                for p in self.suffixlist:
-                    if p == key:
-                        plist.append(self.set_param(key,val))
-
-        print(plist)
-        return plist
-
-
-    def write_suffix(self,plist=None):
-        
-        if plist == None:
-            plist = self.make_plist()
+        plist = [float(self.params[s]) for s in cpylist]
 
         suffix = '_'.join([f'{float(s):.4e}' for s in plist])
         
         return suffix
 
     def get_xvals(self):
-        
+        # get the values in the x array, from the data file that HAS ALREADY BEEN MOVED FROM
+        # tmp_data folder to true data folder, and BEFORE concatenation.
+
         suffix = self.write_suffix()
         
         fname = f"_observables_{suffix}.txt"
@@ -132,24 +124,37 @@ class SingleRun(object):
 
         return
 
+    def add_datastring(self,vars):
+        
+        a = [float(self.params[var]) for var in vars]
+
+        return '\t'.join(map("{:13.6e}".format,a))
+
     def concatenate_observables(self,scan_dir=''):
 
-        xval_params = [self.params[0],self.params[1],self.params[3],
-                       self.params[5]]
+        suffix_type="save"
 
-        newfname = f"data/_observables_{scan_dir}_{self.write_suffix(xval_params)}.txt"
+        newfname = f"data/_observables_{scan_dir}_{self.write_suffix(suffix_type=suffix_type)}.txt"
+
+
+        # determine which variables are not shared between loadsuf and
+        # savesuf, those will be the variables whose values are added
+        # to the concatenated output file.
+        vars = list(set(self.loadsuf).difference(self.savesuf))
+        
 
         with open(newfname,"a+") as f1:
     
             fname = f"data/_observables_{self.write_suffix()}.txt"
 
             with open(fname) as f2:
-            
+
                 for line in f2:
-                    add_omega_Lambda = '\t'.join([f'{float(self.params[2]):13.6e}',
-                                                  f'{float(self.params[4]):13.6e}'])
-                    f1.write(f"{add_omega_Lambda}\t{line}")
+
+                    f1.write(f"{self.add_datastring(vars)}\t{line}")
+
             if os.path.isfile(fname):
+
                 os.remove(fname)
         
         return
