@@ -135,8 +135,8 @@ double E_calc(const double *x,struct params *p)
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
 
 
-  if (x[1] <= 0 || x[1] >= 20.0 || x[2] <= 0 || x[2] >= 8.0
-      || fabs(x[3]) >= 1.0) return 1e300;
+  if (x[1] <= 0 || x[2] <= 0 || x[2] >= 8.0
+      || fabs(x[3]) >= 1.0) return FAILED_E;
   
   
   while (p->mpt <= MAX_M) {
@@ -175,11 +175,11 @@ double E_calc(const double *x,struct params *p)
 
   // if it makes it this far, we did not successfully compute E(R)
 
-  write_QROMBfailure(p,x); // save psi(r), rf_fib(r), and exit
+  //  write_QROMBfailure(p,x); // save psi(r), rf_fib(r), and exit
 
   // never get here.
 
-  return 0;
+  return FAILED_E;
 }
 
 void interpolate_array(double *r,double **y,double *r_cp,double **y_cp,int mpt)

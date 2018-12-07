@@ -36,6 +36,7 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
   my_func.params = p;
 
   size_t iter = 0;
+  size_t itermax = 100;
   int status;
 
 
@@ -72,6 +73,7 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
     scale_backward(s->x,x,p);
     scale_dEdx_backward(s->gradient,dEdx,p);
     *E = s->f;
+    if (*E>FAILED_E-1) break;
     p->Escale = fabs(*E);
     if (energy) {
       fprintf(energy,"%lu\t%13.6e\t%13.6e\n",iter,*E,calc_norm2(dEdx));
@@ -80,7 +82,7 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
 
   }
 
-  while (status == GSL_CONTINUE && iter < 100);
+  while (status == GSL_CONTINUE && iter < itermax);
   
 
   free_vector(dEdx,1,X_SIZE);
@@ -100,7 +102,12 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
     
   } else {
 
-    printf("Did not successfully find a minimum. Exceeded %zu iterations.\n",iter);
+    if (iter < itermax) {
+      printf("Unsuccessful calculation of energy, set to failure value E = %e\n",
+	     FAILED_E);
+    } else {
+      printf("Did not successfully find a minimum. Exceeded %zu iterations.\n",iter);
+    }
 
     return false;
 

@@ -49,6 +49,7 @@ typedef struct {
 #define CONV_ODE   1e-10
 #define CONV_MIN   1e-8
 
+#define FAILED_E   1e300
 
 
 struct params{

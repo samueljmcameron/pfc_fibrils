@@ -116,7 +116,8 @@ int main(int argc, char **argv)
 
       p.gamma_s = gamma_j(j,gammalow,gammahigh,num_gamma);
 
-
+      printf("gamma,k24 = %e,%e\n",p.gamma_s,p.k24);
+      
       // if not first calculation at the current i value, use xvalues at 
       // the j-1,i grid point
       if (j != 0) set_scalings(Rtemp_j,etatemp_j,deltatemp_j,&p);
@@ -152,7 +153,8 @@ int main(int argc, char **argv)
 
       }
 
-      printf("gamma,k24 = %e,%e\n",p.gamma_s,p.k24);
+      fflush(stdout);
+
 
     }
 
@@ -162,6 +164,12 @@ int main(int argc, char **argv)
     fprintf(eta,"\n");
     fprintf(delta,"\n");
 
+    fflush(energy);
+    fflush(surfacetwist);
+    fflush(radius);
+    fflush(eta);
+    fflush(delta);
+    
   }
 
   free_vector(x,1,X_SIZE);

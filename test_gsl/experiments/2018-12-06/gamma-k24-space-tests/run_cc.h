@@ -1,7 +1,6 @@
 #!/bin/bash
-#SBATCH --time=36:00:00
+#SBATCH --time=05:00:00
 #SBATCH --account=def-arutenbe
-#SBATCH --output=slurmoutput/run_%j.out
 
 module restore standard_modules
 
