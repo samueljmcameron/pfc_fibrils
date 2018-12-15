@@ -1,0 +1,81 @@
+Restoring modules from user's standard_modules
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 4.000000e-01
+Lambda = 1.000000e+00
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.000000e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.000000e-03
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 5.000000e-01
+lower bound estimate of R = 1.000000e-02
+upper bound estimate of eta = 6.350000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+abserr is 2.762195e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 6.373726e-09, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+a-alpha = -4.404859e-08, fpa = -1.086813e-09
+a-alpha = -3.958306e-08, fpa = -1.351122e-09
+a-alpha = -1.378720e-08, fpa = -3.175396e-09
+a-alpha = -6.904524e-09, fpa = -1.848510e-09
+a-alpha = 8.760413e-09, fpa = 1.208531e-09
+a-alpha = 1.746972e-08, fpa = 1.806640e-09
+a-alpha = 6.571684e-09, fpa = 8.575275e-10
+a-alpha = 2.094091e-08, fpa = 6.073936e-10
+a-alpha = 8.993240e-09, fpa = 5.324046e-10
+a-alpha = -3.165074e-08, fpa = -2.005241e-09
+a-alpha = 2.215407e-08, fpa = 5.645850e-10
+a-alpha = 3.530762e-08, fpa = 1.953122e-09
+a-alpha = -2.664514e-08, fpa = -9.885872e-10
+a-alpha = -1.305885e-07, fpa = -6.510351e-10
+Did not successfully find a minimum. Exceeded 100 iterations.
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 4.000000e-01
+Lambda = 1.000000e+00
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 3.000000e-02
+initial guesses for R, eta, and delta:
+guess for R = -nan
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = nan
+lower bound estimate of R = nan
+upper bound estimate of eta = 6.350000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+Singular matrix - row all 0, in pinvs
+R = -nan
+failed at point k = 2 in finite differences
+solvde convergence failed when x = (-nan,6.300000e+00,8.100000e-01).
+Retrying using a constant y value
+Singular matrix - row all 0, in pinvs
+R = -nan
+failed at point k = 2 in finite differences
+Retrying with a linear guess and a final twist angle value of pi/4.
+Singular matrix - row all 0, in pinvs
+R = -nan
+failed at point k = 2 in finite differences
+Retrying with a sqrt(r) guess and a final twist angle value of pi/2.01.
+Singular matrix - row all 0, in pinvs
+R = -nan
+failed at point k = 2 in finite differences
+failed to solve ODE when x = (-nan,6.300000e+00,8.100000e-01).
+saving current psi(r) shape (from failed solvde call), as well as the shape of the initial guess of psi(r) (from previous call of E_calc), and exiting to system.
+Traceback (most recent call last):
+  File "scan.py", line 41, in <module>
+    run.run_exe()
+  File "../../modules_gammak24/singlerun.py", line 40, in run_exe
+    subprocess.run([self.executable,self.tmp_path,*self.params.values()],check=True)
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2017/Core/python/3.7.0/lib/python3.7/subprocess.py", line 468, in run
+    output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['../../../bin/gamma_k24_singlepoint', '../../../tmp_data/', '30.', '0.4', '1.0', '1.0', '10.0', '0.030000000000000002', '-nan', '6.3', '0.81', 'nan', 'nan', '6.35', '6.29', '0.816', '0.8']' returned non-zero exit status 1.
