@@ -84,15 +84,14 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
 
   while (status == GSL_CONTINUE && iter < itermax);
   
-
-  free_vector(dEdx,1,X_SIZE);
   gsl_multimin_fdfminimizer_free(s);
   gsl_vector_free(x_scale);
-
 
   if (status == GSL_SUCCESS) {
     printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
 	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
+
+    free_vector(dEdx,1,X_SIZE);
 
     if (fabs(x[3]) <= 1e-5) x[2] = sqrt(-1);
 
@@ -101,6 +100,8 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
     return true;
     
   } else {
+
+    free_vector(dEdx,1,X_SIZE);
 
     if (iter < itermax) {
       printf("Unsuccessful calculation of energy, set to failure value E = %e\n",

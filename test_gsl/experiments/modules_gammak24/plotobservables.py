@@ -1,76 +1,70 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+from readparams import ReadParams
 
 class PlotObservables(object):
 
-    def __init__(self,gamma,k24,scan_dir="",data=None,K33=30.0,d0=1.0,lpath="data/",
-                 spath="results/",plot_format="pdf",colors = sns.color_palette()):
+    def __init__(self,xaxis,readparams,scan_dir="",data=None,
+                 plot_format="pdf",colors = sns.color_palette()):
 
-        self.gamma = gamma
-        self.k24 = k24
-        self.K33 = K33;
-        self.d0 = d0;
-        self.spath = spath
-        self.lpath = lpath
+        self.xaxis=xaxis
         self.plot_format = plot_format
-        self.scan_dir = f"_{scan_dir}"
+        self.scan_dir = scan_dir
         self.colors = colors
+        self.readparams = readparams
         if (data==None):
             self.data = np.loadtxt(self.observables_fname())
         else:
             self.data = self.data
 
-    def observables_fname(self):
+        return
 
-        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{self.d0:.4e}"
-                  f"_{self.gamma:.4e}")
+
+    def observables_fname(self):
     
-        return f"{self.lpath}_observables{self.scan_dir}{suffix}.txt"
+        suffix = self.readparams.write_suffix()
+
+        return f"data/_observables_{self.scan_dir}_{suffix}.txt"
     
     def observable_sname(self,varname):
 
-        suffix = f"_{self.K33:.4e}_{self.d0:.4e}"
-        return f"{self.spath}_{varname}{suffix}.{self.plot_format}"
+        suffix = self.readparams.write_suffix(suffix_type="save")
 
-    def str_to_column(self,varname):
+        return f"results/_{varname}_{suffix}.{self.plot_format}"
+
+    def ylabelstr_to_column(self,varname,observables_num = 5):
         
-        if varname == 'omega':
-            return 0
-        elif varname == 'Lambda':
-            return 1
-        elif varname == 'E':
-            return 2
+        if isinstance(self.xaxis,list):
+            vlength = len(self.xaxis)
+        else:
+            vlength = 1
+
+        if varname == 'E':
+            return vlength+0
         elif varname == 'R':
-            return 3
+            return vlength+1
         elif varname == 'eta':
-            return 4
+            return vlength+2
         elif varname == 'delta':
-            return 5
+            return vlength+3
         elif varname == 'surfacetwist':
-            return 6
+            return vlength+4
         else:
             raise ValueError(f"The label {varname} does not correspond to any "
                              f"columns in the file {self.observables_fname()}") 
 
-    def plot_observable(self,ax,xvar_str,yvar_str,label=None,
-                        markertype='.'):
 
-        x = self.data[:,self.str_to_column(xvar_str)]
-        y = self.data[:,self.str_to_column(yvar_str)]
-
-        ax.plot(x,y,markertype,label=label)
-
-        return
-
-    def plot_observable_omega_eq_Lambda(self,ax,yvar_str,label=None,
-                                        markertype='.',ms_markertype='-',
-                                        color=None,switch_ysign=1,
-                                        start_ms=None,end_ms=None):
+    def plot_observable(self,ax,yvar_str,label=None,
+                        markertype='.',ms_markertype='-',
+                        color=None,switch_ysign=1,
+                        start_ms=None,end_ms=None):
 
         x = self.data[:,0]
-        y = switch_ysign*self.data[:,self.str_to_column(yvar_str)]
+        y = self.data[:,self.ylabelstr_to_column(yvar_str)]
+
+        y *= switch_ysign
+
 
         if start_ms==None:
             start_ms=len(x)
@@ -84,7 +78,6 @@ class PlotObservables(object):
         ax.plot(x[start_ms:end_ms],y[start_ms:end_ms],ms_markertype,
                 color=color)
         ax.plot(x[end_ms:],y[end_ms:],markertype,color=color)
-
 
         return
     

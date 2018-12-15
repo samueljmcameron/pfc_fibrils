@@ -3,13 +3,19 @@ import subprocess
 import sys
 sys.path.append('../../modules_gammak24/')
 from singlerun import SingleRun
+from readparams import ReadParams
 
 if __name__=="__main__":
 
-    # see user_inputs.md for details on what typically goes in these inputs.
-    user_input = input("input string of a k24,Lambda,omega pair, "
-                      "using comma as delimiter: ")
-    k24,Lambda,omega = user_input.split(',')
+    if len(sys.argv)<4:
+
+        # see user_inputs.md for details on what typically goes in these inputs.
+        user_input = input("input string of a k24,Lambda,omega pair, "
+                           "using comma as delimiter: ")
+        k24,Lambda,omega = user_input.split(',')
+
+    else:
+        k24,Lambda,omega = sys.argv[1],sys.argv[2],sys.argv[3]
 
 
     gammas = np.linspace(0.02,0.2,num=19,endpoint=True)
@@ -18,14 +24,17 @@ if __name__=="__main__":
     scan['k_{24}'] = k24
     scan['\Lambda']=Lambda
     scan['\omega']=omega
-
+    
+    loadsuf=["K_{33}","k_{24}","\\Lambda","d_0","\\omega","\\gamma_s"]
     savesuf=["K_{33}","k_{24}","\\Lambda","d_0","\\omega"]
 
     for gamma in gammas:
         
         scan['\gamma_s'] = str(gamma)
         
-        run = SingleRun(scan=scan,savesuf=savesuf)
+        rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=savesuf)
+        
+        run = SingleRun(rp)
 
         run.run_exe()
 
@@ -56,4 +65,4 @@ if __name__=="__main__":
                 scan['deltalower'] = '0.81'
 
 
-        run.concatenate_observables()
+        run.concatenate_observables(["\\gamma_s"])

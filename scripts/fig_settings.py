@@ -8,12 +8,10 @@ from matplotlib import rc
 
 def configure_fig_settings():
 
-    font = {'family':'sans-serif','weight':'normal','size':'9'}
+    font = {'family':'Times New Roman','weight':'normal','size':'9'}
     rc('font', **font)
     rc('text',usetex=True)
     params = {'text.latex.preamble':[r'\usepackage{siunitx}',
-                                     r'\usepackage{sfmath}',
-                                     #                                 r'\sisetup{detect-family}=true',
                                      r'\usepackage{amsmath}']}
 
     
