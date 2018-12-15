@@ -15,7 +15,9 @@ if __name__=="__main__":
         k24,Lambda,omega = user_input.split(',')
 
     else:
-        k24,Lambda,omega = sys.argv[1],sys.argv[2],sys.argv[3]
+
+        k24s = np.linspace(0,1.0,num=11,endpoint=True)
+        k24,Lambda,omega = str(k24s[int(sys.argv[1])]),sys.argv[2],sys.argv[3]
 
 
     gammas = np.linspace(0.02,0.2,num=19,endpoint=True)
