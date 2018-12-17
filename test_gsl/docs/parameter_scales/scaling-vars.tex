@@ -45,7 +45,7 @@ In its most general form, the unscaled model is
 where I have ignored any surface contributions from the ends of the fibril, and $\hat{L}$ is some multiple of the periodic structure along the $\hat{z}$ axis. I have assumed that $\hat{\chi}^2>0$, as the density amplitude term (pre-factor $\hat{\omega}$) would be positive definite if not, meaning no density modulations would occur. The units of $\hat{\Lambda}$ are $\si{\pico\newton\cdot\micro\meter^8}$, the units of $\hat{\omega}$ are $\si{\pico\newton\cdot\micro\meter^{10}}$, and the units of $\hat{\chi}^2$ are $\si{\micro\meter^{-6}}$. If I divide both side of eqn \ref{eq:generalunits} by $\hat{K}_{22}\hat{q}^2$, I can make the system dimensionless and reduce to the form
 \begin{align}\label{eq:general}
 E(R,L;\psi(r),\rho_{\delta}(z))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
-&\phantom{=}+\frac{\Lambda}{R^2L}\int_0^{L}dz\int_0^{R}rdr\rho_{\delta}\left(\frac{4\pi^2}{d_0^2\cos^2\psi}+\frac{\partial^2}{\partial z^2}\right)^2\rho_{\delta}\nonumber\\
+&\phantom{=}+\frac{\Lambda}{R^2L}\int_0^{L}dz\int_0^{R}rdr\rho_{\delta}\left(\frac{4\pi^2}{\cos^2\psi}+\frac{\partial^2}{\partial z^2}\right)^2\rho_{\delta}\nonumber\\
 &\phantom{=}+\frac{\omega}{L}\int_0^{L}dz\rho_{\delta}^2\left(\rho_{\delta}^2-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
 \end{align}
 
@@ -58,10 +58,10 @@ In general, the liquid crystal elastic constants $\hat{K}_{ii}$, $\hat{q}=\hat{k
 For collagen fibrils, $\hat{\delta}\sim0.1\hat{\rho}_0$. Inserting the eqn \ref{eq:rho_units} in dimensionless form into eqn \ref{eq:general} and noting that the period of this structure will be $L=2\pi/\eta$, I get
 \begin{align}\label{eq:final}
 E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
-&\phantom{=}+\frac{\Lambda}{R^2{\frac{2\pi}{\eta}}}\int_0^{{\frac{2\pi}{\eta}}}dz\int_0^{R}rdr\delta^2\cos^2(\eta z)\left(\frac{4\pi^2}{d_0^2\cos^2\psi}-\eta^2\right)^2\nonumber\\
+&\phantom{=}+\frac{\Lambda}{R^2{\frac{2\pi}{\eta}}}\int_0^{{\frac{2\pi}{\eta}}}dz\int_0^{R}rdr\delta^2\cos^2(\eta z)\left(\frac{4\pi^2}{\cos^2\psi}-\eta^2\right)^2\nonumber\\
 &\phantom{=}+\frac{\omega}{{\frac{2\pi}{\eta}}}\int_0^{{\frac{2\pi}{\eta}}}dz\delta^2\cos^2(\eta z)\left(\delta^2\cos^2(\eta z)-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}\nonumber\\
 &=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
-&\phantom{=}+\frac{\Lambda\delta^2}{2R^2}\int_0^{R}rdr\left(\frac{4\pi^2}{d_0^2\cos^2\psi}-\eta^2\right)^2\nonumber\\
+&\phantom{=}+\frac{\Lambda\delta^2}{2R^2}\int_0^{R}rdr\left(\frac{4\pi^2}{\cos^2\psi}-\eta^2\right)^2\nonumber\\
 &\phantom{=}+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
 \end{align}
 The following is a list of the redefined, dimensionless quantites:
@@ -71,12 +71,11 @@ The following is a list of the redefined, dimensionless quantites:
 &r=\hat{r}\hat{q},\\
 &\psi(r)=\hat{\psi}(\hat{r}),\\
 &K_{33}=\frac{\hat{K}_{33}}{\hat{K}_{22}},\\
-&L=\hat{L}\hat{q},\\
-&\Lambda=\frac{\hat{\Lambda}\hat{\chi}^2\hat{q}^2}{\hat{K}_{22}},\label{eq:dimensionlessLambda}\\
+&L=\frac{\hat{L}}{\hat{d}_0},\\
+&\Lambda=\frac{\hat{\Lambda}\hat{\chi}^2}{\hat{K}_{22}\hat{q}^2\hat{d}_0^4},\label{eq:dimensionlessLambda}\\
 &\rho_{\delta}=\frac{\hat{\rho}_{\delta}}{\hat{\chi}},\\
 &\delta=\frac{\hat{\delta}}{\hat{\chi}},\\
-&\eta=\frac{\hat{\eta}}{\hat{q}},\\
-&d_0=\hat{d}_0\hat{q},\\
+&\eta=\hat{\eta}\hat{d}_0,\\
 &\omega=\frac{\hat{\omega}\hat{\chi}^4}{\hat{K}_{22}\hat{q}^2},\label{eq:dimensionlessomega}\\
 &\gamma=\frac{\hat{\gamma}}{\hat{K}_{22}\hat{q}}.
 \end{align}
@@ -131,9 +130,9 @@ at a given inverse temperature $\hat{\beta}$ and density $\hat{\rho}_0=\SI{1.67e
 
 Using a lower value of $\SI{3.2e7}{\pico\newton\per\micro\meter^2}$ and upper value of $\SI{1e9}{\pico\newton\per\micro\meter^2}$ and inserting these values into eqn \ref{eq:bulk_dimensional}, the lower and upper values $\hat{\Lambda}_l=\SI{1.5e-11}{\pico\newton\micro\meter^8}$ and $\hat{\Lambda}_u=\SI{4.8e-10}{\pico\newton\micro\meter^8}$, respectively. Putting these limits into eqn \ref{eq:dimensionlessLambda},
 \begin{equation}\label{eq:Lambda}
-10\lesssim\Lambda\lesssim300
+50\lesssim\Lambda\lesssim1000
 \end{equation}
-(using the same values of $\hat{q}=\SI{10}{\per\micro\meter}$ and $\hat{K}_{22}=\SI{6}{\pico\newton}$ as I used above in the $\omega$ calculation).
+(using the same values of $\hat{q}=\SI{10}{\per\micro\meter}$ and $\hat{K}_{22}=\SI{6}{\pico\newton}$ as I used above in the $\omega$ calculation, and the standard d-band value $\hat{d}_0=\SI{67}{\nano\meter}$).
 %%%%%%%%%%%%%%%
 % Bibliography
 %%%%%%%%%%%%%%%

@@ -41,23 +41,45 @@ class SingleRun(object):
 
         return
 
-    def get_xvals(self):
+    def get_xvals(self,fname='observables',str2float=False):
         # get the values in the x array, from the data file that HAS ALREADY BEEN MOVED FROM
         # tmp_data folder to true data folder, and BEFORE concatenation.
 
         suffix = self.readparams.write_suffix()
         
-        fname = f"_observables_{suffix}.txt"
+        fname = f"_{observables}_{suffix}.txt"
 
         fullpath = f"data/{fname}"
 
         with open(fullpath,"r") as f:
             line = f.readline()
-            E,R,eta,delta,surftwist = line.split()
+            if str2float:
+                E,R,eta,delta,surftwist = map(float,line.split())
+            else:
+                E,R,eta,delta,surftwist = line.split()
         
         return R,eta,delta
+
+    def get_all_observables(self,fname,str2float=False):
+        # get the values in the x array, from the data file that HAS ALREADY BEEN MOVED FROM
+        # tmp_data folder to true data folder, and BEFORE concatenation.
+
+        suffix = self.readparams.write_suffix()
+        
+        fname = f"_{fname}_{suffix}.txt"
+
+        fullpath = f"data/{fname}"
+
+        with open(fullpath,"r") as f:
+            line = f.readline()
+            if str2float:
+                E,R,eta,delta,surftwist = map(float,line.split())
+            else:
+                E,R,eta,delta,surftwist = line.split()
+
+        return E,R,eta,delta,surftwist
     
-    def mv_file(self,mname):
+    def mv_file(self,mname,newname=None):
         # move a file from the temporary file folder to the data folder.
     
         suffix = self.readparams.write_suffix()
@@ -66,17 +88,28 @@ class SingleRun(object):
 
         mvfrom = f"{self.tmp_path}{fname}"
 
-        mvto = f"data/{fname}"
+        if newname != None:
+            newfname = f"_{newname}_{suffix}.txt"
+        else:
+            newfname = fname
+
+        mvto = f"data/{newfname}"
 
         subprocess.run(["mv",mvfrom,mvto],check=True)
 
         return
 
     def add_datastring(self,vars):
-        
-        a = [float(self.params[var]) for var in vars]
 
-        return '\t'.join(map("{:13.6e}".format,a))
+        if isinstance(vars,list):
+            a = [float(self.params[var]) for var in vars]
+            dstring = '\t'.join(map("{:13.6e}".format,a))
+
+        else:
+            a = float(self.params[vars])
+            dstring = f"{a:13.6e}"
+
+        return dstring
 
     def concatenate_observables(self,vars,scan_dir=''):
 
@@ -99,5 +132,27 @@ class SingleRun(object):
             if os.path.isfile(fname):
 
                 os.remove(fname)
+        
+        return
+
+    def write_observables(self,E0,R0,eta0,delta0,
+                          surftwist0,vars,scan_dir=''):
+
+        suffix1 = self.readparams.write_suffix(suffix_type="save")
+
+        newfname = f"data/_observables_{scan_dir}_{suffix1}.txt"
+
+        with open(newfname,"a+") as f1:
+    
+            line=f"{E0:13.6e}\t{R0:13.6e}\t{eta0:13.6e}\t{delta0:13.6e}\t{surftwist0:13.6e}\n"
+
+            f1.write(f"{self.add_datastring(vars)}\t{line}")
+            
+        suffix2 = self.readparams.write_suffix()
+        fname = f"data/_observables_{suffix2}.txt"
+
+        if os.path.isfile(fname):
+            
+            os.remove(fname)
         
         return
