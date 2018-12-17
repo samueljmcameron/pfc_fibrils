@@ -1,3 +1,9 @@
+################################################################################
+# This file can only be run if the corresponding deltazero_energy.py script    #
+# has been run first! Otherwise, 'observables_Emin' type file below will not   #
+# exist and the script will fail. #
+################################################################################
+
 import numpy as np
 import subprocess
 import sys
@@ -29,19 +35,15 @@ if __name__=="__main__":
     savesuf=["K_{33}","k_{24}","d_0","\\omega","\\gamma_s"]
 
 
-    # first, find minimum for delta = 0 case, so you know the upper bound for
+    # first, load the minimum for delta = 0 case, so you know the upper bound for
     # the energy minimum.
     
-    scan['\\omega']='0'
     scan['\\Lambda']='0'
+    scan['\\omega']='0'
 
     rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=savesuf)
 
     run = SingleRun(rp)
-
-    run.run_exe()
-
-    run.mv_file('observables',newname='observables_Emin')
 
     E0,R0,eta0,delta0,surftwist0 = run.get_all_observables('observables_Emin',
                                                            str2float=True)
@@ -57,8 +59,6 @@ if __name__=="__main__":
         run = SingleRun(rp)
 
         run.run_exe()
-
-        #run.mv_file('psivsr')
 
         run.mv_file('observables')
 

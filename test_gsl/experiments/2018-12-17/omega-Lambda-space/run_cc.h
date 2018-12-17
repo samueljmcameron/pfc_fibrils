@@ -1,9 +1,9 @@
 #!/bin/bash
-#SBATCH --time=00:06:00
-#SBATCH --account=def-arutenbe
-#SBATCH --output=slurmoutput/run_%A_%a.out
-#SBATCH --array=0-10
 
-module restore standard_modules
+jout1=$(sbatch runfirst.h $1 $2)
 
-python scan.py $SLURM_ARRAY_TASK_ID $1 $2
+jid1="${jout1//[!0-9]/}"
+
+echo $jid1
+
+jout2=$(sbatch --dependency=afterok:$jid1 runsecond.h $1 $2)
