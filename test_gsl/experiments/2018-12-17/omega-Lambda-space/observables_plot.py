@@ -30,25 +30,38 @@ configure_fig_settings()
 fig = {}
 ax = {}
 
+array_store = {}
+
 for observable in observable_list:
     
     fig[observable],ax[observable] = plt.subplots()
 
     fig[observable].set_size_inches(width,height)
 
+    array_store[observable]=np.empty([31,31],float)
+
 colors = sns.color_palette()
 
 savesuf = ["K_{33}","k_{24}","d_0","\\gamma_s"]
-loadsuf = ["K_{33}","k_{24}","d_0","\\gamma_s"]
+loadsuf = ["K_{33}","k_{24}","d_0","\\omega","\\gamma_s"]
 
 
 
-rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=savesuf)
-obs = PlotObservables(["\\Lambda","\\omega"],rp)
-print(obs.observables_fname())
-for j,observable in enumerate(observable_list):
-    obs.plot_observable(ax[observable],observable,color=colors[j],
-                        label=fr'$\gamma_s,k_{{24}}={float(gamma):.2f},{float(k24):.1f}$')
+
+omegas = np.linspace(0,30,num=31,endpoint=True)
+
+for i,omega in enumerate(omegas):
+
+    scan['\\omega']=str(omega)
+
+    rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=savesuf)
+
+    obs = PlotObservables(["\\Lambda"],rp)
+    print(omega)
+    for j,observable in enumerate(observable_list):
+        
+        index = obs.ylabelstr_to_column(observable)
+        array_store[observable][i,:] = obs.data[:,index]
 
 
 
@@ -58,6 +71,8 @@ xlabel = r'$3\Lambda=\omega$'
 
 for observable in observable_list:
 
+    ax[observable].imshow(array_store[observable])
+    
     if observable == 'surfacetwist':
         ylabel = r'$\psi(R)$'
     elif len(observable) > 1:
@@ -69,4 +84,7 @@ for observable in observable_list:
     ax[observable].set_ylabel(ylabel)
     ax[observable].legend(frameon=False)
     fig[observable].tight_layout()
-    fig[observable].savefig(obs.observable_sname(observable))
+    #    fig[observable].savefig(obs.observable_sname(observable))
+
+
+plt.show()

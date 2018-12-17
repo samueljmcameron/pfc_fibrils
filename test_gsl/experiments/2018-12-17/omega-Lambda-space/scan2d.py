@@ -24,7 +24,7 @@ if __name__=="__main__":
         gamma,k24,omega = sys.argv[1],sys.argv[2],sys.argv[3]
 
 
-    Lambdas = np.linspace(0,30,num=31,endpoint=True)
+    Lambdas = np.linspace(25,30,num=6,endpoint=True)
 
     scan = {}
     scan['k_{24}'] = k24
@@ -50,7 +50,10 @@ if __name__=="__main__":
 
     scan['\\omega']=omega
 
-    for i,Lambda in enumerate(Lambdas):
+    i = 0
+    while (i < len(Lambdas)):
+
+        Lambda = Lambdas[i]
         
         scan['\\Lambda']=str(Lambda)
         
@@ -65,6 +68,11 @@ if __name__=="__main__":
         Ei,Ri,etai,deltai,surftwisti = run.get_all_observables('observables',str2float=True)
         
         if (abs((Ei-E0)/E0) < 1e-7):
+
+            # if the energy is too large, then it will not get smaller as Lambda increases
+            # UNLESS the currently calculated energy Ei is in a highly metastable regime.
+            # For now, I will ignore this possibility.
+
             for j,Lambda in enumerate(Lambdas[i:]):
                 scan['\\Lambda']=str(Lambda)
                 rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=savesuf)
@@ -72,6 +80,23 @@ if __name__=="__main__":
                 run.write_observables(E0,R0,eta0,delta0,surftwist0,"\\Lambda")
 
             break
+
+        elif np.isnan(Ri):
+
+            # if Ri is infinite, then the calculation failed.
+            # Retry it with a different initial guess.
+
+            print("Ri is NAN, trying again with Rguess = 1.0")
+
+            run.remove_file("observables")
+            if abs(float(Rguess)-1.0)>1e-10:
+                Ri = 1.0
+            else:
+                break
+
+        else:
+            run.concatenate_observables("\\Lambda",scan_dir="scanforward")
+            i+= 1
         
         Rguess,etaguess,deltaguess = str(Ri),str(etai),str(deltai)
 
@@ -95,5 +120,3 @@ if __name__=="__main__":
             else:
                 scan['deltalower'] = '0.81'
 
-
-        run.concatenate_observables("\\Lambda")

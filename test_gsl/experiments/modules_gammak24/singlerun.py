@@ -111,6 +111,17 @@ class SingleRun(object):
 
         return dstring
 
+    def remove_file(self,fname="observables"):
+
+        suffix = self.readparams.write_suffix()
+
+        fname = f"data/_{fname}_{suffix}.txt"
+
+        if os.path.isfile(fname):
+            os.remove(fname)
+
+        return
+
     def concatenate_observables(self,vars,scan_dir=''):
 
         suffix1 = self.readparams.write_suffix(suffix_type="save")
