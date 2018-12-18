@@ -73,8 +73,13 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
     scale_backward(s->x,x,p);
     scale_dEdx_backward(s->gradient,dEdx,p);
     *E = s->f;
-    if (*E>FAILED_E-1) break;
+
+    if (*E>0.99*FAILED_E) {
+      break;
+    }
+
     p->Escale = fabs(*E);
+
     if (energy) {
       fprintf(energy,"%lu\t%13.6e\t%13.6e\n",iter,*E,calc_norm2(dEdx));
     }

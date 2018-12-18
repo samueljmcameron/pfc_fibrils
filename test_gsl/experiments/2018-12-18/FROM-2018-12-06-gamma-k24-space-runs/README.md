@@ -1,0 +1,1 @@
+Re-plotting the results from 2018-12-06, this time without the \usepackage{sfmath} included in the python plotting code, which was not platform independent.

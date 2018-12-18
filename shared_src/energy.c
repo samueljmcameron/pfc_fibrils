@@ -136,7 +136,11 @@ double E_calc(const double *x,struct params *p)
 
 
   if (x[1] <= 0 || x[2] <= 0 || x[2] >= 8.0
-      || fabs(x[3]) >= 1.0) return FAILED_E;
+      || fabs(x[3]) >= 1.0) {
+    printf("x[1] = %e, x[2] = %e, x[3] = %e\n",x[1],x[2],x[3]);
+    printf("something is too big or less than zero, so returning failed calculation.\n");
+    return FAILED_E;
+  }
   
   
   while (p->mpt <= MAX_M) {
@@ -177,7 +181,12 @@ double E_calc(const double *x,struct params *p)
 
   //  write_QROMBfailure(p,x); // save psi(r), rf_fib(r), and exit
 
-  // never get here.
+  // NOTE that if the calculation gets to here, then all calculations from this
+  // point on will return FAILED_E, which means the derivatives will all be zero,
+  // and so the minimization will exit with all derivatives being zero, but 
+  // E = FAILED_E.
+
+  printf("failed calculation!\n");
 
   return FAILED_E;
 }

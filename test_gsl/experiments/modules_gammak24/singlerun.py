@@ -21,12 +21,13 @@ class SingleRun(object):
     #  tmp_path - the path of where the output files are stored initially
     #  executable - the executable that creates and writes the output files
     
-    def __init__(self,readparams,tmp_path="../../../tmp_data/",
+    def __init__(self,readparams,tmp_path="../../../tmp_data/",scan_dir="",
                  params=None,executable="../../../bin/gamma_k24_singlepoint"):
 
         self.readparams = readparams
         self.tmp_path = tmp_path
         self.executable = executable
+        self.scan_dir = scan_dir
         if (params == None):
             self.params = self.readparams.params
         else:
@@ -122,11 +123,11 @@ class SingleRun(object):
 
         return
 
-    def concatenate_observables(self,vars,scan_dir=''):
+    def concatenate_observables(self,vars):
 
         suffix1 = self.readparams.write_suffix(suffix_type="save")
 
-        newfname = f"data/_observables_{scan_dir}_{suffix1}.txt"
+        newfname = f"data/_observables_{self.scan_dir}_{suffix1}.txt"
 
         with open(newfname,"a+") as f1:
     
@@ -147,11 +148,11 @@ class SingleRun(object):
         return
 
     def write_observables(self,E0,R0,eta0,delta0,
-                          surftwist0,vars,scan_dir=''):
+                          surftwist0,vars):
 
         suffix1 = self.readparams.write_suffix(suffix_type="save")
 
-        newfname = f"data/_observables_{scan_dir}_{suffix1}.txt"
+        newfname = f"data/_observables_{self.scan_dir}_{suffix1}.txt"
 
         with open(newfname,"a+") as f1:
     
