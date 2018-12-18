@@ -1,0 +1,31 @@
+hi
+Restoring modules from user's standard_modules
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 7.000000e-01
+Lambda = 2.500000e+01
+d0 = 1.000000e+00
+omega = 0.000000e+00
+gamma_s = 1.200000e-01
+initial guesses for R, eta, and delta:
+guess for R = 5.000000e-01
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.000000e+00
+lower bound estimate of R = 1.000000e-01
+upper bound estimate of eta = 6.430000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+likely a maximizing (vs minimizing) solution for psi(r), as y[1][2]=-1.776418e-03  which usually means high energy.
+solvde convergence failed when x = (4.533371e+00,6.722632e+00,8.097508e-01).
+Retrying using a constant y value
+likely a maximizing (vs minimizing) solution for psi(r), as y[1][2]=-2.309995e-03  which usually means high energy.
+solvde convergence failed when x = (1.144250e+01,6.697759e+00,8.070355e-01).
+Retrying using a constant y value
+a-alpha = -2.049975e-07, fpa = -4.848785e-10
+minimum found at:
+           16	 4.958847e-01	 6.387966e+00	-1.449613e-11	 5.478016e-02	 1.396379e-10	 7.930164e-11	 1.966020e-09	 1.972567e-09
+psi(R) = 3.45e-01
