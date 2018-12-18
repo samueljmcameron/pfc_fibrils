@@ -67,7 +67,7 @@ class PlotObservables2d(object):
                     extent = [self.gamma_min,self.gamma_max,self.k24_min,
                               self.k24_max],aspect=aspect)
         #gammas,k24s = np.meshgrid(gammas,k24s)
-        ax.contour(gammas,k24s,stuff,colors='k')
-
+        CS = ax.contour(gammas,k24s,stuff,colors='k')
+        ax.clabel(CS,fontsize=9,inline=1)
         return s
 
