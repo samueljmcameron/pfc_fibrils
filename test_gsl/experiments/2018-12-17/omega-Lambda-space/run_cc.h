@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p slurmoutput
+
 jout1=$(sbatch runfirst.h $1 $2)
 
 jid1="${jout1//[!0-9]/}"
