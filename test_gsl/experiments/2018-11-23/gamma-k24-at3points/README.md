@@ -1,1 +1,0 @@
-This experiment aims to show how turning omega and Lambda on affects the psi(r) curves.
