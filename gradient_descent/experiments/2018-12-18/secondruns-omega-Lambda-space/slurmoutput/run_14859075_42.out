@@ -1,0 +1,31 @@
+hi
+Restoring modules from user's standard_modules
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 7.000000e-01
+Lambda = 0.000000e+00
+d0 = 1.000000e+00
+omega = 4.200000e+00
+gamma_s = 8.000000e-02
+initial guesses for R, eta, and delta:
+guess for R = 5.000000e-01
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.000000e+00
+lower bound estimate of R = 1.000000e-01
+upper bound estimate of eta = 6.430000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+a-alpha = 2.836750e-09, fpa = 7.438698e-10
+minimum found at:
+            6	 2.484549e-01	 6.300000e+00	 8.164966e-01	-8.747513e-01	-1.829852e-09	-5.551115e-10	 6.938894e-09	 7.197552e-09
+psi(R) = 2.50e-01
+Traceback (most recent call last):
+  File "scan2d.py", line 77, in <module>
+    Ei,Ri,etai,deltai,surftwisti = run.get_all_observables('observables',str2float=True)
+  File "../../modules_gammak24/singlerun.py", line 77, in get_all_observables
+    E,R,eta,delta,surftwist = map(float,line.split())
+ValueError: not enough values to unpack (expected 5, got 0)

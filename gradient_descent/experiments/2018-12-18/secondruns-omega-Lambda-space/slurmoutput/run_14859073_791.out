@@ -1,0 +1,34 @@
+hi
+Restoring modules from user's standard_modules
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 6.000000e-01
+Lambda = 0.000000e+00
+d0 = 1.000000e+00
+omega = 7.910000e+01
+gamma_s = 1.000000e-01
+initial guesses for R, eta, and delta:
+guess for R = 5.000000e-01
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.000000e+00
+lower bound estimate of R = 1.000000e-01
+upper bound estimate of eta = 6.430000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+minimum found at:
+            5	 4.384966e-01	 6.300000e+00	 8.164966e-01	-1.316605e+01	-9.349247e-11	 4.229421e-10	-4.440892e-08	 4.441103e-08
+psi(R) = 3.15e-01
+OSError: [Errno 122] Disk quota exceeded
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "scan2d.py", line 116, in <module>
+    run.concatenate_observables("\\Lambda")
+  File "../../modules_gammak24/singlerun.py", line 146, in concatenate_observables
+    os.remove(fname)
+OSError: [Errno 122] Disk quota exceeded

@@ -1,0 +1,8 @@
+hi
+Restoring modules from user's standard_modules
+Traceback (most recent call last):
+  File "scan2d.py", line 77, in <module>
+    Ei,Ri,etai,deltai,surftwisti = run.get_all_observables('observables',str2float=True)
+  File "../../modules_gammak24/singlerun.py", line 77, in get_all_observables
+    E,R,eta,delta,surftwist = map(float,line.split())
+ValueError: not enough values to unpack (expected 5, got 0)
