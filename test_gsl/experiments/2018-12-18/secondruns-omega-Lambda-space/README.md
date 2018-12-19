@@ -1,0 +1,1 @@
+This experiment calculated omega vs Lambda plots of the observables. For this initial run, I've looked at the space from omega = 0 to 100 and Lambda = 0 to 100, at (gamma,k24)=(0.1,0.7), (gamma,k24)=(0.1,0.8), (gamma,k24)=(0.1,0.6), (gamma,k24)=(0.08,0.7), and (gamma,k24)=(0.12,0.7).
