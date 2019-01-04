@@ -21,6 +21,8 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
   
   double calc_norm2(double *dEdx);
 
+  bool poorscaling(gsl_vector *x);
+
   double *dEdx;
   dEdx = vector(1,X_SIZE);
 
@@ -39,6 +41,8 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
   size_t itermax = 100;
   int status;
 
+  int poorscaling_count=0;
+  int max_poorscaling_count = 10;
 
   clock_t begin = clock();
 
@@ -73,10 +77,18 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
     scale_backward(s->x,x,p);
     scale_dEdx_backward(s->gradient,dEdx,p);
     *E = s->f;
+    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
+    if (poorscaling(s->x)) {
+      poorscaling_count += 1;
+    } else {
+      poorscaling_count = 0;
+    }
 
-    if (*E>0.99*FAILED_E) {
+    if (*E>0.99*FAILED_E || poorscaling_count == max_poorscaling_count) {
       break;
     }
+
 
     p->Escale = fabs(*E);
 
@@ -92,34 +104,56 @@ bool drive(double *E,struct params *p,double *x,FILE *energy)
   gsl_multimin_fdfminimizer_free(s);
   gsl_vector_free(x_scale);
 
+  int returnvalue;
+
   if (status == GSL_SUCCESS) {
     printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
 	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
-
-    free_vector(dEdx,1,X_SIZE);
 
     if (fabs(x[3]) <= 1e-5) x[2] = sqrt(-1);
 
     if (p->omega == 0) x[2]=x[3]= sqrt(-1);
     
-    return true;
+    returnvalue =  DRIVER_SUCCESS;
     
   } else {
 
-    free_vector(dEdx,1,X_SIZE);
+    if (*E>0.99*FAILED_E) {
 
-    if (iter < itermax) {
       printf("Unsuccessful calculation of energy, set to failure value E = %e\n",
 	     FAILED_E);
-    } else {
-      printf("Did not successfully find a minimum. Exceeded %zu iterations.\n",iter);
-    }
+      
+    } else if (poorscaling_count == max_poorscaling_count) {
 
+      printf("the initial guesses were not good, did not successfully find a minimum.\n");
+      
+    } else if (iter == itermax) {
+
+      printf("Did not successfully find a minimum. Exceeded %zu iterations.\n",iter);
+      
+    } else {
+      
+      printf("unclear why the calculation failed.\n");
+      
+    }
     return false;
 
   }
 
+  free_vector(dEdx,1,X_SIZE);
+  
 }
+
+bool poorscaling(gsl_vector *x)
+{
+  int i;
+  for (i = 0; i < 3; i++) {
+    if (fabs(gsl_vector_get(x,i)) > 1.0)
+      return true;
+  }
+  return false;
+}
+
 
 double calc_norm2(double *dEdx)
 {

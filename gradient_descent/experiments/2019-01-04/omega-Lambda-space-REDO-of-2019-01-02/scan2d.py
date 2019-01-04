@@ -1,6 +1,3 @@
-# THIS FILE IS ERROR FILLED, DO NOT USE ON FUTURE EXPERIMENTS. SEE MORE RECENT
-# VERSIONS IN e.g. 2019-01-04 experiment folder.
-
 ################################################################################
 # This file can only be run if the corresponding deltazero_energy.py script    #
 # has been run first! Otherwise, 'observables_Emin' type file below will not   #
@@ -55,6 +52,10 @@ if __name__=="__main__":
 
     scan['\\omega']=omega
 
+    scan['Rguess'] = str(R0)
+    scan['Rupper'] = str(1.5*R0)
+    scan['Rlower'] = str(0.75*R0)
+
     i = 0
     while (i < len(Lambdas)):
 
@@ -81,7 +82,7 @@ if __name__=="__main__":
         if (Ei > 0.1*FAILED_E):
 
             # if the energy calculation fails, this will be true.
-
+            print('hi')
             # remove current file with observables for the current Lambda value that are higher than
             # the delta = 0 energy.
             print(Ei)
@@ -98,7 +99,7 @@ if __name__=="__main__":
 
             break
 
-        if np.isnan(Ri):
+        if np.isnan(Ri) or Ri <= 0:
 
             # if Ri is infinite, then the calculation failed.
             # Retry it with a different initial guess.
@@ -107,7 +108,7 @@ if __name__=="__main__":
 
             # remove the current observables file, so that a new one can be written.
             run.remove_file("observables")
-            if abs(float(Rguess)-1.0)>1e-10:
+            if abs(float(scan['Rguess'])-1.0)>1e-10:
                 Ri = 1.0
             else:
                 break

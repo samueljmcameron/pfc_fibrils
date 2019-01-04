@@ -51,6 +51,10 @@ typedef struct {
 
 #define FAILED_E   1e300
 
+#define DRIVER_FAILURE 0
+#define DRIVER_SUCCESS 1
+#define DRIVER_POORSCALING 2
+
 
 struct params{
   // these 14 parameters are necessary to specify in all cases
