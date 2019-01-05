@@ -27,7 +27,9 @@ int main(int argc, char **argv)
 
   void save_observables(FILE *observables,double E,double *x,struct params *p);
 
-  bool drive(double *E,struct params *p,double *x,FILE *energy);
+  void reset_guess_vals(double *x, struct params *p);
+  
+  int drive(double *E,struct params *p,double *x,FILE *energy);
   
   struct params p; 
   initialize_params(&p,argv);
@@ -45,8 +47,23 @@ int main(int argc, char **argv)
 
   double E;
 
-  if (drive(&E,&p,x,(NULL))) save_psivsr(psivsr,&p);
-  else set_x_NAN(&E,x,X_SIZE);
+  int calculation = drive(&E,&p,x,(NULL));
+
+  
+  if (calculation == DRIVER_POORSCALING) {
+    printf("RETRYING!\n");
+    reset_guess_vals(x,&p);
+    calculation = drive(&E,&p,x,(NULL));
+  }
+  if (calculation == DRIVER_SUCCESS) {
+    
+    save_psivsr(psivsr,&p);
+    
+  } else {
+    
+    set_x_NAN(&E,x,X_SIZE);
+    
+  }
 
   save_observables(observables,E,x,&p);
 
@@ -67,7 +84,37 @@ int main(int argc, char **argv)
 }
 
 
+void reset_guess_vals(double *x, struct params *p)
+/*==============================================================================
 
+  Purpose: This function is called if the scaling of x is poor (i.e. if scaledx
+  values in the minimization procedure are consistently not between -1 and 1 for
+  at least one of the x components (usually it is x[1]). The function assumes
+  that the current values of x are okay (as they've been optimized somewhat by
+  the optimization procedure) and only the scaling itself needs to be reset.
+  ============================================================================*/
+{
+  p->Rguess = x[1];
+  p->Rupper = 1.5*p->Rguess;
+  p->Rlower = 0.75*p->Rguess;
+
+  if (x[2] == x[2]) {
+    p->etaguess = x[2];
+    p->etaupper = p->etaguess+0.1;
+    p->etalower = p->etaguess-0.02;
+  }
+  if (x[3] == x[3] && fabs(x[3])>DELTA_CLOSE_TO_ZERO) {
+    p->deltaguess = x[3];
+    p->deltaupper = 0.818;
+    if (p->deltaguess < 0.81) {
+      p->deltalower = 0.95*p->deltaguess;
+    } else {
+      p->deltalower = 0.81;
+    }
+  }
+  
+  return;
+}
 
 void save_psivsr(FILE *psivsr,struct params *p)
 {
@@ -149,7 +196,7 @@ void initialize_params(struct params *p,char **args)
 
   p->mpt = (MAX_M-1)/8+1;
 
-  printf("parameter values for minimization:\n");
+  printf("\n\nparameter values for minimization:\n");
 
   printf("K33 = %e\n",p->K33);
   printf("k24 = %e\n",p->k24);

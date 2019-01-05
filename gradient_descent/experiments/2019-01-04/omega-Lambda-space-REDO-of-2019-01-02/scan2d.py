@@ -7,12 +7,15 @@
 import numpy as np
 import subprocess
 import sys
+import time
 sys.path.append('../../modules_gammak24/')
 from singlerun import SingleRun
 from readparams import ReadParams
 
 if __name__=="__main__":
 
+    start_time = time.time()
+    
     FAILED_E = 1e300
 
     if len(sys.argv)<4:
@@ -140,3 +143,4 @@ if __name__=="__main__":
             else:
                 scan['deltalower'] = '0.81'
 
+    print(f"Took {(time.time()-start_time)/3600} hours to complete.")

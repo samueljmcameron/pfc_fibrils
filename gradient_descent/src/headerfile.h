@@ -55,6 +55,8 @@ typedef struct {
 #define DRIVER_SUCCESS 1
 #define DRIVER_POORSCALING 2
 
+#define DELTA_CLOSE_TO_ZERO 1e-5
+
 
 struct params{
   // these 14 parameters are necessary to specify in all cases

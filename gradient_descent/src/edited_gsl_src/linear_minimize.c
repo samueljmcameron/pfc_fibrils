@@ -213,7 +213,7 @@ minimize (gsl_function_fdf * fn, double rho, double sigma,
       
       if ((a-alpha)*fpa <= GSL_DBL_EPSILON) {
         /* roundoff prevents progress */
-	printf("a-alpha = %e, fpa = %e\n",(a-alpha),fpa);
+	//printf("a-alpha = %e, fpa = %e\n",(a-alpha),fpa);
 	*alpha_new = alpha;
 	return GSL_SUCCESS;
         //return GSL_ENOPROG;
