@@ -74,7 +74,7 @@ class GridmByn(object):
         axes['label'].set_axis_off()
         axes['slice_const_y'] = self.fig.add_subplot(gssub[0,0],sharex=axes['main'],
                                                 sharey=self.slice_const_y_sharey)
-        axes['slice_const_x'] = fig.add_subplot(gssub[1,1],sharey=axes['main'],
+        axes['slice_const_x'] = self.fig.add_subplot(gssub[1,1],sharey=axes['main'],
                                                 sharex=self.slice_const_x_sharex)
 
     
