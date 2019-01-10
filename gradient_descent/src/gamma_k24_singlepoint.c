@@ -42,8 +42,8 @@ int main(int argc, char **argv)
   FILE *observables;
   initialize_file(&observables,argv[1],"observables",p);
 
-  FILE *psivsr;
-  initialize_file(&psivsr,argv[1],"psivsr",p);
+  //  FILE *psivsr;
+  //initialize_file(&psivsr,argv[1],"psivsr",p);
 
   double E;
 
@@ -56,8 +56,8 @@ int main(int argc, char **argv)
     calculation = drive(&E,&p,x,(NULL));
   }
   if (calculation == DRIVER_SUCCESS) {
-    
-    save_psivsr(psivsr,&p);
+    printf("success!\n");
+    //save_psivsr(psivsr,&p);
     
   } else {
     
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
   free_matrix(p.s,1,NSI,1,NSJ);
   free_f3tensor(p.c,1,NCI,1,NCJ,1,MAX_M+1);
 
-  fclose(psivsr);
+  //  fclose(psivsr);
   fclose(observables);
 
   return 0;
