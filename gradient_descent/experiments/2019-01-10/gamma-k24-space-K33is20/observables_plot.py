@@ -20,13 +20,13 @@ observable_list = ['E','R','eta','delta','surfacetwist']
 
 observable_levels = {}
 
-Lambda_yticks = {}
+gamma_yticks = {}
 
-omega_yticks = {}
+k24_yticks = {}
 
-omega_ylims = {}
+k24_ylims = {}
 
-Lambda_xlims = {}
+gamma_xlims = {}
 
 vmins = {}
 
@@ -53,15 +53,15 @@ vmaxs['eta'] = 1.0
 vmaxs['delta'] = 1.0
 
 
-omega_ylims['E'] = Lambda_xlims['E'] = [-6,1]
+k24_ylims['E'] = gamma_xlims['E'] = [-6,1]
 
-omega_ylims['R'] = Lambda_xlims['R'] = [0.02,5]
+k24_ylims['R'] = gamma_xlims['R'] = [0.02,5]
 
-omega_ylims['surfacetwist'] = Lambda_xlims['surfacetwist'] = [0,0.3]
+k24_ylims['surfacetwist'] = gamma_xlims['surfacetwist'] = [0,0.3]
 
-omega_ylims['eta'] = Lambda_xlims['eta'] = [0.97,1.0]
+k24_ylims['eta'] = gamma_xlims['eta'] = [0.97,1.0]
 
-omega_ylims['delta'] = Lambda_xlims['delta'] = [0.85,1.0]
+k24_ylims['delta'] = gamma_xlims['delta'] = [0.85,1.0]
 
 
 observable_levels['E'] = np.array([-4,-3,-2,-1,0],float)
@@ -74,25 +74,25 @@ observable_levels['delta'] = np.array([0.87,0.9,0.93,0.95,0.99],float)
 
 observable_levels['surfacetwist'] = np.array([0.1,0.15,0.2,0.25,0.3],float)
 
-Lambda_yticks['surfacetwist'] = [0.05,0.15,0.25]
+gamma_yticks['surfacetwist'] = [0.05,0.15,0.25]
 
-omega_yticks['surfacetwist'] = [0.05,0.15,0.25]
+k24_yticks['surfacetwist'] = [0.05,0.15,0.25]
 
-Lambda_yticks['delta'] = [0.9,0.95,1.0]
+gamma_yticks['delta'] = [0.9,0.95,1.0]
 
-omega_yticks['delta'] = [0.9,0.95,1.0]
+k24_yticks['delta'] = [0.9,0.95,1.0]
 
-Lambda_yticks['eta'] = [0.98,0.99,1.0]
+gamma_yticks['eta'] = [0.98,0.99,1.0]
 
-omega_yticks['eta'] = [0.98,0.99,1.0]
+k24_yticks['eta'] = [0.98,0.99,1.0]
 
-Lambda_yticks['R'] = [0.1,1.0]
+gamma_yticks['R'] = [0.1,1.0]
 
-omega_yticks['R'] = [0.1,1.0]
+k24_yticks['R'] = [0.1,1.0]
 
-Lambda_yticks['E'] = [-5,-1,3]
+gamma_yticks['E'] = [-5,-1,3]
 
-omega_yticks['E'] = [-5,-1,3]
+k24_yticks['E'] = [-5,-1,3]
 
 
 fig = {}
@@ -103,13 +103,14 @@ data2d = {}
 colors = sns.color_palette()
 
 savesuf = ["K_{33}","d_0"]
-loadsuf = ["K_{33}","k_{24}","d_0","\\omega","\\gamma_s"]
+loadsuf = ["K_{33}","k_{24}","\\Lambda","d_0","\\omega"]
 
 
-num_Lambdas = max_Lambda = 1000
-num_omegas = 30
-Lambdas = np.linspace(1,max_Lambda,num=num_Lambdas,endpoint=True)
-omegas = np.linspace(1,30,num=num_omegas,endpoint=True)
+num_gammas = max_gamma = 100
+num_k24s = 100
+k24s = np.linspace(-1,0.98,num=num_k24s,endpoint=True)
+print(k24s)
+gammas = np.linspace(0.01,0.4,num=100,endpoint=True)
 
 for observable in observable_list:
     
@@ -121,54 +122,54 @@ for observable in observable_list:
     grid[observable].build_subplots_subgrid2x2(width_ratios=[3,1.2],
                                                hspace=0.1,wspace=0.1)
 
-    data2d[observable]=np.empty([num_omegas,num_Lambdas],float)
+    data2d[observable]=np.empty([num_k24s,num_gammas],float)
 
 
 
-for i,k24 in enumerate(['0.9','0.5','0.1']):
+for i,omega in enumerate(['1.0','0.1','0.01']):
 
-    for j,gamma in enumerate(['0.04','0.08','0.12']):
+    for j,Lambda in enumerate(['1.0','10.0','100.0']):
 
-        print(f"gamma,k24 = {gamma},{k24}")
+        print(f"Lambda,omega = {Lambda},{omega}")
         scan = {}
-        scan['\\gamma_s']=gamma
-        scan['k_{24}']=k24
+        scan['\\Lambda']=Lambda
+        scan['\\omega']=omega
 
 
 
         # load in 2d grid of data in data2d for each observable at the
         # specified gamma,k24 pair.
-        for om,omega in enumerate(omegas):
+        for ks,k24 in enumerate(k24s):
 
-            scan['\\omega']=str(omega)
+            scan['k_{24}']=str(k24)
 
             rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=savesuf)
 
-            obs = PlotObservables(["\\Lambda"],rp,scan_dir='scanforward')
-            print(omega)
+            obs = PlotObservables(["\\gamma_s"],rp,scan_dir='scanforward')
+            print(k24)
             for observable in observable_list:
         
                 index = obs.ylabelstr_to_column(observable)
                 datalength = len(obs.data[:,index])
-                if datalength < num_Lambdas-1:
-                    dumarray = np.ones(num_Lambdas-datalength)*np.nan
+                if datalength < num_gammas-1:
+                    dumarray = np.ones(num_gammas-datalength)*np.nan
                     dataarray = np.concatenate((obs.data[:,index],dumarray))
                 else:
-                    dataarray = obs.data[:num_Lambdas,index]
+                    dataarray = obs.data[:num_gammas,index]
                     
                 if observable == 'eta':
-                    data2d[observable][om,:] = 2*np.pi/dataarray
-                    if Lambdas[0] == 0.0:
-                        data2d[observable][om,0] = np.nan
+                    data2d[observable][ks,:] = 2*np.pi/dataarray
+                    if gammas[0] == 0.0:
+                        data2d[observable][ks,0] = np.nan
                 elif observable == 'delta':
-                    data2d[observable][om,:] = dataarray/np.sqrt(2/3)
+                    data2d[observable][ks,:] = dataarray/np.sqrt(2/3)
                 else:
-                    data2d[observable][om,:] = dataarray
+                    data2d[observable][ks,:] = dataarray
 
 
 
-        xlabel = r'$\Lambda$'
-        ylabel = r'$\omega$'
+        xlabel = r'$\gamma$'
+        ylabel = r'$\k_{24}$'
 
 
 
@@ -200,13 +201,13 @@ for i,k24 in enumerate(['0.9','0.5','0.1']):
             """
             zmask = z#np.ma.array(z,mask=mask)
 
-            cs = grid[observable].axarr[i][j]['main'].contourf(Lambdas,omegas,z,
+            cs = grid[observable].axarr[i][j]['main'].contourf(gammas,k24s,z,
                                                                vmin = vmins[observable],
                                                                vmax = vmaxs[observable])
-            css = grid[observable].axarr[i][j]['main'].contour(Lambdas,omegas,zmask,
+            css = grid[observable].axarr[i][j]['main'].contour(gammas,k24s,zmask,
                                                                observable_levels[observable],
                                                                colors='r')
-            cssE = grid[observable].axarr[i][j]['main'].contour(Lambdas,omegas,energies,
+            cssE = grid[observable].axarr[i][j]['main'].contour(gammas,k24s,energies,
                                                                [0],
                                                                colors='w')
             grid[observable].axarr[i][j]['main'].clabel(cssE,cssE.levels,inline=True,
@@ -214,37 +215,37 @@ for i,k24 in enumerate(['0.9','0.5','0.1']):
                                                         fmt={cssE.levels[0]:'E=0'})
             grid[observable].axarr[i][j]['main'].clabel(css,fontsize=9,inline=1)
 
-            cutout_omega_at_15 = data2d[observable][15,:]
+            cutout_k24_at_15 = data2d[observable][15,:]
 
-            cutout_Lambda_at_10 = data2d[observable][:,10]
+            cutout_gamma_at_10 = data2d[observable][:,10]
 
 
-            grid[observable].axarr[i][j]['slice_const_y'].plot(Lambdas,cutout_omega_at_15,'.',
+            grid[observable].axarr[i][j]['slice_const_y'].plot(gammas,cutout_k24_at_15,'.',
                                                                color='orange')
             
-            grid[observable].axarr[i][j]['slice_const_y'].set_yticks(Lambda_yticks[observable])
+            grid[observable].axarr[i][j]['slice_const_y'].set_yticks(gamma_yticks[observable])
 
-            grid[observable].axarr[i][j]['slice_const_y'].set_xlim(Lambdas[0],Lambdas[-1])
-            grid[observable].axarr[i][j]['slice_const_y'].set_ylim(*omega_ylims[observable])
+            grid[observable].axarr[i][j]['slice_const_y'].set_xlim(gammas[0],gammas[-1])
+            grid[observable].axarr[i][j]['slice_const_y'].set_ylim(*k24_ylims[observable])
             if observable == 'R':
                 grid[observable].axarr[i][j]['slice_const_y'].set_yscale('log')
                 #labels = [tick.get_text() for tick in
                 #          grid[observable].axarr[i][j]['slice_const_y'].get_yticklabels()]
 
 
-            grid[observable].axarr[i][j]['main'].set_xscale('log')
-            grid[observable].axarr[i][j]['main'].set_xticks([1,10,100,1000])
+            #grid[observable].axarr[i][j]['main'].set_xscale('log')
+            #grid[observable].axarr[i][j]['main'].set_xticks([1,10,100,1000])
             grid[observable].axarr[i][j]['main'].get_xticklabels()[1].set_color("magenta")
 
-            grid[observable].axarr[i][j]['slice_const_x'].plot(cutout_Lambda_at_10,omegas,'.',
+            grid[observable].axarr[i][j]['slice_const_x'].plot(cutout_gamma_at_10,k24s,'.',
                                       color='magenta')
-            grid[observable].axarr[i][j]['slice_const_x'].set_xticks(omega_yticks[observable])
+            grid[observable].axarr[i][j]['slice_const_x'].set_xticks(k24_yticks[observable])
             grid[observable].axarr[i][j]['slice_const_x'].xaxis.tick_top()
             plt.setp(grid[observable].axarr[i][j]['slice_const_x'].get_yticklabels(),visible=False)
             grid[observable].axarr[i][j]['slice_const_x'].xaxis.set_label_position('top')
 
-            grid[observable].axarr[i][j]['slice_const_x'].set_xlim(*Lambda_xlims[observable])
-            grid[observable].axarr[i][j]['slice_const_x'].set_ylim(omegas[0],omegas[-1])
+            grid[observable].axarr[i][j]['slice_const_x'].set_xlim(*gamma_xlims[observable])
+            grid[observable].axarr[i][j]['slice_const_x'].set_ylim(k24s[0],k24s[-1])
             if observable == 'R':
                 grid[observable].axarr[i][j]['slice_const_x'].set_xscale('log')
 
@@ -257,7 +258,7 @@ for i,k24 in enumerate(['0.9','0.5','0.1']):
                 grid[observable].axarr[i][j]['slice_const_x'].set_xlabel(plabel)
             elif i == 2:
                 grid[observable].axarr[i][j]['main'].set_xlabel(xlabel)
-                grid[observable].axarr[i][j]['main'].annotate(rf'$\gamma={gamma}$',
+                grid[observable].axarr[i][j]['main'].annotate(rf'$\Lambda={Lambda}$',
                                                               xy=(0.7,-0.39),
                                                               xytext=(0.7,-0.4),
                                                               xycoords='axes fraction', 
@@ -270,7 +271,7 @@ for i,k24 in enumerate(['0.9','0.5','0.1']):
             if j == 0:
                 grid[observable].axarr[i][j]['main'].set_ylabel(ylabel)
                 grid[observable].axarr[i][j]['slice_const_y'].set_ylabel(plabel)
-                grid[observable].axarr[i][j]['main'].annotate(rf'$k_{{24}}={k24}$',
+                grid[observable].axarr[i][j]['main'].annotate(rf'$\omega={omega}$',
                                                               xy=(-0.49,0.7),
                                                               xytext=(-0.5,0.7),
                                                               xycoords='axes fraction', 

@@ -106,10 +106,11 @@ savesuf = ["K_{33}","d_0"]
 loadsuf = ["K_{33}","k_{24}","d_0","\\omega","\\gamma_s"]
 
 
-num_Lambdas = max_Lambda = 1000
-num_omegas = 30
-Lambdas = np.linspace(1,max_Lambda,num=num_Lambdas,endpoint=True)
-omegas = np.linspace(1,30,num=num_omegas,endpoint=True)
+num_Lambdas = 1000
+expLambda = 3
+num_omegas = 100
+Lambdas = np.logspace(-1,expLambda,num=num_Lambdas,endpoint=True)
+omegas = np.logspace(-2,1,num=num_omegas,endpoint=True)
 
 for observable in observable_list:
     
@@ -127,7 +128,7 @@ for observable in observable_list:
 
 for i,k24 in enumerate(['0.9','0.5','0.1']):
 
-    for j,gamma in enumerate(['0.04','0.08','0.12']):
+    for j,gamma in enumerate(['0.04','0.08']):
 
         print(f"gamma,k24 = {gamma},{k24}")
         scan = {}
@@ -233,6 +234,7 @@ for i,k24 in enumerate(['0.9','0.5','0.1']):
 
 
             grid[observable].axarr[i][j]['main'].set_xscale('log')
+            grid[observable].axarr[i][j]['main'].set_yscale('log')
             grid[observable].axarr[i][j]['main'].set_xticks([1,10,100,1000])
             grid[observable].axarr[i][j]['main'].get_xticklabels()[1].set_color("magenta")
 
