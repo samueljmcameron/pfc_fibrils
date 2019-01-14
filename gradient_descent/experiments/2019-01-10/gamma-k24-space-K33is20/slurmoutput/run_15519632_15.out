@@ -1,0 +1,1334 @@
+Restoring modules from user's standard_modules
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.000000e-02
+initial guesses for R, eta, and delta:
+guess for R = 5.000000e-01
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.000000e+00
+lower bound estimate of R = 1.000000e-01
+upper bound estimate of eta = 6.430000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+x[1] = -9.059435e-02, x[2] = 6.280565e+00, x[3] = 8.100299e-01
+something is too big or less than zero, so returning failed calculation.
+abserr is 1.211274e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.372333e-08!
+abserr is 1.632328e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.381288e-08!
+abserr is 1.241952e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.381288e-08!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+           32	 9.637292e-02	 6.286003e+00	 8.101386e-01	-1.447512e+00	 1.882670e-07	-2.929702e-07	 8.322620e-08	 3.580540e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.393939e-02
+initial guesses for R, eta, and delta:
+guess for R = 9.637292e-02
+guess for eta = 6.286003e+00
+guess for delta = 8.101386e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.445594e-01
+lower bound estimate of R = 7.227969e-02
+upper bound estimate of eta = 6.316003e+00
+lower bound estimate of eta = 6.256003e+00
+upper bound estimate of delta = 8.121386e-01
+lower bound estimate of delta = 8.051386e-01
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+           97	 1.195588e-01	 6.286625e+00	 8.093252e-01	-1.373799e+00	 4.191212e-07	-2.879230e-08	 1.626212e-06	 1.679601e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.787879e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.195588e-01
+guess for eta = 6.286625e+00
+guess for delta = 8.093252e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.793382e-01
+lower bound estimate of R = 8.966910e-02
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 8.113252e-01
+lower bound estimate of delta = 8.043252e-01
+Did not successfully find a minimum. Exceeded 100 iterations.
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.787879e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.000000e+00
+guess for eta = 6.286625e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.500000e+00
+lower bound estimate of R = 7.500000e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+likely a maximizing (vs minimizing) solution for psi(r), as y[1][2]=-5.178878e-04  which usually means high energy.
+solvde convergence failed when x = (9.758670e-01,6.311149e+00,8.100318e-01).
+Retrying using a constant y value
+likely a maximizing (vs minimizing) solution for psi(r), as y[1][2]=-7.266217e-04  which usually means high energy.
+solvde convergence failed when x = (7.827734e-01,6.507369e+00,8.102861e-01).
+Retrying using a constant y value
+x[1] = -8.928182e-02, x[2] = 6.280214e+00, x[3] = 8.118134e-01
+something is too big or less than zero, so returning failed calculation.
+likely a maximizing (vs minimizing) solution for psi(r), as y[1][2]=-3.013736e-05  which usually means high energy.
+solvde convergence failed when x = (3.174098e-01,6.300354e+00,8.111049e-01).
+Retrying using a constant y value
+x[1] = -9.069867e-02, x[2] = 6.273475e+00, x[3] = 8.118841e-01
+something is too big or less than zero, so returning failed calculation.
+x[1] = -4.573718e-02, x[2] = 6.279334e+00, x[3] = 8.105864e-01
+something is too big or less than zero, so returning failed calculation.
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+the initial guesses were not good, did not successfully find a minimum.
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.787879e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.000000e+00
+guess for eta = 6.286625e+00
+guess for delta = 0.000000e+00
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.500000e+00
+lower bound estimate of R = 7.500000e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 4.352835e-01	 6.286625e+00	 9.250239e-13	 5.854431e-02	 3.207311e-10	-3.083953e-11	-2.610346e-09	 2.630157e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.181818e-02
+initial guesses for R, eta, and delta:
+guess for R = 4.352835e-01
+guess for eta = 6.286625e+00
+guess for delta = 9.250239e-13
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 6.529253e-01
+lower bound estimate of R = 3.264626e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 4.884388e-01	 6.286625e+00	-1.224997e-12	 7.561766e-02	 1.709843e-10	 2.544261e-10	-3.832913e-09	 3.845151e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.575758e-02
+initial guesses for R, eta, and delta:
+guess for R = 4.884388e-01
+guess for eta = 6.286625e+00
+guess for delta = -1.224997e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 7.326582e-01
+lower bound estimate of R = 3.663291e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            1	 5.405860e-01	 6.286625e+00	 2.204168e-12	 9.094223e-02	 5.366813e-10	-2.312965e-10	-7.004979e-09	 7.029314e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.969697e-02
+initial guesses for R, eta, and delta:
+guess for R = 5.405860e-01
+guess for eta = 6.286625e+00
+guess for delta = 2.204168e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 8.108790e-01
+lower bound estimate of R = 4.054395e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 5.923044e-01	 6.286625e+00	 8.049551e-13	 1.048606e-01	 5.248446e-11	-7.709882e-12	 2.841642e-09	 2.842137e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 3.363636e-02
+initial guesses for R, eta, and delta:
+guess for R = 5.923044e-01
+guess for eta = 6.286625e+00
+guess for delta = 8.049551e-13
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 8.884566e-01
+lower bound estimate of R = 4.442283e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 6.439790e-01	 6.286625e+00	-1.280022e-13	 1.176142e-01	 4.867230e-11	 6.167906e-11	-1.784351e-09	 1.786080e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 3.757576e-02
+initial guesses for R, eta, and delta:
+guess for R = 6.439790e-01
+guess for eta = 6.286625e+00
+guess for delta = -1.280022e-13
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 9.659685e-01
+lower bound estimate of R = 4.829843e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 6.958831e-01	 6.286625e+00	 1.161671e-12	 1.293812e-01	 6.512908e-11	-1.696174e-10	 3.172066e-09	 3.177265e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 4.151515e-02
+initial guesses for R, eta, and delta:
+guess for R = 6.958831e-01
+guess for eta = 6.286625e+00
+guess for delta = 1.161671e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.043825e+00
+lower bound estimate of R = 5.219123e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 7.482204e-01	 6.286625e+00	-9.838875e-13	 1.402983e-01	-2.481758e-11	 1.541976e-11	-1.453863e-09	 1.454157e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 4.545455e-02
+initial guesses for R, eta, and delta:
+guess for R = 7.482204e-01
+guess for eta = 6.286625e+00
+guess for delta = -9.838875e-13
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.122331e+00
+lower bound estimate of R = 5.611653e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 8.011502e-01	 6.286625e+00	 1.087373e-12	 1.504733e-01	 2.797822e-08	-2.929755e-10	 3.832913e-09	 2.824106e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 4.939394e-02
+initial guesses for R, eta, and delta:
+guess for R = 8.011502e-01
+guess for eta = 6.286625e+00
+guess for delta = 1.087373e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.201725e+00
+lower bound estimate of R = 6.008627e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 8.548011e-01	 6.286625e+00	 4.923167e-13	 1.599931e-01	 3.077832e-08	-3.083953e-11	 3.965082e-10	 3.078088e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 5.333333e-02
+initial guesses for R, eta, and delta:
+guess for R = 8.548011e-01
+guess for eta = 6.286625e+00
+guess for delta = 4.923167e-13
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.282202e+00
+lower bound estimate of R = 6.411008e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            1	 9.092808e-01	 6.286625e+00	-2.453346e-12	 1.689291e-01	 4.329362e-12	-2.467162e-10	-3.965082e-09	 3.972753e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 5.727273e-02
+initial guesses for R, eta, and delta:
+guess for R = 9.092808e-01
+guess for eta = 6.286625e+00
+guess for delta = -2.453346e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.363921e+00
+lower bound estimate of R = 6.819606e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 9.646829e-01	 6.286625e+00	 2.249747e-12	 1.773410e-01	 6.918945e-11	 3.083953e-11	 6.740640e-09	 6.741065e-09
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 6.121212e-02
+initial guesses for R, eta, and delta:
+guess for R = 9.646829e-01
+guess for eta = 6.286625e+00
+guess for delta = 2.249747e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.447024e+00
+lower bound estimate of R = 7.235122e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.021090e+00	 6.286625e+00	-5.634181e-12	 1.852790e-01	-4.603473e-11	 6.013708e-10	-2.643388e-08	 2.644076e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 6.515152e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.021090e+00
+guess for eta = 6.286625e+00
+guess for delta = -5.634181e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.531635e+00
+lower bound estimate of R = 7.658175e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.078577e+00	 6.286625e+00	 1.022925e-11	 1.927864e-01	-1.932964e-11	 2.929755e-10	 5.445380e-08	 5.445459e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 6.909091e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.078577e+00
+guess for eta = 6.286625e+00
+guess for delta = 1.022925e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.617865e+00
+lower bound estimate of R = 8.089327e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.137214e+00	 6.286625e+00	-2.357352e-11	 1.999002e-01	 1.075089e-10	 2.158767e-10	-1.414213e-07	 1.414215e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 7.303030e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.137214e+00
+guess for eta = 6.286625e+00
+guess for delta = -2.357352e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.705821e+00
+lower bound estimate of R = 8.529105e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.197069e+00	 6.286625e+00	 6.246050e-11	 2.066527e-01	 1.174773e-09	 3.083953e-11	 4.209596e-07	 4.209612e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 7.696970e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.197069e+00
+guess for eta = 6.286625e+00
+guess for delta = 6.246050e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.795603e+00
+lower bound estimate of R = 8.978017e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.258207e+00	 6.286625e+00	-1.936890e-10	 2.130725e-01	-6.595208e-11	-1.387779e-10	-1.476729e-06	 1.476729e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 8.090909e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.258207e+00
+guess for eta = 6.286625e+00
+guess for delta = -1.936890e-10
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.887311e+00
+lower bound estimate of R = 9.436553e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 1.320692e+00	 6.286625e+00	 1.872001e-12	 2.191844e-01	 4.107519e-10	-1.850372e-10	 2.022192e-08	 2.022694e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 8.484848e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.320692e+00
+guess for eta = 6.286625e+00
+guess for delta = 1.872001e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.981038e+00
+lower bound estimate of R = 9.905190e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.384589e+00	 6.286625e+00	-7.238538e-12	 2.250108e-01	 1.435248e-08	-6.167906e-11	-6.991762e-08	 7.137556e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 8.878788e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.384589e+00
+guess for eta = 6.286625e+00
+guess for delta = -7.238538e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.076884e+00
+lower bound estimate of R = 1.038442e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.449965e+00	 6.286625e+00	 3.669734e-11	 2.305714e-01	 1.434230e-08	-6.167906e-11	 4.048349e-07	 4.050889e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 9.272727e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.449965e+00
+guess for eta = 6.286625e+00
+guess for delta = 3.669734e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.174948e+00
+lower bound estimate of R = 1.087474e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.516889e+00	 6.286625e+00	-2.202374e-10	 2.358839e-01	 1.391513e-08	-1.079383e-10	-2.718725e-06	 2.718760e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 9.666667e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.516889e+00
+guess for eta = 6.286625e+00
+guess for delta = -2.202374e-10
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.275333e+00
+lower bound estimate of R = 1.137667e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            4	 1.585432e+00	 6.286625e+00	 3.903554e-11	 2.409645e-01	-2.098136e-10	-7.709882e-11	 5.383260e-07	 5.383260e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.006061e-01
+initial guesses for R, eta, and delta:
+guess for R = 1.585432e+00
+guess for eta = 6.286625e+00
+guess for delta = 3.903554e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.378148e+00
+lower bound estimate of R = 1.189074e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            4	 1.655675e+00	 6.286625e+00	 1.149329e-12	 2.458275e-01	-7.780726e-12	-3.083953e-10	 1.638901e-08	 1.639191e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.045455e-01
+initial guesses for R, eta, and delta:
+guess for R = 1.655675e+00
+guess for eta = 6.286625e+00
+guess for delta = 1.149329e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.483512e+00
+lower bound estimate of R = 1.241756e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.727694e+00	 6.286625e+00	-1.100791e-11	 2.504860e-01	 1.183159e-08	 0.000000e+00	-1.895309e-07	 1.898999e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.084848e-01
+initial guesses for R, eta, and delta:
+guess for R = 1.727694e+00
+guess for eta = 6.286625e+00
+guess for delta = -1.100791e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.591541e+00
+lower bound estimate of R = 1.295771e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.801584e+00	 6.286625e+00	 1.055774e-10	 2.549518e-01	 1.112562e-08	 0.000000e+00	 2.045454e-06	 2.045484e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.124242e-01
+initial guesses for R, eta, and delta:
+guess for R = 1.801584e+00
+guess for eta = 6.286625e+00
+guess for delta = 1.055774e-10
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.702376e+00
+lower bound estimate of R = 1.351188e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            4	 1.877442e+00	 6.286625e+00	-9.374820e-12	 2.592359e-01	 2.150022e-10	-3.083953e-11	-2.035409e-07	 2.035410e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.163636e-01
+initial guesses for R, eta, and delta:
+guess for R = 1.877442e+00
+guess for eta = 6.286625e+00
+guess for delta = -9.374820e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.816163e+00
+lower bound estimate of R = 1.408081e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 1.955375e+00	 6.286625e+00	 1.101846e-10	 2.633481e-01	 9.638985e-09	-4.934325e-10	 2.666121e-06	 2.666139e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.203030e-01
+initial guesses for R, eta, and delta:
+guess for R = 1.955375e+00
+guess for eta = 6.286625e+00
+guess for delta = 1.101846e-10
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.933063e+00
+lower bound estimate of R = 1.466531e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            4	 2.035505e+00	 6.286625e+00	-3.267508e-12	 2.672974e-01	 7.065708e-11	 3.083953e-11	-9.198991e-08	 9.198994e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.242424e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.035505e+00
+guess for eta = 6.286625e+00
+guess for delta = -3.267508e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 3.053257e+00
+lower bound estimate of R = 1.526629e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 2.117969e+00	 6.286625e+00	 4.505122e-11	 2.710921e-01	 8.314759e-09	-9.251859e-11	 1.356322e-06	 1.356348e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.281818e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.117969e+00
+guess for eta = 6.286625e+00
+guess for delta = 4.505122e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 3.176953e+00
+lower bound estimate of R = 1.588477e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            4	 2.202921e+00	 6.286625e+00	 5.019485e-12	 2.747398e-01	-1.607523e-10	-2.467162e-10	 1.723489e-07	 1.723492e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.321212e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.202921e+00
+guess for eta = 6.286625e+00
+guess for delta = 5.019485e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 3.304381e+00
+lower bound estimate of R = 1.652191e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 2.290541e+00	 6.286625e+00	-7.909007e-11	 2.782473e-01	 7.193441e-09	 3.083953e-11	-2.994430e-06	 2.994439e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.360606e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.290541e+00
+guess for eta = 6.286625e+00
+guess for delta = -7.909007e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 3.435812e+00
+lower bound estimate of R = 1.717906e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            4	 2.381034e+00	 6.286625e+00	-1.610325e-12	 2.816212e-01	 1.831085e-11	-2.158767e-10	-7.057846e-08	 7.057880e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.400000e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.381034e+00
+guess for eta = 6.286625e+00
+guess for delta = -1.610325e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 3.571551e+00
+lower bound estimate of R = 1.785776e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 2.474647e+00	 6.286625e+00	 2.565299e-11	 2.848672e-01	 6.216000e-09	-3.083953e-11	 1.224682e-06	 1.224698e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.439394e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.474647e+00
+guess for eta = 6.286625e+00
+guess for delta = 2.565299e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 3.711971e+00
+lower bound estimate of R = 1.855985e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 2.571668e+00	 6.286625e+00	-6.074898e-11	 2.879905e-01	-1.527366e-09	 0.000000e+00	-3.256654e-06	 3.256655e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.478788e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.571668e+00
+guess for eta = 6.286625e+00
+guess for delta = -6.074898e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 3.857502e+00
+lower bound estimate of R = 1.928751e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 2.672451e+00	 6.286625e+00	 2.743586e-11	 2.909961e-01	-1.637632e-09	 3.083953e-11	 1.656611e-06	 1.656612e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.518182e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.672451e+00
+guess for eta = 6.286625e+00
+guess for delta = 2.743586e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 4.008676e+00
+lower bound estimate of R = 2.004338e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 2.777430e+00	 6.286625e+00	-1.792370e-11	 2.938882e-01	-2.031003e-10	 6.167906e-11	-1.223889e-06	 1.223889e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.557576e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.777430e+00
+guess for eta = 6.286625e+00
+guess for delta = -1.792370e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 4.166145e+00
+lower bound estimate of R = 2.083073e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 2.887151e+00	 6.286625e+00	-3.393705e-12	 2.966707e-01	-3.553159e-11	 1.850372e-10	-2.587877e-07	 2.587878e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.596970e-01
+initial guesses for R, eta, and delta:
+guess for R = 2.887151e+00
+guess for eta = 6.286625e+00
+guess for delta = -3.393705e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 4.330726e+00
+lower bound estimate of R = 2.165363e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 3.002315e+00	 6.286625e+00	 5.444159e-12	 2.993470e-01	 5.725363e-11	 3.083953e-11	 4.877051e-07	 4.877051e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.636364e-01
+initial guesses for R, eta, and delta:
+guess for R = 3.002315e+00
+guess for eta = 6.286625e+00
+guess for delta = 5.444159e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 4.503472e+00
+lower bound estimate of R = 2.251736e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 3.123857e+00	 6.286625e+00	-2.378308e-11	 3.019200e-01	 5.941276e-10	 3.083953e-11	-2.432446e-06	 2.432446e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.675758e-01
+initial guesses for R, eta, and delta:
+guess for R = 3.123857e+00
+guess for eta = 6.286625e+00
+guess for delta = -2.378308e-11
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 4.685785e+00
+lower bound estimate of R = 2.342893e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 3.253061e+00	 6.286625e+00	 4.797308e-12	 3.043920e-01	 1.393173e-09	-3.083953e-11	 5.693858e-07	 5.693875e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.715152e-01
+initial guesses for R, eta, and delta:
+guess for R = 3.253061e+00
+guess for eta = 6.286625e+00
+guess for delta = 4.797308e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 4.879592e+00
+lower bound estimate of R = 2.439796e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 3.391789e+00	 6.286625e+00	-8.866973e-12	 3.067643e-01	 1.756483e-09	 9.251859e-11	-1.240806e-06	 1.240808e-06
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.754545e-01
+initial guesses for R, eta, and delta:
+guess for R = 3.391789e+00
+guess for eta = 6.286625e+00
+guess for delta = -8.866973e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 5.087684e+00
+lower bound estimate of R = 2.543842e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 3.542919e+00	 6.286625e+00	 4.577345e-12	 3.090378e-01	 2.027243e-09	-3.083953e-11	 7.652609e-07	 7.652636e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.793939e-01
+initial guesses for R, eta, and delta:
+guess for R = 3.542919e+00
+guess for eta = 6.286625e+00
+guess for delta = 4.577345e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 5.314379e+00
+lower bound estimate of R = 2.657189e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 3.711361e+00	 6.286625e+00	-4.528714e-12	 3.112114e-01	 2.192155e-09	 3.083953e-11	-9.201634e-07	 9.201660e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.833333e-01
+initial guesses for R, eta, and delta:
+guess for R = 3.711361e+00
+guess for eta = 6.286625e+00
+guess for delta = -4.528714e-12
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 5.567042e+00
+lower bound estimate of R = 2.783521e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 3.906915e+00	 6.286625e+00	 7.035605e-13	 3.132818e-01	-1.395995e-11	 3.083953e-11	 1.802791e-07	 1.802791e-07
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.872727e-01
+initial guesses for R, eta, and delta:
+guess for R = 3.906915e+00
+guess for eta = 6.286625e+00
+guess for delta = 7.035605e-13
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 5.860373e+00
+lower bound estimate of R = 2.930186e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            3	 4.156282e+00	 6.286625e+00	-8.308371e-14	 3.152400e-01	 3.788916e-12	-6.167906e-11	-3.224934e-08	 3.224939e-08
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.912121e-01
+initial guesses for R, eta, and delta:
+guess for R = 4.156282e+00
+guess for eta = 6.286625e+00
+guess for delta = -8.308371e-14
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 6.234423e+00
+lower bound estimate of R = 3.117211e+00
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+ss=4.258267180555e+05, lastss = 2.535290882505e+06
+tol = 6.430342818705e-13
+failed to integrate at x = (1.566035e+01,6.286625e+00,4.101825e-09)
+interpolating at R = 1.566035e+01, eta = 6.286625e+00, delta = 4.101825e-09...
+done interpolating.
+ss=1.260705231154e+07, lastss = 2.001998616536e+07
+tol = 6.430343295268e-13
+failed to integrate at x = (1.566035e+01,6.286625e+00,4.101825e-09)
+interpolating at R = 1.566035e+01, eta = 6.286625e+00, delta = 4.101825e-09...
+done interpolating.
+ss=4.234575929863e+08, lastss = 8.521396706841e+08
+tol = 6.430343662671e-13
+failed to integrate at x = (1.566035e+01,6.286625e+00,4.101825e-09)
+interpolating at R = 1.566035e+01, eta = 6.286625e+00, delta = 4.101825e-09...
+done interpolating.
+ss=1.781599894035e+10, lastss = 3.563070497312e+10
+tol = 6.430343887882e-13
+failed to integrate at x = (1.566035e+01,6.286625e+00,4.101825e-09)
+solvde convergence failed when x = (1.566035e+01,6.286625e+00,4.101825e-09).
+Retrying using a constant y value
+ss=1.409839579848e+10, lastss = 8.393463558909e+10
+tol = 6.430103725922e-13
+failed to integrate at x = (1.566035e+01,6.286625e+00,4.101825e-09)
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            1	 5.434339e+00	 6.286625e+00	 4.556228e-10	1.000000e+300	 0.000000e+00	 0.000000e+00	 0.000000e+00	 0.000000e+00
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = -7.000000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.912121e-01
+initial guesses for R, eta, and delta:
+guess for R = 1.000000e+00
+guess for eta = 6.286625e+00
+guess for delta = 4.556228e-10
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.500000e+00
+lower bound estimate of R = 7.500000e-01
+upper bound estimate of eta = 6.316625e+00
+lower bound estimate of eta = 6.256625e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+ss=1.237666902621e+17, lastss = -5.747579178151e+00
+tol = 1.541750836273e-13
+failed to integrate at x = (7.517875e+00,6.286625e+00,8.258923e-07)
+solvde convergence failed when x = (7.517875e+00,6.286625e+00,8.258923e-07).
+Retrying using a constant y value
+ss=1.053923782047e+16, lastss = 6.274522981488e+16
+tol = 1.542798543867e-13
+failed to integrate at x = (7.517875e+00,6.286625e+00,8.258923e-07)
+interpolating at R = 7.517875e+00, eta = 6.286625e+00, delta = 8.258923e-07...
+done interpolating.
+ss=6.232540524247e+17, lastss = 9.897259966953e+17
+tol = 1.542797530277e-13
+failed to integrate at x = (7.517875e+00,6.286625e+00,8.258923e-07)
+solvde convergence failed when x = (7.517875e+00,6.286625e+00,8.258923e-07).
+Retrying using a constant y value
+ss=6.232540524247e+17, lastss = 9.897259966953e+17
+tol = 1.542797530277e-13
+failed to integrate at x = (7.517875e+00,6.286625e+00,8.258923e-07)
+interpolating at R = 7.517875e+00, eta = 6.286625e+00, delta = 8.258923e-07...
+done interpolating.
+ss=2.855919403807e+19, lastss = 5.747074042294e+19
+tol = 1.542797019579e-13
+failed to integrate at x = (7.517875e+00,6.286625e+00,8.258923e-07)
+solvde convergence failed when x = (7.517875e+00,6.286625e+00,8.258923e-07).
+Retrying using a constant y value
+ss=2.855919403807e+19, lastss = 5.747074042294e+19
+tol = 1.542797019579e-13
+failed to integrate at x = (7.517875e+00,6.286625e+00,8.258923e-07)
+interpolating at R = 7.517875e+00, eta = 6.286625e+00, delta = 8.258923e-07...
+done interpolating.
+ss=1.280703692461e+21, lastss = 2.561314442240e+21
+tol = 1.542796763379e-13
+failed to integrate at x = (7.517875e+00,6.286625e+00,8.258923e-07)
+solvde convergence failed when x = (7.517875e+00,6.286625e+00,8.258923e-07).
+Retrying using a constant y value
+ss=1.280703692461e+21, lastss = 2.561314442240e+21
+tol = 1.542796763379e-13
+failed to integrate at x = (7.517875e+00,6.286625e+00,8.258923e-07)
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+abserr is 1.332268e+290, but the convergence criterion CONV_min*(1+p->Escale) is 1.317489e-08!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+abserr is 1.332268e+290, but the convergence criterion CONV_min*(1+p->Escale) is 1.317489e-08!
+failed calculation!
+failed calculation!
+failed calculation!
+failed calculation!
+abserr is 1.332268e+290, but the convergence criterion CONV_min*(1+p->Escale) is 1.317489e-08!
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+            2	 4.142875e+00	 6.286625e+00	 8.141847e-08	1.000000e+300	 0.000000e+00	 0.000000e+00	 0.000000e+00	 0.000000e+00
+success!
+Trying again with Rguess = 1.0
+Last guess for Ri was 1.0, setting delta = 0.0
+Trying again with Rguess = 1.0
+Took 0.12308578186564975 hours to complete.

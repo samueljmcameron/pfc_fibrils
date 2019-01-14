@@ -1,0 +1,693 @@
+Restoring modules from user's standard_modules
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = 9.800000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.000000e-02
+initial guesses for R, eta, and delta:
+guess for R = 5.000000e-01
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.000000e+00
+lower bound estimate of R = 1.000000e-01
+upper bound estimate of eta = 6.430000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+x[1] = -3.216046e-01, x[2] = 6.310043e+00, x[3] = 8.100047e-01
+something is too big or less than zero, so returning failed calculation.
+x[1] = -3.611673e-01, x[2] = 6.289974e+00, x[3] = 8.099988e-01
+something is too big or less than zero, so returning failed calculation.
+abserr is 2.865492e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.741922e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.553633e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.008236e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+likely a maximizing (vs minimizing) solution for psi(r), as y[1][2]=-1.420301e-06  which usually means high energy.
+solvde convergence failed when x = (1.818966e-02,6.304704e+00,8.100023e-01).
+Retrying using a constant y value
+abserr is 2.513944e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.734513e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.162546e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.576446e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.794062e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.244771e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.293965e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.516552e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.709349e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.404188e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.017023e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.840694e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.347390e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.551012e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.723753e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.282357e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.411194e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.640185e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.803319e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.043320e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.174757e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.066141e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.818943e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.640741e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.240773e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.097917e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 6.416901e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 6.683568e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.322596e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.318797e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.218544e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 6.511669e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.113537e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.842483e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.664821e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.630156e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.471061e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 9.853361e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.128769e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.797851e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.728816e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.859974e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.663411e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.556454e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.790015e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.266876e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.288985e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 7.386998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 9.316520e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.100634e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.796169e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.633589e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.125371e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.166853e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.645533e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.296881e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 7.520975e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.786619e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 8.817507e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.790712e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.468837e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 8.378003e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.540545e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.068173e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.018399e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.313554e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.682407e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.403853e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 8.591751e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.210968e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.563644e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.474792e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.927015e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.293296e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.476082e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.581640e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.239122e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 7.847067e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.720483e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.334108e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.818307e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 8.511051e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 6.038934e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.690737e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.504909e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.791875e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 6.238984e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 7.554467e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.702782e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.723798e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.242611e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.392286e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.927535e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.392471e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.692963e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 2.246840e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.831373e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.685135e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 5.531779e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.800109e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 3.208939e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.562878e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 4.831721e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+abserr is 1.693115e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.480432e-08!
+x[1] = -8.351480e-01, x[2] = 6.271019e+00, x[3] = 8.099943e-01
+something is too big or less than zero, so returning failed calculation.
+x[1] = -3.967255e-02, x[2] = 6.302429e+00, x[3] = 8.100017e-01
+something is too big or less than zero, so returning failed calculation.
+abserr is 6.487145e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 1.998997e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 7.756413e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 5.759266e-06, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 1.078806e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 2.053730e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 1.847415e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 3.038938e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 1.847415e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 5.009405e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 9.316723e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 4.024581e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 1.069631e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 2.567725e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 1.609876e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 1.232067e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 5.477408e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 7.843583e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 1.541782e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 2.639616e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 3.902212e-05, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 7.460049e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.430146e-07!
+abserr is 2.126007e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.063399e-07!
+abserr is 2.046176e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.063399e-07!
+abserr is 1.589137e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.063399e-07!
+abserr is 8.258170e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.216867e-07!
+abserr is 3.192056e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.216867e-07!
+abserr is 3.447458e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.226177e-07!
+abserr is 6.736503e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.226177e-07!
+abserr is 4.907829e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.226177e-07!
+abserr is 1.758495e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.227080e-07!
+abserr is 9.552896e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.227085e-07!
+abserr is 9.552175e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.227085e-07!
+abserr is 3.369515e-05, but the convergence criterion CONV_min*(1+p->Escale) is 2.227085e-07!
+abserr is 2.453658e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227085e-07!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.240998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.544163e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.240998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.695745e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.847328e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.847328e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.760481e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.847328e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 2.302075e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.695745e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.695745e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.624499e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.998910e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.695745e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.240998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.544163e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.240998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.392581e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.240998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.544163e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.240998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.240998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.240998e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+abserr is 1.998910e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.227089e-07!
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+           47	 1.591968e-03	 6.285959e+00	 8.080857e-01	-2.127089e+01	 5.713296e-05	 3.094808e-06	-4.687874e-06	 5.740844e-05
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = 9.800000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.393939e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.591968e-03
+guess for eta = 6.285959e+00
+guess for delta = 8.080857e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.387952e-03
+lower bound estimate of R = 1.193976e-03
+upper bound estimate of eta = 6.315959e+00
+lower bound estimate of eta = 6.255959e+00
+upper bound estimate of delta = 8.100857e-01
+lower bound estimate of delta = 8.030857e-01
+abserr is 3.250473e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 9.312397e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 1.008044e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.805342e-07!
+abserr is 1.008044e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.807932e-07!
+abserr is 1.083832e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.807932e-07!
+abserr is 1.233427e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.807962e-07!
+abserr is 1.614370e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.807962e-07!
+abserr is 9.322494e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.807962e-07!
+abserr is 1.083832e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.807962e-07!
+abserr is 1.008041e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.807962e-07!
+abserr is 1.235414e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.807967e-07!
+abserr is 1.255849e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.807968e-07!
+abserr is 1.159625e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808013e-07!
+abserr is 9.322502e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.808013e-07!
+abserr is 1.083833e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.235415e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.008041e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.159624e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.538580e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.614371e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.008041e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.083833e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.311206e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.008041e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+abserr is 1.008041e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808019e-07!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+abserr is 1.083833e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.235415e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.538580e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.462789e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.235415e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.233417e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.159624e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.159624e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 9.322501e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.311206e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.159624e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.083833e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.386997e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 9.322501e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.083833e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.159624e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 9.322501e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 9.322501e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.614371e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.008041e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.159624e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 9.322501e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 9.322501e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.235415e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.159624e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+abserr is 1.311206e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.808020e-07!
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+           34	 2.217867e-03	 6.287014e+00	 8.003225e-01	-1.708020e+01	 7.062160e-05	-4.736952e-07	-5.214235e-07	 7.062511e-05
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = 9.800000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 1.787879e-02
+initial guesses for R, eta, and delta:
+guess for R = 2.217867e-03
+guess for eta = 6.287014e+00
+guess for delta = 8.003225e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 3.326801e-03
+lower bound estimate of R = 1.663400e-03
+upper bound estimate of eta = 6.317014e+00
+lower bound estimate of eta = 6.257014e+00
+upper bound estimate of delta = 8.023225e-01
+lower bound estimate of delta = 7.953225e-01
+abserr is 4.728686e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 1.230682e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 7.001437e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 8.523453e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.496712e-07!
+abserr is 1.003929e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499324e-07!
+abserr is 7.612585e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499325e-07!
+abserr is 1.155512e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499325e-07!
+abserr is 9.281397e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499432e-07!
+abserr is 1.155513e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499432e-07!
+abserr is 1.003930e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 1.231304e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 1.307095e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 1.003930e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 9.281390e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 9.281389e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 1.231304e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 1.079721e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499434e-07!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 1.003930e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 1.307095e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 1.003930e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 9.281389e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 7.836514e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 1.155513e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 8.523477e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 1.079721e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 8.523477e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 1.155513e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 9.281389e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 1.155513e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 9.281389e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 1.079721e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+abserr is 7.765565e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.499435e-07!
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+           27	 2.938366e-03	 6.288107e+00	 7.894713e-01	-1.399435e+01	 3.439154e-05	 1.831621e-06	-2.647041e-06	 3.454186e-05
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = 9.800000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.181818e-02
+initial guesses for R, eta, and delta:
+guess for R = 2.938366e-03
+guess for eta = 6.288107e+00
+guess for delta = 7.894713e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 4.407549e-03
+lower bound estimate of R = 2.203775e-03
+upper bound estimate of eta = 6.318107e+00
+lower bound estimate of eta = 6.258107e+00
+upper bound estimate of delta = 7.914713e-01
+lower bound estimate of delta = 7.844713e-01
+abserr is 7.472783e-09, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 3.940281e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 1.000770e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.259640e-07!
+abserr is 1.076559e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.259640e-07!
+abserr is 9.249780e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262042e-07!
+abserr is 1.000768e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.262091e-07!
+abserr is 8.182461e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262091e-07!
+abserr is 7.733944e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262091e-07!
+abserr is 1.000768e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.262098e-07!
+abserr is 1.303938e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.262098e-07!
+abserr is 8.491892e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262198e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262266e-07!
+abserr is 7.733969e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262266e-07!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+abserr is 9.249792e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262266e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.613575e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 9.249793e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 9.249793e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 1.000770e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 9.249793e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 9.249793e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 1.228144e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 1.000770e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.699705e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 9.249793e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.613575e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 8.491880e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 6.976056e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.733968e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 7.948252e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+abserr is 1.000770e-07, but the convergence criterion CONV_min*(1+p->Escale) is 1.262271e-07!
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+           96	 3.754935e-03	 6.289216e+00	 7.753860e-01	-1.162271e+01	-1.479801e-05	-1.957940e-06	-9.075798e-07	 1.495454e-05
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = 9.800000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.575758e-02
+initial guesses for R, eta, and delta:
+guess for R = 3.754935e-03
+guess for eta = 6.289216e+00
+guess for delta = 7.753860e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 5.632402e-03
+lower bound estimate of R = 2.816201e-03
+upper bound estimate of eta = 6.319216e+00
+lower bound estimate of eta = 6.259216e+00
+upper bound estimate of delta = 7.773860e-01
+lower bound estimate of delta = 7.703860e-01
+abserr is 2.401210e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 8.848035e-09, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 5.435120e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.073785e-07!
+abserr is 6.193032e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.073785e-07!
+abserr is 5.978405e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.073785e-07!
+abserr is 8.466803e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.073817e-07!
+abserr is 5.814100e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.073817e-07!
+abserr is 5.814125e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.073947e-07!
+abserr is 6.572023e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074023e-07!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+abserr is 6.193064e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074023e-07!
+abserr is 5.814110e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074039e-07!
+abserr is 8.845759e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074039e-07!
+abserr is 8.303864e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074039e-07!
+abserr is 6.950978e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074039e-07!
+abserr is 5.747898e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074039e-07!
+abserr is 5.435154e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074039e-07!
+abserr is 6.572022e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074039e-07!
+abserr is 5.435154e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.074039e-07!
+minimum found at:
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+           54	 4.664487e-03	 6.290316e+00	 7.581527e-01	-9.740389e+00	-4.383473e-05	 3.473764e-07	 1.097412e-06	 4.384985e-05
+success!
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = 9.800000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.969697e-02
+initial guesses for R, eta, and delta:
+guess for R = 4.664487e-03
+guess for eta = 6.290316e+00
+guess for delta = 7.581527e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 6.996731e-03
+lower bound estimate of R = 3.498365e-03
+upper bound estimate of eta = 6.320316e+00
+lower bound estimate of eta = 6.260316e+00
+upper bound estimate of delta = 7.601527e-01
+lower bound estimate of delta = 7.531527e-01
+abserr is 4.276251e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 8.651770e-09, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 2.381001e-08, but the convergence criterion CONV_min*(1+p->Escale) is 1.000000e-08!
+abserr is 5.414739e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.206885e-08!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+abserr is 5.035778e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207578e-08!
+abserr is 4.656823e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207772e-08!
+abserr is 5.035779e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207772e-08!
+abserr is 4.656823e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207772e-08!
+abserr is 5.414735e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207772e-08!
+abserr is 4.656823e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207772e-08!
+abserr is 5.414735e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207772e-08!
+Did not successfully find a minimum. Exceeded 100 iterations.
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = 9.800000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.969697e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.000000e+00
+guess for eta = 6.290316e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.500000e+00
+lower bound estimate of R = 7.500000e-01
+upper bound estimate of eta = 6.320316e+00
+lower bound estimate of eta = 6.260316e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+likely a maximizing (vs minimizing) solution for psi(r), as y[1][2]=-1.639613e-04  which usually means high energy.
+solvde convergence failed when x = (9.672119e-01,6.314775e+00,8.100414e-01).
+Retrying using a constant y value
+ss=6.302212765583e+22, lastss = 1.015151429045e+23
+tol = 1.000000000000e-14
+failed to integrate at x = (7.048671e-01,6.510479e+00,8.103731e-01)
+solvde convergence failed when x = (7.048671e-01,6.510479e+00,8.103731e-01).
+Retrying using a constant y value
+x[1] = -1.959125e+00, x[2] = 6.144879e+00, x[3] = 8.128159e-01
+something is too big or less than zero, so returning failed calculation.
+x[1] = -1.139173e-01, x[2] = 6.276019e+00, x[3] = 8.110166e-01
+something is too big or less than zero, so returning failed calculation.
+x[1] = -1.593135e-01, x[2] = 6.278435e+00, x[3] = 8.110358e-01
+something is too big or less than zero, so returning failed calculation.
+abserr is 1.215007e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.676444e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.450778e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 6.416948e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 8.002734e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 3.194543e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.587821e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.253125e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.694840e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.639756e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.688983e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.008288e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 5.291114e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 4.193204e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 3.187006e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.221161e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 6.223354e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.215874e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.468724e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.596487e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 4.973713e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.415484e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.408532e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 5.840825e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.019240e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 9.101201e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.429159e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.047462e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.359553e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 5.593332e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 3.125005e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.245254e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.896964e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.224195e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.146947e-07, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.610111e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.982555e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.455267e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.747113e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.361739e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.622211e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 1.603827e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 2.133083e-06, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+abserr is 3.883962e-08, but the convergence criterion CONV_min*(1+p->Escale) is 2.337103e-08!
+x[1] = -3.572414e-01, x[2] = 6.274578e+00, x[3] = 8.111795e-01
+something is too big or less than zero, so returning failed calculation.
+x[1] = -1.336604e-02, x[2] = 6.281964e+00, x[3] = 8.109276e-01
+something is too big or less than zero, so returning failed calculation.
+abserr is 9.652434e-08, but the convergence criterion CONV_min*(1+p->Escale) is 7.605808e-08!
+abserr is 3.855051e-06, but the convergence criterion CONV_min*(1+p->Escale) is 7.605808e-08!
+abserr is 9.676498e-08, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 9.676473e-08, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 3.883961e-08, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 1.805033e-06, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 1.121654e-06, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 1.120801e-06, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 7.749251e-07, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 1.393331e-06, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 1.606420e-06, but the convergence criterion CONV_min*(1+p->Escale) is 7.605809e-08!
+abserr is 5.982739e-07, but the convergence criterion CONV_min*(1+p->Escale) is 9.152041e-08!
+abserr is 8.917424e-07, but the convergence criterion CONV_min*(1+p->Escale) is 9.152041e-08!
+abserr is 1.164437e-06, but the convergence criterion CONV_min*(1+p->Escale) is 9.162396e-08!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+abserr is 5.414165e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.162521e-08!
+abserr is 5.793691e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207771e-08!
+the initial guesses were not good, did not successfully find a minimum.
+
+
+parameter values for minimization:
+K33 = 2.000000e+01
+k24 = 9.800000e-01
+Lambda = 1.000000e+03
+d0 = 1.000000e+00
+omega = 1.000000e+01
+gamma_s = 2.969697e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.000000e+00
+guess for eta = 6.290316e+00
+guess for delta = 0.000000e+00
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 1.500000e+00
+lower bound estimate of R = 7.500000e-01
+upper bound estimate of eta = 6.320316e+00
+lower bound estimate of eta = 6.260316e+00
+upper bound estimate of delta = 2.000000e-03
+lower bound estimate of delta = -5.000000e-03
+x[1] = -1.767875e+00, x[2] = 6.290316e+00, x[3] = 5.595611e-12
+something is too big or less than zero, so returning failed calculation.
+x[1] = -4.970338e-02, x[2] = 6.290316e+00, x[3] = 2.122108e-12
+something is too big or less than zero, so returning failed calculation.
+x[1] = -3.685357e-01, x[2] = 6.290319e+00, x[3] = -1.224777e-07
+something is too big or less than zero, so returning failed calculation.
+x[1] = -1.228573e-02, x[2] = 6.290316e+00, x[3] = -6.121978e-09
+something is too big or less than zero, so returning failed calculation.
+abserr is 2.652952e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 1.112590e-06, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 6.889468e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 2.653192e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 6.890308e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 2.653516e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 1.324313e-06, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 4.771463e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 4.771607e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 9.006180e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 2.171862e-06, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 2.652790e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 1.747949e-06, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 9.007529e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 4.768165e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 8.935900e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 1.102577e-06, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 2.646804e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 1.101876e-06, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 4.643154e-08, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 6.833096e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 4.739924e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 4.739640e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 6.832775e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181731e-08!
+abserr is 4.740062e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181746e-08!
+abserr is 4.739637e-07, but the convergence criterion CONV_min*(1+p->Escale) is 8.181746e-08!
+the initial guesses were not good, did not successfully find a minimum.
+RETRYING!
+x[1] = 1.057064e-02, x[2] = 6.292344e+00, x[3] = 1.113611e+00
+something is too big or less than zero, so returning failed calculation.
+abserr is 5.034583e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.009314e-08!
+abserr is 4.656884e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207521e-08!
+abserr is 5.035798e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207737e-08!
+abserr is 4.656838e-08, but the convergence criterion CONV_min*(1+p->Escale) is 9.207745e-08!
+Did not successfully find a minimum. Exceeded 100 iterations.
+Trying again with Rguess = 1.0
+Last guess for Ri was 1.0, setting delta = 0.0
+Took 0.20892594556013744 hours to complete.
