@@ -54,9 +54,9 @@ int drive(double *E,struct params *p,double *x,FILE *energy)
 
   gsl_multimin_fdfminimizer_set(s,&my_func,x_scale,0.001,0.01);
 
-  //  printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
-  //	 "iteration","R","eta","delta","E","dEdR","dEdeta",
-  //	 "dEddelta","grad norm");
+  printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
+  	 "iteration","R","eta","delta","E","dEdR","dEdeta",
+  	 "dEddelta","grad norm");
 
   p->Escale = 0; // set initial Escale value to 0 to ensure that convergence
   //                is not obtained immediately from some large guess of Escale 
@@ -77,6 +77,9 @@ int drive(double *E,struct params *p,double *x,FILE *energy)
     scale_backward(s->x,x,p);
     scale_dEdx_backward(s->gradient,dEdx,p);
     *E = s->f;
+
+    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
 
     if (poorscaling(s->x)) {
       poorscaling_count += 1;
@@ -131,6 +134,13 @@ int drive(double *E,struct params *p,double *x,FILE *energy)
     } else if (poorscaling_count == max_poorscaling_count) {
 
       printf("the initial guesses were not good, did not successfully find a minimum.\n");
+
+      printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
+	     "iteration","R","eta","delta","E","dEdR","dEdeta",
+	     "dEddelta","grad norm");
+
+      printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	     iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
 
       returnvalue = DRIVER_POORSCALING;
 
