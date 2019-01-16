@@ -1,3 +1,6 @@
+# THIS IS DEPRECATED. EASIER TO JUST PLOT BY LOADING IN DATA USING psidata.py #
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 

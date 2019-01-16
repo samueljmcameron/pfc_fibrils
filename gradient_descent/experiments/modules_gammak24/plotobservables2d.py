@@ -1,3 +1,6 @@
+# THIS IS DEPRECATED. EASIER TO JUST PLOT BY LOADING IN DATA USING observabledata.py #
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
