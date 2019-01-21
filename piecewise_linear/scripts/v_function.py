@@ -5,7 +5,7 @@ from scipy.integrate import quad
 
 class vFunction(object):
 
-    def __init(self):
+    def __init__(self):
         
         return
 
