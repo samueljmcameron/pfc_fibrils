@@ -31,16 +31,24 @@
 % Begin Document
 %%%%%%%%%%%
 
-\section{Piecewise linear definition}
+\section{Energy function for a piecewise linear twist angle field}
 I will define the piecewise linear twist angle as
 \begin{align}\label{eq:basicpiecewise}
 \psi(r)=
 \begin{cases}
-	\psi_c^{\prime} r															& 0 \leq r \leq R_c \\
-	\psi_s^{\prime} r + (\psi_c^{\prime}-\psi_s^{\prime})R_c								& R_c < r \leq R_s \\
-	\psi_R^{\prime}r+(\psi_s^{\prime}-\psi_R^{\prime})R_s+(\psi_c^{\prime}-\psi_s^{\prime})R_c	& R_s < r \leq R.
+	\psi_c^{\prime} r					& 0 \leq r \leq R_c \\
+	\psi_s^{\prime} r +\psi_1			& R_c < r \leq R_s \\
+	\psi_R^{\prime}r+\psi_2				& R_s < r \leq R.
 \end{cases}
 \end{align}
+which have two constraints,
+\begin{subequations}
+\begin{align}
+&\psi_1=(\psi_c^{\prime}-\psi_s^{\prime})R_c\label{eq:psi1},\\
+&\psi_2=(\psi_s^{\prime}-\psi_R^{\prime})R_s+(\psi_c^{\prime}-\psi_s^{\prime})R_c\label{eq:psi2},
+\end{align}
+\end{subequations}
+to ensure continuity of $\psi(r)$.
 
 Next, I will insert this into the free energy per unit volume,
 \begin{align}\label{eq:startE}
@@ -49,16 +57,54 @@ E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'
 &\phantom{=}-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
 \end{align}
 
+The resulting equation can be written as
+\begin{align}\label{eq:piecewise_E}
+E(R,\eta,&\delta,R_c,R_s,\psi_c^{\prime},\psi_s^{\prime},\psi_R^{\prime})=\nonumber\\
+&\frac{2}{R^2}\left(\frac{1}{4}(u(0,R_c,\psi_c^{\prime})+u(R_c,R_s,\psi_s^{\prime})+u(R_s,R,\psi_R^{\prime}))+\frac{1}{8}(f_1(0,R_c,0,\psi_c^{\prime})\right.\nonumber\\
+&+f_1(R_c,R_s,\psi_1,\psi_s^{\prime})+f_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{2}K_{33}(f_2(0,R_c,0,\psi_c^{\prime})+f_2(R_c,R_s,\psi_1,\psi_s^{\prime})\nonumber\\
+&\left.+f_2(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{4}(v(0,R_c,0,\psi_c^{\prime})+v(R_c,R_s,\psi_1,\psi_s^{\prime})+v(R_s,R,\psi_2,\psi_R^{\prime}))\right)\nonumber\\
+&+\frac{\Lambda\delta^2}{2R^2}\left(\vphantom{\frac{1}{2}}16\pi^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\right.\nonumber\\
+&\left.-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{\eta^4}{2}R^2\right)\nonumber\\
+&+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)-\frac{(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)+\frac{2\gamma}{R}
+\end{align}
+
+which utilizes a derivation shown in the appendix (see eqns \ref{eq:first_int} and \ref{eq:second_int}, as well as the definitions of the functions $u$, $v$, $f_{\alpha}$, and $g_{\alpha}$ in equations \ref{eq:ufunc}, \ref{eq:vfunc}, \ref{eq:falpha}, and \ref{eq:galpha}, respectively). I will minimize this equation subject to the constraint equations \ref{eq:psi1} and \ref{eq:psi2} to determine the equilibrium configuration of the fibril.
+
+\section{Differentiation of the energy}
+The derivative with respect to the fibril radius is
+\begin{align}
+\frac{\partial E}{\partial R}=&\nonumber\\
+&-\frac{4}{R^3}\left(\frac{1}{4}(u(0,R_c,\psi_c^{\prime})+u(R_c,R_s,\psi_s^{\prime})+u(R_s,R,\psi_R^{\prime}))+\frac{1}{8}(f_1(0,R_c,0,\psi_c^{\prime})\right.\nonumber\\
+&+f_1(R_c,R_s,\psi_1,\psi_s^{\prime})+f_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{2}K_{33}(f_2(0,R_c,0,\psi_c^{\prime})+f_2(R_c,R_s,\psi_1,\psi_s^{\prime})\nonumber\\
+&\left.+f_2(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{4}(v(0,R_c,0,\psi_c^{\prime})+v(R_c,R_s,\psi_1,\psi_s^{\prime})+v(R_s,R,\psi_2,\psi_R^{\prime}))\right)\nonumber\\
+&+\frac{2}{R^2}\left(\frac{1}{4}\left.\frac{\partial u(R_s,x_2,\psi_R^{\prime})}{\partial x_2}\right|_{x_2=R}+\frac{1}{8}\left.\frac{\partial f_1(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\right|_{x_2=R}+\frac{1}{2}K_{33}\left.\frac{\partial f_2(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\right|_{x_2=R}\right.\nonumber\\
+&\left.+\frac{1}{4}\left.\frac{\partial v(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\right|_{x_2=R}\right)\nonumber\\
+&-\frac{\Lambda\delta^2}{R^3}\left(\vphantom{\frac{1}{2}}16\pi^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\right.\nonumber\\
+&\left.-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{\eta^4}{2}R^2\right)\nonumber\\
+&+\frac{\Lambda\delta^2}{2R^2}\left(16\pi^4\left.\frac{\partial g_2(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\right|_{x_2=R}-8\pi^2\eta^2\left.\frac{\partial g_1(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\right|_{x_2=R}+\eta^4R\right)\nonumber\\
+&+\frac{2(1+k_{24})}{R^3}\sin(\psi_R^{\prime}R+\psi_2)-\frac{\psi_R^{\prime}(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)-\frac{2\gamma}{R^2}.\label{eq:dEdR}
+\end{align}
+The derivative with respect to the inverse period of density modulations, $\eta$, is
+\begin{align}
+\frac{\partial E}{\partial \eta}=&
+\frac{\Lambda\delta^2}{2R^2}\left(-16\pi^2\eta(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))+2\eta^3R^2\right)\label{eq:dEdeta}
+\end{align}
+The derivative with respect to the size of the density modulations, $\delta$, is
+\begin{align}
+\frac{\partial E}{\partial \delta}=&\frac{\Lambda\delta}{R^2}\left(\vphantom{\frac{1}{2}}16\pi^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\right.\nonumber\\
+&\left.-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{\eta^4}{2}R^2\right)+\omega\delta\left(\frac{3}{2}\delta^2-1\right).
+\end{align}
+
 
 \section{Detailed calculations}
 For a general linear function of the form $\psi(r)=\psi_{ab}^{\prime}r+\psi_0$ in the region $a<r<b$, the two integrals in eqn \ref{eq:startE} become
-\begin{align}
+\begin{align}\label{eq:first_int}
 \int_{a}^{b}&rdr\left[\frac{1}{2}\left(\psi_{ab}^{\prime}+\frac{\sin(2(\psi_{ab}^{\prime}r+\psi_0))}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4(\psi_{ab}^{\prime}r+\psi_0)}{r^2}\right]\nonumber\\
 &=\int_{a}^{b}dr\left(\frac{(1-\psi_{ab}^{\prime})^2}{2}r+\frac{1}{8}\frac{\sin^2(2(\psi_{ab}^{\prime}r+\psi_0))}{r}-\frac{(1-\psi_{ab}^{\prime})}{2}\sin(2(\psi_{ab}^{\prime}r+\psi_0))+\frac{1}{2}K_{33}\frac{\sin^4(\psi_{ab}^{\prime}r+\psi_0)}{r}\right)\nonumber\\
 &=\left(\frac{1}{4}u(a,b,\psi_{ab}^{\prime})+\frac{1}{8}f_1(a,b,\psi_0,\psi_{ab}^{\prime})+\frac{1}{2}K_{33}f_2(a,b,\psi_0,\psi_{ab}^{\prime})+\frac{1}{4}v(a,b,\psi_0,\psi_{ab}^{\prime})\right)
 \end{align}
 and
-\begin{align}
+\begin{align}\label{eq:second_int}
 \int_{a}^{b}rdr\bigg(\frac{4\pi^2}{\cos^2(\psi_{ab}^{\prime}r+\psi_0)}&-\eta^2\bigg)^2\nonumber\\
 =&\int_{a}^{b}dr\left(\frac{16\pi^4r}{\cos^4(\psi_{ab}^{\prime}r+\psi_0)}-\frac{8\pi^2r}{\cos^2(\psi_{ab}^{\prime}r+\psi_0)}\eta^2+\eta^4r\right)\nonumber\\
 =&\left(16\pi^4g_2(a,b,\psi_0,\psi_{ab}^{\prime})-8\pi^2\eta^2g_1(a,b,\psi_0,\psi_{ab}^{\prime})+\frac{\eta^4}{2}(b^2-a^2)\right)
@@ -142,7 +188,13 @@ The derivatives of these functions are listed below:
 \end{subequations}
 \begin{subequations}
 \begin{align}
-&\frac{\partial
+&\frac{\partial g_{\alpha}}{\partial x_1}=\frac{-x_1}{\cos^{2\alpha}(\zeta x_1 +\xi)}\label{eq:dgdx_1}\\
+&\frac{\partial g_{\alpha}}{\partial x_2}=\frac{x_2}{\cos^{2\alpha}(\zeta x_2+\xi)}\label{eq:dgdx_2}\\
+&\frac{\partial g_{\alpha}}{\partial\xi}=\int_{x_1}^{x_2}du\frac{2\alpha u \sin(\zeta u+\xi)}{\cos^{2\alpha+1}(\zeta u+\xi)}\label{eq:dgdxi}\\
+&\frac{\partial g_{\alpha}}{\partial\zeta}=\int_{x_1}^{x_2}du\frac{2\alpha u^2\sin(\zeta u+\xi)}{\cos^{2\alpha+1}(\zeta u +\xi)}\label{eq:dgdzeta}
+\end{align}
+\end{subequations}
+
 	
 %%%%%%%%%%%%%%%
 % Bibliography
