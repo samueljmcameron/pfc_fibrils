@@ -124,8 +124,8 @@ class falphaFunction(object):
 
     def dfalphadzeta_exact(self,x_1,x_2,xi,zeta):
 
-        return 1/(4*zeta)*(np.sin(2/self.alpha*(zeta*x_2+xi))
-                           -np.sin(2/self.alpha*(zeta*x_1+xi)))
+        return 1/(zeta)*(np.sin(2/self.alpha*(zeta*x_2+xi))**(2*self.alpha)
+                           -np.sin(2/self.alpha*(zeta*x_1+xi))**(2*self.alpha))
 
     def dfalphadzeta_full(self,x_1,x_2,xi,zeta):
 
@@ -161,7 +161,7 @@ class falphaFunction(object):
 
     def integrand_dfdxi_exact(self,u,xi,zeta):
 
-        return 4*np.sin(2/self.alpha*(zeta*u+xi))*np.cos(2/self.alpha*(zeta*u+xi))/u
+        return 4*np.sin(2/self.alpha*(zeta*u+xi))**(2*self.alpha-1)*np.cos(2/self.alpha*(zeta*u+xi))/u
 
     def integrand_dfdxi_full(self,u,xi,zeta):
 
