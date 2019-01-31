@@ -1,0 +1,36 @@
+Restoring modules from user's standard_modules
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 9.000000e-01
+Lambda = 1.000000e+00
+d0 = 1.000000e+00
+omega = 5.000000e+00
+gamma_s = 1.200000e-01
+initial guesses for R, eta, and delta:
+guess for R = 5.000000e-01
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 2.000000e+00
+lower bound estimate of R = 1.000000e-01
+upper bound estimate of eta = 6.430000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+x[1] = -2.231274e-01, x[2] = 6.321345e+00, x[3] = 8.099724e-01
+something is too big or less than zero, so returning failed calculation.
+a-alpha = -2.525550e-09, fpa = -6.993058e-09
+a-alpha = -5.533235e-09, fpa = -2.618164e-08
+a-alpha = 1.351206e-08, fpa = 5.465300e-09
+a-alpha = -2.101011e-08, fpa = -7.030787e-09
+a-alpha = -1.325475e-08, fpa = -1.370254e-09
+a-alpha = 4.313239e-08, fpa = 1.031417e-09
+a-alpha = -8.050603e-08, fpa = -6.972075e-10
+a-alpha = 9.391808e-09, fpa = 3.786135e-09
+Did not successfully find a minimum. Exceeded 100 iterations.
+Ri is NAN, trying again with Rguess = 1.0
+Traceback (most recent call last):
+  File "scan2d.py", line 107, in <module>
+    if abs(float(Rguess)-1.0)>1e-10:
+NameError: name 'Rguess' is not defined

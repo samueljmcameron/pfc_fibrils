@@ -1,0 +1,1 @@
+Looking at omega, Lambda space at a constant gamma,k24 coordinate. Some of these calculations did not produce the proper results  due to some poor coding of scan2d.py, I'm hoping to retry them with better results now.

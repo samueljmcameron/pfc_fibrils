@@ -1,0 +1,1 @@
+Using this to generate data for the double_well_scans folder. Just taking (K33,k24,gamma_s,d0)=(30.,0.7,0.1,1.0), and looking for the phase transition point that I know (from 2018-11-24/gamma-k24…) is between Lambda=omega=21 and Lambda=omega=22.

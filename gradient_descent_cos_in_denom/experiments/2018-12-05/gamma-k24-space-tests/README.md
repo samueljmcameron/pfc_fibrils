@@ -1,0 +1,1 @@
+This is just a quick scan of (gamma,k24) space with omega = Lambda = 3.0.

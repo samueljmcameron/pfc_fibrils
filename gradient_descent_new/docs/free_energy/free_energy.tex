@@ -1,0 +1,84 @@
+\documentclass[12pt]{article}
+%\usepackage{helvet}
+%\renewcommand{\familydefault}{\sfdefault}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{braket}
+\usepackage{titlesec}
+\usepackage{siunitx}
+\usepackage{mathtools}
+\usepackage{tikz}
+\usepackage[font={small}]{caption}
+\usepackage{subcaption}
+\usepackage[inline]{enumitem}
+%\titlespacing*{\section}{0pt}{4pt}{4pt}
+\usepackage[letterpaper, margin=2cm]{geometry}
+
+
+\begin{document}
+\pagenumbering{arabic}
+\spacing{1.5}
+
+%%%%%%%%%%%
+% Begin Document
+%%%%%%%%%%%
+
+\section{Free energy}
+In it's most general form, the free energy of a material which is composed of chiral, rod-like molecules, and has a crystalline density structure is given by the free energy
+\begin{align}\label{eq:Fgeneral}
+\mathcal{F} = \int_{V}d^3r\left(f(Q_{ij},\partial_kQ_{lm},\phi)+g(\nabla_{\parallel}\phi,\nabla_{\bot}\phi)+h(\phi)\right),
+\end{align}
+where $Q_{ij}$ is the (tensor) order parameter, which is spatially non-uniform and non-zero in any non-isotropic phase, and $\phi$ is the density order parameter which quantifies the change in density from some reference phase, $\rho_{ref}$ (which is homogeneous in density). There are three pieces to this free energy:
+\begin{enumerate}[label={\roman*}]
+	\item The liquid crystal free energy, $f(Q_{ij},\partial_kQ_{lm},\phi)$, which penalizes any non-equilibrium distortions (e.g. splay, bend, twist) in the average molecular orientation.
+	\item The crystalline density free energy, $g(\nabla_{\parallel}\phi,\nabla_{\bot}\phi)$, which in general allows for periodic modulations in the density below some transition temperature, $T_m$. $\nabla$ is broken up into it's parallel and perpendicular components with respect to the local orientation of the rod-like molecules. It could be possible that there are two transition temperatures, one for ordering parallel to the molecules, and a second for ordering perpendicular to the molecules.
+	\item A potential well term $h(\phi)$, which encourages non-zero $\phi$ values below some transition temperature $T_p$ (which could in general be different than $T_m$).
+\end{enumerate}
+
+In what follows, I will make several large assumptions in the form of eqn \ref{eq:Fgeneral}. The first assumption concerns the liquid crystal free energy term, and in particular the order parameter $Q_{ij}$. Although we are interested in modelling chiral (collagen) molecules, I will assume that the biaxiality of the molecules is small so we are in the "low chirality limit" \cite{Wright:1989zz}. In this limit, $Q_{ij}$ is uniaxial, and can be written as
+\begin{align}\label{eq:simpleQ}
+Q_{ij}=\lambda(3n_in_j-\delta_{ij}),
+\end{align}
+where $\lambda$ is a position-dependent quantity related to the usual uniaxial scalar order parameter $S(r)=1/2\left<3cos^2\theta-1\right>$, and $n_i$ are the components of the director field $\bm{n}(\bm{r})$ which gives the average, local molecular orientation. Since a uniaxial $Q_{ij}$ tends to minimize the bulk (gradient-less) components of the liquid crystal free energy, we ignore these terms in our system, and consider only the deformation free energy, which for uniaxial liquid crystals can most recognizably be written in the form
+\begin{align}
+f_{\mathrm{frank}}(\Lambda,\nabla\bm{n})=&\frac{1}{2}\hat{K}_{11}\lambda^2(\nabla\cdot\bm{n})^2+\frac{1}{2}\hat{K}_{22}\lambda^2(\bm{n}\cdot\nabla\times\bm{n}+q)^2+\frac{1}{2}\hat{K}_{33}\lambda^2(\bm{n}\times(\nabla\times\bm{n}))^2\nonumber\\
+&+\hat{k}_{13}\lambda^2\nabla\cdot(\nabla\cdot\bm{n})\bm{n}-\frac{1}{2}(\hat{K}_{22}+\hat{k}_{24})\lambda^2\nabla\cdot(\bm{n}\times(\nabla\times\bm{n})+\bm{n}(\nabla\cdot\bm{n}))+f_{\lambda}(\lambda,\nabla\lambda).
+\end{align}
+For a constant ordering of the rods $\lambda = \lambda_0$ and the divergence terms (preceded by $\hat{k}_{13}$ and $\hat{K}_{22}+\hat{k}_{24}$) could be integrated out by taking the surface of integration to infinity. However, if the ordering is position dependent, these terms cannot be integrated out. The $f_{\lambda}$ term will be made insignificant in our second assumption (see \cite{Wright:1989zz} for details on the functional form of this term).
+
+The second assumption I make is again on the form of the liquid crystal free energy, and is related to the above discussion on the positional dependence of $\lambda$. Since we are interested in modelling collagen fibril structure, I am going to assume that the liquid crystal material is constrained to be within a cylinder of radius $R$ and infinite length, and that any order in the molecular field is zero outside of this this cylinder. This assumption greatly simplifies our analysis, as it reduces our volume of integration from a bulk system with many fibrils to that of a single fibril. Mathematically, this corresponds to constraining $\lambda$ to the form
+\begin{align}
+\lambda(r)=&
+	\begin{cases}
+	\lambda_0,	& r<R\\
+	0,			& r>R.
+	\end{cases}
+\end{align}
+In this equation, $r$ is the usual radial component in cylindrical polar coordinates. This simplification has further repercussions, as it corresponds physically to neglecting interactions between the cylindrical fibrils (as there is only one) in the system.
+
+The third assumption I make is to constrain the director field to be that of a double-twist structure, with $\bm{n}=\sin\psi(r)\bm{\theta}+\cos\psi(r)\bm{z}$ (potential error in here with a minus sign in the $\bm{\theta}$ term\footnote{any change in sign of this term will just correspond to a redefinition of the sign of the inverse pitch $q$, which we in the end will fix anyway to match up with the right-handedness of the fibrils}).
+
+The final assumption I make regarding the liquid crystal free energy term is that the density modulations $\phi$ are small enough perturbations as to not affect the values of the elastic constants. Thus, to first order the liquid crystal free energy does not depend on $\phi$. Thus, integrating over the first integral in equation
+
+\begin{align}
+a(\nabla_{\parallel}\phi)^2+b(\nabla_{\parallel}^2\phi)^2-c(\nabla_{\bot}\phi)^2+d(\nabla_{\bot}^2\phi)^2+e(\nabla_{\parallel}\phi)^2(\nabla_{\bot}\phi)^2
+\end{align}
+
+	
+%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%
+\clearpage
+\bibliography{pfc}
+\bibliographystyle{unsrt}
+
+\end{document}

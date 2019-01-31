@@ -1,0 +1,114 @@
+Restoring modules from user's standard_modules
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 7.000000e-01
+Lambda = 1.000000e+00
+d0 = 1.000000e+00
+omega = 5.000000e+00
+gamma_s = 2.000000e-02
+initial guesses for R, eta, and delta:
+guess for R = 1.000000e-01
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = 5.000000e-01
+lower bound estimate of R = 1.000000e-02
+upper bound estimate of eta = 6.350000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+    iteration	            R	          eta	        delta	            E	         dEdR	       dEdeta	     dEddelta	    grad norm
+a-alpha = 7.627807e-10, fpa = 5.328645e-08
+a-alpha = 2.315230e-08, fpa = 1.019514e-09
+a-alpha = -1.100133e-08, fpa = -7.439527e-09
+a-alpha = -3.429878e-08, fpa = -1.757913e-09
+a-alpha = 3.874687e-09, fpa = 6.697348e-09
+a-alpha = 6.730733e-09, fpa = 2.423843e-09
+a-alpha = -1.748944e-08, fpa = -1.788348e-09
+a-alpha = 1.059809e-08, fpa = 4.176784e-10
+a-alpha = 1.297121e-08, fpa = 4.771771e-10
+a-alpha = -4.476681e-08, fpa = -2.639609e-10
+a-alpha = -2.771621e-08, fpa = -1.189186e-09
+a-alpha = -3.112702e-09, fpa = -1.074257e-08
+a-alpha = -1.187500e-07, fpa = -6.879371e-10
+a-alpha = -2.742656e-08, fpa = -7.570239e-10
+a-alpha = 7.701527e-09, fpa = 2.564424e-10
+a-alpha = 6.250000e-09, fpa = 1.486872e-08
+a-alpha = -2.020931e-09, fpa = -1.674246e-08
+a-alpha = 1.131863e-09, fpa = 2.765890e-08
+a-alpha = -5.842985e-09, fpa = -9.643184e-10
+a-alpha = -2.771698e-09, fpa = -8.261889e-09
+a-alpha = 3.416867e-08, fpa = 4.432359e-10
+a-alpha = -2.579393e-08, fpa = -2.331251e-09
+a-alpha = 3.920729e-08, fpa = 2.888812e-10
+a-alpha = -5.409739e-08, fpa = -1.283560e-09
+a-alpha = -2.945076e-07, fpa = -2.916164e-10
+a-alpha = 1.513441e-08, fpa = 1.021973e-09
+a-alpha = 6.082528e-08, fpa = 2.998182e-10
+a-alpha = 1.144322e-08, fpa = 5.946945e-09
+a-alpha = 4.450660e-07, fpa = 2.887235e-10
+a-alpha = 8.926472e-08, fpa = 1.423451e-10
+a-alpha = 5.564681e-08, fpa = 6.959843e-10
+a-alpha = -9.401352e-08, fpa = -4.715553e-10
+a-alpha = 2.267066e-08, fpa = 9.756904e-11
+a-alpha = 5.559136e-08, fpa = 3.630241e-10
+a-alpha = -1.014943e-08, fpa = -3.062856e-09
+a-alpha = -1.019674e-09, fpa = -2.245764e-08
+a-alpha = -1.187500e-07, fpa = -1.667352e-09
+a-alpha = 1.073735e-08, fpa = 1.834661e-09
+a-alpha = -2.186656e-08, fpa = -3.046358e-09
+a-alpha = -1.919733e-09, fpa = -1.988930e-08
+a-alpha = -6.250000e-09, fpa = -1.313490e-08
+a-alpha = -1.526836e-07, fpa = -6.546929e-10
+a-alpha = -5.145783e-08, fpa = -3.193159e-09
+a-alpha = -6.250000e-09, fpa = -2.686002e-09
+a-alpha = -6.250000e-09, fpa = -5.215347e-09
+a-alpha = 1.363951e-08, fpa = 3.686021e-09
+a-alpha = 3.517693e-08, fpa = 8.487945e-10
+a-alpha = -2.762258e-07, fpa = -2.610058e-10
+a-alpha = -3.125000e-08, fpa = -4.271226e-10
+Did not successfully find a minimum. Exceeded 100 iterations.
+parameter values for minimization:
+K33 = 3.000000e+01
+k24 = 7.000000e-01
+Lambda = 1.000000e+00
+d0 = 1.000000e+00
+omega = 5.000000e+00
+gamma_s = 3.000000e-02
+initial guesses for R, eta, and delta:
+guess for R = -nan
+guess for eta = 6.300000e+00
+guess for delta = 8.100000e-01
+estimated ranges of R, eta, and delta:
+upper bound estimate of R = nan
+lower bound estimate of R = nan
+upper bound estimate of eta = 6.350000e+00
+lower bound estimate of eta = 6.290000e+00
+upper bound estimate of delta = 8.160000e-01
+lower bound estimate of delta = 8.000000e-01
+Singular matrix - row all 0, in pinvs
+R = -nan
+failed at point k = 2 in finite differences
+solvde convergence failed when x = (-nan,6.300000e+00,8.100000e-01).
+Retrying using a constant y value
+Singular matrix - row all 0, in pinvs
+R = -nan
+failed at point k = 2 in finite differences
+Retrying with a linear guess and a final twist angle value of pi/4.
+Singular matrix - row all 0, in pinvs
+R = -nan
+failed at point k = 2 in finite differences
+Retrying with a sqrt(r) guess and a final twist angle value of pi/2.01.
+Singular matrix - row all 0, in pinvs
+R = -nan
+failed at point k = 2 in finite differences
+failed to solve ODE when x = (-nan,6.300000e+00,8.100000e-01).
+saving current psi(r) shape (from failed solvde call), as well as the shape of the initial guess of psi(r) (from previous call of E_calc), and exiting to system.
+Traceback (most recent call last):
+  File "scan.py", line 41, in <module>
+    run.run_exe()
+  File "../../modules_gammak24/singlerun.py", line 40, in run_exe
+    subprocess.run([self.executable,self.tmp_path,*self.params.values()],check=True)
+  File "/cvmfs/soft.computecanada.ca/easybuild/software/2017/Core/python/3.7.0/lib/python3.7/subprocess.py", line 468, in run
+    output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['../../../bin/gamma_k24_singlepoint', '../../../tmp_data/', '30.', '0.7000000000000001', '1.0', '1.0', '5.0', '0.030000000000000002', '-nan', '6.3', '0.81', 'nan', 'nan', '6.35', '6.29', '0.816', '0.8']' returned non-zero exit status 1.
