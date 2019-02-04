@@ -80,7 +80,7 @@ For thermodynamic stability, both $b_{\parallel}>0$ and $b_{\bot}>0$. $a_{\paral
 
 To ensure that non-zero density amplitude modulations are thermodynamically favourable, we also include the third term in eqn \ref{eq:Fgeneral}, which can most simply be written as
 \begin{align}
-h(\phi)=d\phi^2(1-e\phi^2).
+h(\phi)=d\phi^2(e\phi^2-1).
 \end{align}
 
 The simplifying assumptions I make to reduce the number of terms in the above two equations are:
@@ -149,22 +149,43 @@ With assumption \ref{asspfc:1}, I don't need to evaluate $\nabla_{\bot}$, but I 
 
 Using assumptions \ref{asspfc:1} and \ref{asspfc:2} and the identities $(\nabla\phi)^2=\nabla\cdot(\phi\nabla\phi)-\phi\nabla^2\phi$ and $(\nabla^2\phi)^2=\nabla\cdot\nabla(\phi\nabla^2\phi)-2\nabla\cdot(\phi\nabla\nabla^2\phi)+\phi\nabla^4\phi$, I can re-write the phase field crystal parts of the free energy as
 \begin{align}\label{eq:pfc1}
-\int_{\mathrm{all\:space}}d^3rg(\nabla_{\parallel}\phi,\nabla_{\bot}\phi)&=2\pi\frac{\Lambda}{2}\int_0^Rdr\int_0^{\frac{2\pi}{\eta}}dz\phi(z)\left(\left(\frac{2\pi}{d_{\parallel}}\right)^2+cos^2\psi(r)\frac{\partial^2}{\partial z^2}\right)^2\phi(z)+\mathcal{F}_{surf},
+\int_{\mathrm{all\:space}}d^3rg(\nabla_{\parallel}\phi,\nabla_{\bot}\phi)&=2\pi\frac{\Lambda}{2}\int_0^Rrdr\int_0^{\frac{2\pi}{\eta}}dz\phi(z)\left(\left(\frac{2\pi}{d_{\parallel}}\right)^2+cos^2\psi(r)\frac{\partial^2}{\partial z^2}\right)^2\phi(z)+\mathcal{F}_{surf},
 \end{align}
 \begin{align}
-\int_{\mathrm{all\:space}}d^3rh(\phi)=\omega\pi R^2\int_0^{\frac{2\pi}{\eta}}dz\left(\frac{\phi(z)}{\chi}\right)^2\left(1-\left(\frac{\phi(z)}{\chi}\right)^2\right).
+\int_{\mathrm{all\:space}}d^3rh(\phi)=\omega\pi R^2\int_0^{\frac{2\pi}{\eta}}dz\left(\frac{\phi(z)}{\chi}\right)^2\left(\left(\frac{\phi(z)}{\chi}\right)^2-1\right).
 \end{align}
 The terms $\mathcal{F}_{surf}$ are obtained through integration by parts, and in general cannot be neglected for the same reasons that the divergence terms in the frank free energy cannot be neglected. However, since all of these terms are integrated through a dot product of $\hat{d\bm{S}}=\hat{r}$ and some vector with direction $\hat{\bm{V}}=\hat{\nabla\phi}=\hat{z}$ by assumption \ref{asspfc:2}, they are zero in our case. I have also taken the free parameter $\chi^2>0$, which is not necessary in general. $\chi^2>0$ is equivalent physically to only looking at our system below the critical temperature where density modulations occur (which is where we are interested in investigating). The parameter $d_{\parallel}$ is just the preferred period of the density modulations, and will in general not be equivalent to the true period $\eta$ because of the $\cos^2\psi(r)$ term in eqn \ref{eq:pfc1}.
 
 \subsection{Final form of the free energy per unit volume}
-A bulk phase (i.e. array) of cylindrical, liquid crystalline collagen fibrils which satisfies all of the above assumptions has a free energy per fibril volume ($\pi R^2 2\pi/\eta$),
+In this section, I will use hats to denote dimensional variables, and no hats as dimensionless variables. For the dimensional case, I can write the free energy per fibril volume ($\pi R^2 2\pi/\eta$) bulk phase (i.e. array) of cylindrical, liquid crystalline collagen fibrils as
 \begin{align}
-E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\left(\frac{1}{2}K_{22}\left(q-\psi'-\frac{\sin2\psi}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right)\nonumber\\
-&\phantom{=}+\frac{\Lambda}{R^22\pi/\eta}\int_0^Rdr\int_0^{\frac{2\pi}{\eta}}dz\:\phi(z)\left(\left(\frac{2\pi}{d_{\parallel}}\right)^2+cos^2\psi(r)\frac{\partial^2}{\partial z^2}\right)^2\!\!\phi(z)\nonumber\\
-&\phantom{=}+\frac{\omega}{2\pi/\eta}\int_0^{\frac{2\pi}{\eta}}dz\left(\frac{\phi(z)}{\chi}\right)^2\left(1-\left(\frac{\phi(z)}{\chi}\right)^2\right)\nonumber\\
-&\phantom{=}-(K_{22}+k_{24})\frac{\sin^2\psi(R)}{R^2}+\frac{2\gamma}{R^2}.
+\hat{E}(\hat{R},\hat{\eta};\hat{\psi}(\hat{r}),\hat{\phi}(\hat{z}))&=\frac{2}{\hat{R}^2}\int_0^{\hat{R}}\hat{r}d\hat{r}\left(\frac{1}{2}\hat{K}_{22}\left(\hat{q}-\hat{\psi}'-\frac{\sin2\hat{\psi}}{2\hat{r}}\right)^2+\frac{1}{2}\hat{K}_{33}\frac{\sin^4\hat{\psi}}{\hat{r}^2}\right)\nonumber\\
+&\phantom{=}+\frac{\hat{\Lambda}\hat{\chi}^2}{\hat{R}^22\pi/\hat{\eta}}\int_0^{\hat{R}}\hat{r}d\hat{r}\int_0^{\frac{2\pi}{\hat{\eta}}}d\hat{z}\:\frac{\hat{\phi}(\hat{z})}{\hat{\chi}}\left(\left(\frac{2\pi}{\hat{d}_{\parallel}}\right)^2+cos^2\hat{\psi}(\hat{r})\frac{\partial^2}{\partial \hat{z}^2}\right)^2\!\!\frac{\hat{\phi}(\hat{z})}{\hat{\chi}}\nonumber\\
+&\phantom{=}+\frac{\hat{\omega}}{2\pi/\hat{\eta}}\int_0^{\frac{2\pi}{\hat{\eta}}}d\hat{z}\left(\frac{\hat{\phi}(\hat{z})}{\hat{\chi}}\right)^2\left(\left(\frac{\hat{\phi}(\hat{z})}{\hat{\chi}}\right)^2-1\right)\nonumber\\
+&\phantom{=}-(\hat{K}_{22}+\hat{k}_{24})\frac{\sin^2\hat{\psi}(\hat{R})}{\hat{R}^2}+\frac{2\hat{\gamma}}{\hat{R}^2}.
 \end{align}
 
+If I take a single mode approximation for the density, $\hat{\phi}(\hat{z})=\hat{\delta}\cos(\hat{\eta}\hat{z})$ and replace all variables with their dimensionless forms
+\begin{align}
+&E=\frac{\hat{E}}{\hat{K}_{22}\hat{q}^2},\\
+&R=\hat{R}\hat{q},\\
+&r=\hat{r}\hat{q},\\
+&\psi(r)=\hat{\psi}(\hat{r}),\\
+&K_{33}=\frac{\hat{K}_{33}}{\hat{K}_{22}},\\
+&L=\frac{\hat{L}}{\hat{d}_{\parallel}},\\
+&\Lambda=\frac{\hat{\Lambda}\hat{\chi}^2}{\hat{K}_{22}\hat{q}^2\hat{d}_{\parallel}^4},\label{eq:dimensionlessLambda}\\
+&\rho_{\delta}=\frac{\hat{\rho}_{\delta}}{\hat{\chi}},\\
+&\delta=\frac{\hat{\delta}}{\hat{\chi}},\\
+&\eta=\hat{\eta}\hat{d}_{\parallel},\\
+&\omega=\frac{\hat{\omega}\hat{\chi}^4}{\hat{K}_{22}\hat{q}^2},\label{eq:dimensionlessomega}\\
+&\gamma=\frac{\hat{\gamma}}{\hat{K}_{22}\hat{q}}.
+\end{align}
+then this becomes
+\begin{align}
+E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\left(\frac{1}{2}\left(1-\psi'-\frac{\sin2\psi}{2r}\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right)\nonumber\\
+&\phantom{=}+\frac{\Lambda\delta^2}{2R^2}\int_0^Rrdr\left(4\pi^4-\eta^2\cos^2\psi(r)\right)^2\nonumber\\
+&\phantom{=}+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)-(1+k_{24})\frac{\sin^2\psi(R)}{R^2}+\frac{2\gamma}{R}.
+\end{align}
 
 
 	
