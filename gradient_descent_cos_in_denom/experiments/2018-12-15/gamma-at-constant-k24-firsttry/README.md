@@ -1,1 +1,0 @@
-In this experiment, I am producing plots of observables for different gamma values, at constant k24, omega, and Lambda. I did not have much success for non-zero values of omega and Lambda, as the input guesses for radius were much too small. Will try another experiment to see if I can get it to work better.

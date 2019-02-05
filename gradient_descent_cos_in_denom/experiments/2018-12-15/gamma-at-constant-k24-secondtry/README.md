@@ -1,1 +1,0 @@
-In this experiment, I am producing plots of observables for different gamma values, at constant k24, omega, and Lambda. This time, (vs firsttry directory), I am going to start with larger values of Rguess in the data/input.dat file.

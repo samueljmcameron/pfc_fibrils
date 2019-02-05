@@ -12,10 +12,9 @@
 *.DS_Store
 *.dSYM
 archives/
-gradient_descent/experiments/*
-!gradient_descent/experiments/modules_gammak24/
-!gradient_descent/experiments/2019-01-10/
-
+**/experiments/*
+!gradient_descent_cos_in_denom/experiments/modules_gammak24/
+!gradient_descent_new/experiments/modules_gammak24/
 **/tmp_data/*
 !**/tmp_data/README.md
 *#

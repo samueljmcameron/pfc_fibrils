@@ -1,5 +1,0 @@
-This experiment calculated k24 vs gamma plots of the observables. For this run, I am looking at the space from k24 = -1 to 1 and gamma = 0.01 to 0.4, in a 2d (4x4) grid of (Lambda,omega) coordinates, where Lambda[1..4] = (0.1,1.0,10.0,100.0) and omega[1..4] = (0.01,0.1,1.0,10.0).
-
-To make a calculation of any observable vs gamma, run the script "run_cc.h <Lambda> <omega> <k24index>" where <Lambda> is the numerical value for Lambda, <omega> is the numerical value for omega, and <k24index> is the index of the k24 array (set in scan2d.py, see below) corresponding to the value of k24 that you want to compute.
-
-The range of gamma values to be calculated (i.e. gamma = 0.01 to gamma = 0.4 in this case) and k24 values to be calculated (i.e. k24 = -1 to k24 = 1) must be set manually within the python script "scan2d.py". All other parameters (beside gamma, k24, omega range, and Lambda range) are set in the input.dat file.

@@ -63,7 +63,6 @@ struct params{
   double K33;
   double k24;
   double Lambda;
-  double d0;
   double omega;
   double gamma_s;
   double *r;

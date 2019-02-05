@@ -6,12 +6,12 @@ TARGET = gamma_k24_singlepoint
 
 BINDIR = ../bin
 GSL_SRCDIR = edited_gsl_src
-SHARED_SRCDIR = ../../shared_src
+ENERGY_SRCDIR = energy_src
 OBJDIR = ../obj
 
 LOCAL_SRC = driver.c gamma_k24_singlepoint.c
 
-SHARED_SRC := pinvs.c red.c shooting.c bksub.c energy.c nrutil.c polint.c trapzd.c \
+ENERGY_SRC := pinvs.c red.c shooting.c bksub.c energy.c nrutil.c polint.c trapzd.c \
               scaling.c solvde.c difeq.c finite_differences.c qromb.c shared.c
 
 EDITED_GSL_SRC := $(wildcard $(GSL_SRCDIR)/*.c)
@@ -21,9 +21,9 @@ EDITEDGSL_INC := $(wildcard $(GSL_SRCDIR)/*.h)
 
 
 EDITED_GSL_OBJS := $(EDITED_GSL_SRC:$(GSL_SRCDIR)/%.c=$(OBJDIR)/%.o)
-SHARED_OBJS := $(SHARED_SRC:%.c=$(OBJDIR)/%.o)
+ENERGY_OBJS := $(ENERGY_SRC:%.c=$(OBJDIR)/%.o)
 LOCAL_OBJS := $(LOCAL_SRC:%.c=$(OBJDIR)/%.o)
-OBJECTS := $(SHARED_OBJS) $(EDITED_GSL_OBJS) $(LOCAL_OBJS)
+OBJECTS := $(ENERGY_OBJS) $(EDITED_GSL_OBJS) $(LOCAL_OBJS)
 rm = rm -f
 
 $(BINDIR)/$(TARGET): $(OBJECTS)
@@ -34,7 +34,7 @@ $(LOCAL_OBJS) : $(OBJDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
 
-$(SHARED_OBJS) : $(OBJDIR)/%.o: $(SHARED_SRCDIR)/%.c
+$(ENERGY_OBJS) : $(OBJDIR)/%.o: $(ENERGY_SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
 
