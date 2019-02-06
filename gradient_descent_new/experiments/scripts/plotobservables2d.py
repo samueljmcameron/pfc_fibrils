@@ -9,13 +9,12 @@ import seaborn as sns
 class PlotObservables2d(object):
 
     def __init__(self,Lambda,omega,gamma_min,gamma_max,k24_min,k24_max,
-                 scan_dir="",data=None,K33=30.0,d0=1.0,lpath="data/",
+                 scan_dir="",data=None,K33=30.0,lpath="data/",
                  spath="results/",plot_format="pdf",colors = sns.color_palette()):
 
         self.Lambda = Lambda
         self.omega = omega
         self.K33 = K33
-        self.d0 = d0
         self.spath = spath
         self.lpath = lpath
         self.plot_format = plot_format
@@ -35,14 +34,14 @@ class PlotObservables2d(object):
 
     def observables_fname(self,varname):
 
-        suffix = (f"_{self.K33:.4e}_{self.Lambda:.4e}_{self.d0:.4e}"
+        suffix = (f"_{self.K33:.4e}_{self.Lambda:.4e}"
                   f"_{self.omega:.4e}")
     
         return f"{self.lpath}_{varname}{suffix}.txt"
     
     def observable_sname(self,varname):
 
-        suffix = (f"_{self.K33:.4e}_{self.Lambda:.4e}_{self.d0:.4e}"
+        suffix = (f"_{self.K33:.4e}_{self.Lambda:.4e}"
                   f"_{self.omega:.4e}")
 
         return f"{self.spath}_{varname}{suffix}.{self.plot_format}"

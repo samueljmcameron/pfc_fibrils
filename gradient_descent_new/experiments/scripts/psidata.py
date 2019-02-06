@@ -13,9 +13,9 @@ from readparams import ReadParams
 class PsiData(ReadParams):
 
     def __init__(self,scan_dir="",datfile="data/input.dat",scan={},
-                 loadsuf=["K_{33}","k_{24}","\\Lambda","d_0",
+                 loadsuf=["K_{33}","k_{24}","\\Lambda",
                           "\\omega","\\gamma_s"],
-                 savesuf=["K_{33}","k_{24}","\\Lambda","d_0",
+                 savesuf=["K_{33}","k_{24}","\\Lambda",
                           "\\omega","\\gamma_s"],sfile_format=".pdf"):
 
         ReadParams.__init__(self,datfile=datfile,

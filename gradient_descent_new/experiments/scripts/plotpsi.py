@@ -7,13 +7,12 @@ import matplotlib.pyplot as plt
 
 class PlotPsi(object):
 
-    def __init__(self,gamma,k24,fig,ax,K33=30.0,d0=1.0,lpath="data/",
+    def __init__(self,gamma,k24,fig,ax,K33=30.0,lpath="data/",
                  spath="results/",plot_format="pdf"):
 
         self.gamma = gamma
         self.k24 = k24
         self.K33 = K33;
-        self.d0 = d0;
         self.spath = spath
         self.lpath = lpath
         self.plot_format = plot_format
@@ -23,13 +22,13 @@ class PlotPsi(object):
     def psivsr_fname(self,omega,Lambda):
 
         suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{omega:.4e}"
-                  f"_{self.d0:.4e}_{Lambda:.4e}_{self.gamma:.4e}")
+                  f"_{Lambda:.4e}_{self.gamma:.4e}")
     
         return f"{self.lpath}_psivsr{suffix}.txt"
     
     def psivsr_sname(self,omega,Lambda):
 
-        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{omega:.4e}_{self.d0:.4e}"
+        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{omega:.4e}"
                   f"_{Lambda:.4e}")
         return f"{self.spath}_psivsr{suffix}.{self.plot_format}"
 

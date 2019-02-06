@@ -2,7 +2,7 @@
 class ReadParams(object):
 
     def __init__(self,datfile="data/input.dat",scan={},
-                 loadsuf=["K_{33}","k_{24}","d_0","\\gamma_s"],
+                 loadsuf=["K_{33}","k_{24}","\\gamma_s"],
                  savesuf=["K_{33}","d_0"],params=None):
 
         self.datfile = datfile

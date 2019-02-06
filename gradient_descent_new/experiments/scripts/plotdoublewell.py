@@ -21,13 +21,13 @@ class PlotDoubleWell(object):
     def fname(self):
 
         suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{self.omega:.4e}"
-                  f"_{self.d0:.4e}_{self.Lambda:.4e}_{self.gamma:.4e}")
+                  f"_{self.Lambda:.4e}_{self.gamma:.4e}")
     
         return f"{self.lpath}_Evst{suffix}.txt"
     
     def sname(self):
 
-        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{self.d0:.4e}"
+        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}"
                   f"_{self.gamma:.4e}")
         return f"{self.spath}_Evst{suffix}.{self.plot_format}"
 
