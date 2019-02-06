@@ -8,7 +8,7 @@ import numpy as np
 import subprocess
 import sys
 import time
-sys.path.append('../../modules_gammak24/')
+sys.path.append('../../scripts/')
 from singlerun import SingleRun
 from readparams import ReadParams
 
@@ -36,8 +36,8 @@ if __name__=="__main__":
     scan['\\gamma_s'] = gamma
     scan['\\omega']= omega
     
-    loadsuf=["K_{33}","k_{24}","\\Lambda","d_0","\\omega","\\gamma_s"]
-    savesuf=["K_{33}","k_{24}","d_0","\\omega","\\gamma_s"]
+    loadsuf=["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
+    savesuf=["K_{33}","k_{24}","\\omega","\\gamma_s"]
     scan_dir = "scanforward"
 
     # first, load the minimum for delta = 0 case, so you know the upper bound for

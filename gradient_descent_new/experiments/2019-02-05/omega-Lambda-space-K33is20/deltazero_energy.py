@@ -1,7 +1,7 @@
 import numpy as np
 import subprocess
 import sys
-sys.path.append('../../modules_gammak24/')
+sys.path.append('../../scripts/')
 from singlerun import SingleRun
 from readparams import ReadParams
 
@@ -10,8 +10,8 @@ if __name__=="__main__":
 
     gamma,k24 = sys.argv[1],sys.argv[2]
 
-    loadsuf=["K_{33}","k_{24}","\\Lambda","d_0","\\omega","\\gamma_s"]
-    savesuf=["K_{33}","k_{24}","d_0","\\omega","\\gamma_s"]
+    loadsuf=["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
+    savesuf=["K_{33}","k_{24}","\\omega","\\gamma_s"]
     
     scan = {}
     scan['k_{24}'] = k24

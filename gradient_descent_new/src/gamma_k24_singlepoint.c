@@ -67,6 +67,7 @@ int main(int argc, char **argv)
 
   save_observables(observables,E,x,&p);
 
+
   free_vector(x,1,X_SIZE);
   free_vector(p.r,1,MAX_M);
   free_matrix(p.y,1,NE,1,MAX_M);
