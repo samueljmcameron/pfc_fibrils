@@ -5,7 +5,7 @@ import sys
 import seaborn as sns
 sys.path.append('../../../../scripts/')
 from fig_settings import configure_fig_settings
-sys.path.append('../../modules_gammak24/')
+sys.path.append('../../scripts/')
 from plotobservables import PlotObservables
 from gridmbyn import GridmByn
 from readparams import ReadParams
@@ -102,8 +102,8 @@ data2d = {}
 
 colors = sns.color_palette()
 
-savesuf = ["K_{33}","d_0"]
-loadsuf = ["K_{33}","k_{24}","d_0","\\omega","\\gamma_s"]
+savesuf = ["K_{33}"]
+loadsuf = ["K_{33}","k_{24}","\\omega","\\gamma_s"]
 
 
 num_Lambdas = max_Lambda = 1000
