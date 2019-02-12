@@ -1,0 +1,141 @@
+\documentclass[12pt]{article}
+%\usepackage{helvet}
+%\renewcommand{\familydefault}{\sfdefault}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+\usepackage{fullpage}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{gensymb}
+\usepackage[nottoc,numbib]{tocbibind}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{titlesec}
+\usepackage{siunitx}
+\usepackage{mathtools}
+\usepackage[font={small}]{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage[letterpaper, margin=2cm]{geometry}
+\DeclareSIUnit{\calorie}{cal}
+
+
+\begin{document}
+\pagenumbering{arabic}
+\spacing{1.5}
+
+%%%%%%%%%%%
+% Begin Document
+%%%%%%%%%%%
+
+\section{Dimensional vs dimensionless model}
+I will denote all unscaled variables with a hat over top of them, and all scaled variables without (i.e. $\hat{R}$ has units, $R$ does not).
+
+In its most general form, the unscaled model is
+\begin{align}\label{eq:generalunits}
+\hat{E}(\hat{R},\hat{L};\hat{\psi}(\hat{r}),\hat{\rho}_{\delta}(\hat{z}))&=\frac{2\pi}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\left[\frac{1}{2}\hat{K}_{22}\left(\hat{\psi}'+\frac{\sin2\hat{\psi}}{2\hat{r}}-\hat{q}\right)^2+\frac{1}{2}\hat{K}_{33}\frac{\sin^4\hat{\psi}}{\hat{r}^2}\right]\nonumber\\
+&\phantom{=}+\frac{\hat{\Lambda}}{2}\frac{2\pi}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\hat{\rho}_{\delta}\left(\frac{4\pi^2}{\hat{d}^2_0}+\cos^2\hat{\psi}\frac{\partial^2}{\partial\hat{z}^2}\right)^2\hat{\rho}_{\delta}\nonumber\\
+&\phantom{=}+\hat{\omega}\frac{\pi\hat{R}^2}{\pi\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\hat{\rho}_{\delta}^2\left(\hat{\rho}_{\delta}^2-\hat{\chi}^2\right)-\frac{(\hat{K}_{22}+\hat{k}_{24})}{\hat{R}^2}\sin\hat{\psi}(\hat{R})+\frac{2\hat{\gamma}}{\hat{R}}\nonumber\\
+&=\frac{2}{\hat{R}^2}\int_0^{\hat{R}}\hat{r}d\hat{r}\left[\frac{1}{2}\hat{K}_{22}\left(\hat{\psi}'+\frac{\sin2\hat{\psi}}{2\hat{r}}-\hat{q}\right)^2+\frac{1}{2}\hat{K}_{33}\frac{\sin^4\hat{\psi}}{\hat{r}^2}\right]\nonumber\\
+&\phantom{=}+\frac{\hat{\Lambda}\hat{\chi}^2}{\hat{R}^2\hat{L}}\int_0^{\hat{L}}d\hat{z}\int_0^{\hat{R}}\hat{r}d\hat{r}\left(\frac{\hat{\rho}_{\delta}}{\hat{\chi}}\right)\left(\frac{4\pi^2}{\hat{d}^2_0}+\cos^2\hat{\psi}\frac{\partial^2}{\partial\hat{z}^2}\right)^2\left(\frac{\hat{\rho}_{\delta}}{\hat{\chi}}\right)\nonumber\\
+&\phantom{=}+\frac{\hat{\omega}\hat{\chi}^4}{\hat{L}}\int_0^{\hat{L}}d\hat{z}\left(\frac{\hat{\rho}_{\delta}}{\hat{\chi}}\right)^2\left[\left(\frac{\hat{\rho}_{\delta}}{\hat{\chi}}\right)^2-1\right]-\frac{(\hat{K}_{22}+\hat{k}_{24})}{\hat{R}^2}\sin\hat{\psi}(\hat{R})+\frac{2\hat{\gamma}}{\hat{R}}\nonumber\\
+\end{align}
+where I have ignored any surface contributions from the ends of the fibril, and $\hat{L}$ is some multiple of the periodic structure along the $\hat{z}$ axis. I have assumed that $\hat{\chi}^2>0$, as the density amplitude term (pre-factor $\hat{\omega}$) would be positive definite if not, meaning no density modulations would occur. The units of $\hat{\Lambda}$ are $\si{\pico\newton\cdot\micro\meter^8}$, the units of $\hat{\omega}$ are $\si{\pico\newton\cdot\micro\meter^{10}}$, and the units of $\hat{\chi}^2$ are $\si{\micro\meter^{-6}}$. If I divide both side of eqn \ref{eq:generalunits} by $\hat{K}_{22}\hat{q}^2$, rescale the radial coordinate $\hat{r}$ by $q$ and the axial coordinate $\hat{z}$ by $d_0$, I can make the system dimensionless and reduce to the form
+\begin{align}\label{eq:general}
+E(R,L;\psi(r),\rho_{\delta}(z))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
+&\phantom{=}+\frac{\Lambda}{R^2L}\int_0^{L}dz\int_0^{R}rdr\rho_{\delta}\left(4\pi^2+\cos^2\psi\frac{\partial^2}{\partial z^2}\right)^2\rho_{\delta}\nonumber\\
+&\phantom{=}+\frac{\omega}{L}\int_0^{L}dz\rho_{\delta}^2\left(\rho_{\delta}^2-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
+\end{align}
+
+In general, the liquid crystal elastic constants $\hat{K}_{ii}$, $\hat{q}=\hat{k}_{2}/\hat{K}_{22}$, and $\hat{k}_{24}$ depend on the density of the system \cite{Odijk:liqcryst1986}. Therefore, any density modulations $\hat{\rho}_{\delta}$ from some reference density $\hat{\rho}_0$ must be small. For systems with periodicity in only a single axis, it is reasonable to take a single mode approximation to the density modulations of the form
+\begin{equation}\label{eq:rho_units}
+\begin{array}{lr}
+	\hat{\rho}_{\delta}=\hat{\delta}\cos(\hat{\eta}\hat{z}), &\hat{\delta}\ll\hat{\rho}_0.
+\end{array}
+\end{equation}
+For collagen fibrils, $\hat{\delta}\sim0.1\hat{\rho}_0$. Inserting eqn \ref{eq:rho_units} in dimensionless form into eqn \ref{eq:general} and noting that the period of this structure will be $L=2\pi/\eta$, I get
+\begin{align}\label{eq:final}
+E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
+&\phantom{=}+\frac{\Lambda}{R^2{\frac{2\pi}{\eta}}}\int_0^{{\frac{2\pi}{\eta}}}dz\int_0^{R}rdr\delta^2\cos^2(\eta z)\left(4\pi^2-\cos^2\psi\eta^2\right)^2\nonumber\\
+&\phantom{=}+\frac{\omega}{{\frac{2\pi}{\eta}}}\int_0^{{\frac{2\pi}{\eta}}}dz\delta^2\cos^2(\eta z)\left(\delta^2\cos^2(\eta z)-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}\nonumber\\
+&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
+&\phantom{=}+\frac{\Lambda\delta^2}{2R^2}\int_0^{R}rdr\left(4\pi^2-\cos^2\psi\eta^2\right)^2\nonumber\\
+&\phantom{=}+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
+\end{align}
+The following is a list of the redefined, dimensionless quantites:
+\begin{align}
+&E=\frac{\hat{E}}{\hat{K}_{22}\hat{q}^2},\\
+&R=\hat{R}\hat{q},\\
+&r=\hat{r}\hat{q},\\
+&\psi(r)=\hat{\psi}(\hat{r}),\\
+&K_{33}=\frac{\hat{K}_{33}}{\hat{K}_{22}},\\
+&L=\frac{\hat{L}}{\hat{d}_0},\\
+&\Lambda=\frac{\hat{\Lambda}\hat{\chi}^2}{\hat{K}_{22}\hat{q}^2\hat{d}_0^4},\label{eq:dimensionlessLambda}\\
+&\rho_{\delta}=\frac{\hat{\rho}_{\delta}}{\hat{\chi}},\\
+&\delta=\frac{\hat{\delta}}{\hat{\chi}},\\
+&\eta=\hat{\eta}\hat{d}_0,\\
+&\omega=\frac{\hat{\omega}\hat{\chi}^4}{\hat{K}_{22}\hat{q}^2},\label{eq:dimensionlessomega}\\
+&\gamma=\frac{\hat{\gamma}}{\hat{K}_{22}\hat{q}}.
+\end{align}
+\section{Approximating coefficients}
+\subsection{Approximating $\hat{\chi}$}
+To begin with, I will determine the value of $\hat{\chi}$ with two assumptions: 
+\begin{enumerate}
+\item \label{1} The standard d-band model holds, where gap regions have $4/5$ the density of filled regions and so $\hat{\delta}=0.1\hat{\rho}_0$.
+\item \label{2} As the d-banding strength increases, our model is consistent with the standard d-band model, i.e. the dimensional version of $\delta(\omega\to\infty)=\sqrt{2/3}$ is always $0.1\hat{\rho}_0$.
+\end{enumerate}
+Taking a hexagonal packing of collagen molecules within the fibril with intermolecular spacings of $\SI{1.53}{\nano\meter}$ (cross section) and $\sim\SI{35}{\nano\meter}$ (axial), the primitive unit cell of a fibril has lattice vectors $\bm{a}=\SI{1.53}{\nano\meter}\,\hat{\bm{x}}$, $\bm{b}=\SI{1.53}{\nano\meter}(0.5\,\hat{\bm{x}}+0.866\,\hat{\bm{y}})$, and $\bm{c}\sim\SI{330}{\nano\meter}\,\hat{\bm{z}}$, giving a molecular number density $\hat{\rho}_0\sim\SI{1.67e6}{\micro\meter^{-3}}$, and so $\hat{\delta}\sim\SI{1.67e5}{\micro\meter^{-3}}$ using assumption \ref{1}. above. By assumption \ref{2}, this implies
+\begin{equation}\label{eq:chi}
+\hat{\chi}=\sqrt{\frac{3}{2}}\hat{\delta}\sim\SI{2e5}{\micro\meter^{-3}}.
+\end{equation}
+\subsection{Approximating $\omega$}
+The main difficulty in approximating $\omega$ comes from determining the energy scale of $\hat{\omega}\hat{\chi}^4$. An estimate of this energy scale could be through experimental work \cite{Kadler:1987ui} which measures the Gibbs free energy of type I collagen molecules polymerizing into fibrils as $\SI{13}{\kilo\calorie\per\mole}\sim\SI{2e5}{\pico\newton\per\micro\meter\squared}$. A different study found $\sim\SI{3.5}{\kilo\calorie\per\mole}\sim\SI{5.4e4}{\pico\newton\per\micro\meter\squared}$ \cite{Leikin:1995id}. We assume that the d-band contribution to this energy is within the range of one hundredth to one tenth of the total energy (anything slightly outside of this range is not unreasonable, but perhaps surprising). Calculation using different $\omega$ indicates that our model is fairly insensitive to changes in $\omega>1$, so that only the lower limit of our estimation is important for our results. If we choose $\hat{K}_{22}=\SI{6}{\pico\newton}$, a lower bound on $\hat{\omega}\hat{\chi}4\sim\SI{1e2}{\pico\newton\per\micro\meter\squared}$ and an upper bound on the inverse pitch as $\hat{q}=\SI{10}{\per\micro\meter}$ \cite{Cameron:2018kq}, our estimate of $\omega$ using eqn \ref{eq:dimensionlessomega} is
+\begin{equation}\label{eq:omega}
+\omega\gtrsim\frac{1}{6}.
+\end{equation}
+\subsection{Approximating $\Lambda$}
+In order to approximate $\Lambda$, we can look at how our model will respond to a small strain on the periodic spacing (i.e. the d-band), a method that has been applied in determining the bulk modulus of contribution in phase field crystal models \cite{Elder:2004ct}. If I define $\hat{\eta}_{eq}=2\pi/\hat{d}_{eq}$, with $\hat{d}_{eq}\sim\SI{67}{\nano\meter}$ being the equilibrium d-band spacing, then expanding our free energy in terms of the applied strain $u=(d-d_{eq})/d_{eq}$ will provide a dimensionless bulk modulus, $K=1/2\partial^2E/\partial u^2$, from the definition
+\begin{equation}\label{eq:strain_taylor}
+E(u;R_{eq},\eta_{eq},\delta_{eq})=E(0;R_{eq},\eta_{eq},\delta_{eq})+\frac{1}{2}\left.\frac{\partial^2E}{\partial u^2}\right|_{u=0}\!\!\!\!\!\!\!\!\!u^2+\mathcal{O}(u^3).
+\end{equation}
+Inserting $\eta_{eq}/(1+u)$ into eqn \ref{eq:final},
+\begin{align}\label{eq:fe_strain}
+E(u;R_{eq},\eta_{eq},\delta_{eq})&=\frac{2}{R_{eq}^2}\int_0^{R_{eq}}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
+&\phantom{=}+\frac{\Lambda\delta_{eq}^2}{2R_{eq}^2}\int_0^{R_{eq}}rdr\left(4\pi^2-\cos^2\psi\frac{\eta_{eq}^2}{(1+u)^2}\right)^2\nonumber\\
+&\phantom{=}+\frac{\omega\delta_{eq}^2}{2}\left(\frac{3}{4}\delta_{eq}^2-1\right)-\frac{(1+k_{24})}{R_{eq}^2}\sin\psi(R_{eq})+\frac{2\gamma}{R_{eq}}.
+\end{align}
+Evaluating the second order partial derivative at $u=0$ I find
+\begin{align}
+K=\frac{1}{2}\left.\frac{\partial^2E}{\partial u^2}\right|_{u=0} &=\frac{16\pi^4\Lambda\delta_{eq}^2}{d_{eq}^4R_{eq}^2}\int_0^{R_{eq}}rdr\left(5\cos^4{\psi}-3d_{eq}^2\cos^2\psi(r)\right).
+\end{align}
+In dimensional units, this bulk modulus for $\psi(r)=0$ (and so $d_{eq}=1$ and $\delta_{eq}^2=2/3$) becomes
+\begin{equation}\label{eq:bulk_dimensional}
+\hat{K}=\frac{32}{3}\pi^4\Lambda \hat{K}_{22}\hat{q}^2
+\end{equation}
+With this equation and an estimate of the bulk modulus, we can determine the value of $\Lambda$.
+
+To approximate the 1D bulk modulus, there are two options. The first is to gauge an approximation from the Young's modulus (which is approximately a 1D "bulk" modulus) of fibrils. Without crosslinks, the Young's modulus is $\sim\SI{32}{\mega\pascal}=\SI{3.2e7}{\pico\newton\per\micro\meter^2}$ for in vitro assembled type I fibrils \cite{Graham:2004bl}. With cross-linking present, the modulus is 10 times larger, $\sim\SI{200}{\mega\pascal}$ \cite{vanderRijt:2006bt}. The second is to assume that any distribution of d-banding observed in fibrils through e.g. diffraction measurements arise from a thermodynamic distribution with Boltzmann factor $\exp(-\hat{\beta}\Delta E)$, where $\Delta E$ is the energy difference between the equilibrium d-band configuration and a configuration with a slight strain. In the latter case, the distribution of fibrils can be fit with a probability distribution function of the form
+\begin{equation}\label{eq:dbandpdf}
+P(u)=P_0\exp\left(\frac{-\beta\hat{K}u^2}{\hat{\rho}_0}\right).
+\end{equation}
+Using the full-width half-max (FWHM), $\sigma$ of a d-band distribution, the modulus $\hat{K}$ can be determined by
+\begin{equation}\label{eq:FWHM}
+\hat{K}=\frac{4\ln2\hat{\rho}_0}{\hat{\beta}\sigma^2}
+\end{equation}
+at a given inverse temperature $\hat{\beta}$ and density $\hat{\rho}_0=\SI{1.67e6}{\per\micro\meter^{-3}}$. AFM measurements of (individual) self-assembled type I fibrils with no cross-links give a FWHM $\sigma=\SI{1.5}{\nano\meter}/\SI{66}{\nano\meter}=\num{2.27e-2}$ \cite{Fang:2013ba}, and so $\hat{K}=\SI{3.8e7}{\pico\newton\per\micro\meter^2}$, which is quite close to the cross-link free modulus measured above. I am hesitant in using the upper bound determined using the bundled tendon fibrils as it is much larger than any experimental measure of Young's modulus, so I will take the upper estimate of the bulk modulus to be $\hat{K}=\SI{1e9}{\pico\newton\per\micro\meter\squared}$.
+
+Inserting a value of $\hat{K}=\SI{3.8e7}{\pico\newton\per\micro\meter^2}$ (consistent with both direct measurement and our modulus determination from the d-band distribution) and $\hat{K}_{22}=\SI{6}{\pico\newton}$ into eqn \ref{eq:bulk_dimensional}, we get a range of $\Lambda$ values parameterized by $\Lambda=5000/q^2$, and so
+\begin{equation}\label{eq:Lambda}
+50\lesssim\Lambda\lesssim5000
+\end{equation}
+if we take $\hat{q}\in[\SI{1}{\per\micro\meter},\SI{10}{\per\micro\meter}]$.
+%%%%%%%%%%%%%%%
+% Bibliography
+%%%%%%%%%%%%%%%
+\clearpage
+\bibliography{scaling-vars}
+\bibliographystyle{unsrt}
+
+\end{document}
