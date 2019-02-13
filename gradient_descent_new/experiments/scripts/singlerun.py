@@ -22,7 +22,7 @@ class SingleRun(object):
     #  executable - the executable that creates and writes the output files
     
     def __init__(self,readparams,tmp_path="../../../tmp_data/",scan_dir="",
-                 params=None,executable="../../../bin/gamma_k24_singlepoint"):
+                 params=None,executable="../../../bin/full3var_onerun"):
 
         self.readparams = readparams
         self.tmp_path = tmp_path

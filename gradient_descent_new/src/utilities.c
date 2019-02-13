@@ -3,108 +3,38 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <time.h>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_blas.h>
-#include "edited_gsl_src/gsl_multimin.h"
-#include "../../shared_src/nrutil.h"
 #include "headerfile.h"
+#include "energy_src/nrutil.h"
 
 
-int main(int argc, char **argv)
-{
-  void initialize_params(struct params *p,char **args);
-
-  void initialize_param_vectors(struct params *p);
-
-  void initialize_x(double *x,struct params p);
-
-  void initialize_file(FILE **output,char *path,char *fname,struct params p);
-
-  void save_psivsr(FILE *psivsr,struct params *p);
-
-  void set_x_NAN(double *E,double *x,int xsize);
-
-  void save_observables(FILE *observables,double E,double *x,struct params *p);
-
-  void reset_guess_vals(double *x, struct params *p);
-  
-  int drive(double *E,struct params *p,double *x,FILE *energy);
-  
-  struct params p; 
-  initialize_params(&p,argv);
-  initialize_param_vectors(&p);
-
-  double *x;
-  x = vector(1,X_SIZE);
-  initialize_x(x,p);
-
-  FILE *observables;
-  initialize_file(&observables,argv[1],"observables",p);
-
-  FILE *psivsr;
-  initialize_file(&psivsr,argv[1],"psivsr",p);
-
-  double E;
-
-  int calculation = drive(&E,&p,x,(NULL));
-
-  
-  if (calculation == DRIVER_POORSCALING) {
-    printf("RETRYING!\n");
-    reset_guess_vals(x,&p);
-    calculation = drive(&E,&p,x,(NULL));
-  }
-  if (calculation == DRIVER_SUCCESS) {
-    printf("success!\n");
-    save_psivsr(psivsr,&p);
-    
-  } else {
-    
-    set_x_NAN(&E,x,X_SIZE);
-    
-  }
-
-  save_observables(observables,E,x,&p);
-
-  free_vector(x,1,X_SIZE);
-  free_vector(p.r,1,MAX_M);
-  free_matrix(p.y,1,NE,1,MAX_M);
-  free_vector(p.r_cp,1,MAX_M);
-  free_matrix(p.y_cp,1,NE,1,MAX_M);
-  free_vector(p.rf_fib,1,MAX_M);
-  free_matrix(p.s,1,NSI,1,NSJ);
-  free_f3tensor(p.c,1,NCI,1,NCJ,1,MAX_M+1);
-
-  fclose(psivsr);
-  fclose(observables);
-
-  return 0;
-
-}
-
-
-void reset_guess_vals(double *x, struct params *p)
+void reset_guess_vals(struct params *p)
 /*==============================================================================
 
-  Purpose: This function is called if the scaling of x is poor (i.e. if scaledx
-  values in the minimization procedure are consistently not between -1 and 1 for
-  at least one of the x components (usually it is x[1]). The function assumes
-  that the current values of x are okay (as they've been optimized somewhat by
-  the optimization procedure) and only the scaling itself needs to be reset.
+  Purpose: This function is called if the scaling of R,eta,delta is poor (i.e.
+  if scaledx values in the minimization procedure are consistently not between 
+  -1 and 1 for at least one of the R,eta,delta components (usually it is R).
+  The function assumes that the current values of R,eta,delta are okay (as 
+  they've been optimized somewhat by the optimization procedure) and only the
+  scaling itself needs to be reset.
   ============================================================================*/
 {
-  p->Rguess = x[1];
+
+  double current_R = p->R;
+  double current_eta = p->eta;
+  double current_delta = p->delta;
+  
+  p->Rguess = current_R;
   p->Rupper = 1.5*p->Rguess;
   p->Rlower = 0.75*p->Rguess;
 
-  if (x[2] == x[2]) {
-    p->etaguess = x[2];
+  if (current_eta == current_eta) { // if eta is not NAN
+    p->etaguess = current_eta;
     p->etaupper = p->etaguess+0.1;
     p->etalower = p->etaguess-0.02;
   }
-  if (x[3] == x[3] && fabs(x[3])>DELTA_CLOSE_TO_ZERO) {
-    p->deltaguess = x[3];
+  if (current_delta == current_delta && fabs(current_delta)>DELTA_CLOSE_TO_ZERO) {
+    // if delta is not NAN and not close to zero
+    p->deltaguess = current_delta;
     p->deltaupper = 0.818;
     if (p->deltaguess < 0.81) {
       p->deltalower = 0.95*p->deltaguess;
@@ -115,6 +45,17 @@ void reset_guess_vals(double *x, struct params *p)
   
   return;
 }
+
+
+void save_observables(FILE *observables,double E,struct params *p)
+{
+
+  fprintf(observables,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	  E,p->R,p->eta,p->delta,p->y[1][p->mpt]);
+  return;
+}
+
+
 
 void save_psivsr(FILE *psivsr,struct params *p)
 {
@@ -128,28 +69,24 @@ void save_psivsr(FILE *psivsr,struct params *p)
   return;
 }
 
-void save_observables(FILE *observables,double E,double *x,struct params *p)
+
+
+void set_NAN(double *E,struct params *p)
 {
 
-  fprintf(observables,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	  E,x[1],x[2],x[3],p->y[1][p->mpt]);
-  return;
-}
-
-
-void set_x_NAN(double *E,double *x,int xsize)
-{
-  int i;
-  for (i = 1; i <= xsize; i++) x[i] = sqrt(-1);
+  p->R = sqrt(-1);
+  p->eta = sqrt(-1);
+  p->delta = sqrt(-1);
   *E = sqrt(-1);
+  
   return;
 }
 
-void initialize_x(double *x,struct params p)
+void initialize_R_eta_delta(struct params *p)
 {
-  x[1] = p.Rguess;
-  x[2] = p.etaguess;
-  x[3] = p.deltaguess;
+  p->R = p->Rguess;
+  p->eta = p->etaguess;
+  p->delta = p->deltaguess;
   return;
 }
 

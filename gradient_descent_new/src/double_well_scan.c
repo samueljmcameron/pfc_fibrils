@@ -4,9 +4,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <time.h>
-#include <gsl/gsl_vector.h>
-#include <gsl/gsl_blas.h>
-#include "../../shared_src/nrutil.h"
+#include "energy_src/nrutil.h"
 #include "headerfile.h"
 
 int main(int argc, char **argv)
@@ -15,18 +13,15 @@ int main(int argc, char **argv)
 
   void initialize_param_vectors(struct params *p);
 
-  void initialize_x(double *x,struct params p);
-
   void initialize_file(FILE **output,char *path,char *fname,struct params p);
 
-  double E_calc(const double *x, struct params *p);
+  double E_calc(struct params *p);
 
   void initialize_first_xpoint_x0(double *x0,struct params *p);
 
   void initialize_second_xpoint_x1(double *x1,struct params *p);
 
-  void x_of_t(double *x,const double t,const double *x0,const double *x1,
-	      const int xsize);
+  void x_of_t(struct params *p,const double t,const double *x0,const double *x1);
 
   double set_t_start(char **args);
 
@@ -34,18 +29,18 @@ int main(int argc, char **argv)
 
   int set_numpoints(char **args);
 
-  void initialize_psi_and_r(double R,struct params *p);
+  void initialize_psi_and_r(struct params *p);
 
   
   struct params p; 
   initialize_params(&p,argv);
   initialize_param_vectors(&p);
 
-  double *x0;
+  double *x0; // this will hold the coordinates at the first minimum (smaller R)
   x0 = vector(1,X_SIZE);
   initialize_first_xpoint_x0(x0,&p);
 
-  double *x1;
+  double *x1; // this will hold the coordinates at the second minimum (larger R)
   x1 = vector(1,X_SIZE);
   initialize_second_xpoint_x1(x1,&p);
 
@@ -61,23 +56,21 @@ int main(int argc, char **argv)
   double t;
   double E;
 
-  double *x;
-  x = vector(1,X_SIZE);
 
   int iter;
 
-  x_of_t(x,t_start,x0,x1,X_SIZE);
+  x_of_t(&p,t_start,x0,x1);
 
-  initialize_psi_and_r(x[1],&p);
+  initialize_psi_and_r(&p);
 
 
   for (iter = 0; iter < numpoints; iter++) {
 
     t = t_start + iter*t_step;
 
-    x_of_t(x,t,x0,x1,X_SIZE);
+    x_of_t(&p,t,x0,x1);
 
-    E = E_calc(x,&p);
+    E = E_calc(&p);
 
     fprintf(Evst,"%13.6e\t%13.6e\n",t,E);
 
@@ -85,7 +78,6 @@ int main(int argc, char **argv)
 
   free_vector(x0,1,X_SIZE);
   free_vector(x1,1,X_SIZE);
-  free_vector(x,1,X_SIZE);
   
   free_vector(p.r,1,MAX_M);
   free_matrix(p.y,1,NE,1,MAX_M);
@@ -123,16 +115,14 @@ double set_t_end(char **args)
 }
 
 
-void x_of_t(double *x,const double t,const double *x0,const double *x1,
-	    const int xsize)
+void x_of_t(struct params *p,const double t,const double *x0,const double *x1)
 {
   int i;
+
+  p->R = x0[1]+t*(x1[1]-x0[1]);
+  p->eta = x0[2]+t*(x1[2]-x0[2]);
+  p->delta = x0[3]+t*(x1[3]-x0[3]);
   
-  for (i = 1; i <= xsize; i++) {
-    x[i] = x0[i] + t*(x1[i]-x0[i]);
-    printf("x[%d] = %e,",i,x[i]);
-  }
-  printf("\n");
   
   return;
 }
@@ -149,19 +139,16 @@ void initialize_param_vectors(struct params *p)
   p->s = matrix(1,NSI,1,NSJ);
   p->c = f3tensor(1,NCI,1,NCJ,1,MAX_M+1);
 
-
-
-
   return;
 }
 
-void initialize_psi_and_r(double R,struct params *p)
+void initialize_psi_and_r(struct params *p)
 {
 
   void linearGuess(double *r, double **y, double initialSlope,double h,int mpt);
-  
-  double h = R/(p->mpt-1);
-  double slopeguess = M_PI/(4.0*R);
+
+  double h = p->R/(p->mpt-1);
+  double slopeguess = M_PI/(4.0*p->R);
   linearGuess(p->r,p->y,slopeguess,h,p->mpt); //linear initial guess for psi(r)
   
   return;

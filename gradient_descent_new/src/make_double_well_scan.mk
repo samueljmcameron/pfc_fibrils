@@ -5,13 +5,13 @@ LFLAGS = -Wall -I. -O2 -lm -lgsl -lgslcblas
 TARGET = double_well_scan
 
 BINDIR = ../bin
-SHARED_SRCDIR = ../../shared_src
+SHARED_SRCDIR = energy_src
 OBJDIR = ../obj
 
 LOCAL_SRC = double_well_scan.c
 
 SHARED_SRC := pinvs.c red.c shooting.c bksub.c energy.c nrutil.c polint.c trapzd.c \
-              scaling.c solvde.c difeq.c finite_differences.c qromb.c shared.c
+              solvde.c difeq.c finite_differences.c qromb.c shared.c
 
 INCLUDES := headerfile.h
 

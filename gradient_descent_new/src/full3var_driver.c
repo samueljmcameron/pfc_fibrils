@@ -7,12 +7,28 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_blas.h>
 #include "edited_gsl_src/gsl_multimin.h"
-#include "../../shared_src/nrutil.h"
+#include "energy_src/nrutil.h"
 #include "headerfile.h"
 
 
-int drive(double *E,struct params *p,double *x,FILE *energy)
+int drive(double *E,struct params *p,FILE *energy)
+/*==============================================================================
+  This function minimizes E with respect to R, eta, and delta. It writes the
+  values of R, eta, and delta which minimize E to the struct values p->R,
+  p->eta, and p->delta. It also writes the energy E through the first
+  argument.
+  ============================================================================*/
 {
+
+  void scale_forward(gsl_vector *y,const struct params *p);
+  
+  void scale_backward(const gsl_vector *y,struct params *p);
+  
+  void scale_E_backward(const double F,double *E,struct params *p);
+  
+  void scale_dEdx_backward(const gsl_vector *dFdy,double *dEdx,struct params *p);
+
+
   void my_fdf(const gsl_vector *x,void *params, double *func,gsl_vector *grad);
 
   void df(const gsl_vector *x,void *ps,gsl_vector *g);
@@ -28,7 +44,7 @@ int drive(double *E,struct params *p,double *x,FILE *energy)
 
   gsl_vector *x_scale;
   x_scale = gsl_vector_alloc(X_SIZE);
-  scale_forward(x_scale,x,p);
+  scale_forward(x_scale,p);
 
   gsl_multimin_function_fdf my_func;
   my_func.n = X_SIZE;
@@ -74,12 +90,12 @@ int drive(double *E,struct params *p,double *x,FILE *energy)
     if (status == GSL_SUCCESS)
       printf("minimum found at:\n");
 
-    scale_backward(s->x,x,p);
+    scale_backward(s->x,p);
     scale_dEdx_backward(s->gradient,dEdx,p);
     *E = s->f;
 
     printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
+	   iter,p->R,p->eta,p->delta,*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
 
     if (poorscaling(s->x)) {
       poorscaling_count += 1;
@@ -114,11 +130,11 @@ int drive(double *E,struct params *p,double *x,FILE *energy)
 	   "dEddelta","grad norm");
 
     printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	   iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
+	   iter,p->R,p->eta,p->delta,*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
 
-    if (fabs(x[3]) <= DELTA_CLOSE_TO_ZERO) x[2] = sqrt(-1);
+    if (fabs(p->delta) <= DELTA_CLOSE_TO_ZERO) p->eta = sqrt(-1);
 
-    if (p->omega == 0) x[2]=x[3]= sqrt(-1);
+    if (p->omega == 0) p->eta=p->delta= sqrt(-1);
     
     returnvalue =  DRIVER_SUCCESS;
     
@@ -140,7 +156,7 @@ int drive(double *E,struct params *p,double *x,FILE *energy)
 	     "dEddelta","grad norm");
 
       printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	     iter,x[1],x[2],x[3],*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
+	     iter,p->R,p->eta,p->delta,*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx));
 
       returnvalue = DRIVER_POORSCALING;
 
@@ -165,6 +181,64 @@ int drive(double *E,struct params *p,double *x,FILE *energy)
   return returnvalue;
   
 }
+
+void my_fdf(const gsl_vector *x,void *params, double *func,gsl_vector *grad)
+{
+  double f(const gsl_vector *x_scale,void *ps);
+  void df(const gsl_vector *x,void *ps,gsl_vector *g);
+  
+  *func = f(x,params);
+  df(x,params,grad);
+  return;
+}
+
+void df(const gsl_vector *x,void *ps,gsl_vector *g)
+{
+  int deriv_xi(double (*f)(const gsl_vector *,void *),const gsl_vector *x,
+	       int i,void *ps,double h,double *result,double *abserr);
+  double f(const gsl_vector *x_scale,void *ps);
+  
+  double h = 1e-5;
+  int i;
+  double result,abserr;
+  struct params *p = ps;
+
+  for (i = 0; i < 3; i++) {
+    deriv_xi(f,x,i,ps,h,&result,&abserr);
+    gsl_vector_set(g,i,result);
+    if (abserr >= 0.5*CONV_MIN*(1+p->Escale)) {
+      if (p->Escale != 0) {
+	printf("abserr is %e, but the convergence criterion "
+	       "CONV_min*(1+p->Escale) is %e!\n",
+	       abserr,CONV_MIN*(1+p->Escale));
+      }
+    }
+  }
+  return;
+  
+}
+
+
+double f(const gsl_vector *x_scale,void *ps)
+{
+  
+  double E_calc(struct params *p);
+
+  void scale_backward(const gsl_vector *y,struct params *p);
+
+
+  double E;
+  struct params *p = ps;
+  
+
+  scale_backward(x_scale,p);
+    
+  E = E_calc(p);
+
+  return E;
+}
+
+
 
 bool poorscaling(gsl_vector *x)
 {

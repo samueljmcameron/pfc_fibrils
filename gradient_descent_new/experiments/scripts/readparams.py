@@ -3,7 +3,7 @@ class ReadParams(object):
 
     def __init__(self,datfile="data/input.dat",scan={},
                  loadsuf=["K_{33}","k_{24}","\\gamma_s"],
-                 savesuf=["K_{33}","d_0"],params=None):
+                 savesuf=["K_{33}"],params=None):
 
         self.datfile = datfile
         self.scan = scan

@@ -14,67 +14,8 @@
 #define LRG_NBR 1e10
 
 
-void my_fdf(const gsl_vector *x,void *params, double *func,gsl_vector *grad)
-{
-  double f(const gsl_vector *x_scale,void *ps);
-  void df(const gsl_vector *x,void *ps,gsl_vector *g);
-  
-  *func = f(x,params);
-  df(x,params,grad);
-  return;
-}
 
-void df(const gsl_vector *x,void *ps,gsl_vector *g)
-{
-  int deriv_xi(double (*f)(const gsl_vector *,void *),const gsl_vector *x,
-	       int i,void *ps,double h,double *result,double *abserr);
-  double f(const gsl_vector *x_scale,void *ps);
-  
-  double h = 1e-5;
-  int i;
-  double result,abserr;
-  struct params *p = ps;
-
-  for (i = 0; i < 3; i++) {
-    deriv_xi(f,x,i,ps,h,&result,&abserr);
-    gsl_vector_set(g,i,result);
-    if (abserr >= 0.5*CONV_MIN*(1+p->Escale)) {
-      if (p->Escale != 0) {
-	printf("abserr is %e, but the convergence criterion "
-	       "CONV_min*(1+p->Escale) is %e!\n",
-	       abserr,CONV_MIN*(1+p->Escale));
-      }
-    }
-  }
-  return;
-  
-}
-
-
-double f(const gsl_vector *x_scale,void *ps)
-{
-  
-  double E_calc(const double *x,struct params *ps);
-
-
-  
-  double *x;
-  double E;
-  struct params *p = ps;
-  
-  x = vector(1,3);
-
-  scale_backward(x_scale,x,p);
-    
-  E = E_calc(x,p);
-
-
-  
-  free_vector(x,1,3);
-  return E;
-}
-
-double E_calc(const double *x,struct params *p)
+double E_calc(struct params *p)
 /*==============================================================================
 
   Purpose: This function calculates E(x), by first solving the ODE for psi(r)
@@ -92,8 +33,6 @@ double E_calc(const double *x,struct params *p)
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24), as
   well as the array info (r,y,rf_fib,etc).
-
-  x -- This vector holds the variable parameters x = (R,eta,delta)'.
 
   ------------------------------------------------------------------------------
 
@@ -113,12 +52,12 @@ double E_calc(const double *x,struct params *p)
   void copy_2_arrays(double *r_cp,double **y_cp,double *r,double **y,
 		     int last_mpt);
 
-  void solvde_wrapper(double scalv[],struct params *p,const double *x,double h,
+  void solvde_wrapper(double scalv[],struct params *p,double h,
 		      bool ignore_first_y);
   
-  bool successful_E_count(double *E,struct params *p,const double *x);
+  bool successful_E_count(double *E,struct params *p);
 
-  void write_QROMBfailure(struct params *p,const double *x);
+  void write_QROMBfailure(struct params *p);
 
 
   
@@ -135,9 +74,9 @@ double E_calc(const double *x,struct params *p)
   scalv[2] = 4.0;   // guess for magnitude of the psi' values
 
 
-  if (x[1] <= 0 || x[2] <= 0 || x[2] >= 8.0
-      || fabs(x[3]) >= 1.0) {
-    printf("x[1] = %e, x[2] = %e, x[3] = %e\n",x[1],x[2],x[3]);
+  if (p->R <= 0 || p->eta <= 0 || p->eta >= 8.0
+      || fabs(p->delta) >= 1.0) {
+    printf("p->R = %e, p->eta = %e, p->delta = %e\n",p->R,p->eta,p->delta);
     printf("something is too big or less than zero, so returning failed calculation.\n");
     return FAILED_E;
   }
@@ -145,12 +84,12 @@ double E_calc(const double *x,struct params *p)
   
   while (p->mpt <= MAX_M) {
 
-    h = x[1]/(p->mpt-1);    // compute stepsize in r[1..mpt] 
+    h = p->R/(p->mpt-1);    // compute stepsize in r[1..mpt] 
 
     if (p->mpt != last_mpt) {
 
       printf("interpolating at R = %e, eta = %e, delta = %e...\n",
-	     x[1],x[2],x[3]);
+	     p->R,p->eta,p->delta);
 
       copy_2_arrays(p->r_cp,p->y_cp,p->r,p->y,last_mpt); // copy arrays r and y into r_cp and y_cp
       propagate_r(p->r,h,p->mpt);
@@ -166,12 +105,12 @@ double E_calc(const double *x,struct params *p)
     }
 
     
-    solvde_wrapper(scalv,p,x,h,false);
+    solvde_wrapper(scalv,p,h,false);
 
-    if(successful_E_count(&E,p,x)) return E;
+    if(successful_E_count(&E,p)) return E;
     else if (E > LRG_NBR) {
-      solvde_wrapper(scalv,p,x,h,true);
-      if(successful_E_count(&E,p,x)) return E;
+      solvde_wrapper(scalv,p,h,true);
+      if(successful_E_count(&E,p)) return E;
     }
     p->mpt = (p->mpt-1)*2+1;
     
@@ -179,7 +118,7 @@ double E_calc(const double *x,struct params *p)
 
   // if it makes it this far, we did not successfully compute E(R)
 
-  //  write_QROMBfailure(p,x); // save psi(r), rf_fib(r), and exit
+  //  write_QROMBfailure(p); // save psi(r), rf_fib(r), and exit
 
   // NOTE that if the calculation gets to here, then all calculations from this
   // point on will return FAILED_E, which means the derivatives will all be zero,
@@ -239,7 +178,7 @@ void propagate_r(double *r, double h,int mpt)
   return;
 }
 
-void write_QROMBfailure(struct params *p,const double *x)
+void write_QROMBfailure(struct params *p)
 /*==============================================================================
   
   Purpose: This function saves the r, psi(r), and r*f_fibril(r) values that 
@@ -252,8 +191,6 @@ void write_QROMBfailure(struct params *p,const double *x)
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
 
-  x -- This vector holds the variable parameters x = (R,eta,delta)'.
-
   ------------------------------------------------------------------------------
 
   Returns: Exits with exit status exit(1);
@@ -262,17 +199,16 @@ void write_QROMBfailure(struct params *p,const double *x)
 
 {
 
-  void make_f_err(char *f_err,char *err_type,int f_err_size,struct params *p,
-		  const double *x);
+  void make_f_err(char *f_err,char *err_type,int f_err_size,struct params *p);
   
   int i;
   FILE *broken;
   int f_err_size = 200;
   char f_err[f_err_size];
 
-  make_f_err(f_err,"QROMB",f_err_size,p,x);
+  make_f_err(f_err,"QROMB",f_err_size,p);
 
-  printf("failed to integrate with qromb at x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+  printf("failed to integrate with qromb at (R,eta,delta) = (%e,%e,%e).\n",p->R,p->eta,p->delta);
   printf("saving psi(r) shape, rf_fib(r), and exiting to system.\n");
 
   broken = fopen(f_err,"w");
@@ -290,7 +226,7 @@ void write_QROMBfailure(struct params *p,const double *x)
 
 
 
-bool successful_E_count(double *E,struct params *p,const double *x)
+bool successful_E_count(double *E,struct params *p)
 /*==============================================================================
 
   Purpose: Given the form of psi(r) (in the array y[1..2][1..mpt]), compute the
@@ -307,8 +243,6 @@ bool successful_E_count(double *E,struct params *p,const double *x)
   p -- This struct has all of the constant parameter info (e.g. K33, k24), as
   well as the array info (r,y,rf_fib,etc).
 
-  x -- This vector holds the variable parameters x = (R,eta,delta)'.
-
   ------------------------------------------------------------------------------
 
   Returns: Returns true if the calculation of E(x) was successful, and stores
@@ -318,8 +252,8 @@ bool successful_E_count(double *E,struct params *p,const double *x)
   
 {
 
-  void compute_rf2233b1(struct params *p,const double *x);
-  double no_integral_E(struct params *p,const double *x,double psiR,
+  void compute_rf2233b1(struct params *p);
+  double no_integral_E(struct params *p,double psiR,
 		       double integration_2233b1);
 
   double qromb(double *x,double *y, int xlength,double tol,bool *failure);
@@ -340,25 +274,25 @@ bool successful_E_count(double *E,struct params *p,const double *x)
   // be ignored.
 
   
-  tol2233b1 = fabs(no_integral_E(p,x,p->y[1][p->mpt],0)*x[1]*x[1]/2.0*tol0);
+  tol2233b1 = fabs(no_integral_E(p,p->y[1][p->mpt],0)*p->R*p->R/2.0*tol0);
   tol2233b1 = tol2233b1 > tol0 ? tol2233b1 : tol0;
-  compute_rf2233b1(p,x);
+  compute_rf2233b1(p);
   integration_2233b1 = qromb(p->r,p->rf_fib,p->mpt,tol2233b1,&failure);
   
   if (failure) {
     *E = integration_2233b1;
-    printf("failed to integrate at x = (%e,%e,%e)\n",
-	   x[1],x[2],x[3]);
+    printf("failed to integrate at (R,eta,delta) = (%e,%e,%e)\n",
+	   p->R,p->eta,p->delta);
     return false;
   }
 
-  *E = no_integral_E(p,x,p->y[1][p->mpt],integration_2233b1);
+  *E = no_integral_E(p,p->y[1][p->mpt],integration_2233b1);
 
   return true;
 }
 
 
-double no_integral_E(struct params *p,const double *x,double psiR,
+double no_integral_E(struct params *p,double psiR,
 		     double integration_2233b1)
 /*==============================================================================
 
@@ -370,8 +304,6 @@ double no_integral_E(struct params *p,const double *x,double psiR,
   Parameters:
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
-
-  x -- This vector holds the variable parameters x = (R,eta,delta)'.
 
   psiR -- This is the surface twist of the fibrils, psi(R). In this code, this
   term would be y[1][mpt].
@@ -391,21 +323,21 @@ double no_integral_E(struct params *p,const double *x,double psiR,
   double E;
 
   // first calculate bulk energy per unit length
-  E = 2.0/(x[1]*x[1])*integration_2233b1; 
+  E = 2.0/(p->R*p->R)*integration_2233b1; 
 
   // add density fluctuations term
-  E = (E+x[3]*x[3]*p->omega*0.5
-       *(0.75*x[3]*x[3]-1));
+  E = (E+p->delta*p->delta*p->omega*0.5
+       *(0.75*p->delta*p->delta-1));
 
   // add surface term tension terms
-  E = E+0.5+1.0/x[1]*(-(1+p->k24)*(sin(psiR)*sin(psiR))/x[1]+2.0*p->gamma_s);  
+  E = E+0.5+1.0/p->R*(-(1+p->k24)*(sin(psiR)*sin(psiR))/p->R+2.0*p->gamma_s);  
   
 
   return E;
 }
 
 
-void compute_rf2233b1(struct params *p,const double *x)
+void compute_rf2233b1(struct params *p)
 /*==============================================================================
 
   Purpose: This function computes r*f_fibril(r) for all ri in r[1..mpt], and
@@ -417,12 +349,10 @@ void compute_rf2233b1(struct params *p,const double *x)
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
 
-  x -- This vector holds the variable parameters x = (R,eta,delta)'.
-
   ============================================================================*/
 {
 
-  double f2233b1_r(struct params *p,const double *x,double ri,double sin_yi,
+  double f2233b1_r(struct params *p,double ri,double sin_yi,
 		   double sin_2yi,double cos_yi,double yi_p);
 
   int i;
@@ -439,7 +369,7 @@ void compute_rf2233b1(struct params *p,const double *x)
 
     cosy = cos(p->y[1][i]);
 
-    p->rf_fib[i] = p->r[i]*f2233b1_r(p,x,p->r[i],siny,sin2y,cosy,
+    p->rf_fib[i] = p->r[i]*f2233b1_r(p,p->r[i],siny,sin2y,cosy,
 				     p->y[2][i]);
 
   }
@@ -448,7 +378,7 @@ void compute_rf2233b1(struct params *p,const double *x)
 }
 
 
-double f2233b1_r(struct params *p,const double *x,double ri,double sin_yi,
+double f2233b1_r(struct params *p,double ri,double sin_yi,
 		 double sin_2yi,double cos_yi,double yi_p)
 /*==============================================================================
 
@@ -460,8 +390,6 @@ double f2233b1_r(struct params *p,const double *x,double ri,double sin_yi,
   Parameters:
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
-
-  x -- This vector holds the variable parameters x = (R,eta,delta)'.
 
   ri -- This is the current grid point where the function is being calculated
   at.
@@ -483,9 +411,9 @@ double f2233b1_r(struct params *p,const double *x,double ri,double sin_yi,
 
   ans = (-(yi_p+0.5*sin_2yi/ri)+0.5*(yi_p+0.5*sin_2yi/ri)
 	 *(yi_p+0.5*sin_2yi/ri)+0.5*p->K33*sin_yi*sin_yi*sin_yi
-	 *sin_yi/(ri*ri)+p->Lambda*x[3]*x[3]/4.0
-	 *(4*M_PI*M_PI-x[2]*x[2]*cos_yi*cos_yi)
-	 *(4*M_PI*M_PI-x[2]*x[2]*cos_yi*cos_yi));
+	 *sin_yi/(ri*ri)+p->Lambda*p->delta*p->delta/4.0
+	 *(4*M_PI*M_PI-p->eta*p->eta*cos_yi*cos_yi)
+	 *(4*M_PI*M_PI-p->eta*p->eta*cos_yi*cos_yi));
 
   return ans;
 

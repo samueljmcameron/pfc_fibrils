@@ -73,6 +73,11 @@ struct params{
   double **s;
   double ***c;
   int mpt;
+  // these three parameters are the typical ones I am minimizing with
+  // respect to
+  double R;
+  double eta;
+  double delta;
   // these 10 parameters are necessary to specify for finding minima
   double Rguess;
   double etaguess;
@@ -101,14 +106,14 @@ struct params{
 
 /* from file energy.c */
 
-double E_calcwrap(double *x_scale,void *ps);
+//double E_calcwrap(double *x_scale,void *ps);
 
 /* from file scaling.c */
 
-void scale_forward(gsl_vector *y,const double *x,struct params *p);
-void scale_backward(const gsl_vector *y, double *x,struct params *p);
-void scale_E_backward(const double F,double *E,struct params *p);
-void scale_dEdx_backward(const gsl_vector *dFdy,double *dEdx,struct params *p);
+//void scale_forward(gsl_vector *y,const struct params *p);
+//void scale_backward(const gsl_vector *y,struct params *p);
+//void scale_E_backward(const double F,double *E,struct params *p);
+//void scale_dEdx_backward(const gsl_vector *dFdy,double *dEdx,struct params *p);
 
 #endif /* ANSI */
 

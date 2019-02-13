@@ -7,7 +7,7 @@
 
 #define EPS 1.0e-14
 
-void solvde_wrapper(double scalv[],struct params *p,const double *x,double h,
+void solvde_wrapper(double scalv[],struct params *p,double h,
 		    bool ignore_first_y)
 /*==============================================================================
 
@@ -29,16 +29,16 @@ void solvde_wrapper(double scalv[],struct params *p,const double *x,double h,
   ============================================================================*/
 {
 
-  bool solvde(double scalv[],struct params *p,const double *x,double h,bool flag);
+  bool solvde(double scalv[],struct params *p,double h,bool flag);
 
   void sqrtGuess(double *r, double **y, double initialSlope,double h,int mpt);
 
   void linearGuess(double *r, double **y, double initialSlope,double h,int mpt);
 
-  void write_SOLVDEfailure(struct params *p,const double *x);
+  void write_SOLVDEfailure(struct params *p);
 
   bool success_brent(double *psip01,double psip02,struct params *p,
-		     const double *x,double h);
+		     double h);
   
   void constantGuess(double *r,double **y,double val,double h,int mpt);
 
@@ -49,56 +49,56 @@ void solvde_wrapper(double scalv[],struct params *p,const double *x,double h,
   bool flag = true;
 
 
-  if (!solvde(scalv,p,x,h,flag) || ignore_first_y) {
+  if (!solvde(scalv,p,h,flag) || ignore_first_y) {
 
     flag = true;//false;
-    printf("solvde convergence failed when x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+    printf("solvde convergence failed when (R,eta,delta) = (%e,%e,%e).\n",p->R,p->eta,p->delta);
     //printf("Retrying using a hybrid shooting/relaxing method.\n");
     printf("Retrying using a constant y value\n");
     
-    //  if (x[2] > 6.32) psip02 = M_PI/(0.01*x[1]);
-    //else psip02 = M_PI/(2.0*x[1]);
-    //success_brent(&psip01,psip02,p,x,h);
+    //  if (p->eta > 6.32) psip02 = M_PI/(0.01*p->R);
+    //else psip02 = M_PI/(2.0*p->R);
+    //success_brent(&psip01,psip02,p,h);
     constantGuess(p->r,p->y,0.3,h,p->mpt);
 
   } else return;
   
-  if (!solvde(scalv,p,x,h,flag)) {
+  if (!solvde(scalv,p,h,flag)) {
 
     flag = true;
     printf("Retrying with a linear guess and a final twist angle value of "
 	   "pi/4.\n");
 
-    slopeguess = M_PI/(4.0*x[1]);
+    slopeguess = M_PI/(4.0*p->R);
     
     linearGuess(p->r,p->y,slopeguess,h,p->mpt);
 
   } else return;
-  if (!solvde(scalv,p,x,h,flag)) {
+  if (!solvde(scalv,p,h,flag)) {
 
     flag = true;
     printf("Retrying with a sqrt(r) guess and a final twist angle value of "
 	   "pi/2.01.\n");
 
-    slopeguess = M_PI/(2.01*sqrt(x[1]));
+    slopeguess = M_PI/(2.01*sqrt(p->R));
 
     sqrtGuess(p->r,p->y,slopeguess,h,p->mpt);
 
   } else return;
 
 
-  if (!solvde(scalv,p,x,h,flag)) {
+  if (!solvde(scalv,p,h,flag)) {
     
     // save form of y when solvde failed, rf_fib, and exit.
 
 
-    write_SOLVDEfailure(p,x);
+    write_SOLVDEfailure(p);
   } else return;
 
   
 }
 
-bool solvde(double scalv[],struct params *p, const double *x,double h,bool flag)
+bool solvde(double scalv[],struct params *p,double h,bool flag)
 /*==============================================================================
   Driver routine for solution of two point boundary value problems
   by relaxation. itmax is the maximum number of iterations. conv
@@ -121,7 +121,7 @@ bool solvde(double scalv[],struct params *p, const double *x,double h,bool flag)
 
   void bksub(int ne, int nb, int jf, int k1, int k2, double ***c);
   void difeq(int k, int k1, int k2, int jsf, int isl, int isf,
-	     struct params *p,const double *x, double h);
+	     struct params *p,double h);
   bool pinvs(int ie1, int ie2, int je1, int jsf, int jc1, int k, double ***c,
 	     double **s);
   void red(int iz1, int iz2, int jz1, int jz2, int jm1, int jm2, int jmf,
@@ -157,30 +157,30 @@ bool solvde(double scalv[],struct params *p, const double *x,double h,bool flag)
 
   for (it=1;it<=ITMAX;it++) { //Primary iteration loop.
     k=k1; //Boundary conditions at first point.
-    difeq(k,k1,k2,j9,ic3,ic4,p,x,h);
+    difeq(k,k1,k2,j9,ic3,ic4,p,h);
     //    if (isnan(y[1][k])) printf("NAN at first BC!\n");
     if (!pinvs(ic3,ic4,j5,j9,jc1,k1,p->c,p->s)) {
-      printf("R = %e\n",x[1]);
+      printf("R = %e\n",p->R);
       printf("failed at first BC!\n");
       return false;
     }
     for (k=k1+1;k<=k2;k++) { //Finite difference equations at all point pairs.
       kp=k-1;
-      difeq(k,k1,k2,j9,ic1,ic4,p,x,h);
+      difeq(k,k1,k2,j9,ic1,ic4,p,h);
       //      if (isnan(y[1][k])) printf("NAN at k = %d!\n",k);
       red(ic1,ic4,j1,j2,j3,j4,j9,ic3,jc1,jcf,kp,p->c,p->s);
       if (!pinvs(ic1,ic4,j3,j9,jc1,k,p->c,p->s)) {
-	printf("R = %e\n",x[1]);
+	printf("R = %e\n",p->R);
 	printf("failed at point k = %d in finite differences\n",k);
 	return false;
       }
     }
     k=k2+1;// Final boundary conditions.
-    difeq(k,k1,k2,j9,ic1,ic2,p,x,h);
+    difeq(k,k1,k2,j9,ic1,ic2,p,h);
     //    if (isnan(y[1][k])) printf("NAN at last BC!\n");
     red(ic1,ic2,j5,j6,j7,j8,j9,ic3,jc1,jcf,k2,p->c,p->s);
     if (!pinvs(ic1,ic2,j7,j9,jcf,k2+1,p->c,p->s)) {
-      printf("R = %e\n",x[1]);
+      printf("R = %e\n",p->R);
       printf("failed at last BC!\n");
       return false;
     }
@@ -294,7 +294,7 @@ void linearGuess(double *r, double **y, double initialSlope,double h,int mpt)
   return;
 } 
   
-void write_SOLVDEfailure(struct params *p,const double *x)
+void write_SOLVDEfailure(struct params *p)
 /*==============================================================================
   
   Purpose: This function saves the current forms of r and psi(r) (which has
@@ -308,8 +308,6 @@ void write_SOLVDEfailure(struct params *p,const double *x)
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
 
-  x -- This vector holds the variable parameters x = (R,eta,delta)'.
-
   ------------------------------------------------------------------------------
 
   Returns: Exits with exit status exit(1);
@@ -318,8 +316,7 @@ void write_SOLVDEfailure(struct params *p,const double *x)
 
 {
 
-  void make_f_err(char *f_err,char *err_type,int f_err_size,struct params *p,
-		  const double *x);
+  void make_f_err(char *f_err,char *err_type,int f_err_size,struct params *p);
 
   int i;
   FILE *broken1,*broken2;
@@ -327,12 +324,12 @@ void write_SOLVDEfailure(struct params *p,const double *x)
   char f_err1[f_err_size];
   char f_err2[f_err_size];
 
-  printf("failed to solve ODE when x = (%e,%e,%e).\n",x[1],x[2],x[3]);
+  printf("failed to solve ODE when (R,eta,delta) = (%e,%e,%e).\n",p->R,p->eta,p->delta);
   printf("saving current psi(r) shape (from failed solvde call), as well as the"
 	 " shape of the initial guess of psi(r) (from previous call of E_calc),"
 	 " and exiting to system.\n");
 
-  make_f_err(f_err1,"SOLVDE_FAIL",f_err_size,p,x);
+  make_f_err(f_err1,"SOLVDE_FAIL",f_err_size,p);
   broken1 = fopen(f_err1,"w");
 
   for (i = 1; i<=p->mpt; i++) {
@@ -340,7 +337,7 @@ void write_SOLVDEfailure(struct params *p,const double *x)
   }
   fclose(broken1);
 
-  make_f_err(f_err2,"SOLVDE_INITGUESS",f_err_size,p,x);
+  make_f_err(f_err2,"SOLVDE_INITGUESS",f_err_size,p);
   broken2 = fopen(f_err2,"w");
 
   for (i = 1; i<=p->mpt; i++) {

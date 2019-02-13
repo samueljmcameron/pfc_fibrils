@@ -9,7 +9,7 @@
 #include "headerfile.h"
 
 
-void scale_forward(gsl_vector *y,const double *x,struct params *p)
+void scale_forward(gsl_vector *y,const struct params *p)
 /*==============================================================================
   Purpose: Make the scaling transformation y=D^(-1)*(x-c) from real units (x),
   to scaled values (y), where D is the transformation matrix,
@@ -18,16 +18,16 @@ void scale_forward(gsl_vector *y,const double *x,struct params *p)
 
   ============================================================================*/
 {
-  gsl_vector_set(y,0,2*x[1]/(p->Rupper-p->Rlower)
+  gsl_vector_set(y,0,2*p->R/(p->Rupper-p->Rlower)
 		 -(p->Rupper+p->Rlower)/(p->Rupper-p->Rlower));
-  gsl_vector_set(y,1,2*x[2]/(p->etaupper-p->etalower)
+  gsl_vector_set(y,1,2*p->eta/(p->etaupper-p->etalower)
 		 -(p->etaupper+p->etalower)/(p->etaupper-p->etalower));
-  gsl_vector_set(y,2,2*x[3]/(p->deltaupper-p->deltalower)
+  gsl_vector_set(y,2,2*p->delta/(p->deltaupper-p->deltalower)
 		 -(p->deltaupper+p->deltalower)/(p->deltaupper-p->deltalower));
   return;
 }
 
-void scale_backward(const gsl_vector *y, double *x,struct params *p)
+void scale_backward(const gsl_vector *y,struct params *p)
 /*==============================================================================
   Purpose: Make the scaling transformation x=D*y+c from scaled units (y),
   to real values (x), where D is the transformation matrix,
@@ -36,14 +36,15 @@ void scale_backward(const gsl_vector *y, double *x,struct params *p)
 
   ============================================================================*/
 {
-  x[1] = 0.5*((p->Rupper-p->Rlower)*gsl_vector_get(y,0)
+  p->R = 0.5*((p->Rupper-p->Rlower)*gsl_vector_get(y,0)
 	      +p->Rupper+p->Rlower);
-  x[2] = 0.5*((p->etaupper-p->etalower)*gsl_vector_get(y,1)
-	      +p->etaupper+p->etalower);
-  x[3] = 0.5*((p->deltaupper-p->deltalower)*gsl_vector_get(y,2)
-	      +p->deltaupper+p->deltalower);
+  p->eta = 0.5*((p->etaupper-p->etalower)*gsl_vector_get(y,1)
+		+p->etaupper+p->etalower);
+  p->delta = 0.5*((p->deltaupper-p->deltalower)*gsl_vector_get(y,2)
+		  +p->deltaupper+p->deltalower);
   return;
 }
+
 
 
 void scale_dEdx_backward(const gsl_vector *dEdy,double *dEdx,struct params *p)

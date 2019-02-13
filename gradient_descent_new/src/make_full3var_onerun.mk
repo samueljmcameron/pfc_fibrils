@@ -2,17 +2,17 @@ CC = gcc
 CFLAGS = -I. -O2
 LINKER = gcc
 LFLAGS = -Wall -I. -O2 -lm -lgsl -lgslcblas
-TARGET = gamma_k24_singlepoint
+TARGET = full3var_onerun
 
 BINDIR = ../bin
 GSL_SRCDIR = edited_gsl_src
 ENERGY_SRCDIR = energy_src
 OBJDIR = ../obj
 
-LOCAL_SRC = driver.c gamma_k24_singlepoint.c
+LOCAL_SRC = full3var_driver.c full3var_onerun.c utilities.c full3var_scaling.c
 
 ENERGY_SRC := pinvs.c red.c shooting.c bksub.c energy.c nrutil.c polint.c trapzd.c \
-              scaling.c solvde.c difeq.c finite_differences.c qromb.c shared.c
+              solvde.c difeq.c finite_differences.c qromb.c shared.c
 
 EDITED_GSL_SRC := $(wildcard $(GSL_SRCDIR)/*.c)
 

@@ -10,7 +10,7 @@
 
 
 bool success_brent(double *psip01,double psip02,struct params *p,
-		   const double *x,double h)
+		   double h)
 /*==============================================================================
 
   NOTE THAT SUCCESS (TRUE) IS RETURNED EVEN IF THE ROOT IS NOT BRACKETED, as
@@ -22,7 +22,7 @@ bool success_brent(double *psip01,double psip02,struct params *p,
   ============================================================================*/
 {
 
-  double F_bound(double psip0,struct params *p,const double *x,double h);
+  double F_bound(double psip0,struct params *p,double h);
 
   int iter;
 
@@ -31,8 +31,8 @@ bool success_brent(double *psip01,double psip02,struct params *p,
   double tol = EPS;
   double a = *psip01, b = psip02, c = b;
   double d,e,min1,min2;
-  double fa = F_bound(*psip01,p,x,h);
-  double fb = F_bound(psip02,p,x,h);
+  double fa = F_bound(*psip01,p,h);
+  double fb = F_bound(psip02,p,h);
   double fc = fb;
   double pp,q,rr,s,tol1,psip0m;
 
@@ -58,7 +58,7 @@ bool success_brent(double *psip01,double psip02,struct params *p,
     tol1 = 2.0*EPS*fabs(b)+0.5*tol;
     psip0m = 0.5*(c-b);
     if (fabs(psip0m) <= tol1 || fb == 0) {
-      fb = F_bound(b,p,x,h);
+      fb = F_bound(b,p,h);
       printf("psip0 = %e\n",b);
       b = *psip01;
       return true;
@@ -94,7 +94,7 @@ bool success_brent(double *psip01,double psip02,struct params *p,
     if (fabs(d) > tol1) b += d;
     else b += SIGN(tol1,psip0m);
     
-    fb = F_bound(b,p,x,h);
+    fb = F_bound(b,p,h);
   }
 
   printf("did not converge after %d iterations.\n",itmax);
@@ -104,41 +104,41 @@ bool success_brent(double *psip01,double psip02,struct params *p,
 
 
 
-double F_bound(double psip0,struct params *p,const double *x,double h)
+double F_bound(double psip0,struct params *p,double h)
 {
 
   double F_eq(double psiR,double psipR,double R,double k24);
     
-  void rk4driver(struct params *p,const double *x,double h);
+  void rk4driver(struct params *p,double h);
   
   
   double f;
   p->y[1][1] = 0;
   p->y[2][1] = psip0;
-  rk4driver(p,x,h);
+  rk4driver(p,h);
 
-  f = F_eq(p->y[1][p->mpt],p->y[2][p->mpt],x[1],p->k24);
+  f = F_eq(p->y[1][p->mpt],p->y[2][p->mpt],p->R,p->k24);
 
   if ((fabs(p->y[1][p->mpt])>= M_PI/2.0 || fabs(f) >=10)
-      && x[3] != 0) {
+      && p->delta != 0) {
     return 10;
   }
   else return f;
 }
 
 
-double F_solve(double psip0,struct params *p,const double *x,double h)
+double F_solve(double psip0,struct params *p,double h)
 {
   
   double F_eq(double psiR,double psipR,double R,double k24);
 
-  void rk4driver(struct params *p,const double *x,double h);
+  void rk4driver(struct params *p,double h);
   
   p->y[1][1] = 0;
   p->y[2][1] = psip0;
-  rk4driver(p,x,h);
+  rk4driver(p,h);
 
-  return F_eq(p->y[1][p->mpt],p->y[2][p->mpt],x[1],p->k24);
+  return F_eq(p->y[1][p->mpt],p->y[2][p->mpt],p->R,p->k24);
 }
 
 
@@ -148,12 +148,12 @@ double F_eq(double psiR,double psipR,double R,double k24)
 }
 
 
-void rk4driver(struct params *p,const double *x,double h)
+void rk4driver(struct params *p,double h)
 {
   
-  void derivs(double *dydrj,double r_j,double *y,struct params *p,const double *x);
+  void derivs(double *dydrj,double r_j,double *y,struct params *p);
   void rk4(double r_j,double *y,double h,double *dydr,struct params *p,
-	   const double *x,int n);
+	   int n);
 
   double *ydum;
   double *dydr;
@@ -166,8 +166,8 @@ void rk4driver(struct params *p,const double *x,double h)
   ydum[2] = p->y[2][1];
 
   for (i = 2; i <= p->mpt; i++) {
-    derivs(dydr,p->r[i-1],ydum,p,x);
-    rk4(p->r[i-1],ydum,h,dydr,p,x,2);
+    derivs(dydr,p->r[i-1],ydum,p);
+    rk4(p->r[i-1],ydum,h,dydr,p,2);
     p->y[1][i] = ydum[1];
     p->y[2][i] = ydum[2];
   }
@@ -181,7 +181,7 @@ void rk4driver(struct params *p,const double *x,double h)
 
 
 void rk4(double r_j,double *y,double h,double *dydr,struct params *p,
-	 const double *x,int n)
+	 int n)
 /*==============================================================================
 
   Purpose: compute a fourth order runge-kutta step at the radial value r_j, and
@@ -201,8 +201,6 @@ void rk4(double r_j,double *y,double h,double *dydr,struct params *p,
   p -- address pointing to the parameter struct (where K33, Lambda, etc are
   stored).
 
-  x[1..3] -- x = (R,eta,delta)'.
-
   ------------------------------------------------------------------------------
 
   Returns: Does not explicitly return anything, but it stores psi(r_j) and 
@@ -211,7 +209,7 @@ void rk4(double r_j,double *y,double h,double *dydr,struct params *p,
   ============================================================================*/
 {
 
-  void derivs(double *dydrj,double r_j,double *y,struct params *p,const double *x);
+  void derivs(double *dydrj,double r_j,double *y,struct params *p);
   
   double *ytmp; // stores e.g. yi+0.5*h*dyidrj
   double *dy1,*dy2;
@@ -225,20 +223,20 @@ void rk4(double r_j,double *y,double h,double *dydr,struct params *p,
     ytmp[i] = y[i]+0.5*h*dydr[i];
   }
 
-  derivs(dy1,r_j+0.5*h,ytmp,p,x);
+  derivs(dy1,r_j+0.5*h,ytmp,p);
   
   for (i = 1; i <= n; i++) {
     ytmp[i] = y[i]+0.5*h*dy1[i];
   }
 
-  derivs(dy2,r_j+0.5*h,ytmp,p,x);
+  derivs(dy2,r_j+0.5*h,ytmp,p);
 
   for (i = 1; i <= n; i++) {
     ytmp[i] = y[i]+h*dy2[i];
     dy2[i] += dy1[i];         // store k2+k3, so one less array is needed.
   }
 
-  derivs(dy1,r_j+h,ytmp,p,x);
+  derivs(dy1,r_j+h,ytmp,p);
 
   for (i = 1; i <= n; i++) {
     y[i] = y[i]+h/6.0*(dydr[i]+2*dy2[i]+dy1[i]);
@@ -251,7 +249,7 @@ void rk4(double r_j,double *y,double h,double *dydr,struct params *p,
   return;
 }
 
-void derivs(double *dydrj,double r_j,double *y,struct params *p,const double *x)
+void derivs(double *dydrj,double r_j,double *y,struct params *p)
 /*==============================================================================
 
   Purpose: For the function dyidr = fi(r,y1,y2), where y1 is psi(r), y2 is
@@ -269,8 +267,6 @@ void derivs(double *dydrj,double r_j,double *y,struct params *p,const double *x)
 
   p -- address pointing to the parameter struct (where K33, Lambda, etc are
   stored).
-
-  x[1..3] -- x = (R,eta,delta)'.
 
   ------------------------------------------------------------------------------
 
@@ -294,8 +290,8 @@ void derivs(double *dydrj,double r_j,double *y,struct params *p,const double *x)
   dydrj[1] = y[2];
   dydrj[2] = (1.0/r_j*(1-y[2]-cos2y1*(1-0.5*sin2y1/r_j)
 		       +p->K33*siny1*siny1*sin2y1/r_j
-		       +p->Lambda*x[3]*x[3]*x[2]*x[2]*r_j
-		       *(4*M_PI*M_PI-x[2]*x[2]*cosy1*cosy1)
+		       +p->Lambda*p->delta*p->delta*p->eta*p->eta*r_j
+		       *(4*M_PI*M_PI-p->eta*p->eta*cosy1*cosy1)
 		       *cosy1*siny1));
   return;
 }
