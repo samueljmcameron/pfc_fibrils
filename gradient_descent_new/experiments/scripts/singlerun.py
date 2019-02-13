@@ -100,14 +100,17 @@ class SingleRun(object):
 
         return
 
-    def add_datastring(self,vars):
+    def add_datastring(self,vrs,externalparam=None):
 
-        if isinstance(vars,list):
-            a = [float(self.params[var]) for var in vars]
+        if isinstance(vrs,list):
+            a = [float(self.params[var]) for var in vrs]
             dstring = '\t'.join(map("{:13.6e}".format,a))
+        elif vrs == None:
+            a = externalparam
+            dstring = f"{a:13.6e}"
 
         else:
-            a = float(self.params[vars])
+            a = float(self.params[vrs])
             dstring = f"{a:13.6e}"
 
         return dstring
@@ -123,7 +126,7 @@ class SingleRun(object):
 
         return
 
-    def concatenate_observables(self,vars):
+    def concatenate_observables(self,vrs,externalparam=None):
 
         suffix1 = self.readparams.write_suffix(suffix_type="save")
 
@@ -139,7 +142,7 @@ class SingleRun(object):
 
                 for line in f2:
 
-                    f1.write(f"{self.add_datastring(vars)}\t{line}")
+                    f1.write(f"{self.add_datastring(vrs,externalparam=externalparam)}\t{line}")
 
             if os.path.isfile(fname):
 
@@ -148,7 +151,7 @@ class SingleRun(object):
         return
 
     def write_observables(self,E0,R0,eta0,delta0,
-                          surftwist0,vars):
+                          surftwist0,vrs,externalparam=None):
 
         suffix1 = self.readparams.write_suffix(suffix_type="save")
 
@@ -158,7 +161,7 @@ class SingleRun(object):
     
             line=f"{E0:13.6e}\t{R0:13.6e}\t{eta0:13.6e}\t{delta0:13.6e}\t{surftwist0:13.6e}\n"
 
-            f1.write(f"{self.add_datastring(vars)}\t{line}")
+            f1.write(f"{self.add_datastring(vrs,externalparam=externalparam)}\t{line}")
             
         suffix2 = self.readparams.write_suffix()
         fname = f"data/_observables_{suffix2}.txt"

@@ -7,7 +7,7 @@
 #include <gsl/gsl_vector.h>
 #include <gsl/gsl_blas.h>
 #include "edited_gsl_src/gsl_multimin.h"
-#include "../../shared_src/nrutil.h"
+#include "energy_src/nrutil.h"
 #include "headerfile.h"
 
 
@@ -29,12 +29,12 @@ int main(int argc, char **argv)
 
   void reset_guess_vals(struct params *p);
   
-  int drive(double *E,struct params *p,FILE *energy);
+  int full3var_driver(double *E,struct params *p,FILE *energy);
   
   struct params p; 
   initialize_params(&p,argv);
   initialize_param_vectors(&p);
-
+  p.x_size = 3;
 
   initialize_R_eta_delta(&p);
 
@@ -44,13 +44,13 @@ int main(int argc, char **argv)
 
   double E;
 
-  int calculation = drive(&E,&p,(NULL));
+  int calculation = full3var_driver(&E,&p,(NULL));
 
   
   if (calculation == DRIVER_POORSCALING) {
     printf("RETRYING!\n");
     reset_guess_vals(&p);
-    calculation = drive(&E,&p,(NULL));
+    calculation = full3var_driver(&E,&p,(NULL));
   }
   if (calculation == DRIVER_SUCCESS) {
     printf("success!\n");

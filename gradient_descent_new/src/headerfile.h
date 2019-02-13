@@ -44,7 +44,6 @@ typedef struct {
 #define NCJ (NE-NB+1)           // # of columns in storage matrix within c[m][:][:]
 #define NCK (M+1)               // # number of points in tensor c, c[:][m][n]
 
-#define X_SIZE     3
 #define ITMAX      5000
 #define CONV_ODE   1e-10
 #define CONV_MIN   1e-8
@@ -73,6 +72,7 @@ struct params{
   double **s;
   double ***c;
   int mpt;
+  int x_size;
   // these three parameters are the typical ones I am minimizing with
   // respect to
   double R;

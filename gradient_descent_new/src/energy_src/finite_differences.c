@@ -70,7 +70,9 @@ int deriv_xi(double (*f)(const gsl_vector *,void *),const gsl_vector *x_scale,
   double r_0, round, trunc, error;
   gsl_vector *x;
 
-  x=gsl_vector_alloc(X_SIZE);
+  struct params *p = ps;
+
+  x=gsl_vector_alloc(p->x_size);
   gsl_vector_memcpy(x,x_scale);
   c_deriv(f,x,i,ps,h,&r_0,&round,&trunc);
   error = round + trunc;

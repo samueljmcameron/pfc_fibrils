@@ -9,7 +9,7 @@ GSL_SRCDIR = edited_gsl_src
 SHARED_SRCDIR = energy_src
 OBJDIR = ../obj
 
-LOCAL_SRC = full3var_driver.c full3var_psivsr.c utilities.c full3var_scaling.c
+LOCAL_SRC = full3var_driver.c full3var_psivsr.c utilities.c
 
 SHARED_SRC := pinvs.c red.c shooting.c bksub.c energy.c nrutil.c polint.c trapzd.c \
               solvde.c difeq.c finite_differences.c qromb.c shared.c

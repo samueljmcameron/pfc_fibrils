@@ -11,7 +11,7 @@
 #include "headerfile.h"
 
 
-int full3var_driver(double *E,struct params *p,FILE *energy)
+int delta1var_driver(double *E,struct params *p,FILE *energy)
 /*==============================================================================
   This function minimizes E with respect to R, eta, and delta. It writes the
   values of R, eta, and delta which minimize E to the struct values p->R,
@@ -20,14 +20,13 @@ int full3var_driver(double *E,struct params *p,FILE *energy)
   ============================================================================*/
 {
 
-  void scale3var_forward(gsl_vector *y,const struct params *p);
+  void scaledelta1var_forward(gsl_vector *y,const struct params *p);
   
-  void scale3var_backward(const gsl_vector *y,struct params *p);
+  void scaledelta1var_backward(const gsl_vector *y,struct params *p);
   
-  void scale3var_E_backward(const double F,double *E,struct params *p);
+  void scaledelta1var_E_backward(const double F,double *E,struct params *p);
   
-  void scale3var_dEdx_backward(const gsl_vector *dFdy,double *dEdx,struct params *p);
-
+  void scaledelta1var_dEdx_backward(const gsl_vector *dFdy,double *dEdx,struct params *p);
 
   void my_fdf(const gsl_vector *x,void *params, double *func,gsl_vector *grad);
 
@@ -35,17 +34,21 @@ int full3var_driver(double *E,struct params *p,FILE *energy)
 
   double f(const gsl_vector *x_scale,void *ps);
   
-  double calc_norm2(double *dEdx,struct params *p);
+  double calc_norm2(double *dEdx,int x_size);
 
-  bool poorscaling(gsl_vector *x,struct params *p);
-
+  bool poorscaling(gsl_vector *x,int x_size);
+  
   double *dEdx;
+
+  
   dEdx = vector(1,p->x_size);
 
   gsl_vector *x_scale;
   x_scale = gsl_vector_alloc(p->x_size);
-  scale3var_forward(x_scale,p);
+  scaledelta1var_forward(x_scale,p);
 
+
+  
   gsl_multimin_function_fdf my_func;
   my_func.n = p->x_size;
   my_func.f = f;
@@ -62,17 +65,21 @@ int full3var_driver(double *E,struct params *p,FILE *energy)
 
   clock_t begin = clock();
 
+
+
   const gsl_multimin_fdfminimizer_type *T;
   T = gsl_multimin_fdfminimizer_vector_bfgs2;
 
   gsl_multimin_fdfminimizer *s;
   s = gsl_multimin_fdfminimizer_alloc(T,p->x_size);
 
+
   gsl_multimin_fdfminimizer_set(s,&my_func,x_scale,0.001,0.01);
 
-  printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
-  	 "iteration","R","eta","delta","E","dEdR","dEdeta",
-  	 "dEddelta","grad norm");
+
+
+  printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
+  	 "iteration","R","eta","delta","E","dEddelta");
 
   p->Escale = 0; // set initial Escale value to 0 to ensure that convergence
   //                is not obtained immediately from some large guess of Escale 
@@ -90,14 +97,14 @@ int full3var_driver(double *E,struct params *p,FILE *energy)
     if (status == GSL_SUCCESS)
       printf("minimum found at:\n");
 
-    scale3var_backward(s->x,p);
-    scale3var_dEdx_backward(s->gradient,dEdx,p);
+    scaledelta1var_backward(s->x,p);
+    scaledelta1var_dEdx_backward(s->gradient,dEdx,p);
     *E = s->f;
 
-    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	   iter,p->R,p->eta,p->delta,*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx,p));
+    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	   iter,p->R,p->eta,p->delta,*E,dEdx[1]);
 
-    if (poorscaling(s->x,p)) {
+    if (poorscaling(s->x,p->x_size)) {
       poorscaling_count += 1;
     } else {
       poorscaling_count = 0;
@@ -111,7 +118,7 @@ int full3var_driver(double *E,struct params *p,FILE *energy)
     p->Escale = fabs(*E);
 
     if (energy) {
-      fprintf(energy,"%lu\t%13.6e\t%13.6e\n",iter,*E,calc_norm2(dEdx,p));
+      fprintf(energy,"%lu\t%13.6e\t%13.6e\n",iter,*E,calc_norm2(dEdx,p->x_size));
     }
 
 
@@ -125,12 +132,11 @@ int full3var_driver(double *E,struct params *p,FILE *energy)
   int returnvalue;
 
   if (status == GSL_SUCCESS) {
-    printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
-	   "iteration","R","eta","delta","E","dEdR","dEdeta",
-	   "dEddelta","grad norm");
+    printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
+	   "iteration","R","eta","delta","E","dEddelta");
 
-    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	   iter,p->R,p->eta,p->delta,*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx,p));
+    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	   iter,p->R,p->eta,p->delta,*E,dEdx[1]);
 
     if (fabs(p->delta) <= DELTA_CLOSE_TO_ZERO) p->eta = sqrt(-1);
 
@@ -151,12 +157,11 @@ int full3var_driver(double *E,struct params *p,FILE *energy)
 
       printf("the initial guesses were not good, did not successfully find a minimum.\n");
 
-      printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
-	     "iteration","R","eta","delta","E","dEdR","dEdeta",
-	     "dEddelta","grad norm");
+      printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
+	     "iteration","R","eta","delta","E","dEddelta");
 
-      printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	     iter,p->R,p->eta,p->delta,*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx,p));
+      printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	     iter,p->R,p->eta,p->delta,*E,dEdx[1]);
 
       returnvalue = DRIVER_POORSCALING;
 
@@ -224,14 +229,14 @@ double f(const gsl_vector *x_scale,void *ps)
   
   double E_calc(struct params *p);
 
-  void scale3var_backward(const gsl_vector *y,struct params *p);
+  void scaledelta1var_backward(const gsl_vector *y,struct params *p);
 
 
   double E;
   struct params *p = ps;
   
 
-  scale3var_backward(x_scale,p);
+  scaledelta1var_backward(x_scale,p);
     
   E = E_calc(p);
 
@@ -240,10 +245,10 @@ double f(const gsl_vector *x_scale,void *ps)
 
 
 
-bool poorscaling(gsl_vector *x,struct params *p)
+bool poorscaling(gsl_vector *x,int x_size)
 {
   int i;
-  for (i = 0; i < p->x_size; i++) {
+  for (i = 0; i < x_size; i++) {
     if (fabs(gsl_vector_get(x,i)) > 1.0)
       return true;
   }
@@ -251,23 +256,23 @@ bool poorscaling(gsl_vector *x,struct params *p)
 }
 
 
-double calc_norm2(double *dEdx,struct params *p)
+double calc_norm2(double *dEdx,int x_size)
 {
   double sum = 0;
   int i;
 
-  for (i = 1; i <= p->x_size; i++) sum += dEdx[i]*dEdx[i];
+  for (i = 1; i <= x_size; i++) sum += dEdx[i]*dEdx[i];
 
   return sqrt(sum);
 }
-
 
 /*==============================================================================
   This re-scaling of parameters is taken from  Chapter 7.5.2 of Practical
   Optimization by Gill et al (published in 1981), on page 274, (eqn 7.17).
   ============================================================================*/
 
-void scale3var_forward(gsl_vector *y,const struct params *p)
+
+void scaledelta1var_forward(gsl_vector *y,const struct params *p)
 /*==============================================================================
   Purpose: Make the scaling transformation y=D^(-1)*(x-c) from real units (x),
   to scaled values (y), where D is the transformation matrix,
@@ -276,16 +281,13 @@ void scale3var_forward(gsl_vector *y,const struct params *p)
 
   ============================================================================*/
 {
-  gsl_vector_set(y,0,2*p->R/(p->Rupper-p->Rlower)
-		 -(p->Rupper+p->Rlower)/(p->Rupper-p->Rlower));
-  gsl_vector_set(y,1,2*p->eta/(p->etaupper-p->etalower)
-		 -(p->etaupper+p->etalower)/(p->etaupper-p->etalower));
-  gsl_vector_set(y,2,2*p->delta/(p->deltaupper-p->deltalower)
+
+  gsl_vector_set(y,0,2*p->delta/(p->deltaupper-p->deltalower)
 		 -(p->deltaupper+p->deltalower)/(p->deltaupper-p->deltalower));
   return;
 }
 
-void scale3var_backward(const gsl_vector *y,struct params *p)
+void scaledelta1var_backward(const gsl_vector *y,struct params *p)
 /*==============================================================================
   Purpose: Make the scaling transformation x=D*y+c from scaled units (y),
   to real values (x), where D is the transformation matrix,
@@ -294,18 +296,15 @@ void scale3var_backward(const gsl_vector *y,struct params *p)
 
   ============================================================================*/
 {
-  p->R = 0.5*((p->Rupper-p->Rlower)*gsl_vector_get(y,0)
-	      +p->Rupper+p->Rlower);
-  p->eta = 0.5*((p->etaupper-p->etalower)*gsl_vector_get(y,1)
-		+p->etaupper+p->etalower);
-  p->delta = 0.5*((p->deltaupper-p->deltalower)*gsl_vector_get(y,2)
+
+  p->delta = 0.5*((p->deltaupper-p->deltalower)*gsl_vector_get(y,0)
 		  +p->deltaupper+p->deltalower);
   return;
 }
 
 
 
-void scale3var_dEdx_backward(const gsl_vector *dEdy,double *dEdx,struct params *p)
+void scaledelta1var_dEdx_backward(const gsl_vector *dEdy,double *dEdx,struct params *p)
 /*==============================================================================
   Purpose: Make the scaling transformation dEdx = D^(-1)*dFdy from scaled
   units (dEdy) to real values (dEdx), where D is the transformation matrix,
@@ -314,8 +313,7 @@ void scale3var_dEdx_backward(const gsl_vector *dEdy,double *dEdx,struct params *
   ============================================================================*/
 
 {
-  dEdx[1] = 2.0/(p->Rupper-p->Rlower)*gsl_vector_get(dEdy,0);
-  dEdx[2] = 2.0/(p->etaupper-p->etalower)*gsl_vector_get(dEdy,1);
-  dEdx[3] = 2.0/(p->deltaupper-p->deltalower)*gsl_vector_get(dEdy,2);
+
+  dEdx[1] = 2.0/(p->deltaupper-p->deltalower)*gsl_vector_get(dEdy,0);
   return;
 }
