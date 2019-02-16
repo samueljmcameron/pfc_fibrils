@@ -1,0 +1,1 @@
+In this experiment, I am producing plots of psi(r) for different gamma values, at constant k24, omega, and Lambda. I want to stack the plots on top of each other to compare how psi(r) changes with gamma.
