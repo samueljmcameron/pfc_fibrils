@@ -37,7 +37,7 @@ int main(int argc, char **argv)
 
   initialize_R_eta_delta(&p);
 
-  p->x_size = 3;
+  p.x_size = 3;
 
   FILE *observables;
   initialize_file(&observables,argv[1],"observables",p);
