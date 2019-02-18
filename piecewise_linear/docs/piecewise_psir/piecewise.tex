@@ -52,19 +52,19 @@ to ensure continuity of $\psi(r)$.
 
 Next, I will insert this into the free energy per unit volume,
 \begin{align}\label{eq:startE}
-E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\left[\frac{1}{2}\left(\psi'+\frac{\sin2\psi}{2r}-1\right)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\right]\nonumber\\
-&\phantom{=}+\frac{\Lambda\delta^2}{2R^2}\int_0^{R}rdr\left(\frac{4\pi^2}{\cos^2\psi}-\eta^2\right)^2+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)\nonumber\\
+E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\bigg[\frac{1}{2}\bigg(\psi'+\frac{\sin2\psi}{2r}-1\bigg)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\bigg]\nonumber\\
+&\phantom{=}+\frac{\Lambda\delta^2}{2R^2}\int_0^{R}rdr\big(4\pi^2-\eta^2\cos^2\psi(r)\big)^2+\frac{\omega\delta^2}{2}\bigg(\frac{3}{4}\delta^2-1\bigg)\nonumber\\
 &\phantom{=}-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
 \end{align}
 
 The resulting equation can be written as
 \begin{align}\label{eq:piecewise_E}
 E(R,\eta,&\delta,R_c,R_s,\psi_c^{\prime},\psi_s^{\prime},\psi_R^{\prime})=\nonumber\\
-&\frac{2}{R^2}\left(\frac{1}{4}(u(0,R_c,\psi_c^{\prime})+u(R_c,R_s,\psi_s^{\prime})+u(R_s,R,\psi_R^{\prime}))+\frac{1}{8}(f_1(0,R_c,0,\psi_c^{\prime})\right.\nonumber\\
+&\frac{2}{R^2}\bigg(\frac{1}{4}(u(0,R_c,\psi_c^{\prime})+u(R_c,R_s,\psi_s^{\prime})+u(R_s,R,\psi_R^{\prime}))+\frac{1}{8}(f_1(0,R_c,0,\psi_c^{\prime})\nonumber\\
 &+f_1(R_c,R_s,\psi_1,\psi_s^{\prime})+f_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{2}K_{33}(f_2(0,R_c,0,\psi_c^{\prime})+f_2(R_c,R_s,\psi_1,\psi_s^{\prime})\nonumber\\
-&\left.+f_2(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{4}(v(0,R_c,0,\psi_c^{\prime})+v(R_c,R_s,\psi_1,\psi_s^{\prime})+v(R_s,R,\psi_2,\psi_R^{\prime}))\right)\nonumber\\
-&+\frac{\Lambda\delta^2}{2R^2}\left(\vphantom{\frac{1}{2}}16\pi^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\right.\nonumber\\
-&\left.-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{\eta^4}{2}R^2\right)\nonumber\\
+&+f_2(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{4}(v(0,R_c,0,\psi_c^{\prime})+v(R_c,R_s,\psi_1,\psi_s^{\prime})+v(R_s,R,\psi_2,\psi_R^{\prime}))\bigg)\nonumber\\
+&+\frac{\Lambda\delta^2}{2R^2}\bigg(8\pi^4R^2-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))\nonumber\\
+&+\eta^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\bigg)\nonumber\\
 &+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)-\frac{(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)+\frac{2\gamma}{R}
 \end{align}
 
@@ -74,81 +74,84 @@ which utilizes a derivation shown in the appendix (see eqns \ref{eq:first_int} a
 The derivative with respect to the fibril radius, $R$, is
 \begin{align}
 \frac{\partial E}{\partial R}=&\nonumber\\
-&-\frac{4}{R^3}\left(\frac{1}{4}(u(0,R_c,\psi_c^{\prime})+u(R_c,R_s,\psi_s^{\prime})+u(R_s,R,\psi_R^{\prime}))+\frac{1}{8}(f_1(0,R_c,0,\psi_c^{\prime})\right.\nonumber\\
+&-\frac{4}{R^3}\bigg(\frac{1}{4}(u(0,R_c,\psi_c^{\prime})+u(R_c,R_s,\psi_s^{\prime})+u(R_s,R,\psi_R^{\prime}))+\frac{1}{8}(f_1(0,R_c,0,\psi_c^{\prime})\nonumber\\
 &+f_1(R_c,R_s,\psi_1,\psi_s^{\prime})+f_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{2}K_{33}(f_2(0,R_c,0,\psi_c^{\prime})+f_2(R_c,R_s,\psi_1,\psi_s^{\prime})\nonumber\\
-&\left.+f_2(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{4}(v(0,R_c,0,\psi_c^{\prime})+v(R_c,R_s,\psi_1,\psi_s^{\prime})+v(R_s,R,\psi_2,\psi_R^{\prime}))\right)\nonumber\\
-&+\frac{2}{R^2}\left(\frac{1}{4}\frac{\partial u(R_s,x_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}+\frac{1}{8}\frac{\partial f_1(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}+\frac{1}{2}K_{33}\frac{\partial f_2(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}\right.\nonumber\\
-&\left.+\frac{1}{4}\frac{\partial v(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}\right)\nonumber\\
-&-\frac{\Lambda\delta^2}{R^3}\left(\vphantom{\frac{1}{2}}16\pi^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\right.\nonumber\\
-&\left.-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{\eta^4}{2}R^2\right)\nonumber\\
-&+\frac{\Lambda\delta^2}{2R^2}\left(16\pi^4\frac{\partial g_2(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}-8\pi^2\eta^2\frac{\partial g_1(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}+\eta^4R\right)\nonumber\\
+&+f_2(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{4}(v(0,R_c,0,\psi_c^{\prime})+v(R_c,R_s,\psi_1,\psi_s^{\prime})+v(R_s,R,\psi_2,\psi_R^{\prime}))\bigg)\nonumber\\
+&+\frac{2}{R^2}\bigg(\frac{1}{4}\frac{\partial u(R_s,x_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}+\frac{1}{8}\frac{\partial f_1(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}+\frac{1}{2}K_{33}\frac{\partial f_2(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}\nonumber\\
+&+\frac{1}{4}\frac{\partial v(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}\bigg)\nonumber\\
+&-\frac{\Lambda\delta^2}{R^3}\big(8\pi^4R^2-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))\nonumber\\
+&+\eta^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\big)\nonumber\\
+&+\frac{\Lambda\delta^2}{2R^2}\bigg(16\pi^4R-8\pi^2\eta^2\frac{\partial g_1(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}+\eta^4\frac{\partial g_2(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}\bigg)\nonumber\\
 &+\frac{2(1+k_{24})}{R^3}\sin(\psi_R^{\prime}R+\psi_2)-\frac{\psi_R^{\prime}(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)-\frac{2\gamma}{R^2}.\label{eq:dEdR}
 \end{align}
 The derivative with respect to the inverse period of density modulations, $\eta$, is
 \begin{align}
 \frac{\partial E}{\partial \eta}=&
-\frac{\Lambda\delta^2}{2R^2}\left(-16\pi^2\eta(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))+2\eta^3R^2\right)\label{eq:dEdeta}
+\frac{\Lambda\delta^2}{2R^2}\big(-16\pi^2\eta(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))\nonumber\\
+&+2\eta^3(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\big)\label{eq:dEdeta}
 \end{align}
 The derivative with respect to the size of the density modulations, $\delta$, is
 \begin{align}
-\frac{\partial E}{\partial \delta}=&\frac{\Lambda\delta}{R^2}\left(\vphantom{\frac{1}{2}}16\pi^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\right.\nonumber\\
-&\left.-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{\eta^4}{2}R^2\right)+\omega\delta\left(\frac{3}{2}\delta^2-1\right).
+\frac{\partial E}{\partial \delta}=&\frac{\Lambda\delta}{R^2}\big(8\pi^4R^2-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))\nonumber\\
+&+\eta^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\big)+\omega\delta\left(\frac{3}{2}\delta^2-1\right).
 \end{align}
 
 The derivative with respect to the core radius size, $R_c$, is
 \begin{align}
 \frac{\partial E}{\partial R_c}=&\nonumber\\
-&\frac{2}{R^2}\left(\frac{1}{4}\left(\frac{\partial u(0,x_2,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial u(x_1,R_s,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\right)+\frac{1}{8}\left(\frac{\partial f_1(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}\right.\right.\nonumber\\
-&\left.+\frac{\partial f_1(x_1,R_s,\psi_1,\psi_c^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial f_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial \psi_1}{\partial R_c}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_c}\right)\nonumber\\
-&+\frac{1}{2}K_{33}\left(\frac{\partial f_2(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial f_2(x_1,R_s,\psi_1,\psi_c^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial f_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial \psi_1}{\partial R_c}\right.\nonumber\\
-&\left.+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_c}\right)+\frac{1}{4}\left(\frac{\partial v(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial v(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\right.\nonumber\\
-&\left.\left.+\frac{\partial v(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\right)\right)\nonumber\\
-&+\frac{\Lambda\delta^2}{2R^2}\left(16\pi^4\left(\frac{\partial g_2(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial g_2(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\right.\right.\nonumber\\
-&\left.+\frac{\partial g_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\right)\nonumber\\
-&-8\pi^2\eta^2\left(\frac{\partial g_1(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial g_1(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial g_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}\right.\nonumber\\
-&\left.\left.+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\right)\right)-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial R_c}.\label{eq:dEdRc}
+&\frac{2}{R^2}\bigg(\frac{1}{4}\bigg(\frac{\partial u(0,x_2,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial u(x_1,R_s,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\bigg)+\frac{1}{8}\bigg(\frac{\partial f_1(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}\nonumber\\
+&+\frac{\partial f_1(x_1,R_s,\psi_1,\psi_c^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial f_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial \psi_1}{\partial R_c}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_c}\bigg)\nonumber\\
+&+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial f_2(x_1,R_s,\psi_1,\psi_c^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial f_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial \psi_1}{\partial R_c}\nonumber\\
+&+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_c}\bigg)+\frac{1}{4}\bigg(\frac{\partial v(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial v(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\nonumber\\
+&+\frac{\partial v(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\bigg)\bigg)\nonumber\\
+&+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial g_1(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\nonumber\\
+&+\frac{\partial g_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\bigg)\nonumber\\
+&+\eta^4\bigg(\frac{\partial g_2(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial g_2(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\nonumber\\
+&+\frac{\partial g_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\bigg)\bigg)\nonumber\\
+&-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial R_c}.\label{eq:dEdRc}
 \end{align}
 
 The derivative with respect to the shelf radius size, $R_s$, is
 \begin{align}
 \frac{\partial E}{\partial R_s}=&\nonumber\\
-&\frac{2}{R^2}\left(\frac{1}{4}\left(\frac{\partial u(R_c,x_2,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial u(x_1,R,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}\right)+\frac{1}{8}\left(\frac{\partial f_1(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}\right.\right.\nonumber\\
-&\left.+\frac{\partial f_1(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\right)\nonumber\\
-&+\frac{1}{2}K_{33}\left(\frac{\partial f_2(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial f_2(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\right)\nonumber\\
-&\left.+\frac{1}{4}\left(\frac{\partial v(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial v(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_2}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\right)\right)\nonumber\\
-&+\frac{\Lambda\delta^2}{2R^2}\left(16\pi^4\left(\frac{\partial g_2(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial g_2(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_s}\right)\right.\nonumber\\
-&\left.-8\pi^2\eta^2\left(\frac{\partial g_1(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{g_1(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\right)\right)\nonumber\\
+&\frac{2}{R^2}\bigg(\frac{1}{4}\bigg(\frac{\partial u(R_c,x_2,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial u(x_1,R,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}\bigg)+\frac{1}{8}\bigg(\frac{\partial f_1(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}\nonumber\\
+&+\frac{\partial f_1(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\bigg)\nonumber\\
+&+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial f_2(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\bigg)\nonumber\\
+&+\frac{1}{4}\bigg(\frac{\partial v(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial v(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_2}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\bigg)\bigg)\nonumber\\
+&+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{g_1(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\bigg)\bigg)\nonumber\\
+&+\eta^4\bigg(\frac{\partial g_2(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial g_2(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_s}\bigg)\nonumber\\
 &-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial R_s}.\label{eq:dEdRs}
 \end{align}
 
 The derivative with respect to the twist angle gradient in the core, $\psi_c^{\prime}$, is
 \begin{align}
 \frac{\partial E}{\partial \psi_c^{\prime}}=&\nonumber\\
-&\frac{2}{R^2}\left(\frac{1}{4}\frac{\partial u(0,R_c,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{1}{8}\left(\frac{\partial f_1(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial f_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\right.\right.\nonumber\\
-&\left.+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\right)+\frac{1}{2}K_{33}\left(\frac{\partial f_2(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial f_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\right.\nonumber\\
-&\left.+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\right)+\frac{1}{4}\left(\frac{\partial v(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial v(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\right.\nonumber\\
-&\left.\left.+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\right)\right)+\frac{\Lambda\delta^2}{2R^2}\left(16\pi^4\left(\frac{\partial g_2(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial g_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\right.\right.\nonumber\\
-&\left.+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\right)-8\pi^2\eta^2\left(\frac{\partial g_1(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial g_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\right.\nonumber\\
-&\left.\left.+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial\psi_c^{\prime}}\right)\right)-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_c^{\prime}}.\label{eq:dEdpsi_cp}
+&\frac{2}{R^2}\bigg(\frac{1}{4}\frac{\partial u(0,R_c,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{1}{8}\bigg(\frac{\partial f_1(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial f_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\nonumber\\
+&+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\bigg)+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial f_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\nonumber\\
+&+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\bigg)+\frac{1}{4}\bigg(\frac{\partial v(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial v(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\nonumber\\
+&+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\bigg)\bigg)+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}\nonumber\\
+&+\frac{\partial g_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial\psi_c^{\prime}}\bigg)\nonumber\\
+&\eta^4\bigg(\frac{\partial g_2(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial g_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\nonumber\\
+&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\bigg)\bigg)-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_c^{\prime}}.\label{eq:dEdpsi_cp}
 \end{align}
 
 The derivative with respect to the twist angle gradient in the shelf, $\psi_s^{\prime}$, is
 \begin{align}
 \frac{\partial E}{\partial \psi_s^{\prime}}=&\nonumber\\
-&\frac{2}{R^2}\left(\frac{1}{4}\frac{\partial u(R_c,R_s,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{1}{8}\left(\frac{\partial f_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\right)\right.\nonumber\\
-&+\frac{1}{2}K_{33}\left(\frac{\partial f_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\right)\nonumber\\
-&\left.+\frac{1}{4}\left(\frac{\partial v(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\right)\right)\nonumber\\
-&+\frac{\Lambda\delta^2}{2R^2}\left(16\pi^4\left(\frac{\partial g_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\right)\right.\nonumber\\
-&\left.-8\pi^2\eta^2\left(\frac{\partial g_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\right)\right)\nonumber\\
+&\frac{2}{R^2}\bigg(\frac{1}{4}\frac{\partial u(R_c,R_s,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{1}{8}\bigg(\frac{\partial f_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\nonumber\\
+&+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\nonumber\\
+&+\frac{1}{4}\bigg(\frac{\partial v(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)\nonumber\\
+&+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\nonumber\\
+&+\eta^4\bigg(\frac{\partial g_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)\nonumber\\
 &-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_s^{\prime}}.\label{eq:dEdpsi_sp}
 \end{align}
 
 Finally, the derivative with respect to the twist angle gradient in surface reconstruction region, $\psi_R^{\prime}$, is
 \begin{align}
 \frac{\partial E}{\partial \psi_R^{\prime}}=&\nonumber\\
-&\frac{2}{R^2}\left(\frac{1}{4}\frac{\partial u(R_s,R,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{1}{8}\frac{\partial f_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{1}{2}K_{33}\frac{\partial f_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\right.\nonumber\\
-&\left.+\frac{1}{4}\frac{\partial v(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\right)+\frac{\Lambda\delta^2}{2R^2}\left(16\pi^4\frac{\partial g_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{zeta=\psi_R^{\prime}}\right.\nonumber\\
-&\left.-8\pi^2\eta^2\frac{\partial g_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\right)-\frac{(1+k_{24})}{R}\cos(\psi_R^{\prime}R+\psi_2).\label{eq:dEdpsi_Rc}
+&\frac{2}{R^2}\bigg(\frac{1}{4}\frac{\partial u(R_s,R,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{1}{8}\frac{\partial f_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{1}{2}K_{33}\frac{\partial f_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\nonumber\\
+&+\frac{1}{4}\frac{\partial v(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\bigg)+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\frac{\partial g_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\nonumber\\
+&\eta^4\frac{\partial g_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\bigg)-\frac{(1+k_{24})}{R}\cos(\psi_R^{\prime}R+\psi_2).\label{eq:dEdpsi_Rc}
 \end{align}
 
 \section{Detailed calculations}
@@ -160,9 +163,9 @@ For a general linear function of the form $\psi(r)=\psi_{ab}^{\prime}r+\psi_0$ i
 \end{align}
 and
 \begin{align}\label{eq:second_int}
-\int_{a}^{b}rdr\bigg(\frac{4\pi^2}{\cos^2(\psi_{ab}^{\prime}r+\psi_0)}&-\eta^2\bigg)^2\nonumber\\
-=&\int_{a}^{b}dr\left(\frac{16\pi^4r}{\cos^4(\psi_{ab}^{\prime}r+\psi_0)}-\frac{8\pi^2r}{\cos^2(\psi_{ab}^{\prime}r+\psi_0)}\eta^2+\eta^4r\right)\nonumber\\
-=&\left(16\pi^4g_2(a,b,\psi_0,\psi_{ab}^{\prime})-8\pi^2\eta^2g_1(a,b,\psi_0,\psi_{ab}^{\prime})+\frac{\eta^4}{2}(b^2-a^2)\right)
+\int_{a}^{b}rdr\big(4\pi^2&-\eta^2\cos^2(\psi_{ab}^{\prime}r+\psi_0)\big)^2\nonumber\\
+=&\int_{a}^{b}dr\big(16\pi^4r-8\pi^2r\cos^2(\psi_{ab}^{\prime}r+\psi_0)\eta^2+\eta^4r\cos^4(\psi_{ab}^{\prime}r+\psi_0)\big)\nonumber\\
+=&\big(8\pi^4(b^2-a^2)-8\pi^2\eta^2g_1(a,b,\psi_0,\psi_{ab}^{\prime})+\eta^4g_2(a,b,\psi_0,\psi_{ab}^{\prime})\big)
 \end{align}
 where I have defined the functions
 \begin{subequations}
@@ -170,7 +173,7 @@ where I have defined the functions
 &u(x_1,x_2,\zeta)=(1-\zeta)^2(x_2^2-x_1^2),\label{eq:ufunc}\\
 &v(x_1,x_2,\xi,\zeta)=\frac{(1-\zeta)}{\zeta}(\cos(2(\zeta x_2+\xi))-\cos(2(\zeta x_1+\xi))),\label{eq:vfunc}\\
 &f_{\alpha}(x_1,x_2,\xi,\zeta)=\int_{x_1}^{x_2}du\frac{\sin^{2\alpha}\left(\frac{2}{\alpha}(\zeta u+\xi)\right)}{u},\label{eq:falpha}\\
-&g_{\alpha}(x_1,x_2,\xi,\zeta)=\int_{x_1}^{x_2}du\frac{u}{\cos^{2\alpha}(\zeta u+\xi)}.\label{eq:galpha}
+&g_{\alpha}(x_1,x_2,\xi,\zeta)=\int_{x_1}^{x_2}u\cos^{2\alpha}(\zeta u+\xi)du.\label{eq:galpha}
 \end{align}
 \end{subequations}
 For $\zeta\ll1$, I can expand the final three of these equations up to $\mathcal{O}(\zeta^4)$ using trigonometric identities to get
@@ -182,10 +185,10 @@ For $\zeta\ll1$, I can expand the final three of these equations up to $\mathcal
 &\phantom{f_1(x_1,x_2,\xi,\zeta)=}+2\zeta^2(x_2^2-x_1^2)\left(\cos^2(2\xi)-\sin^2(2\xi)\right)-\frac{32}{9}\zeta^3(x_2^3-x_1^3)\sin(2\xi)\cos(2\xi)\\
 &f_2(x_1,x_2,\xi,\zeta)=\sin^4\xi\ln\frac{x_2}{x_1}+4\zeta(x_2-x_1)\sin^3\xi\cos\xi+\zeta^2(x_2^2-x_1^2)\sin^2\xi(\cos^2\xi-\sin^2\xi)\nonumber\\
 &\phantom{f_2(x_1,x_2,\xi,\zeta)=}+\frac{4}{3}\zeta^3(x_2^3-x_1^3)\sin\xi\cos\xi\left(\cos^2\xi-5\sin^2\xi\right)\\
-&g_1(x_1,x_2,\xi,\zeta)=\frac{1}{\cos^2\xi}\left(\frac{x_2^2-x_1^2}{2}+\frac{2\zeta(x_2^3-x_1^2)}{3}\tan\xi+\frac{\zeta^2(x_2^4-x_1^4)(3\tan^2\xi+1)}{4}\right.\nonumber\\
-&\phantom{g_1(x_1,x_2,\xi,\zeta)=}\left.+\frac{4\zeta^3(x_2^5-x_1^5)(4+3\tan^2\xi)\tan\xi}{15}\right)\\
-&g_2(x_1,x_2,\xi,\zeta)=\frac{1}{\cos^4\xi}\left(\frac{x_2^2-x_1^2}{2}+\frac{4\zeta(x_2^3-x_1^3)\tan\xi}{3}+\frac{\zeta^2(x_2^4-x_1^4)(1+5\tan^2\xi)}{2}\right.\nonumber\\
-&\phantom{g_2(x_1,x_2,\xi,\zeta)=}\left.+\frac{\zeta^3(x_2^5-x_1^5)(60\tan^2\xi+28)\tan\xi}{15}\right)
+&g_1(x_1,x_2,\xi,\zeta)=\frac{(x_2^2-x_1^2)\cos^2\xi}{2}-\frac{2(x_2^3-x_1^3)\cos\xi\sin\xi}{3}\zeta-\frac{(x_2^4-x_1^4)(\cos^2\xi-\sin^2\xi)}{4}\zeta^2\nonumber\\
+&\phantom{g_1(x_1,x_2,\xi,\zeta)=}+\frac{4(x_2^5-x_1^5)\cos\xi\sin\xi}{15}\zeta^3\nonumber\\
+&g_2(x_1,x_2,\xi,\zeta)=\frac{(x_2^2-x_1^2)\cos^4\xi}{2}-\frac{4(x_2^3-x_1^3)\cos^3\xi\sin\xi}{3}\zeta-\frac{(x_2^4-x_1^4)\cos^2\xi(\cos^2\xi-3\sin^2\xi)}{2}\zeta^2\nonumber\\
+&\phantom{g_2(x_1,x_2,\xi,\zeta)=}-\frac{(x_2^5-x_1^5)\cos\xi(5\cos^3\xi-12\sin^3\xi)}{15}\zeta^3
 \end{align}
 \end{subequations}
 
@@ -243,10 +246,18 @@ The derivatives of these functions are listed below:
 \end{subequations}
 \begin{subequations}
 \begin{align}
-&\frac{\partial g_{\alpha}}{\partial x_1}=\frac{-x_1}{\cos^{2\alpha}(\zeta x_1 +\xi)}\label{eq:dgdx_1}\\
-&\frac{\partial g_{\alpha}}{\partial x_2}=\frac{x_2}{\cos^{2\alpha}(\zeta x_2+\xi)}\label{eq:dgdx_2}\\
-&\frac{\partial g_{\alpha}}{\partial\xi}=\int_{x_1}^{x_2}du\frac{2\alpha u \sin(\zeta u+\xi)}{\cos^{2\alpha+1}(\zeta u+\xi)}\label{eq:dgdxi}\\
-&\frac{\partial g_{\alpha}}{\partial\zeta}=\int_{x_1}^{x_2}du\frac{2\alpha u^2\sin(\zeta u+\xi)}{\cos^{2\alpha+1}(\zeta u +\xi)}\label{eq:dgdzeta}
+&\frac{\partial g_{\alpha}}{\partial x_1}=-x_1\cos^{2\alpha}(\zeta x_1 +\xi)\label{eq:dgdx_1}\\
+&\frac{\partial g_{\alpha}}{\partial x_2}=x_2\cos^{2\alpha}(\zeta x_2+\xi)\label{eq:dgdx_2}\\
+&\frac{\partial g_{\alpha}}{\partial\xi}=
+	\begin{cases}
+	-(x_2^2-x_1^2)\cos\xi\sin\xi-\frac{2(x_2^3-x_1^3)(\cos^2\xi-\sin^2\xi)}{3}\zeta,	&\zeta=0,\alpha=1,\\
+	-2(x_2^2-x_1^2)\cos^3\xi\sin\xi-\frac{4(x_2^3-x_1^3)(\cos^4\xi-3\cos^2\xi\sin^2\xi)}{3}\zeta,	&\zeta=0,\alpha=2,\\
+	-2\alpha\int_{x_1}^{x_2} u\cos^{2\alpha-1}(\zeta u+\xi)\sin(\zeta u+\xi)du, &\zeta\neq0,\end{cases}\label{eq:dgdxi}\\
+&\frac{\partial g_{\alpha}}{\partial\zeta}=
+	\begin{cases}
+	\frac{-2(x_2^3-x_1^3)\cos\xi\sin\xi}{3}-\frac{(x_2^4-x_1^4)(\cos^2\xi-\sin^2\xi)}{2}\zeta,	&\zeta=0,\alpha=1,\\
+	\frac{-4(x_2^3-x_1^3)\cos^3\xi\sin\xi}{3}-(x_2^4-x_1^4)\cos^2\xi(\cos^2\xi-\sin^2\xi)\zeta,	&\zeta=0,\alpha=2,\\
+	-2\alpha\int_{x_1}^{x_2} u^2\cos^{2\alpha+1}(\zeta u +\xi)\sin(\zeta u+\xi)du,	&\zeta\neq0.\end{cases}\label{eq:dgdzeta}
 \end{align}
 \end{subequations}
 
