@@ -1,10 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "headerfile."
+#include "headerfile.h"
 
 
-double Efunc(double *x,struct params *p)
+double Efunc(double R,double eta, double delta,double R_c,double R_s,
+	     double psip_c,double psip_s,double psip_R,struct params *p)
 {
+  
   double ufunc(double x_1,double x_2,double zeta);
   double vfunc(double x_1,double x_2,double xi,double zeta);
   double f_1func(double x_1,double x_2, double xi,double zeta);
@@ -12,16 +14,11 @@ double Efunc(double *x,struct params *p)
   double g_1func(double x_1,double x_2,double xi,double zeta);
   double g_2func(double x_1,double x_2,double xi,double zeta);
 
-  R = x[0];
-  eta = x[1];
-  delta = x[2];
-  R_c = x[3];
-  R_s = x[4];
-  psip_c = x[5];
-  psip_s = x[6];
-  psip_R = x[7];
-
-
+  if (R_c<0 || R_s < R_c || R < R_s) return FAILED_E;
+  
+  double psi1 = (psip_c-psip_s)*R_c;
+  double psi2 = (psip_s-psip_R)*R_s+(psip_c-psip_s)*R_c;
+  
   double a1;
 
   a1 = 0.25*(ufunc(0,R_c,psip_c)+ufunc(R_c,R_s,psip_s)+ufunc(R_s,R,psip_R));
@@ -39,13 +36,13 @@ double Efunc(double *x,struct params *p)
 
   double a2;
 
-  a2 = 16*M_PI*M_PI*M_PI*M_PI*(g_2func(0,R_c,0,psip_c)+g_2func(R_c,R_s,psi1,psip_s)
-			       +g_2func(R_s,R,psi2,psip_R));
+  a2 = 8*M_PI*M_PI*M_PI*M_PI*R*R;
 
   a2 += -8*M_PI*M_PI*eta*eta*(g_1func(0,R_c,0,psip_c)+g_1func(R_c,R_s,psi1,psip_s)
 			      +g_1func(R_s,R,psi2,psip_R));
 
-  a2 += 0.5*eta*eta*eta*eta*R*R;
+  a2 += eta*eta*eta*eta*(g_2func(0,R_c,0,psip_c)+g_2func(R_c,R_s,psi1,psip_s)
+			 +g_2func(R_s,R,psi2,psip_R));
 
   a2 *= p->Lambda*delta*delta/(2*R*R);
 

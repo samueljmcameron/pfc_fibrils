@@ -16,6 +16,8 @@
 #define RELERR 1e-10
 #define SIZE_INTEGRATION 1000
 
+#define FAILED_E 1e300
+
 
 struct params{
   // these five parameters completely specify the parameter

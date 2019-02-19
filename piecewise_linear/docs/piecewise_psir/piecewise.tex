@@ -88,7 +88,7 @@ The derivative with respect to the inverse period of density modulations, $\eta$
 \begin{align}
 \frac{\partial E}{\partial \eta}=&
 \frac{\Lambda\delta^2}{2R^2}\big(-16\pi^2\eta(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))\nonumber\\
-&+2\eta^3(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\big)\label{eq:dEdeta}
+&+4\eta^3(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\big)\label{eq:dEdeta}
 \end{align}
 The derivative with respect to the size of the density modulations, $\delta$, is
 \begin{align}
@@ -100,8 +100,8 @@ The derivative with respect to the core radius size, $R_c$, is
 \begin{align}
 \frac{\partial E}{\partial R_c}=&\nonumber\\
 &\frac{2}{R^2}\bigg(\frac{1}{4}\bigg(\frac{\partial u(0,x_2,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial u(x_1,R_s,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\bigg)+\frac{1}{8}\bigg(\frac{\partial f_1(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}\nonumber\\
-&+\frac{\partial f_1(x_1,R_s,\psi_1,\psi_c^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial f_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial \psi_1}{\partial R_c}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_c}\bigg)\nonumber\\
-&+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial f_2(x_1,R_s,\psi_1,\psi_c^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial f_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial \psi_1}{\partial R_c}\nonumber\\
+&+\frac{\partial f_1(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial f_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial \psi_1}{\partial R_c}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_c}\bigg)\nonumber\\
+&+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial f_2(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}+\frac{\partial f_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial \psi_1}{\partial R_c}\nonumber\\
 &+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_c}\bigg)+\frac{1}{4}\bigg(\frac{\partial v(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial v(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\nonumber\\
 &+\frac{\partial v(R_c,R_s,\xi,\psi_s^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\bigg)\bigg)\nonumber\\
 &+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial g_1(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\nonumber\\
@@ -182,11 +182,12 @@ Note that eqn \ref{eq:galpha} can be integrated analytically, and will be in the
 For $\zeta\ll1$, I can expand the final three of these equations up to $\mathcal{O}(\zeta^4)$ using trigonometric identities to get
 \begin{subequations}
 \begin{align}
-&v(x_1,x_2,\xi,\zeta)= -2(1-\zeta)\sin(2\xi)(x_2-x_1)-2(1-\zeta)\cos(2\xi)(x_2^2-x_1^2)\zeta\nonumber\\
-&\phantom{v(x_1,x_2,\xi,\zeta)= }+\frac{4}{3}(1-\zeta)\sin(2\xi)(x_2^3-x_1^3)\zeta^2+\frac{2}{3}\cos(2\xi)(x_2^4-x_1^4)\zeta^3,\\
+&v(x_1,x_2,\xi,\zeta)=-2\sin(2\xi)(x_2-x_1)+2(\sin(2\xi)(x_2-x_1)-\cos(2\xi)(x_2^2-x_1^2))\zeta\nonumber\\
+&\phantom{v(x_1,x_2,\xi,\zeta)=}+\frac{2}{3}(3\cos(2\xi)(x_2^2-x_1^2)+2\sin(2\xi)(x_2^3-x_1^3))\zeta^2\nonumber\\
+&\phantom{v(x_1,x_2,\xi,\zeta)=}+\frac{2}{3}(-2\sin(2\xi)(x_2^3-x_1^3)+\cos(2\xi)(x_2^4-x_1^4))\zeta^3,\\
 &f_1(x_1,x_2,\xi,\zeta)=\sin^2\left(2\xi\right)\ln\frac{x_2}{x_1}+4\zeta(x_2-x_1)\cos(2\xi)\sin(2\xi)\nonumber\\
 &\phantom{f_1(x_1,x_2,\xi,\zeta)=}+2\zeta^2(x_2^2-x_1^2)\left(\cos^2(2\xi)-\sin^2(2\xi)\right)-\frac{32}{9}\zeta^3(x_2^3-x_1^3)\sin(2\xi)\cos(2\xi)\\
-&f_2(x_1,x_2,\xi,\zeta)=\sin^4\xi\ln\frac{x_2}{x_1}+4\zeta(x_2-x_1)\sin^3\xi\cos\xi+\zeta^2(x_2^2-x_1^2)\sin^2\xi(\cos^2\xi-\sin^2\xi)\nonumber\\
+&f_2(x_1,x_2,\xi,\zeta)=\sin^4\xi\ln\frac{x_2}{x_1}+4\zeta(x_2-x_1)\sin^3\xi\cos\xi+\zeta^2(x_2^2-x_1^2)\sin^2\xi(3\cos^2\xi-\sin^2\xi)\nonumber\\
 &\phantom{f_2(x_1,x_2,\xi,\zeta)=}+\frac{4}{3}\zeta^3(x_2^3-x_1^3)\sin\xi\cos\xi\left(\cos^2\xi-5\sin^2\xi\right)\\
 &g_1(x_1,x_2,\xi,\zeta)=\frac{(x_2^2-x_1^2)\cos^2\xi}{2}-\frac{2(x_2^3-x_1^3)\cos\xi\sin\xi}{3}\zeta-\frac{(x_2^4-x_1^4)(\cos^2\xi-\sin^2\xi)}{4}\zeta^2\nonumber\\
 &\phantom{g_1(x_1,x_2,\xi,\zeta)=}+\frac{4(x_2^5-x_1^5)\cos\xi\sin\xi}{15}\zeta^3\nonumber\\
@@ -236,7 +237,9 @@ The derivatives of these functions are listed below:
 	\end{cases}\label{eq:dfdx_2}\\
 &\frac{\partial f_{\alpha}}{\partial \xi} = 
 	\begin{cases}
-	\infty,													& x_1 = 0,\xi\neq0\\
+	\infty,													& x_1 = 0,\xi\neq0,\\
+	4\sin(2\xi)\cos(2\xi)\ln\frac{x_2}{x_1}+8(x_2-x_1)(\cos^2(2\xi)-\sin^2(2\xi))\zeta,	&\zeta=0,\alpha=1,\\
+	4\sin^3\xi\cos\xi\ln\frac{x_2}{x_1}+4(x_2-x_1)\sin^2\xi(3\cos^2\xi-\sin^2\xi)\zeta,	&\zeta=0,\alpha=2,\\
 	\int_{x_1}^{x_2}du\frac{4\sin^{2\alpha-1}\left(\frac{2}{\alpha}(\zeta u+\xi)\right)\cos\left(\frac{2}{\alpha}(\zeta u+\xi)\right)}{u},	& x_1\neq0
 	\end{cases}\label{eq:dfdxi}\\
 &\frac{\partial f_{\alpha}}{\partial\zeta} = 
