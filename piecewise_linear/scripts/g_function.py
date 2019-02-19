@@ -23,39 +23,35 @@ class galphaFunction(object):
         if self.alpha == 1:
 
 
-            a0 = (x_2**2-x_1**2)/2
+            a0 = (x_2**2-x_1**2)*np.cos(xi)**2/2
 
-            a1 = 2*(x_2**3-x_1**3)*np.tan(xi)/3
+            a1 = -2*(x_2**3-x_1**3)*np.cos(xi)*np.sin(xi)/3
 
-            a2 = (x_2**4-x_1**4)*(3*np.tan(xi)**2+1)/4
+            a2 = -(x_2**4-x_1**4)*(np.cos(xi)**2-np.sin(xi)**2)/4
 
-            a3 = 4*(x_2**5-x_1**5)*(4+3*np.tan(xi)**2)*np.tan(xi)/15
+            a3 = 4*(x_2**5-x_1**5)*np.cos(xi)*np.sin(xi)/15
 
         elif self.alpha == 2:
             
-            a0 = (x_2**2-x_1**2)/2
+            a0 = (x_2**2-x_1**2)*np.cos(xi)**4/2
 
-            a1 = 4*(x_2**3-x_1**3)*np.tan(xi)/3
+            a1 = -2*(x_2**3-x_1**3)*np.cos(xi)**3*np.sin(xi)/3
 
-            a2 = (x_2**4-x_1**4)*(1+5*np.tan(xi)**2)/2
+            a2 = -(x_2**4-x_1**4)*(np.cos(xi)**2-3*np.sin(xi)**2)/2
 
-            a3 = (x_2**5-x_1**5)*(60*np.tan(xi)**2+28)*np.tan(xi)/15
+            a3 = -(x_2**5-x_1**5)*np.cos(xi)*(5*np.cos(xi)**3-12*np.sin(xi)**3)/15
 
         else:
 
             print(f"alpha must be either 1 or two, not {self.alpha}")
 
 
-        return 1/np.cos(xi)**(2*self.alpha)*(a0 + a1*zeta + a2*zeta**2 + a3*zeta**3)
+        return a0 + a1*zeta + a2*zeta**2 + a3*zeta**3
 
 
     def integrand_galpha(self,u,xi,zeta):
 
-        if zeta*u+xi >= np.pi/2-self.zerotol:
-
-            ValueError(self.valerr)
-
-        return u/(np.cos(zeta*u+xi)**(2*self.alpha))
+        return u*np.cos(zeta*u+xi)**(2*self.alpha)
 
 
     def galpha_exact(self,x_1,x_2,xi,zeta,show_err = False):
@@ -71,16 +67,13 @@ class galphaFunction(object):
     
     def galpha_full(self,x_1,x_2,xi,zeta):
 
-        result = self.galpha_exact(x_1,x_2,xi,zeta)
+        result = np.where(zeta!=0,self.galpha_exact(x_1,x_2,xi,zeta),
+                          self.galpha_approx(x_1,x_2,xi,zeta))
 
         return result
 
     def integrand_dgalphadzeta(self,u,xi,zeta):
 
-        if zeta*u+xi >= np.pi/2-self.zerotol:
-
-            ValueError(self.valerr)
-        
         result = 2*self.alpha*u**2*np.sin(zeta*u+xi)
 
         return result/np.cos(zeta*u+xi)**(2*self.alpha+1)

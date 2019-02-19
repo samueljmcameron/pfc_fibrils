@@ -173,9 +173,12 @@ where I have defined the functions
 &u(x_1,x_2,\zeta)=(1-\zeta)^2(x_2^2-x_1^2),\label{eq:ufunc}\\
 &v(x_1,x_2,\xi,\zeta)=\frac{(1-\zeta)}{\zeta}(\cos(2(\zeta x_2+\xi))-\cos(2(\zeta x_1+\xi))),\label{eq:vfunc}\\
 &f_{\alpha}(x_1,x_2,\xi,\zeta)=\int_{x_1}^{x_2}du\frac{\sin^{2\alpha}\left(\frac{2}{\alpha}(\zeta u+\xi)\right)}{u},\label{eq:falpha}\\
-&g_{\alpha}(x_1,x_2,\xi,\zeta)=\int_{x_1}^{x_2}u\cos^{2\alpha}(\zeta u+\xi)du.\label{eq:galpha}
+&g_{\alpha}(x_1,x_2,\xi,\zeta)=\int_{x_1}^{x_2}u\cos^{2\alpha}(\zeta u+\xi)du
+\label{eq:galpha}
 \end{align}
 \end{subequations}
+Note that eqn \ref{eq:galpha} can be integrated analytically, and will be in the computation, but it's form is not very illuminating and so I have left it in integral form.
+
 For $\zeta\ll1$, I can expand the final three of these equations up to $\mathcal{O}(\zeta^4)$ using trigonometric identities to get
 \begin{subequations}
 \begin{align}
@@ -252,12 +255,14 @@ The derivatives of these functions are listed below:
 	\begin{cases}
 	-(x_2^2-x_1^2)\cos\xi\sin\xi-\frac{2(x_2^3-x_1^3)(\cos^2\xi-\sin^2\xi)}{3}\zeta,	&\zeta=0,\alpha=1,\\
 	-2(x_2^2-x_1^2)\cos^3\xi\sin\xi-\frac{4(x_2^3-x_1^3)(\cos^4\xi-3\cos^2\xi\sin^2\xi)}{3}\zeta,	&\zeta=0,\alpha=2,\\
-	-2\alpha\int_{x_1}^{x_2} u\cos^{2\alpha-1}(\zeta u+\xi)\sin(\zeta u+\xi)du, &\zeta\neq0,\end{cases}\label{eq:dgdxi}\\
+	-2\alpha\int_{x_1}^{x_2} u\cos^{2\alpha-1}(\zeta u +\xi)\sin(\zeta u+\xi)du
+		&\zeta\neq0,
+	\end{cases}\label{eq:dgdxi}\\
 &\frac{\partial g_{\alpha}}{\partial\zeta}=
 	\begin{cases}
 	\frac{-2(x_2^3-x_1^3)\cos\xi\sin\xi}{3}-\frac{(x_2^4-x_1^4)(\cos^2\xi-\sin^2\xi)}{2}\zeta,	&\zeta=0,\alpha=1,\\
 	\frac{-4(x_2^3-x_1^3)\cos^3\xi\sin\xi}{3}-(x_2^4-x_1^4)\cos^2\xi(\cos^2\xi-\sin^2\xi)\zeta,	&\zeta=0,\alpha=2,\\
-	-2\alpha\int_{x_1}^{x_2} u^2\cos^{2\alpha+1}(\zeta u +\xi)\sin(\zeta u+\xi)du,	&\zeta\neq0.\end{cases}\label{eq:dgdzeta}
+	-2\alpha\int_{x_1}^{x_2} u^2\cos^{2\alpha-1}(\zeta u +\xi)\sin(\zeta u+\xi)du,	&\zeta\neq0.\end{cases}\label{eq:dgdzeta}
 \end{align}
 \end{subequations}
 
