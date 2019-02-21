@@ -7,6 +7,7 @@ TARGET = samplecalc
 BINDIR = ../bin
 GSL_SRCDIR = edited_gsl_src
 ENERGY_SRCDIR = funcs
+CONTINUUM_SRCDIR = continuum_E
 OBJDIR = ../obj
 
 LOCAL_SRC = samplecalc.c
@@ -14,6 +15,8 @@ LOCAL_SRC = samplecalc.c
 ENERGY_SRC := energyderivs.c energyfunc.c f1_functions.c f2_functions.c \
               g1_functions.c g2_functions.c u_functions.c v_functions.c \
               nrutil.c
+
+CONTINUUM_SRC := energy.c qromb.c trapzd.c polint.c
 
 EDITED_GSL_SRC := $(wildcard $(GSL_SRCDIR)/*.c)
 
@@ -23,8 +26,9 @@ EDITEDGSL_INC := $(wildcard $(GSL_SRCDIR)/*.h)
 
 EDITED_GSL_OBJS := $(EDITED_GSL_SRC:$(GSL_SRCDIR)/%.c=$(OBJDIR)/%.o)
 ENERGY_OBJS := $(ENERGY_SRC:%.c=$(OBJDIR)/%.o)
+CONTINUUM_OBJS := $(CONTINUUM_SRC:%.c=$(OBJDIR)/%.o)
 LOCAL_OBJS := $(LOCAL_SRC:%.c=$(OBJDIR)/%.o)
-OBJECTS := $(ENERGY_OBJS) $(EDITED_GSL_OBJS) $(LOCAL_OBJS)
+OBJECTS := $(CONTINUUM_OBJS) $(ENERGY_OBJS) $(EDITED_GSL_OBJS) $(LOCAL_OBJS)
 rm = rm -f
 
 $(BINDIR)/$(TARGET): $(OBJECTS)
@@ -32,6 +36,10 @@ $(BINDIR)/$(TARGET): $(OBJECTS)
 	@echo "Linking complete!"
 
 $(LOCAL_OBJS) : $(OBJDIR)/%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
+	@echo "Compiled "$<" successfully!"
+
+$(CONTINUUM_OBJS) : $(OBJDIR)/%.o: $(CONTINUUM_SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 	@echo "Compiled "$<" successfully!"
 
