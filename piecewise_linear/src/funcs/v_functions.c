@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <gsl/gsl_integration.h>
-#include "headerfile.h"
+#include "../headerfile.h"
 
 double vfunc(double x_1,double x_2,double xi,double zeta)
 {
@@ -84,7 +83,7 @@ double dvdzeta(double x_1,double x_2,double xi,double zeta)
 
     f = (1/zeta-1)*(2*x_1*sin(2*(zeta*x_1+xi))-2*x_2*sin(2*(zeta*x_2+xi)));
 
-    f += -1/(zeta*zeta)*(np.cos(2*(zeta*x_2+xi))-np.cos(2*(zeta*x_1+xi)));
+    f += -1/(zeta*zeta)*(cos(2*(zeta*x_2+xi))-cos(2*(zeta*x_1+xi)));
 
   }
 

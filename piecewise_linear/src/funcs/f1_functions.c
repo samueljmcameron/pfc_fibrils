@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <gsl/gsl_integration.h>
-#include "headerfile.h"
+#include "../headerfile.h"
 
 
 double f_1func(double x_1,double x_2, double xi,double zeta)
@@ -50,7 +50,7 @@ double f_1func(double x_1,double x_2, double xi,double zeta)
     F.function = &f_1_integrand;
     F.params = v;
 
-    gsl_integration_qags(&F,x_1,x_2,ABSERR,RELERR,SIZE_INTEGRATION,&ans,&error);
+    gsl_integration_qags(&F,x_1,x_2,ABSERR,RELERR,SIZE_INTEGRATION,w,&ans,&error);
 
     gsl_integration_workspace_free (w);
 
@@ -95,6 +95,8 @@ double df_1dxi(double x_1,double x_2,double xi,double zeta)
   double df_1dxi_integrand(double u, void *params);
 
   gsl_integration_workspace *w = gsl_integration_workspace_alloc(SIZE_INTEGRATION);
+
+  double ans;
   
   double error;
   
@@ -108,7 +110,7 @@ double df_1dxi(double x_1,double x_2,double xi,double zeta)
   F.function = &df_1dxi_integrand;
   F.params = v;
   
-  gsl_integration_qags(&F,x_1,x_2,ABSERR,RELERR,SIZE_INTEGRATION,&ans,&error);
+  gsl_integration_qags(&F,x_1,x_2,ABSERR,RELERR,SIZE_INTEGRATION,w,&ans,&error);
   
   gsl_integration_workspace_free (w);
   
@@ -145,7 +147,12 @@ double df_1dzeta(double x_1,double x_2,double xi,double zeta)
 double f_1_integrand(double u,void *params)
 // params is just a vector with x[0] = xi, x[1] = zeta.
 {
-  double *x = *params;
+  
+  double *x = params;
+  
+
+  double xi=x[0];
+  double zeta=x[1];
 
   double f;
 
@@ -155,7 +162,7 @@ double f_1_integrand(double u,void *params)
 
   } else {
 
-    f = sin(2*(x[1]*u+x[0]))*sin(2*(x[1]*u+x[0]))/u;
+    f = sin(2*(zeta*u+xi))*sin(2*(zeta*u+xi))/u;
 
   }
 
@@ -169,9 +176,9 @@ double df_1dxi_integrand(double u, void *params)
 {
   double *x = params;
 
-  x[0] = xi;
-  x[1] = zeta;
-
+  double xi=x[0];
+  double zeta=x[1];
+  
   double f;
 
   if (fabs(u) < ZERO) {

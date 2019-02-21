@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <gsl/gsl_integration.h>
-#include "headerfile.h"
+#include "../headerfile.h"
 
 double g_2func(double x_1,double x_2,double xi,double zeta)
 {
@@ -11,6 +10,8 @@ double g_2func(double x_1,double x_2,double xi,double zeta)
 
   if (fabs(zeta)<SMALL) {
 
+    double a0,a1,a2,a3;
+    
     a0 = (x_2*x_2-x_1*x_1)*cos(xi)*cos(xi)*cos(xi)*cos(xi)/2.0;
 
     a1 = -4*(x_2*x_2*x_2-x_1*x_1*x_1)*cos(xi)*cos(xi)*cos(xi)*sin(xi)/3.0;
@@ -140,9 +141,10 @@ double dg_2dzeta(double x_1,double x_2,double xi,double zeta)
     double r1 = -8*x_1*x_1*zeta*zeta+8*xi*xi+1;
     double r2 = -8*x_2*x_2*zeta*zeta+8*xi*xi+1;
 
-    ans = 4*zeta*(x_2*np.sin(t2)-x_1*np.sin(t1))+r2*np.cos(t2)-r1*np.cos(t1);
-    ans += 32*zeta*(x_2*np.sin(s2)-x_1*np.sin(s1));
-    ans += 16*(q2*np.cos(s2)-q1*np.cos(s1))-64*xi*xi*(np.cos(p2)**4-np.cos(p1)**4);
+    ans = 4*zeta*(x_2*sin(t2)-x_1*sin(t1))+r2*cos(t2)-r1*cos(t1);
+    ans += 32*zeta*(x_2*sin(s2)-x_1*sin(s1));
+    ans += 16*(q2*cos(s2)-q1*cos(s1));
+    ans += -64*xi*xi*(cos(p2)*cos(p2)*cos(p2)*cos(p2)-cos(p1)*cos(p1)*cos(p1)*cos(p1));
 
     ans /= 64*zeta*zeta*zeta;
 

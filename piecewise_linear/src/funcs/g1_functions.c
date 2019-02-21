@@ -1,8 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <gsl/gsl_integration.h>
-#include "headerfile.h"
+#include "../headerfile.h"
 
 double g_1func(double x_1,double x_2,double xi,double zeta)
 {
@@ -78,7 +77,7 @@ double dg_1dxi(double x_1,double x_2,double xi,double zeta)
     double p2 = zeta*x_2+xi;
         
     double s1 = 2*(zeta*x_1+xi);
-    doulbe s2 = 2*(zeta*x_2+xi);
+    double s2 = 2*(zeta*x_2+xi);
 
     ans = sin(s2)-sin(s1)-(s2*cos(s2)-s1*cos(s1));
     ans += 4*xi*(cos(p2)*cos(p2)-cos(p1)*cos(p1));

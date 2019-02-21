@@ -138,20 +138,23 @@ The derivative with respect to the twist angle gradient in the core, $\psi_c^{\p
 The derivative with respect to the twist angle gradient in the shelf, $\psi_s^{\prime}$, is
 \begin{align}
 \frac{\partial E}{\partial \psi_s^{\prime}}=&\nonumber\\
-&\frac{2}{R^2}\bigg(\frac{1}{4}\frac{\partial u(R_c,R_s,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{1}{8}\bigg(\frac{\partial f_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\nonumber\\
-&+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\nonumber\\
-&+\frac{1}{4}\bigg(\frac{\partial v(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)\nonumber\\
-&+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\nonumber\\
-&+\eta^4\bigg(\frac{\partial g_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)\nonumber\\
-&-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_s^{\prime}}.\label{eq:dEdpsi_sp}
+&\frac{2}{R^2}\bigg(\frac{1}{4}\frac{\partial u(R_c,R_s,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{1}{8}\bigg(\frac{\partial f_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial f_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_s^{\prime}}\nonumber\\
+&+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial f_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_s^{\prime}}\nonumber\\
+&+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)+\frac{1}{4}\bigg(\frac{\partial v(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial v(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_s^{\prime}}\nonumber\\
+&+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}\nonumber\\
+&+\frac{\partial g_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_s^{\prime}}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\nonumber\\
+&+\eta^4\bigg(\frac{\partial g_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial g_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_s^{\prime}}\nonumber\\
+&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_s^{\prime}}.\label{eq:dEdpsi_sp}
 \end{align}
 
 Finally, the derivative with respect to the twist angle gradient in surface reconstruction region, $\psi_R^{\prime}$, is
 \begin{align}
 \frac{\partial E}{\partial \psi_R^{\prime}}=&\nonumber\\
-&\frac{2}{R^2}\bigg(\frac{1}{4}\frac{\partial u(R_s,R,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{1}{8}\frac{\partial f_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{1}{2}K_{33}\frac{\partial f_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\nonumber\\
-&+\frac{1}{4}\frac{\partial v(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\bigg)+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\frac{\partial g_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\nonumber\\
-&\eta^4\frac{\partial g_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\bigg)-\frac{(1+k_{24})}{R}\cos(\psi_R^{\prime}R+\psi_2).\label{eq:dEdpsi_Rc}
+&\frac{2}{R^2}\bigg(\frac{1}{4}\frac{\partial u(R_s,R,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{1}{8}\bigg(\frac{\partial f_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{\partial f_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)\nonumber\\
+&+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)\nonumber\\
+&+\frac{1}{4}\bigg(\frac{\partial v(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)\bigg)+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\nonumber\\
+&+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)+\eta^4\bigg(\frac{\partial g_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\nonumber\\
+&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)\bigg)-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\bigg(R+\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg).\label{eq:dEdpsi_Rc}
 \end{align}
 
 \section{Detailed calculations}
