@@ -44,7 +44,7 @@ double Efunc(struct params *p)
 	      +vfunc(R_s,R,psi2,psip_R));
 
   a1 *= 2/(R*R);
-
+  
   double a2;
 
   a2 = 8*M_PI*M_PI*M_PI*M_PI*R*R;
@@ -57,13 +57,6 @@ double Efunc(struct params *p)
 			 +g_2func(R_s,R,psi2,psip_R));
 
   a2 *= p->Lambda*delta*delta/(2*R*R);
-
-
-  printf("%lf,%lf,%lf\n",g_1func(0,R_c,0,psip_c),g_1func(R_c,R_s,psi1,psip_s),
-	 g_1func(R_s,R,psi2,psip_R));
-
-  printf("%lf,%lf,%lf\n",g_2func(0,R_c,0,psip_c),g_2func(R_c,R_s,psi1,psip_s),
-	 g_2func(R_s,R,psi2,psip_R));
   
   double a3;
 
@@ -72,7 +65,6 @@ double Efunc(struct params *p)
 
   a3 += -(1+p->k24)*sin(psip_R*R+psi2)/(R*R)+2*p->gamma_s/R;
 
-  printf("psi(R)=%lf\n",psip_R*R+psi2);
   
   return a1 + a2 + a3;
 

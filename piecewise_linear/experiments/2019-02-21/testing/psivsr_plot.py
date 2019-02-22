@@ -6,6 +6,8 @@ sys.path.append('../../scripts/')
 from singlerun import SingleRun
 from readparams import ReadParams
 
+from scipy.integrate import simps,romb
+
 def psi(rs,R_c,R_s,psip_c,psip_s,psip_R):
 
     psi1 = (psip_c-psip_s)*R_c
@@ -28,11 +30,6 @@ if __name__ == "__main__":
 
 
 
-    R_c = 0.0355
-    R_s = 0.865
-    psip_c = 3
-    psip_s = 0.0
-    psip_R = 0.5
 
         
     scan = {}
@@ -40,11 +37,6 @@ if __name__ == "__main__":
     scan['\\gamma_s'] = gamma
     scan['\\Lambda']=Lambda
     scan['\\omega']= omega
-    scan['R_c']=str(R_c)
-    scan['R_s']=str(R_s)
-    scan['psip_c']=str(psip_c)
-    scan['psip_s']=str(psip_s)
-    scan['psip_R']=str(psip_R)
     
     loadsuf=["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
 
@@ -69,13 +61,43 @@ if __name__ == "__main__":
 
     c_rs = c_data[:,0]
     c_psis = c_data[:,1]
+    c_rfs = c_data[:,3]
+
+    c_dx = c_rs[1]-c_rs[0]
 
     d_rs = d_data[:,0]
     d_psis = d_data[:,1]
+    d_rfs = d_data[:,3]
 
-    plt.plot(c_rs,c_psis,'o')
+    d_dx = d_rs[1]-d_rs[0]
 
-    plt.plot(d_rs,d_psis,'.')
-    plt.plot(c_rs,psi(c_rs,R_c,R_s,psip_c,psip_s,psip_R),'k-')
+    R_c = float(run.params['R_c'])
+    R_s = float(run.params['R_s'])
+    R = float(run.params['R'])
+    delta = float(run.params['delta'])
+    gamma = float(run.params['\gamma_s'])
+    omega = float(run.params['\omega'])
+    k24 = float(run.params['k_{24}'])
+
+    
+    E = 2/(R*R)*simps(d_rfs,d_rs)
+
+    E += omega*delta*delta/2*(3/4*delta*delta-1)
+    E += -(1+k24)/(R*R)*np.sin(c_psis[-1])+2*gamma/R
+
+    print("E python discrete from continuum integral = ",E)
+
+    """
+    fig, axarr = plt.subplots(2,sharex=True)
+    
+    axarr[0].plot(c_rs,c_psis,'o',label='continuous')
+    axarr[0].plot(d_rs,d_psis,'.',label='discrete')
+    axarr[0].set_ylabel(r"$\psi(r)$")
+
+    axarr[1].plot(c_rs,c_rfs,'o',label='continuous')
+    axarr[1].plot(d_rs,d_rfs,'.',label='discrete')
+    axarr[1].set_ylabel(r"$rf(r)$")
+    axarr[1].set_xlabel(r"$r$")
 
     plt.show()
+    """

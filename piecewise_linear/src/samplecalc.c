@@ -17,15 +17,20 @@ int main(int argc, char **argv)
 
   double Efunc(struct params *p);
 
-  double E_calc(struct params *p,double *r,double **y,double *rf_fib,int n);
-
   void initialize_file(FILE **output,char *path,char *fname,struct params p);
 
   void save_psivsr(FILE *psivsr,double *r,double **y,double *rf_fib,int n);
 
+  void propagate_r(double *r, double h,int mpt);
+
+  void buildpsi(double *r,double **y,struct params *p,int n);
+
+  void compute_rf2233b1(double *rf_fib,struct params *p,double *r, double **y, int n);
+
   struct params p;
 
   int n = 2*2*2*2*2*2*2*2*2*2*2*2*2*2*2*2+1;
+
 
   double *r,*rf_fib;
   double **y;
@@ -37,13 +42,19 @@ int main(int argc, char **argv)
   
   setparams(&p,argv);
 
-  printf("E discrete = %lf\n",Efunc(&p));
+  double h = p.R/(n-1);
 
-  printf("E continuum = %lf\n",E_calc(&p,r,y,rf_fib,n));
+  printf("E discrete = %.8lf\n",Efunc(&p));
 
   FILE *psi_r;
 
   initialize_file(&psi_r,argv[1],"psivsr_discrete",p);
+
+  propagate_r(r,h,n);
+
+  buildpsi(r,y,&p,n);
+
+  compute_rf2233b1(rf_fib,&p,r,y,n);
 
   save_psivsr(psi_r,r,y,rf_fib,n);
 

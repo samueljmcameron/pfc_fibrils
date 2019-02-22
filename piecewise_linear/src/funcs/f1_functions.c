@@ -51,13 +51,14 @@ double f_1func(double x_1,double x_2, double xi,double zeta)
     F.params = v;
 
     gsl_integration_qags(&F,x_1,x_2,ABSERR,RELERR,SIZE_INTEGRATION,w,&ans,&error);
-
+    
     gsl_integration_workspace_free (w);
 
     free(v);
 
   }
-
+  
+  
   return ans;
 
 }

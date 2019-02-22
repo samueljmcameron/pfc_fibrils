@@ -16,7 +16,7 @@ double g_2func(double x_1,double x_2,double xi,double zeta)
 
     a1 = -4*(x_2*x_2*x_2-x_1*x_1*x_1)*cos(xi)*cos(xi)*cos(xi)*sin(xi)/3.0;
 
-    a2 = -((x_2*x_2*x_2*x_2-x_1*x_1*x_1*x_1*x_1)*cos(xi)*cos(xi)*
+    a2 = -((x_2*x_2*x_2*x_2-x_1*x_1*x_1*x_1)*cos(xi)*cos(xi)*
 	   (cos(xi)*cos(xi)-3*sin(xi)*sin(xi))/2.0);
 
     a3 = -((x_2*x_2*x_2*x_2*x_2-x_1*x_1*x_1*x_1*x_1)*cos(xi)

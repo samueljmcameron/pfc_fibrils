@@ -205,7 +205,7 @@ double no_integral_E(struct params *p,double psiR,
 
   p -- This struct has all of the constant parameter info (e.g. K33, k24).
 
-  psiR -- This is the surface twist of the fibrils, psi(R). In this code, this
+p  psiR -- This is the surface twist of the fibrils, psi(R). In this code, this
   term would be y[1][mpt].
 
   integration_2233b1 -- This is the value of the integral that is computed
@@ -230,7 +230,7 @@ double no_integral_E(struct params *p,double psiR,
        *(0.75*p->delta*p->delta-1));
 
   // add surface term tension terms
-  E = E+0.5+1.0/p->R*(-(1+p->k24)*(sin(psiR)*sin(psiR))/p->R+2.0*p->gamma_s);  
+  E = E+1.0/p->R*(-(1+p->k24)*(sin(psiR)*sin(psiR))/p->R+2.0*p->gamma_s);  
   
 
   return E;
@@ -309,8 +309,8 @@ double f2233b1_r(struct params *p,double ri,double sin_yi,
 
   double ans;
 
-  ans = (-(yi_p+0.5*sin_2yi/ri)+0.5*(yi_p+0.5*sin_2yi/ri)
-	 *(yi_p+0.5*sin_2yi/ri)+0.5*p->K33*sin_yi*sin_yi*sin_yi
+  ans = (0.5*(yi_p+0.5*sin_2yi/ri-1)*(yi_p+0.5*sin_2yi/ri-1)
+	 +0.5*p->K33*sin_yi*sin_yi*sin_yi
 	 *sin_yi/(ri*ri)+p->Lambda*p->delta*p->delta/4.0
 	 *(4*M_PI*M_PI-p->eta*p->eta*cos_yi*cos_yi)
 	 *(4*M_PI*M_PI-p->eta*p->eta*cos_yi*cos_yi));

@@ -15,7 +15,7 @@ double f_2func(double x_1,double x_2, double xi,double zeta)
 
     double a0,a1,a2,a3;
 
-    if ((x_1 < ZERO || x_2 < ZERO) && xi < ZERO) {
+    if ((x_1 < ZERO || x_2 < ZERO) && fabs(xi) < ZERO) {
       
       a0 = 0.0;
 
@@ -57,6 +57,8 @@ double f_2func(double x_1,double x_2, double xi,double zeta)
     free(v);
 
   }
+
+
 
   return ans;
 
