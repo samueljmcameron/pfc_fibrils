@@ -64,7 +64,7 @@ double dEdR(struct params *p)
   a1 += 0.5*p->K33*(f_2func(0,R_c,0,psip_c)+f_2func(R_c,R_s,psi1,psip_s)
 		    +f_2func(R_s,R,psi2,psip_R));
 
-  a1 += 0.25*(vfunc(0,R_c,0,psip_c)+vfunc(R_s,R_s,psi1,psip_s)
+  a1 += 0.25*(vfunc(0,R_c,0,psip_c)+vfunc(R_c,R_s,psi1,psip_s)
 	      +vfunc(R_s,R,psi2,psip_R));
 
   a1 *= -4/(R*R*R);
@@ -195,7 +195,7 @@ double dEdR_c(struct params *p)
 
   a1 = 0.25*(dudx_2(R_c,psip_c)+dudx_1(R_c,psip_s));
 
-  a1 += 0.125*(df_1dx_2(R_c,0,psip_c)+df_1dx_1(R_c,0,psip_s)
+  a1 += 0.125*(df_1dx_2(R_c,0,psip_c)+df_1dx_1(R_c,psi1,psip_s)
 	       +df_1dxi(R_c,R_s,psi1,psip_s)*dpsi1dR_c
 	       +df_1dxi(R_s,R,psi2,psip_R)*dpsi2dR_c);
 

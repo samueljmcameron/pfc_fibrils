@@ -3,8 +3,10 @@ import matplotlib.pyplot as plt
 import sys
 import time
 sys.path.append('../../scripts/')
+sys.path.append('../../../scripts/')
 from singlerun import SingleRun
 from readparams import ReadParams
+from energy import energy
 
 from scipy.integrate import simps,romb
 
@@ -45,7 +47,7 @@ if __name__ == "__main__":
     rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=loadsuf)
         
     # create a class to do calculations with current parameters in scan.
-    run = SingleRun(rp,executable="../../../bin/samplecalc")
+    run = SingleRun(rp,executable="../../../bin/samplecalc_testenergy")
     # run C executable.
     run.run_exe()
 
@@ -73,19 +75,42 @@ if __name__ == "__main__":
 
     R_c = float(run.params['R_c'])
     R_s = float(run.params['R_s'])
+    psip_c = float(run.params['psip_c'])
+    psip_s = float(run.params['psip_s'])
+    psip_R = float(run.params['psip_R'])
     R = float(run.params['R'])
+    eta = float(run.params['eta'])
     delta = float(run.params['delta'])
     gamma = float(run.params['\gamma_s'])
     omega = float(run.params['\omega'])
     k24 = float(run.params['k_{24}'])
+    K33 = float(run.params['K_{33}'])
+    Lambda = float(run.params['\Lambda'])
 
+
+    piece1 = 2/(R*R)*simps(d_rfs[d_rs<=R_c],d_rs[d_rs<=R_c])
+    piece2 = 2/(R*R)*simps(d_rfs[(d_rs>R_c)&(d_rs<=R_s)],d_rs[(d_rs>R_c)&(d_rs<=R_s)])
+    piece3 = 2/(R*R)*simps(d_rfs[d_rs>R_s],d_rs[d_rs>R_s])
+    piece4 = omega*delta*delta/2*(3/4*delta*delta-1)-(1+k24)/(R*R)*np.sin(d_psis[-1])+2*gamma/R
+
+    print("piece1 = ",piece1)
+    print("piece2 = ",piece2)
+    print("piece3 = ",piece3)
+    
     
     E = 2/(R*R)*simps(d_rfs,d_rs)
 
     E += omega*delta*delta/2*(3/4*delta*delta-1)
-    E += -(1+k24)/(R*R)*np.sin(c_psis[-1])+2*gamma/R
+    E += -(1+k24)/(R*R)*np.sin(d_psis[-1])+2*gamma/R
+
 
     print("E python discrete from continuum integral = ",E)
+
+
+    E_d = energy(R,eta,delta,R_c,R_s,psip_c,psip_s,psip_R,
+                 K33,Lambda,omega,k24,gamma)
+
+    print("E python discrete from discrete integral = ",E_d)
 
     """
     fig, axarr = plt.subplots(2,sharex=True)

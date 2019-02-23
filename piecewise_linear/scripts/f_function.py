@@ -64,6 +64,7 @@ class falphaFunction(object):
 
             ValueError("u value of integrand cannot have lower integration limit of zero "
                        "if the intercept of psi(r) is non-zero.")
+            result = np.nan
 
         return result
 

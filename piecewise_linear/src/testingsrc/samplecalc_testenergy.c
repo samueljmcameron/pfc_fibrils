@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 
   double h = p.R/(n-1);
 
-  printf("E discrete = %.8lf\n",Efunc(&p));
+  printf("E discrete (C code) from discrete integral = %.8lf\n",Efunc(&p));
 
   FILE *psi_r;
 
@@ -76,7 +76,6 @@ void save_psivsr(FILE *psivsr,double *r,double **y,double *rf_fib,int n)
     fprintf(psivsr,"%13.6e\t%13.6e\t%13.6e\t%13.6e\n",r[i],y[1][i],y[2][i],
 	    rf_fib[i]);
   }
-  printf("psi(R) = %1.2e\n",y[1][n]);
   return;
 }
 

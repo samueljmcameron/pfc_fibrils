@@ -32,6 +32,9 @@ class vFunction(object):
 
     def v_exact(self,x_1,x_2,xi,zeta):
 
+        if zeta == 0:
+            return np.nan
+        
         ans = np.cos(2*(zeta*x_2+xi))-np.cos(2*(zeta*x_1+xi))
 
         ans *= (1-zeta)/zeta

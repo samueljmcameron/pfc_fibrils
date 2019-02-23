@@ -98,7 +98,7 @@ class SingleRun(object):
 
         subprocess.run(["mv",mvfrom,mvto],check=True)
 
-        return
+        return mvto
 
     def add_datastring(self,vrs,externalparam=None):
 

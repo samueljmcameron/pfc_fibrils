@@ -44,6 +44,8 @@ double Efunc(struct params *p)
 	      +vfunc(R_s,R,psi2,psip_R));
 
   a1 *= 2/(R*R);
+
+
   
   double a2;
 
@@ -57,7 +59,7 @@ double Efunc(struct params *p)
 			 +g_2func(R_s,R,psi2,psip_R));
 
   a2 *= p->Lambda*delta*delta/(2*R*R);
-  
+
   double a3;
 
 
