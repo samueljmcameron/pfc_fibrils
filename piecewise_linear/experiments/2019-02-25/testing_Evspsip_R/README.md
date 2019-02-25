@@ -1,0 +1,1 @@
+Looking at energy vs R_c for everything else fixed, trying to debug why my derivatives aren't correct.
