@@ -12,6 +12,30 @@ class falphaFunction(object):
 
     def falpha_approx(self,x_1,x_2,xi,zeta):
 
+        x_2t2 = x_2*x_2
+
+        x_2t3 = x_2*x_2*x_2
+
+        x_2t4 = x_2*x_2*x_2*x_2
+
+        x_2t5 = x_2*x_2*x_2*x_2*x_2
+
+        x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_1t2 = x_1*x_1
+
+        x_1t3 = x_1*x_1*x_1
+
+        x_1t4 = x_1*x_1*x_1*x_1
+
+        x_1t5 = x_1*x_1*x_1*x_1*x_1
+
+        x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1
+
+        x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1
+
         if self.alpha == 1:
 
             if (x_1 < self.zerotol or x_2 < self.zerotol) and xi < self.zerotol:
@@ -24,9 +48,22 @@ class falphaFunction(object):
 
             a1 = 4*(x_2-x_1)*np.cos(2*xi)*np.sin(2*xi)
 
-            a2 = 2*(x_2**2-x_1**2)*(np.cos(2*xi)**2-np.sin(2*xi)**2)
+            a2 = 2*(x_2t2-x_1t2)*(np.cos(2*xi)**2-np.sin(2*xi)**2)
 
-            a3 = -32/9*(x_2**3-x_1**3)*np.sin(2*xi)*np.cos(2*xi)
+            a3 = -32/9*(x_2t3-x_1t3)*np.sin(2*xi)*np.cos(2*xi)
+
+            a1 = 4*np.sin(2*xi)*np.cos(2*xi)*(x_2-x_1)
+
+            a2 = +(-2*np.cos(2*xi)**2*x_1t2+2*np.cos(2*xi)**2*x_2t2+2*np.sin(2*xi)**2*x_1t2
+                    -2*np.sin(2*xi)**2*x_2t2)
+
+            a3 =-(32/9)*np.sin(2*xi)*np.cos(2*xi)*(-x_1t3+x_2t3)
+
+            a4 = +(4*np.cos(2*xi)**2*x_1t4*(1/3)-4*np.sin(2*xi)**2*x_1t4*(1/3)
+                   -4*np.cos(2*xi)**2*x_2t4*(1/3)+4*np.sin(2*xi)**2*x_2t4*(1/3))
+
+            a5 = +(128/75)*np.sin(2*xi)*np.cos(2*xi)*(-x_1**5+x_2**5)
+            
 
         elif self.alpha == 2:
 
@@ -40,16 +77,32 @@ class falphaFunction(object):
 
             a1 = 4*(x_2-x_1)*np.sin(xi)**3*np.cos(xi)
 
-            a2 = (x_2**2-x_1**2)*np.sin(xi)**2*(3*np.cos(xi)**2-np.sin(xi)**2)
+            a2 = (x_2t2-x_1t2)*np.sin(xi)**2*(3*np.cos(xi)**2-np.sin(xi)**2)
             
-            a3 = 4/3*(x_2**3-x_1**3)*np.sin(xi)*np.cos(xi)*(np.cos(xi)**2-5*np.sin(xi)**2)
+            a3 = 4/3*(x_2t3-x_1t3)*np.sin(xi)*np.cos(xi)*(np.cos(xi)**2-5*np.sin(xi)**2)
+
+            a1 = +4*(np.sin(xi))**3*np.cos(xi)*(x_2-x_1)
+
+            a2 = +((np.sin(xi))**4*x_1t2-(np.sin(xi))**4*x_2t2-3*(np.sin(xi))**2*(np.cos(xi))**2*x_1t2
+                   +3*(np.sin(xi))**2*(np.cos(xi))**2*x_2t2)
+
+            a3 = +((20*(np.sin(xi))**3*np.cos(xi)*x_1t3)/9-(4*np.sin(xi)*(np.cos(xi))**3*x_1t3)/3
+                   -(20*(np.sin(xi))**3*np.cos(xi)*x_2t3)/9+(4*np.sin(xi)*(np.cos(xi))**3*x_2t3)/3)
+
+            a4 = +(-(5*(np.sin(xi))**4*x_1t4)/12+2*(np.sin(xi))**2*(np.cos(xi))**2*x_1t4
+                    -((np.cos(xi))**4*x_1t4)/4+(5*(np.sin(xi))**4*x_2t4)/12
+                    -2*(np.sin(xi))**2*(np.cos(xi))**2*x_2t4+((np.cos(xi))**4*x_2t4)/4)
+
+            a5 = +(-(68*(np.sin(xi))**3*np.cos(xi)*x_1**5)/75+(4*np.sin(xi)*(np.cos(xi))**3*x_1**5)/5
+                    +(68*(np.sin(xi))**3*np.cos(xi)*x_2**5)/75-(4*np.sin(xi)*(np.cos(xi))**3*x_2**5)/5)
+
 
         else:
 
             print(f"alpha must be either 1 or two, not {self.alpha}")
 
 
-        return a0 + a1*zeta + a2*zeta**2 + a3*zeta**3
+        return a0 + a1*zeta + a2*zeta**2 + a3*zeta**3 + a4*zeta**4 + a5*zeta**5
 
     def integrand_f_approx(self,u,xi,zeta):
 
@@ -100,27 +153,88 @@ class falphaFunction(object):
 
     def dfalphadzeta_approx(self,x_1,x_2,xi,zeta):
 
+        x_2t2 = x_2*x_2
+
+        x_2t3 = x_2*x_2*x_2
+
+        x_2t4 = x_2*x_2*x_2*x_2
+
+        x_2t5 = x_2*x_2*x_2*x_2*x_2
+
+        x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_1t2 = x_1*x_1
+
+        x_1t3 = x_1*x_1*x_1
+
+        x_1t4 = x_1*x_1*x_1*x_1
+
+        x_1t5 = x_1*x_1*x_1*x_1*x_1
+
+        x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1
+
+        x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1
+
+
         if self.alpha == 1:
 
             a0 = 4*(x_2-x_1)*np.cos(2*xi)*np.sin(2*xi)
 
-            a1 = 4*(x_2**2-x_1**2)*(np.cos(2*xi)**2-np.sin(2*xi)**2)
+            a1 = 4*(x_2t2-x_1t2)*(np.cos(2*xi)**2-np.sin(2*xi)**2)
 
-            a2 = -32/3*(x_2**3-x_1**3)*np.sin(2*xi)*np.cos(2*xi)
+            a2 = -32/3*(x_2t3-x_1t3)*np.sin(2*xi)*np.cos(2*xi)
+
+
+            a0 = 4*np.sin(2*xi)*np.cos(2*xi)*(x_2-x_1)
+
+            a1 = +(-4*np.cos(2*xi)**2*x_1t2+4*np.cos(2*xi)**2*x_2t2
+                    +4*np.sin(2*xi)**2*x_1t2-4*np.sin(2*xi)**2*x_2t2)
+
+            a2 = -(32/3)*np.sin(2*xi)*np.cos(2*xi)*(-x_1t3+x_2t3)
+
+            a3 = (16*np.cos(2*xi)**2*x_1t4*(1/3)-16*np.sin(2*xi)**2*x_1t4*(1/3)
+                  -16*np.cos(2*xi)**2*x_2t4*(1/3)+16*np.sin(2*xi)**2*x_2t4*(1/3))
+            
+            a4 = (128/15)*np.sin(2*xi)*np.cos(2*xi)*(-x_1**5+x_2**5)
+            
+            a5 = (-128*np.cos(2*xi)**2*x_1**6*(1/45)+128*np.sin(2*xi)**2*x_1**6*(1/45)
+                   +128*np.cos(2*xi)**2*x_2**6*(1/45)-128*np.sin(2*xi)**2*x_2**6*(1/45))
+            
 
         elif self.alpha == 2:
 
             a0 = 4*(x_2-x_1)*np.sin(xi)**3*np.cos(xi)
 
-            a1 = 2*(x_2**2-x_1**2)*np.sin(xi)**2*(3*np.cos(xi)**2-np.sin(xi)**2)
+            a1 = 2*(x_2t2-x_1t2)*np.sin(xi)**2*(3*np.cos(xi)**2-np.sin(xi)**2)
             
-            a2 = 4*(x_2**3-x_1**3)*np.sin(xi)*np.cos(xi)*(np.cos(xi)**2-5*np.sin(xi)**2)
+            a2 = 4*(x_2t3-x_1t3)*np.sin(xi)*np.cos(xi)*(np.cos(xi)**2-5*np.sin(xi)**2)
+
+            a0 = 4*np.sin(xi)**3*np.cos(xi)*(x_2-x_1)
+
+            a1 = +(2*np.sin(xi)**4*x_1t2-2*np.sin(xi)**4*x_2t2-6*np.sin(xi)**2*np.cos(xi)**2*x_1t2
+                   +6*np.sin(xi)**2*np.cos(xi)**2*x_2t2)
+
+            a2 = +(20*np.sin(xi)**3*np.cos(xi)*x_1t3*(1/3)-4*np.sin(xi)*np.cos(xi)**3*x_1t3
+                   -20*np.sin(xi)**3*np.cos(xi)*x_2t3*(1/3)+4*np.sin(xi)*np.cos(xi)**3*x_2t3)
+
+            a3 = +(-5*np.sin(xi)**4*x_1t4*(1/3)+8*np.sin(xi)**2*np.cos(xi)**2*x_1t4
+                    -np.cos(xi)**4*x_1t4+5*np.sin(xi)**4*x_2t4*(1/3)
+                    -8*np.sin(xi)**2*np.cos(xi)**2*x_2t4+np.cos(xi)**4*x_2t4)
+
+            a4 = +(-68*np.sin(xi)**3*np.cos(xi)*x_1**5*(1/15)+4*np.sin(xi)*np.cos(xi)**3*x_1**5
+                    +68*np.sin(xi)**3*np.cos(xi)*x_2**5*(1/15)-4*np.sin(xi)*np.cos(xi)**3*x_2**5)
+
+            a5 = +(34*np.sin(xi)**4*x_1**6*(1/45)-64*np.sin(xi)**2*np.cos(xi)**2*x_1**6*(1/15)
+                   +2*np.cos(xi)**4*x_1**6*(1/3)-34*np.sin(xi)**4*x_2**6*(1/45)
+                   +64*np.sin(xi)**2*np.cos(xi)**2*x_2**6*(1/15)-2*np.cos(xi)**4*x_2**6*(1/3))
 
         else:
 
             print(f"alpha must be either 1 or two, not {self.alpha}")
 
-        return a0 + a1*zeta + a2*zeta**2
+        return a0 + a1*zeta + a2*zeta**2 + a3*zeta**3 + a4*zeta**4 + a5*zeta**5
 
 
     def dfalphadzeta_exact(self,x_1,x_2,xi,zeta):
@@ -146,19 +260,81 @@ class falphaFunction(object):
 
     def dfalphadxi_approx(self,x_1,x_2,xi,zeta):
 
-        if self.alpha == 1:
+        x_2t2 = x_2*x_2
 
-            a0 = 4*np.sin(2*xi)*np.cos(2*xi)*np.log(x_2/x_1)
+        x_2t3 = x_2*x_2*x_2
+
+        x_2t4 = x_2*x_2*x_2*x_2
+
+        x_2t5 = x_2*x_2*x_2*x_2*x_2
+
+        x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_1t2 = x_1*x_1
+
+        x_1t3 = x_1*x_1*x_1
+
+        x_1t4 = x_1*x_1*x_1*x_1
+
+        x_1t5 = x_1*x_1*x_1*x_1*x_1
+
+        x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1
+
+        x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1
+
+        if self.alpha == 1:
+            
+            if (x_1 < self.zerotol or x_2 < self.zerotol) and xi < self.zerotol:
+                
+                a0 = 0.0
+
+            else:
+
+                a0 = 4*np.sin(2*xi)*np.cos(2*xi)*np.log(x_2/x_1)
 
             a1 = 8*(x_2-x_1)*(np.cos(2*xi)**2-np.sin(2*xi)**2)
 
+            a1 = +(8*(np.cos(2*xi))**2*(x_2-x_1)-8*(np.sin(2*xi))**2*(x_2-x_1))
+
+            a2 = +(16*np.cos(2*xi)*x_1t2*np.sin(2*xi)-16*np.cos(2*xi)*x_2t2*np.sin(2*xi))
+
+            a3 = +(-(64*(np.cos(2*xi))**2*(-x_1t3+x_2t3))/9+(64*(np.sin(2*xi))**2*(-x_1t3+x_2t3))/9)
+
+            a4 = +(-(32*np.cos(2*xi)*x_1t4*np.sin(2*xi))/3+(32*np.cos(2*xi)*x_2t4*np.sin(2*xi))/3)
+
+            a5 = +((256*(np.cos(2*xi))**2*(-x_1**5+x_2**5))/75-(256*(np.sin(2*xi))**2*(-x_1**5+x_2**5))/75)
+
         elif self.alpha == 2:
 
-            a0 = 4*np.sin(xi)**3*np.cos(xi)*np.log(x_2/x_1)
+            if (x_1 < self.zerotol or x_2 < self.zerotol) and xi < self.zerotol:
+                
+                a0 = 0.0
+
+            else:
+
+                a0 = 4*np.sin(xi)**3*np.cos(xi)*np.log(x_2/x_1)
 
             a1 = 4*(x_2-x_1)*np.sin(xi)**2*(3*np.cos(xi)**2-np.sin(xi)**2)
 
-        return a0 + a1*zeta
+            a1 = +(12*(np.sin(xi))**2*(np.cos(xi))**2*(x_2-x_1)-4*(np.sin(xi))**4*(x_2-x_1))
+
+            a2 = +(10*(np.sin(xi))**3*x_1t2*np.cos(xi)-10*(np.sin(xi))**3*x_2t2*np.cos(xi)
+                   -6*np.sin(xi)*(np.cos(xi))**3*x_1t2+6*np.sin(xi)*(np.cos(xi))**3*x_2t2)
+
+            a3 = +((32*(np.sin(xi))**2*(np.cos(xi))**2*x_1t3)/3-(20*(np.sin(xi))**4*x_1t3)/9
+                   -(4*(np.cos(xi))**4*x_1t3)/3-(32*(np.sin(xi))**2*(np.cos(xi))**2*x_2t3)/3
+                   +(20*(np.sin(xi))**4*x_2t3)/9+(4*(np.cos(xi))**4*x_2t3)/3)
+
+            a4 = +(-(17*(np.sin(xi))**3*x_1t4*np.cos(xi))/3+5*np.sin(xi)*(np.cos(xi))**3*x_1t4
+                    +(17*(np.sin(xi))**3*x_2t4*np.cos(xi))/3-5*np.sin(xi)*(np.cos(xi))**3*x_2t4)
+
+            a5 = +(-(128*(np.sin(xi))**2*(np.cos(xi))**2*x_1**5)/25+(68*(np.sin(xi))**4*x_1**5)/75
+                    +(4*(np.cos(xi))**4*x_1**5)/5+(128*(np.sin(xi))**2*(np.cos(xi))**2*x_2**5)/25
+                    -(68*(np.sin(xi))**4*x_2**5)/75-(4*(np.cos(xi))**4*x_2**5)/5)
+
+        return a0 + a1*zeta + a2*zeta**2 + a3*zeta**3 + a4*zeta**4 + a5*zeta**5
 
     def integrand_dfdxi_approx(self,u,xi,zeta):
 
@@ -216,8 +392,8 @@ if __name__ == "__main__":
 
     zetas = np.linspace(-1,1,num=201,endpoint=True)
 
-    x_1 = 0.01
-    x_2 = 0.1
+    x_1 = 0.865
+    x_2 = 0.88
 
     xi = 0.1
 

@@ -22,33 +22,72 @@ class galphaFunction(object):
 
     def galpha_approx(self,x_1,x_2,xi,zeta):
 
+        x_2t2 = x_2*x_2
+
+        x_2t3 = x_2*x_2*x_2
+
+        x_2t4 = x_2*x_2*x_2*x_2
+
+        x_2t5 = x_2*x_2*x_2*x_2*x_2
+
+        x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_1t2 = x_1*x_1
+
+        x_1t3 = x_1*x_1*x_1
+
+        x_1t4 = x_1*x_1*x_1*x_1
+
+        x_1t5 = x_1*x_1*x_1*x_1*x_1
+
+        x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1
+
+        x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1
+
         if self.alpha == 1:
+ 
+            a0 = ((1/4.0)*np.cos(2*xi)*x_2t2-(1/4.0)*np.cos(2*xi)*x_1t2
+                  -(1/4.0)*x_1t2+(1/4.0)*x_2t2)
+            
+            a1 = (-(1/3.0)*np.sin(2*xi)*x_2t3+(1/3.0)*np.sin(2*xi)*x_1t3)
 
+            a2 = (-(1/4.0)*np.cos(2*xi)*x_2t4+(1/4.0)*np.cos(2*xi)*x_1t4)
 
-            a0 = (x_2**2-x_1**2)*np.cos(xi)**2/2
+            a3 = (2*np.sin(2*xi)*x_2t5*(1/15.0)-2*np.sin(2*xi)*x_1t5*(1/15.0))
 
-            a1 = -2*(x_2**3-x_1**3)*np.cos(xi)*np.sin(xi)/3
+            a4 = ((1/18.0)*x_2t6*np.cos(2*xi)-(1/18.0)*x_1t6*np.cos(2*xi))
 
-            a2 = -(x_2**4-x_1**4)*(np.cos(xi)**2-np.sin(xi)**2)/4
+            a5 = (-2*np.sin(2*xi)*x_2t7*(1/105.0)+2*np.sin(2*xi)*x_1t7*(1/105.0))
 
-            a3 = 4*(x_2**5-x_1**5)*np.cos(xi)*np.sin(xi)/15
 
         elif self.alpha == 2:
+
+            a0 = ((1/16.0)*np.cos(4*xi)*x_2t2+(1/4.0)*np.cos(2*xi)*x_2t2-(1/16.0)*np.cos(4*xi)*x_1t2
+                  -(1/4.0)*np.cos(2*xi)*x_1t2-3*x_1t2*(1/16.0)+3*x_2t2*(1/16.0))
+
+            a1 = (-(1/6.0)*np.sin(4*xi)*x_2t3-(1/3.0)*np.sin(2*xi)*x_2t3
+                    +(1/6.0)*np.sin(4*xi)*x_1t3+(1/3.0)*np.sin(2*xi)*x_1t3)
+
+            a2 = (-(1/4.0)*np.cos(4*xi)*x_2t4-(1/4.0)*np.cos(2*xi)*x_2t4
+                    +(1/4.0)*np.cos(4*xi)*x_1t4+(1/4.0)*np.cos(2*xi)*x_1t4)
             
-            a0 = (x_2**2-x_1**2)*np.cos(xi)**4/2
+            a3 = (4*np.sin(4*xi)*x_2t5*(1/15.0)+2*np.sin(2*xi)*x_2t5*(1/15.0)
+                  -4*np.sin(4*xi)*x_1t5*(1/15.0)-2*np.sin(2*xi)*x_1t5*(1/15.0))
 
-            a1 = -4*(x_2**3-x_1**3)*np.cos(xi)**3*np.sin(xi)/3
+            a4 = (2*np.cos(4*xi)*x_2t6*(1/9.0)+(1/18.0)*x_2t6*np.cos(2*xi)
+                  -2*np.cos(4*xi)*x_1t6*(1/9.0)-(1/18.0)*x_1t6*np.cos(2*xi))
 
-            a2 = -(x_2**4-x_1**4)*np.cos(xi)**2*(np.cos(xi)**2-3*np.sin(xi)**2)/2
-
-            a3 = -(x_2**5-x_1**5)*np.cos(xi)*(5*np.cos(xi)**3-12*np.sin(xi)**3)/15
+            a5 = (-16*np.sin(4*xi)*x_2t7*(1/105.0)-2*np.sin(2*xi)*x_2t7*(1/105.0)
+                   +16*np.sin(4*xi)*x_1t7*(1/105.0)+2*np.sin(2*xi)*x_1t7*(1/105.0))
 
         else:
 
             print(f"alpha must be either 1 or two, not {self.alpha}")
 
 
-        return a0 + a1*zeta + a2*zeta**2 + a3*zeta**3
+        return a0 + a1*zeta + a2*zeta**2 + a3*zeta**3 + a4*zeta**4 + a5*zeta**5
 
 
     def galpha_exact(self,x_1,x_2,xi,zeta):
@@ -94,20 +133,62 @@ class galphaFunction(object):
 
     def dgalphadzeta_approx(self,x_1,x_2,xi,zeta):
 
-        if self.alpha == 1:
+        x_2t2 = x_2*x_2
 
-            a0 = -2/3*(x_2**3-x_1**3)*np.cos(xi)*np.sin(xi)
+        x_2t3 = x_2*x_2*x_2
+
+        x_2t4 = x_2*x_2*x_2*x_2
+
+        x_2t5 = x_2*x_2*x_2*x_2*x_2
+
+        x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_1t2 = x_1*x_1
+
+        x_1t3 = x_1*x_1*x_1
+
+        x_1t4 = x_1*x_1*x_1*x_1
+
+        x_1t5 = x_1*x_1*x_1*x_1*x_1
+
+        x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1
+
+        x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1
+
+
+        if self.alpha == 1:
+ 
+            a0 = -(1/3.0)*np.sin(2*xi)*x_2t3+(1/3.0)*np.sin(2*xi)*x_1t3
             
-            a1 = -1/2*(x_2**4-x_1**4)*(np.cos(xi)**2-np.sin(xi)**2)
+            a1 = (-(1/2.0)*np.cos(2*xi)*x_2t4+(1/2.0)*np.cos(2*xi)*x_1t4)
+
+            a2 = (2*np.sin(2*xi)*x_2t5*(1/5.0)-2*np.sin(2*xi)*x_1t5*(1/5.0))
+
+            a3 = (2*x_2t6*np.cos(2*xi)*(1/9.0)-2*x_1t6*np.cos(2*xi)*(1/9.0))
+
+            a4 = (-2*np.sin(2*xi)*x_2t7*(1/21.0)+2*np.sin(2*xi)*x_1t7*(1/21.0))
 
         elif self.alpha == 2:
 
-            a0 = -4/3*(x_2**3-x_1**3)*np.cos(xi)**3*np.sin(xi)
-            
-            a1 = -(x_2**4-x_1**4)*np.cos(xi)**2*(np.cos(xi)**2-np.sin(xi)**2)
+            a0 = (-(1/6.0)*np.sin(4*xi)*x_2t3-(1/3.0)*np.sin(2*xi)*x_2t3
+                   +(1/6.0)*np.sin(4*xi)*x_1t3+(1/3.0)*np.sin(2*xi)*x_1t3)
+
+            a1 = (-(1/2.0)*np.cos(4*xi)*x_2t4-(1/2.0)*np.cos(2*xi)*x_2t4+(1/2.0)*np.cos(4*xi)*x_1t4
+                   +(1/2.0)*np.cos(2*xi)*x_1t4)
+
+            a2 = (4*np.sin(4*xi)*x_2t5*(1/5.0)+2*np.sin(2*xi)*x_2t5*(1/5.0)
+                  -4*np.sin(4*xi)*x_1t5*(1/5.0)-2*np.sin(2*xi)*x_1t5*(1/5.0))
+
+            a3 = (8*np.cos(4*xi)*x_2t6*(1/9.0)+2*x_2t6*np.cos(2*xi)*(1/9.0)
+                  -8*np.cos(4*xi)*x_1t6*(1/9.0)-2*x_1t6*np.cos(2*xi)*(1/9.0))
+
+            a4 = (-16*np.sin(4*xi)*x_2t7*(1/21.0)-2*np.sin(2*xi)*x_2t7*(1/21.0)
+                   +16*np.sin(4*xi)*x_1t7*(1/21.0)+2*np.sin(2*xi)*x_1t7*(1/21.0))
 
 
-        return a0 + a1*zeta
+        return a0 + a1*zeta + a2*zeta*zeta + a3*zeta**3 + a4*zeta**4
     
     def dgalphadzeta_exact(self,x_1,x_2,xi,zeta):
 
@@ -159,19 +240,66 @@ class galphaFunction(object):
 
     def dgalphadxi_approx(self,x_1,x_2,xi,zeta):
 
+        x_2t2 = x_2*x_2
+
+        x_2t3 = x_2*x_2*x_2
+
+        x_2t4 = x_2*x_2*x_2*x_2
+
+        x_2t5 = x_2*x_2*x_2*x_2*x_2
+
+        x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2
+
+        x_1t2 = x_1*x_1
+
+        x_1t3 = x_1*x_1*x_1
+
+        x_1t4 = x_1*x_1*x_1*x_1
+
+        x_1t5 = x_1*x_1*x_1*x_1*x_1
+
+        x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1
+
+        x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1
+
         if self.alpha == 1:
 
-            a0 = -(x_2**2-x_1**2)*np.cos(xi)*np.sin(xi)
+            a0 = -(1/2.0)*np.sin(2*xi)*x_2t2+(1/2.0)*np.sin(2*xi)*x_1t2
 
-            a1 = -2/3*(x_2**3-x_1**3)*(np.cos(xi)**2-np.sin(xi)**2)
+            a1 = +(-2*np.cos(2*xi)*x_2t3*(1/3.0)+2*np.cos(2*xi)*x_1t3*(1/3.0))
+
+            a2 = +((1/2.0)*np.sin(2*xi)*x_2t4-(1/2.0)*np.sin(2*xi)*x_1t4)
+
+            a3 = +(4*np.cos(2*xi)*x_2t5*(1/15.0)-4*np.cos(2*xi)*x_1t5*(1/15.0))
+
+            a4 = +(-(1/9.0)*np.sin(2*xi)*x_2t6+(1/9.0)*np.sin(2*xi)*x_1t6)
+
+            a5 = +(-4*np.cos(2*xi)*x_2t7*(1/105.0)+4*np.cos(2*xi)*x_1t7*(1/105.0))
+
 
         elif self.alpha == 2:
 
-            a0 = -2*(x_2**2-x_1**2)*np.cos(xi)**3*np.sin(xi)
+            a0 = (-(1/4.0)*np.sin(4*xi)*x_2t2-(1/2.0)*np.sin(2*xi)*x_2t2+(1/4.0)*np.sin(4*xi)*x_1t2
+                   +(1/2.0)*np.sin(2*xi)*x_1t2)
 
-            a1 = -4/3*(x_2**3-x_1**3)*np.cos(xi)**2*(np.cos(xi)**2-3*np.sin(xi)**2)
+            a1 = (-2*np.cos(4*xi)*x_2t3*(1/3.0)-2*np.cos(2*xi)*x_2t3*(1/3.0)
+                   +2*np.cos(4*xi)*x_1t3*(1/3.0)+2*np.cos(2*xi)*x_1t3*(1/3.0))
 
-        return a0 + a1*zeta
+            a2 = (np.sin(4*xi)*x_2t4+(1/2.0)*np.sin(2*xi)*x_2t4-np.sin(4*xi)*x_1t4
+                  -(1/2.0)*np.sin(2*xi)*x_1t4)
+
+            a3 = +(16*np.cos(4*xi)*x_2t5*(1/15.0)+4*np.cos(2*xi)*x_2t5*(1/15.0)
+                   -16*np.cos(4*xi)*x_1t5*(1/15.0)-4*np.cos(2*xi)*x_1t5*(1/15.0))
+
+            a4 = +(-8*np.sin(4*xi)*x_2t6*(1/9.0)-(1/9.0)*np.sin(2*xi)*x_2t6
+                    +8*np.sin(4*xi)*x_1t6*(1/9.0)+(1/9.0)*np.sin(2*xi)*x_1t6)
+
+            a5 = +(-64*np.cos(4*xi)*x_2t7*(1/105.0)-4*np.cos(2*xi)*x_2t7*(1/105.0)
+                    +64*np.cos(4*xi)*x_1t7*(1/105.0)+4*np.cos(2*xi)*x_1t7*(1/105.0))
+
+        return a0 + a1*zeta + a2*zeta**2 + a3*zeta**3+a4*zeta**4+a5*zeta**5
             
     def dgalphadxi_exact(self,x_1,x_2,xi,zeta):
 
@@ -282,8 +410,8 @@ if __name__ == "__main__":
 
     zetas = np.linspace(-1,1,num=201,endpoint=True)
 
-    x_1 = 0.01
-    x_2 = 0.1
+    x_1 = 0.865
+    x_2 = 0.88
 
     xi = 0.1
 
