@@ -44,7 +44,7 @@ double Efunc(struct params *p)
 	      +vfunc(R_s,R,psi2,psip_R));
 
   a1 *= 2/(R*R);
-
+  printf("a1 = %lf\t",a1);
 
   double a2;
   
@@ -53,9 +53,10 @@ double Efunc(struct params *p)
   a2 += -(eta*eta/(M_PI*M_PI))*(g_1func(0,R_c,0,psip_c)+g_1func(R_c,R_s,psi1,psip_s)
 				+g_1func(R_s,R,psi2,psip_R));
   a2 += (eta*eta*eta*eta)/(8*M_PI*M_PI*M_PI*M_PI)*(g_2func(0,R_c,0,psip_c)
-						 +g_2func(R_c,R_s,psi1,psip_s)
-						 +g_2func(R_s,R,psi2,psip_R));
+						   +g_2func(R_c,R_s,psi1,psip_s)
+						   +g_2func(R_s,R,psi2,psip_R));
   a2 *= 8*M_PI*M_PI*M_PI*M_PI*p->Lambda*delta*delta/(2*R*R);
+  printf("a2 = %lf\n",a2);
   
   double a3;
 

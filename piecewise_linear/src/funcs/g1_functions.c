@@ -76,7 +76,7 @@ double dg_1dxi(double x_1,double x_2,double xi,double zeta)
 		 *(20*cos(xi)*cos(xi)*cos(xi)*sin(xi)
 		   +12*sin(xi)*sin(xi)*(3*cos(xi)*cos(xi)-sin(xi)*sin(xi))));
 
-    ans = a0 + a1*zeta;// + a2*zeta*zeta + a3*zeta*zeta*zeta;
+    ans = a0 + a1*zeta + a2*zeta*zeta + a3*zeta*zeta*zeta;
 
   } else {
 
@@ -115,7 +115,7 @@ double dg_1dzeta(double x_1,double x_2,double xi,double zeta)
 
     a2 = 4*(x_2*x_2*x_2*x_2*x_2-x_1*x_1*x_1*x_1*x_1)*cos(xi)*sin(xi)/5.0;
 
-    ans = a0 + a1*zeta;//+a2*zeta*zeta;
+    ans = a0 + a1*zeta+a2*zeta*zeta;
 
   } else {
 

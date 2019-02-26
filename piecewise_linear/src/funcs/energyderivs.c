@@ -392,14 +392,10 @@ double dEdpsip_R(struct params *p)
   double R = p->R;
   double eta = p->eta;
   double delta = p->delta;
-  double R_c = p->R_c;
   double R_s = p->R_s;
-  double psip_c = p->psip_c;
-  double psip_s = p->psip_s;
   double psip_R = p->psip_R;
-  
-  double psi1 = (psip_c-psip_s)*R_c;
-  double psi2 = (psip_s-psip_R)*R_s+(psip_c-psip_s)*R_c;
+
+  double psi2 = (p->psip_s-p->psip_R)*R_s+(p->psip_c-p->psip_s)*p->R_c;
 
   double dpsi2dpsip_R = -R_s;
 
@@ -413,20 +409,21 @@ double dEdpsip_R(struct params *p)
 
   a1 += 0.25*(dvdzeta(R_s,R,psi2,psip_R)+dvdxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R);
 
-  a1 *= 2.0/(R*R);
+  a1 *= 2/(R*R);
 
   double a2;
 
-  a2 = -8*M_PI*M_PI*eta*eta*(dg_1dzeta(R_s,R,psi2,psip_R)+dg_1dxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R);
+  a2 = -8*M_PI*M_PI/(eta*eta)*(dg_1dzeta(R_s,R,psi2,psip_R)
+			       +dg_1dxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R);
 
-  a2 += eta*eta*eta*eta*(dg_2dzeta(R_s,R,psi2,psip_R)+dg_2dxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R);
+  a2 += dg_2dzeta(R_s,R,psi2,psip_R)+dg_2dxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R;
 
-  a2 *= p->Lambda*delta*delta/(2*R*R);
+  a2 *= eta*eta*eta*eta*p->Lambda*delta*delta/(2*R*R);
 
   double a3;
 
   a3 = -(1+p->k24)/(R*R)*cos(psip_R*R+psi2)*(R+dpsi2dpsip_R);
-
+  
   return a1+a2+a3;
 
 }

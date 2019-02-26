@@ -66,9 +66,9 @@ int main(int argc, char **argv)
   
   initialize_file(&Evspsip_R,argv[1],"Evspsip_R",p);
 
-  double psip_R0 = -0.0006;
-  double psip_Rf = 0.0006;
-  int num = 60;
+  double psip_R0 = 0.05;
+  double psip_Rf = 0.6;
+  int num = 500;
 
   double dpsip_R = (psip_Rf-psip_R0)/num;
   
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 
     psi2 = (p.psip_s-p.psip_R)*p.R_s+(p.psip_c-p.psip_s)*p.R_c;
 
-    fprintf(Evspsip_R,"%13.12lf\n",dg_1dzeta(p.R_s,p.R,psi2,p.psip_R));
+    fprintf(Evspsip_R,"%13.12lf\n",g_2func(p.R_s,p.R,psi2,p.psip_R));
 
   }
 

@@ -11,7 +11,7 @@
 
 
 #define ZERO 1e-14
-#define SMALL 1e-4
+#define SMALL 1e-3
 #define ABSERR 1e-10
 #define RELERR 1e-10
 #define SIZE_INTEGRATION 1000
