@@ -145,6 +145,8 @@ class galphaFunction(object):
 
         x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2
 
+        x_2t8 = x_2*x_2*x_2*x_2*x_2*x_2*x_2*x_2
+
         x_1t2 = x_1*x_1
 
         x_1t3 = x_1*x_1*x_1
@@ -156,6 +158,8 @@ class galphaFunction(object):
         x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1
 
         x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1
+
+        x_1t8 = x_1*x_1*x_1*x_1*x_1*x_1*x_1*x_1
 
 
         if self.alpha == 1:
@@ -169,6 +173,8 @@ class galphaFunction(object):
             a3 = (2*x_2t6*np.cos(2*xi)*(1/9.0)-2*x_1t6*np.cos(2*xi)*(1/9.0))
 
             a4 = (-2*np.sin(2*xi)*x_2t7*(1/21.0)+2*np.sin(2*xi)*x_1t7*(1/21.0))
+
+            a5 = (-(1/30.0)*x_2t8*np.cos(2*xi)+(1/30.0)*x_1t8*np.cos(2*xi))
 
         elif self.alpha == 2:
 
@@ -187,8 +193,10 @@ class galphaFunction(object):
             a4 = (-16*np.sin(4*xi)*x_2t7*(1/21.0)-2*np.sin(2*xi)*x_2t7*(1/21.0)
                    +16*np.sin(4*xi)*x_1t7*(1/21.0)+2*np.sin(2*xi)*x_1t7*(1/21.0))
 
+            a5 = (-8*np.cos(4*xi)*x_2t8*(1/15)-(1/30)*x_2t8*np.cos(2*xi)
+                   +8*np.cos(4*xi)*x_1t8*(1/15)+(1/30)*x_1t8*np.cos(2*xi))
 
-        return a0 + a1*zeta + a2*zeta*zeta + a3*zeta**3 + a4*zeta**4
+        return a0 + a1*zeta + a2*zeta*zeta + a3*zeta**3 + a4*zeta**4 + a5*zeta**5
     
     def dgalphadzeta_exact(self,x_1,x_2,xi,zeta):
 

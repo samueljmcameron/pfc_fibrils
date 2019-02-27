@@ -10,18 +10,59 @@ double vfunc(double x_1,double x_2,double xi,double zeta)
   
   if (fabs(zeta)< SMALL) {
 
-    double a0,a1,a2,a3;
+    double x_2t2 = x_2*x_2;
 
-    a0 = -2*sin(2*xi)*(x_2-x_1);
+    double x_2t3 = x_2*x_2*x_2;
 
-    a1 = 2*(sin(2*xi)*(x_2-x_1)-cos(2*xi)*(x_2*x_2-x_1*x_1));
+    double x_2t4 = x_2*x_2*x_2*x_2;
 
-    a2 = 2.0/3.0*(3*cos(2*xi)*(x_2*x_2-x_1*x_1)+2*sin(2*xi)*(x_2*x_2*x_2-x_1*x_1*x_1));
+    double x_2t5 = x_2*x_2*x_2*x_2*x_2;
 
-    a3 = 2.0/3.0*(-2*sin(2*xi)*(x_2*x_2*x_2-x_1*x_1*x_1)
-		  +cos(2*xi)*(x_2*x_2*x_2*x_2-x_1*x_1*x_1*x_1));
-    
-    ans = a0+a1*zeta+a2*zeta*zeta+a3*zeta*zeta*zeta;
+    double x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2;
+
+    double x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2;
+
+    double x_1t2 = x_1*x_1;
+
+    double x_1t3 = x_1*x_1*x_1;
+
+    double x_1t4 = x_1*x_1*x_1*x_1;
+
+    double x_1t5 = x_1*x_1*x_1*x_1*x_1;
+
+    double x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1;
+
+    double x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1;
+
+    double a0,a1,a2,a3,a4,a5;
+
+    //a0 = -2*sin(2*xi)*(x_2-x_1);
+
+    //a1 = 2*(sin(2*xi)*(x_2-x_1)-cos(2*xi)*(x_2*x_2-x_1*x_1));
+
+    //a2 = 2.0/3.0*(3*cos(2*xi)*(x_2*x_2-x_1*x_1)+2*sin(2*xi)*(x_2*x_2*x_2-x_1*x_1*x_1));
+
+    //a3 = 2.0/3.0*(-2*sin(2*xi)*(x_2*x_2*x_2-x_1*x_1*x_1)
+    //	  +cos(2*xi)*(x_2*x_2*x_2*x_2-x_1*x_1*x_1*x_1));
+
+    a0 = -2*sin(2*xi)*x_2+2*sin(2*xi)*x_1;
+
+    a1 = +(-2*cos(2*xi)*x_2t2+2*cos(2*xi)*x_1t2+2*sin(2*xi)*x_2-2*sin(2*xi)*x_1);
+
+    a2 = +(4*sin(2*xi)*x_2t3*(1/3.0)-4*sin(2*xi)*x_1t3*(1/3.0)
+	   +2*cos(2*xi)*x_2t2-2*cos(2*xi)*x_1t2);
+
+    a3 = +(2*cos(2*xi)*x_2t4*(1/3.0)-2*cos(2*xi)*x_1t4*(1/3.0)
+	   -4*sin(2*xi)*x_2t3*(1/3.0)+4*sin(2*xi)*x_1t3*(1/3.0));
+
+    a4 = +(-4*sin(2*xi)*x_2t5*(1/15.0)+4*sin(2*xi)*x_1t5*(1/15.0)
+	   -2*cos(2*xi)*x_2t4*(1/3.0)+2*cos(2*xi)*x_1t4*(1/3.0));
+
+    a5 = +(-4*cos(2*xi)*x_2t6*(1/45.0)+4*cos(2*xi)*x_1t6*(1/45.0)
+	   +4*sin(2*xi)*x_2t5*(1/15.0)-4*sin(2*xi)*x_1t5*(1/15.0));
+
+    ans = (a0 + a1*zeta + a2*zeta*zeta + a3*zeta*zeta*zeta
+	   + a4*zeta*zeta*zeta*zeta + a5*zeta*zeta*zeta*zeta*zeta);
     
   } else {
 
@@ -71,23 +112,65 @@ double dvdxi(double x_1,double x_2,double xi, double zeta)
 
 double dvdzeta(double x_1,double x_2,double xi,double zeta)
 {
-  double f;
+  double ans;
 
   if (fabs(zeta)<SMALL) {
 
-    f = 2*sin(2*xi)*(x_2-x_1)-2*cos(2*xi)*(x_2*x_2-x_1*x_1);
-    f += 4*zeta*(cos(2*xi)*(x_2*x_2-x_1*x_1)
-		 +2.0/3.0*sin(2*xi)*(x_2*x_2*x_2-x_1*x_1*x_1));
+    double x_2t2 = x_2*x_2;
+
+    double x_2t3 = x_2*x_2*x_2;
+
+    double x_2t4 = x_2*x_2*x_2*x_2;
+
+    double x_2t5 = x_2*x_2*x_2*x_2*x_2;
+
+    double x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2;
+
+    double x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2;
+
+    double x_1t2 = x_1*x_1;
+
+    double x_1t3 = x_1*x_1*x_1;
+
+    double x_1t4 = x_1*x_1*x_1*x_1;
+
+    double x_1t5 = x_1*x_1*x_1*x_1*x_1;
+
+    double x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1;
+
+    double x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1;
+
+    double a0,a1,a2,a3,a4,a5;
+
+    a0 = -4*cos(2*xi)*x_2+4*cos(2*xi)*x_1;
+
+    a1 = +(4*sin(2*xi)*x_2t2-4*sin(2*xi)*x_1t2+4*cos(2*xi)*x_2-4*cos(2*xi)*x_1);
+
+    a2 = +(8*cos(2*xi)*x_2t3*(1/3.0)-8*cos(2*xi)*x_1t3*(1/3.0)
+	   -4*sin(2*xi)*x_2t2+4*sin(2*xi)*x_1t2);
+
+    a3 = +(-4*sin(2*xi)*x_2t4*(1/3.0)+4*sin(2*xi)*x_1t4*(1/3.0)
+	   -8*cos(2*xi)*x_2t3*(1/3.0)+8*cos(2*xi)*x_1t3*(1/3.0));
+
+    a4 = +(-8*cos(2*xi)*x_2t5*(1/15.0)+8*cos(2*xi)*x_1t5*(1/15.0)
+	   +4*sin(2*xi)*x_2t4*(1/3.0)-4*sin(2*xi)*x_1t4*(1/3.0));
+
+    a5 = +(8*sin(2*xi)*x_2t6*(1/45.0)-8*sin(2*xi)*x_1t6*(1/45.0)
+	   +8*cos(2*xi)*x_2t5*(1/15.0)-8*cos(2*xi)*x_1t5*(1/15.0));
+
+    ans = (a0 + a1*zeta + a2*zeta*zeta + a3*zeta*zeta*zeta
+	   + a4*zeta*zeta*zeta*zeta + a5*zeta*zeta*zeta*zeta*zeta);
+
 
   } else {
 
-    f = (1/zeta-1)*(2*x_1*sin(2*(zeta*x_1+xi))-2*x_2*sin(2*(zeta*x_2+xi)));
+    ans = (1/zeta-1)*(2*x_1*sin(2*(zeta*x_1+xi))-2*x_2*sin(2*(zeta*x_2+xi)));
 
-    f += -1/(zeta*zeta)*(cos(2*(zeta*x_2+xi))-cos(2*(zeta*x_1+xi)));
+    ans += -1/(zeta*zeta)*(cos(2*(zeta*x_2+xi))-cos(2*(zeta*x_1+xi)));
 
   }
 
-  return f;
+  return ans;
 
 }
 

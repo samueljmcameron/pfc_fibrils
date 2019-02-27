@@ -66,9 +66,9 @@ int main(int argc, char **argv)
   
   initialize_file(&Evspsip_R,argv[1],"Evspsip_R",p);
 
-  double psip_R0 = 0.05;
-  double psip_Rf = 0.6;
-  int num = 500;
+  double psip_R0 = -0.01;
+  double psip_Rf = 0.01;
+  int num = 100;
 
   double dpsip_R = (psip_Rf-psip_R0)/num;
   

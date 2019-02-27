@@ -13,7 +13,33 @@ double f_2func(double x_1,double x_2, double xi,double zeta)
 
   if (fabs(zeta)<SMALL) {
 
-    double a0,a1,a2,a3;
+    double x_2t2 = x_2*x_2;
+
+    double x_2t3 = x_2*x_2*x_2;
+
+    double x_2t4 = x_2*x_2*x_2*x_2;
+
+    double x_2t5 = x_2*x_2*x_2*x_2*x_2;
+
+    double x_2t6 = x_2*x_2*x_2*x_2*x_2*x_2;
+
+    double x_2t7 = x_2*x_2*x_2*x_2*x_2*x_2*x_2;
+
+    double x_1t2 = x_1*x_1;
+
+    double x_1t3 = x_1*x_1*x_1;
+
+    double x_1t4 = x_1*x_1*x_1*x_1;
+
+    double x_1t5 = x_1*x_1*x_1*x_1*x_1;
+
+    double x_1t6 = x_1*x_1*x_1*x_1*x_1*x_1;
+
+    double x_1t7 = x_1*x_1*x_1*x_1*x_1*x_1*x_1;
+
+
+
+    double a0,a1,a2,a3,a4,a5;
 
     if ((x_1 < ZERO || x_2 < ZERO) && fabs(xi) < ZERO) {
       
@@ -25,14 +51,46 @@ double f_2func(double x_1,double x_2, double xi,double zeta)
 
     }
 
+    double sinxi_t2 = sin(xi)*sin(xi);
+
+    double sinxi_t3 = sin(xi)*sinxi_t2;
+
+    double sinxi_t4 = sinxi_t3*sin(xi);
+
+    double cosxi_t2 = cos(xi)*cos(xi);
+
+    double cosxi_t3 = cos(xi)*cosxi_t2;
+
+    double cosxi_t4 = cosxi_t3*cos(xi);
+
+
+    /*
     a1 = 4*(x_2-x_1)*cos(xi)*sin(xi)*sin(xi)*sin(xi);
 
     a2 = (x_2*x_2-x_1*x_1)*sin(xi)*sin(xi)*(3*cos(xi)*cos(xi)-sin(xi)*sin(xi));
 
     a3 = (4.0/3.0*(x_2*x_2*x_2-x_1*x_1*x_1)*sin(xi)*cos(xi)
 	  *(cos(xi)*cos(xi)-5*sin(xi)*sin(xi)));
+	  */
 
-    ans = a0 + a1*zeta + a2*zeta*zeta + a3*zeta*zeta*zeta;
+
+    a1 = +4*sinxi_t3*cos(xi)*(x_2-x_1);
+
+    a2 = +(sinxi_t4*x_1t2-sinxi_t4*x_2t2-3*sinxi_t2*cosxi_t2*x_1t2
+	   +3*sinxi_t2*cosxi_t2*x_2t2);
+
+    a3 = +((20*sinxi_t3*cos(xi)*x_1t3)/9.0-(4*sin(xi)*cosxi_t3*x_1t3)/3.0
+	   -(20*sinxi_t3*cos(xi)*x_2t3)/9.0+(4*sin(xi)*cosxi_t3*x_2t3)/3.0);
+
+    a4 = +(-(5*sinxi_t4*x_1t4)/12.0+2*sinxi_t2*cosxi_t2*x_1t4
+	   -(cosxi_t4*x_1t4)/4.0+(5*sinxi_t4*x_2t4)/12.0
+	   -2*sinxi_t2*cosxi_t2*x_2t4+(cosxi_t4*x_2t4)/4.0);
+
+    a5 = +(-(68*sinxi_t3*cos(xi)*x_1t5)/75.0+(4*sin(xi)*cosxi_t3*x_1t5)/5.0
+	   +(68*sinxi_t3*cos(xi)*x_2t5)/75.0-(4*sin(xi)*cosxi_t3*x_2t5)/5.0);
+
+    ans = (a0 + a1*zeta + a2*zeta*zeta + a3*zeta*zeta*zeta
+	   + a4*zeta*zeta*zeta*zeta + a5*zeta*zeta*zeta*zeta*zeta);
 
   } else {
 
