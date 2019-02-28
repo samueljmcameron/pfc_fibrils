@@ -416,148 +416,119 @@ if __name__ == "__main__":
     g2 = galphaFunction(2)
 
 
+    R_c = 0.0355
+    R_s = 0.865
+    R = 0.88
+    psip_c = 3.0
+    psip_s = 0.0
+    
+
     zetas = np.linspace(-1,1,num=201,endpoint=True)
 
-    x_1 = 0.865
-    x_2 = 0.88
+    x_1 = R_s
+    x_2 = R
 
-    xi = 0.1
+    xis = (psip_s-zetas)*R_s+(psip_c-psip_s)*R_c
 
 
-    # start by just plotting g_1 and g_2 as functions of zeta
-    
-    ax1 = []
-
+    # first plot g_1 and g_2
     
     fig1 = plt.figure()
 
+    ax1 = []
+    
     ax1.append(fig1.add_subplot(1,2,1))
 
     ax1.append(fig1.add_subplot(1,2,2))
 
 
-    ax1[0].plot(zetas,g1.galpha_approx(x_1,x_2,xi,zetas),'bo',label ='approx')
+    #ax1[0].plot(zetas,g1.galpha_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax1[0].plot(zetas,[g1.galpha_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',
-             label='exact')
+    #ax1[0].plot(zetas,[g1.galpha_exact(x_1,x_2,xi,zeta) for xi,zeta in zip(xis,zetas)],'r.',
+    #            label='exact')
 
-    ax1[0].plot(zetas,[g1.galpha_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',
-             label='full')
+    ax1[0].plot(zetas,[g1.galpha_full(x_1,x_2,xi,zeta) for xi,zeta in zip(xis,zetas)],'k-',
+                label='full')
 
-    ax1[0].plot(zetas,[g1.galpha_integral(x_1,x_2,xi,zeta) for zeta in zetas],'k--',
-                  label='integral')
+    ax1[1].set_ylabel(r'$g_1$')
 
-    ax1[0].set_ylabel(r'$g_1$')
+    #ax1[1].plot(zetas,g2.galpha_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax1[0].legend(frameon=False)
+    #ax1[1].plot(zetas,[g2.galpha_exact(x_1,x_2,xi,zeta) for xi,zeta in zip(xis,zetas)],'r.',
+    #            label='exact')
 
-    ax1[1].plot(zetas,g2.galpha_approx(x_1,x_2,xi,zetas),'bo',label='approx')
-
-    ax1[1].plot(zetas,[g2.galpha_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',
-             label='exact')
-
-    ax1[1].plot(zetas,[g2.galpha_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',
-             label='full')
-
-    ax1[1].plot(zetas,[g2.galpha_integral(x_1,x_2,xi,zeta) for zeta in zetas],'k--',
-                  label='integral')
-
+    ax1[1].plot(zetas,[g2.galpha_full(x_1,x_2,xi,zeta) for xi,zeta in zip(xis,zetas)],'k-',
+                label='full')
 
     ax1[1].set_ylabel(r'$g_2$')
 
     ax1[1].legend(frameon=False)
 
-
-    # now plot dg_1/dzeta and dg_2/dzeta as functions of zeta
-
-
-    
-    ax2 = []
-
+    # next plot dg_1/dzeta and dg_2/dzeta vs zeta
     
     fig2 = plt.figure()
 
+    ax2 = []
+    
     ax2.append(fig2.add_subplot(1,2,1))
 
     ax2.append(fig2.add_subplot(1,2,2))
 
 
-    ax2[0].plot(zetas,g1.dgalphadzeta_approx(x_1,x_2,xi,zetas),'bo',label ='approx')
+    #ax2[0].plot(zetas,g1.dgalphadzeta_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax2[0].plot(zetas,[g1.dgalphadzeta_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',
-             label='exact')
+    #ax2[0].plot(zetas,[g1.dgalphadzeta_exact(x_1,x_2,xi,zeta)
+    #                   for xi,zeta in zip(xis,zetas)],'r.',label='exact')
 
-    ax2[0].plot(zetas,[g1.dgalphadzeta_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',
-             label='full')
-
-    ax2[0].plot(zetas,[g1.dgalphadzeta_integral(x_1,x_2,xi,zeta) for zeta in zetas],'k--',
-                  label='integral')
+    ax2[0].plot(zetas,[g1.dgalphadzeta_full(x_1,x_2,xi,zeta)
+                       for xi,zeta in zip(xis,zetas)],'k-',label='full')
 
     ax2[0].set_ylabel(r'$\frac{\partial g_1}{\partial\zeta}$')
 
-    ax2[0].legend(frameon=False)
+    #ax2[1].plot(zetas,g2.dgalphadzeta_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax2[1].plot(zetas,g2.dgalphadzeta_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    #ax2[1].plot(zetas,[g2.dgalphadzeta_exact(x_1,x_2,xi,zeta)
+    #                   for xi,zeta in zip(xis,zetas)],'r.',label='exact')
 
-    ax2[1].plot(zetas,[g2.dgalphadzeta_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',
-             label='exact')
-
-    ax2[1].plot(zetas,[g2.dgalphadzeta_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',
-             label='full')
-
-    ax2[1].plot(zetas,[g2.dgalphadzeta_integral(x_1,x_2,xi,zeta) for zeta in zetas],'k--',
-                  label='integral')
-
+    ax2[1].plot(zetas,[g2.dgalphadzeta_full(x_1,x_2,xi,zeta)
+                       for xi,zeta in zip(xis,zetas)],'k-',label='full')
 
     ax2[1].set_ylabel(r'$\frac{\partial g_2}{\partial\zeta}$')
-
+    
     ax2[1].legend(frameon=False)
 
-    # finally, plot dg_1/dxi and dg_2/dxi as functions of zeta
-
-    
-    ax3 = []
-
+    # finally, plot dg_1/dxi and dg_2/dxi
     
     fig3 = plt.figure()
 
+    ax3 = []
+    
     ax3.append(fig3.add_subplot(1,2,1))
 
     ax3.append(fig3.add_subplot(1,2,2))
 
 
-    ax3[0].plot(zetas,g1.dgalphadxi_approx(x_1,x_2,xi,zetas),'bo',label ='approx')
+    #ax3[0].plot(zetas,g1.dgalphadxi_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax3[0].plot(zetas,[g1.dgalphadxi_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',
-             label='exact')
+    #ax3[0].plot(zetas,[g1.dgalphadxi_exact(x_1,x_2,xi,zeta)
+    #                   for xi,zeta in zip(xis,zetas)],'r.',label='exact')
 
-    ax3[0].plot(zetas,[g1.dgalphadxi_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',
-             label='full')
+    ax3[0].plot(zetas,[g1.dgalphadxi_full(x_1,x_2,xi,zeta)
+                       for xi,zeta in zip(xis,zetas)],'k-',label='full')
 
-    ax3[0].plot(zetas,[g1.dgalphadxi_integral(x_1,x_2,xi,zeta) for zeta in zetas],'k--',
-                  label='integral')
+    ax3[1].set_ylabel(r'$\frac{\partial g_1}{\partial\xi}$')
+    
+    #ax3[1].plot(zetas,g2.dgalphadxi_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax3[0].set_ylabel(r'$\frac{\partial g_1}{\partial\xi}$')
+    #ax3[1].plot(zetas,[g2.dgalphadxi_exact(x_1,x_2,xi,zeta)
+    #                   for xi,zeta in zip(xis,zetas)],'r.',label='exact')
 
-    ax3[0].legend(frameon=False)
-
-    ax3[1].plot(zetas,g2.dgalphadxi_approx(x_1,x_2,xi,zetas),'bo',label='approx')
-
-    ax3[1].plot(zetas,[g2.dgalphadxi_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',
-             label='exact')
-
-    ax3[1].plot(zetas,[g2.dgalphadxi_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',
-             label='full')
-
-    ax3[1].plot(zetas,[g2.dgalphadxi_integral(x_1,x_2,xi,zeta) for zeta in zetas],'k--',
-                  label='integral')
-
+    ax3[1].plot(zetas,[g2.dgalphadxi_full(x_1,x_2,xi,zeta)
+                       for xi,zeta in zip(xis,zetas)],'k-',label='full')
 
     ax3[1].set_ylabel(r'$\frac{\partial g_2}{\partial\xi}$')
-
+    
     ax3[1].legend(frameon=False)
-
-
-
+    
 
     plt.show()

@@ -19,42 +19,13 @@ int main(int argc, char **argv)
 
   double dEdpsip_R(struct params *p);
 
-  double ufunc(double x_1,double x_2,double zeta);
-  double dudx_1(double x_1,double zeta);
-  double dudx_2(double x_2,double zeta);
-  double dudzeta(double x_1,double x_2,double zeta);
-  
-  double vfunc(double x_1,double x_2,double xi,double zeta);
-  double dvdx_1(double x_1,double xi,double zeta);
-  double dvdx_2(double x_2,double xi,double zeta);
-  double dvdxi(double x_1,double x_2,double xi, double zeta);
-  double dvdzeta(double x_1,double x_2,double xi,double zeta);
-  
-  double f_1func(double x_1,double x_2,double xi,double zeta);
-  double df_1dx_1(double x_1,double xi,double zeta);
-  double df_1dx_2(double x_2,double xi,double zeta);
-  double df_1dxi(double x_1,double x_2,double xi,double zeta);
-  double df_1dzeta(double x_1,double x_2,double xi,double zeta);
-  
-  double f_2func(double x_1,double x_2,double xi,double zeta);
-  double df_2dx_1(double x_1,double xi,double zeta);
-  double df_2dx_2(double x_2,double xi,double zeta);
-  double df_2dxi(double x_1,double x_2,double xi,double zeta);
-  double df_2dzeta(double x_1,double x_2,double xi,double zeta);
   
   double g_1func(double x_1,double x_2,double xi,double zeta);
   double dg_1dx_1(double x_1,double xi,double zeta);
   double dg_1dx_2(double x_2,double xi,double zeta);
   double dg_1dxi(double x_1,double x_2,double xi,double zeta);
   double dg_1dzeta(double x_1,double x_2,double xi,double zeta);
-  
-  double g_2func(double x_1,double x_2,double xi,double zeta);
-  double dg_2dx_1(double x_1,double xi,double zeta);
-  double dg_2dx_2(double x_2,double xi,double zeta);
-  double dg_2dxi(double x_1,double x_2,double xi,double zeta);
-  double dg_2dzeta(double x_1,double x_2,double xi,double zeta);
-  
-  
+    
   void initialize_file(FILE **output,char *path,char *fname,struct params p);
 
 
@@ -62,15 +33,17 @@ int main(int argc, char **argv)
 
   setparams(&p,argv);
   
-  FILE *Evspsip_R;
+  FILE *g1_func;
   
-  initialize_file(&Evspsip_R,argv[1],"Evspsip_R",p);
+  initialize_file(&g1_func,argv[1],"g1_func",p);
 
-  double psip_R0 = -0.01;
-  double psip_Rf = 0.01;
-  int num = 100;
+  double psip_R0 = -1;
+  double psip_Rf = 1;
+  int num = 200;
 
   double dpsip_R = (psip_Rf-psip_R0)/num;
+
+  double x_1,x_2,xi,zeta;
   
   int i;
 
@@ -80,15 +53,19 @@ int main(int argc, char **argv)
 
     p.psip_R = dpsip_R*i+psip_R0;
 
-    fprintf(Evspsip_R,"%13.6e\t%13.6e\t%13.6e\t",p.psip_R,Efunc(&p),dEdpsip_R(&p));
+    x_1 = p.R_s;
+    x_2 = p.R;
+    zeta = p.psip_R;
+    xi = (p.psip_s-p.psip_R)*p.R_s+(p.psip_c-p.psip_s)*p.R_c;
 
-    psi2 = (p.psip_s-p.psip_R)*p.R_s+(p.psip_c-p.psip_s)*p.R_c;
+    fprintf(g1_func,"%13.6e\t%13.6e\t%13.6e\t%13.6e\n",zeta,
+	    g_1func(x_1,x_2,xi,zeta),dg_1dxi(x_1,x_2,xi,zeta),
+	    dg_1dzeta(x_1,x_2,xi,zeta));
 
-    fprintf(Evspsip_R,"%13.12lf\n",g_2func(p.R_s,p.R,psi2,p.psip_R));
 
   }
 
-  fclose(Evspsip_R);
+  fclose(g1_func);
   
   return 0;
 

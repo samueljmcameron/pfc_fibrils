@@ -97,9 +97,9 @@ double dEdR(struct params *p)
 
   double a5;
 
-  a5 = 2*(1+p->k24)/(R*R*R)*sin(psip_R*R+psi2);
+  a5 = 2*(1+p->k24)/(R*R*R)*sin(psip_R*R+psi2)*sin(psip_R*R+psi2);
 
-  a5 += -psip_R*(1+p->k24)/(R*R)*cos(psip_R*R+psi2);
+  a5 += -2*psip_R*(1+p->k24)/(R*R)*sin(psip_R*R+psi2)*cos(psip_R*R+psi2);
 
   a5 += -2*p->gamma_s/(R*R);
 
@@ -223,7 +223,7 @@ double dEdR_c(struct params *p)
 
   double a3;
 
-  a3 = -(1+p->k24)/(R*R)*cos(psip_R*R+psi2)*dpsi2dR_c;
+  a3 = -2*(1+p->k24)/(R*R)*sin(psip_R*R+psi2)*cos(psip_R*R+psi2)*dpsi2dR_c;
 
   return a1+a2+a3;
 
@@ -273,7 +273,7 @@ double dEdR_s(struct params *p)
 
   double a3;
 
-  a3 = -(1+p->k24)/(R*R)*cos(psip_R*R+psi2)*dpsi2dR_s;
+  a3 = -2*(1+p->k24)/(R*R)*sin(psip_R*R+psi2)*cos(psip_R*R+psi2)*dpsi2dR_s;
 
   return a1+a2+a3;
   
@@ -325,7 +325,7 @@ double dEdpsip_c(struct params *p)
 
   double a3;
 
-  a3 = -(1+p->k24)/(R*R)*cos(psip_R*R+psi2)*dpsi2dpsip_c;
+  a3 = -2*(1+p->k24)/(R*R)*sin(psip_R*R+psi2)*cos(psip_R*R+psi2)*dpsi2dpsip_c;
 
   return a1 + a2 + a3;
   
@@ -379,7 +379,7 @@ double dEdpsip_s(struct params *p)
 
   double a3;
 
-  a3 = -(1+p->k24)/(R*R)*cos(psip_R*R+psi2)*dpsi2dpsip_s;
+  a3 = -2*(1+p->k24)/(R*R)*sin(psip_R*R+psi2)*cos(psip_R*R+psi2)*dpsi2dpsip_s;
 
   return a1 + a2 + a3;
 
@@ -389,41 +389,36 @@ double dEdpsip_s(struct params *p)
 double dEdpsip_R(struct params *p)
 {
 
-  double R = p->R;
+  double x_1 = p->R_s;
+  double x_2 = p->R;
+  double zeta = p->psip_R;
+  double xi = (p->psip_s-p->psip_R)*p->R_s+(p->psip_c-p->psip_s)*p->R_c;
+  double dxidzeta = -p->R_s;
+
   double eta = p->eta;
   double delta = p->delta;
-  double R_s = p->R_s;
-  double psip_R = p->psip_R;
+  double R = p->R;
 
-  double psi2 = (p->psip_s-p->psip_R)*R_s+(p->psip_c-p->psip_s)*p->R_c;
+  double a1,a2,a3;
 
-  double dpsi2dpsip_R = -R_s;
+  a1 = 0.25*dudzeta(x_1,x_2,zeta);
 
-  double a1;
+  a1 += 0.125*(df_1dzeta(x_1,x_2,xi,zeta)+df_1dxi(x_1,x_2,xi,zeta)*dxidzeta);
 
-  a1 = 0.25*dudzeta(R_s,R,psip_R);
+  a1 += 0.5*p->K33*(df_2dzeta(x_1,x_2,xi,zeta)+df_2dxi(x_1,x_2,xi,zeta)*dxidzeta);
 
-  a1 += 0.125*(df_1dzeta(R_s,R,psi2,psip_R)+df_1dxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R);
+  a1 += 0.25*(dvdzeta(x_1,x_2,xi,zeta)+dvdxi(x_1,x_2,xi,zeta)*dxidzeta);
 
-  a1 += 0.5*p->K33*(df_2dzeta(R_s,R,psi2,psip_R)+df_2dxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R);
+  a1 *= 2.0/(R*R);
 
-  a1 += 0.25*(dvdzeta(R_s,R,psi2,psip_R)+dvdxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R);
+  a2 = -8*M_PI*M_PI/(eta*eta)*(dg_1dzeta(x_1,x_2,xi,zeta)+dg_1dxi(x_1,x_2,xi,zeta)*dxidzeta);
 
-  a1 *= 2/(R*R);
+  a2 += dg_2dzeta(x_1,x_2,xi,zeta)+dg_2dxi(x_1,x_2,xi,zeta)*dxidzeta;
 
-  double a2;
+  a2 *= eta*eta*eta*eta*p->Lambda*delta*delta/(2.0*R*R);
 
-  a2 = -8*M_PI*M_PI/(eta*eta)*(dg_1dzeta(R_s,R,psi2,psip_R)
-			       +dg_1dxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R);
+  a3 = -2*(1+p->k24)/(R*R)*sin(zeta*R+xi)*cos(zeta*R+xi)*(R+dxidzeta);
 
-  a2 += dg_2dzeta(R_s,R,psi2,psip_R)+dg_2dxi(R_s,R,psi2,psip_R)*dpsi2dpsip_R;
-
-  a2 *= eta*eta*eta*eta*p->Lambda*delta*delta/(2*R*R);
-
-  double a3;
-
-  a3 = -(1+p->k24)/(R*R)*cos(psip_R*R+psi2)*(R+dpsi2dpsip_R);
-  
   return a1+a2+a3;
 
 }

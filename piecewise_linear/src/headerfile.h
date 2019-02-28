@@ -12,8 +12,8 @@
 
 #define ZERO 1e-14
 #define SMALL 5e-3
-#define ABSERR 1e-10
-#define RELERR 1e-10
+#define ABSERR 1e-12
+#define RELERR 1e-12
 #define SIZE_INTEGRATION 1000
 
 #define CONV_ODE   1e-10

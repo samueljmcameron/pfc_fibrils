@@ -32,7 +32,7 @@ double dudxi(void)
 double dudzeta(double x_1,double x_2,double zeta)
 {
 
-  return -2*zeta*(1-zeta)*(x_2*x_2-x_1*x_1);
+  return -2*(1-zeta)*(x_2*x_2-x_1*x_1);
 
 }
 

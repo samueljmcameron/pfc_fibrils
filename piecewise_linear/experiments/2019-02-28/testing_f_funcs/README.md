@@ -1,0 +1,1 @@
+Struggling to get the derivatives correct for the energy, so now looking at each function individually to ensure they are correct. In this experiment, I'm looking at the f functions.

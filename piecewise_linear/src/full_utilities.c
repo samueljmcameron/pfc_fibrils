@@ -18,23 +18,40 @@ void reset_guess_vals(struct params *p)
   scaling itself needs to be reset.
   ============================================================================*/
 {
-
-  double current_R = p->R;
-  double current_eta = p->eta;
-  double current_delta = p->delta;
   
-  p->Rguess = current_R;
+  p->Rguess = p->R;
   p->Rupper = 1.5*p->Rguess;
   p->Rlower = 0.75*p->Rguess;
 
-  if (current_eta == current_eta) { // if eta is not NAN
-    p->etaguess = current_eta;
+  p->R_cguess = p->R_c;
+  p->R_cupper = 1.5*p->R_cguess;
+  p->R_clower = 0.75*p->R_cguess;
+
+  p->R_sguess = p->R_s;
+  p->R_supper = 1.5*p->R_sguess;
+  p->R_slower = 0.75*p->R_sguess;
+
+  p->psip_cguess = p->psip_c;
+  p->psip_cupper = 1.5*p->psip_cguess;
+  p->psip_clower = 0.75*p->psip_cguess;
+
+  p->psip_sguess = p->psip_s;
+  p->psip_supper = 1.5*p->psip_sguess;
+  p->psip_slower = 0.75*p->psip_sguess;
+
+  p->psip_Rguess = p->psip_R;
+  p->psip_Rupper = 1.5*p->psip_Rguess;
+  p->psip_Rlower = 0.75*p->psip_Rguess;
+
+
+  if (p->eta == p->eta) { // if eta is not NAN
+    p->etaguess = p->eta;
     p->etaupper = p->etaguess+0.1;
     p->etalower = p->etaguess-0.02;
   }
-  if (current_delta == current_delta && fabs(current_delta)>DELTA_CLOSE_TO_ZERO) {
+  if (p->delta == p->delta && fabs(p->delta)>DELTA_CLOSE_TO_ZERO) {
     // if delta is not NAN and not close to zero
-    p->deltaguess = current_delta;
+    p->deltaguess = p->delta;
     p->deltaupper = 0.818;
     if (p->deltaguess < 0.81) {
       p->deltalower = 0.95*p->deltaguess;

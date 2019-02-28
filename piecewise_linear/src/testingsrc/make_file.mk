@@ -2,13 +2,13 @@ CC = gcc
 CFLAGS = -I../ -O2
 LINKER = gcc
 LFLAGS = -Wall -I. -O2 -lm -lgsl -lgslcblas
-TARGET = samplecalc_testEvspsip_c
+TARGET = $(ARGS)
 
 BINDIR = ../../bin
 ENERGY_SRCDIR = ../funcs
 OBJDIR = ../../obj
 
-LOCAL_SRC = samplecalc_testEvspsip_c.c
+LOCAL_SRC = $(ARGS).c
 
 ENERGY_SRC := energyderivs.c energyfunc.c f1_functions.c f2_functions.c \
               g1_functions.c g2_functions.c u_functions.c v_functions.c \

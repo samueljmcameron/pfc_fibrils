@@ -54,8 +54,8 @@ if __name__ == "__main__":
     # determine where the zero of dEdpsip_ss occur (should be at the same spot
     # as where the min above occurs according to calculus).
     j_zero1 = np.argmin(np.abs(dEdpsip_ss))
-        
-
+       
+    dEs = np.gradient(Es,psip_ss)
     # plot Es vs psip_ss and dEdpsip_ss vs psip_ss
 
     fig,axarr = plt.subplots(2,sharex=True)
@@ -64,6 +64,7 @@ if __name__ == "__main__":
     axarr[0].scatter(psip_ss[i_min],Es[i_min])
     axarr[0].set_ylabel(r"$E(psip_s)$")
     axarr[1].plot(psip_ss,dEdpsip_ss,'.')
+    axarr[1].plot(psip_ss,dEs,'-')
     axarr[1].plot(psip_ss,np.abs(dEdpsip_ss),'--')
     axarr[1].scatter(psip_ss[j_zero1],dEdpsip_ss[j_zero1])
     axarr[1].set_ylabel(r"$dE/dpsip_s$")

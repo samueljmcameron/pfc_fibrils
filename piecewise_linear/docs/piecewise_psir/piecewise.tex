@@ -54,7 +54,7 @@ Next, I will insert this into the free energy per unit volume,
 \begin{align}\label{eq:startE}
 E(R,\eta,\delta;\psi(r))&=\frac{2}{R^2}\int_0^{R}rdr\bigg[\frac{1}{2}\bigg(\psi'+\frac{\sin2\psi}{2r}-1\bigg)^2+\frac{1}{2}K_{33}\frac{\sin^4\psi}{r^2}\bigg]\nonumber\\
 &\phantom{=}+\frac{\Lambda\delta^2}{2R^2}\int_0^{R}rdr\big(4\pi^2-\eta^2\cos^2\psi(r)\big)^2+\frac{\omega\delta^2}{2}\bigg(\frac{3}{4}\delta^2-1\bigg)\nonumber\\
-&\phantom{=}-\frac{(1+k_{24})}{R^2}\sin\psi(R)+\frac{2\gamma}{R}.
+&\phantom{=}-\frac{(1+k_{24})}{R^2}\sin^2\psi(R)+\frac{2\gamma}{R}.
 \end{align}
 
 The resulting equation can be written as
@@ -65,7 +65,7 @@ E(R,\eta,&\delta,R_c,R_s,\psi_c^{\prime},\psi_s^{\prime},\psi_R^{\prime})=\nonum
 &+f_2(R_s,R,\psi_2,\psi_R^{\prime}))+\frac{1}{4}(v(0,R_c,0,\psi_c^{\prime})+v(R_c,R_s,\psi_1,\psi_s^{\prime})+v(R_s,R,\psi_2,\psi_R^{\prime}))\bigg)\nonumber\\
 &+\frac{\Lambda\delta^2}{2R^2}\bigg(8\pi^4R^2-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))\nonumber\\
 &+\eta^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\bigg)\nonumber\\
-&+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)-\frac{(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)+\frac{2\gamma}{R}
+&+\frac{\omega\delta^2}{2}\left(\frac{3}{4}\delta^2-1\right)-\frac{(1+k_{24})}{R^2}\sin^2(\psi_R^{\prime}R+\psi_2)+\frac{2\gamma}{R}
 \end{align}
 
 which utilizes a derivation shown in the appendix (see eqns \ref{eq:first_int} and \ref{eq:second_int}, as well as the definitions of the functions $u$, $v$, $f_{\alpha}$, and $g_{\alpha}$ in equations \ref{eq:ufunc}, \ref{eq:vfunc}, \ref{eq:falpha}, and \ref{eq:galpha}, respectively). I will minimize this equation subject to the constraint equations \ref{eq:psi1} and \ref{eq:psi2} to determine the equilibrium configuration of the fibril.
@@ -82,7 +82,7 @@ The derivative with respect to the fibril radius, $R$, is
 &-\frac{\Lambda\delta^2}{R^3}\big(8\pi^4R^2-8\pi^2\eta^2(g_1(0,R_c,0,\psi_c^{\prime})+g_1(R_c,R_s,\psi_1,\psi_s^{\prime})+g_1(R_s,R,\psi_2,\psi_R^{\prime}))\nonumber\\
 &+\eta^4(g_2(0,R_c,0,\psi_c^{\prime})+g_2(R_c,R_s,\psi_1,\psi_s^{\prime})+g_2(R_s,R,\psi_2,\psi_R^{\prime}))\big)\nonumber\\
 &+\frac{\Lambda\delta^2}{2R^2}\bigg(16\pi^4R-8\pi^2\eta^2\frac{\partial g_1(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}+\eta^4\frac{\partial g_2(R_s,x_2,\psi_2,\psi_R^{\prime})}{\partial x_2}\bigg|_{x_2=R}\bigg)\nonumber\\
-&+\frac{2(1+k_{24})}{R^3}\sin(\psi_R^{\prime}R+\psi_2)-\frac{\psi_R^{\prime}(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)-\frac{2\gamma}{R^2}.\label{eq:dEdR}
+&+\frac{2(1+k_{24})}{R^3}\sin^2(\psi_R^{\prime}R+\psi_2)-\frac{2\psi_R^{\prime}(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)\cos(\psi_R^{\prime}R+\psi_2)-\frac{2\gamma}{R^2}.\label{eq:dEdR}
 \end{align}
 The derivative with respect to the inverse period of density modulations, $\eta$, is
 \begin{align}
@@ -108,7 +108,7 @@ The derivative with respect to the core radius size, $R_c$, is
 &+\frac{\partial g_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\bigg)\nonumber\\
 &+\eta^4\bigg(\frac{\partial g_2(0,x_2,0,\psi_c^{\prime})}{\partial x_2}\bigg|_{x_2=R_c}+\frac{\partial g_2(x_1,R_s,\psi_1,\psi_s^{\prime})}{\partial x_1}\bigg|_{x_1=R_c}\nonumber\\
 &+\frac{\partial g_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial R_c}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_c}\bigg)\bigg)\nonumber\\
-&-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial R_c}.\label{eq:dEdRc}
+&-\frac{2(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial R_c}.\label{eq:dEdRc}
 \end{align}
 
 The derivative with respect to the shelf radius size, $R_s$, is
@@ -120,7 +120,7 @@ The derivative with respect to the shelf radius size, $R_s$, is
 &+\frac{1}{4}\bigg(\frac{\partial v(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial v(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_2}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\bigg)\bigg)\nonumber\\
 &+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{g_1(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial \xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial R_s}\bigg)\bigg)\nonumber\\
 &+\eta^4\bigg(\frac{\partial g_2(R_c,x_2,\psi_1,\psi_s^{\prime})}{\partial x_2}\bigg|_{x_2=R_s}+\frac{\partial g_2(x_1,R,\psi_2,\psi_R^{\prime})}{\partial x_1}\bigg|_{x_1=R_s}+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial R_s}\bigg)\nonumber\\
-&-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial R_s}.\label{eq:dEdRs}
+&-\frac{2(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial R_s}.\label{eq:dEdRs}
 \end{align}
 
 The derivative with respect to the twist angle gradient in the core, $\psi_c^{\prime}$, is
@@ -132,7 +132,7 @@ The derivative with respect to the twist angle gradient in the core, $\psi_c^{\p
 &+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\bigg)\bigg)+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}\nonumber\\
 &+\frac{\partial g_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial \psi_2}{\partial\psi_c^{\prime}}\bigg)\nonumber\\
 &\eta^4\bigg(\frac{\partial g_2(0,R_c,0,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_c^{\prime}}+\frac{\partial g_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_c^{\prime}}\nonumber\\
-&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\bigg)\bigg)-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_c^{\prime}}.\label{eq:dEdpsi_cp}
+&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_c^{\prime}}\bigg)\bigg)-\frac{2(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_c^{\prime}}.\label{eq:dEdpsi_cp}
 \end{align}
 
 The derivative with respect to the twist angle gradient in the shelf, $\psi_s^{\prime}$, is
@@ -144,7 +144,7 @@ The derivative with respect to the twist angle gradient in the shelf, $\psi_s^{\
 &+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}\nonumber\\
 &+\frac{\partial g_1(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_s^{\prime}}+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\nonumber\\
 &+\eta^4\bigg(\frac{\partial g_2(R_c,R_s,\psi_1,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_s^{\prime}}+\frac{\partial g_2(R_c,R_s,\xi,\psi_s^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_1}\frac{\partial\psi_1}{\partial\psi_s^{\prime}}\nonumber\\
-&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_s^{\prime}}.\label{eq:dEdpsi_sp}
+&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_s^{\prime}}\bigg)\bigg)-\frac{2(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)\cos(\psi_R^{\prime}R+\psi_2)\frac{\partial\psi_2}{\partial\psi_s^{\prime}}.\label{eq:dEdpsi_sp}
 \end{align}
 
 Finally, the derivative with respect to the twist angle gradient in surface reconstruction region, $\psi_R^{\prime}$, is
@@ -154,7 +154,7 @@ Finally, the derivative with respect to the twist angle gradient in surface reco
 &+\frac{1}{2}K_{33}\bigg(\frac{\partial f_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{\partial f_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)\nonumber\\
 &+\frac{1}{4}\bigg(\frac{\partial v(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}+\frac{\partial v(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)\bigg)+\frac{\Lambda\delta^2}{2R^2}\bigg(-8\pi^2\eta^2\bigg(\frac{\partial g_1(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\nonumber\\
 &+\frac{\partial g_1(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)+\eta^4\bigg(\frac{\partial g_2(R_s,R,\psi_2,\zeta)}{\partial\zeta}\bigg|_{\zeta=\psi_R^{\prime}}\nonumber\\
-&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)\bigg)-\frac{(1+k_{24})}{R^2}\cos(\psi_R^{\prime}R+\psi_2)\bigg(R+\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg).\label{eq:dEdpsi_Rc}
+&+\frac{\partial g_2(R_s,R,\xi,\psi_R^{\prime})}{\partial\xi}\bigg|_{\xi=\psi_2}\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg)\bigg)-\frac{2(1+k_{24})}{R^2}\sin(\psi_R^{\prime}R+\psi_2)\cos(\psi_R^{\prime}R+\psi_2)\bigg(R+\frac{\partial\psi_2}{\partial\psi_R^{\prime}}\bigg).\label{eq:dEdpsi_Rc}
 \end{align}
 
 \section{Detailed calculations}
@@ -205,7 +205,7 @@ The derivatives of these functions are listed below:
 &\frac{\partial u}{\partial x_1}=-2(1-\zeta)^2x_1\label{eq:dudx_1}\\
 &\frac{\partial u}{\partial x_2}=2(1-\zeta)^2x_2\label{eq:dudx_2}\\
 &\frac{\partial u}{\partial \xi} = 0\label{eq:dudxi}\\
-&\frac{\partial u}{\partial\zeta}=-2\zeta(1-\zeta)(x_2^2-x_1^2)\label{eq:dudzeta}
+&\frac{\partial u}{\partial\zeta}=-2(1-\zeta)(x_2^2-x_1^2)\label{eq:dudzeta}
 \end{align}
 \end{subequations}
 \begin{subequations}

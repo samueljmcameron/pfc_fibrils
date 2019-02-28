@@ -35,10 +35,12 @@ class SingleRun(object):
 
         return
 
-    def run_exe(self):
+    def run_exe(self,valgrind=False):
         # run c executable to determine psi(r), R, delta, etc.
-
-        subprocess.run([self.executable,self.tmp_path,*self.params.values()],check=True)
+        if valgrind:
+            subprocess.run(["valgrind",self.executable,self.tmp_path,*self.params.values()],check=True)
+        else:
+            subprocess.run([self.executable,self.tmp_path,*self.params.values()],check=True)
 
         return
 

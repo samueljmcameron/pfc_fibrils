@@ -8,7 +8,7 @@ double g_1func(double x_1,double x_2,double xi,double zeta)
 
   double ans;
   
-  if (fabs(zeta)< SMALL) {
+  if (fabs(zeta)<SMALL) {
 
     double x_2t2 = x_2*x_2;
 

@@ -52,7 +52,7 @@ int full_driver(double *E,struct params *p,FILE *energy)
   my_func.params = p;
 
   size_t iter = 0;
-  size_t itermax = 100;
+  size_t itermax = 10000000;
   int status;
 
   int poorscaling_count=0;
@@ -68,9 +68,9 @@ int full_driver(double *E,struct params *p,FILE *energy)
 
   gsl_multimin_fdfminimizer_set(s,&my_func,x_scale,0.001,0.01);
 
-  printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
-  	 "iteration","R","eta","delta","E","dEdR","dEdeta",
-  	 "dEddelta","grad norm");
+  //printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
+  //	 "iteration","R","eta","delta","E","dEdR","dEdeta",
+  //	 "dEddelta","grad norm");
 
   p->Escale = 0; // set initial Escale value to 0 to ensure that convergence
   //                is not obtained immediately from some large guess of Escale 
@@ -92,8 +92,8 @@ int full_driver(double *E,struct params *p,FILE *energy)
     scale_full_dEdx_backward(s->gradient,dEdx,p);
     *E = s->f;
 
-    printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	   iter,p->R,p->eta,p->delta,*E,dEdx[0],dEdx[1],dEdx[2],calc_norm2(dEdx,p));
+    //printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+    //	   iter,p->R,p->eta,p->delta,*E,dEdx[0],dEdx[1],dEdx[2],calc_norm2(dEdx,p));
 
     if (poorscaling(s->x,p)) {
       poorscaling_count += 1;
@@ -143,18 +143,35 @@ int full_driver(double *E,struct params *p,FILE *energy)
       printf("Unsuccessful calculation of energy, set to failure value E = %e\n",
 	     FAILED_E);
 
+
+      printf("E = %lf\n",*E);
+      printf("R = %lf\n",p->R);
+      printf("eta = %lf\n",p->eta);
+      printf("delta = %lf\n",p->delta);
+      printf("R_c = %lf\n",p->R_c);
+      printf("R_s = %lf\n",p->R_s);
+      printf("psip_c = %lf\n",p->psip_c);
+      printf("psip_s = %lf\n",p->psip_s);
+      printf("psip_R = %lf\n",p->psip_R);
+      printf("norm gradient = %lf\n",calc_norm2(dEdx,p));
+
       returnvalue = DRIVER_FAILURE;
       
     } else if (poorscaling_count == max_poorscaling_count) {
 
       printf("the initial guesses were not good, did not successfully find a minimum.\n");
 
-      printf("%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\t%13s\n",
-	     "iteration","R","eta","delta","E","dEdR","dEdeta",
-	     "dEddelta","grad norm");
 
-      printf("%13lu\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
-	     iter,p->R,p->eta,p->delta,*E,dEdx[1],dEdx[2],dEdx[3],calc_norm2(dEdx,p));
+      printf("E = %lf\n",*E);
+      printf("R = %lf\n",p->R);
+      printf("eta = %lf\n",p->eta);
+      printf("delta = %lf\n",p->delta);
+      printf("R_c = %lf\n",p->R_c);
+      printf("R_s = %lf\n",p->R_s);
+      printf("psip_c = %lf\n",p->psip_c);
+      printf("psip_s = %lf\n",p->psip_s);
+      printf("psip_R = %lf\n",p->psip_R);
+      printf("norm gradient = %lf\n",calc_norm2(dEdx,p));
 
       returnvalue = DRIVER_POORSCALING;
 
@@ -162,6 +179,17 @@ int full_driver(double *E,struct params *p,FILE *energy)
     } else if (iter == itermax) {
 
       printf("Did not successfully find a minimum. Exceeded %zu iterations.\n",iter);
+
+      printf("E = %lf\n",*E);
+      printf("R = %lf\n",p->R);
+      printf("eta = %lf\n",p->eta);
+      printf("delta = %lf\n",p->delta);
+      printf("R_c = %lf\n",p->R_c);
+      printf("R_s = %lf\n",p->R_s);
+      printf("psip_c = %lf\n",p->psip_c);
+      printf("psip_s = %lf\n",p->psip_s);
+      printf("psip_R = %lf\n",p->psip_R);
+      printf("norm gradient = %lf\n",calc_norm2(dEdx,p));
 
       returnvalue = DRIVER_FAILURE;
       

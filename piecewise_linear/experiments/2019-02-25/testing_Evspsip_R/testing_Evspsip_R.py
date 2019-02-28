@@ -60,11 +60,14 @@ if __name__ == "__main__":
 
     fig,axarr = plt.subplots(2,sharex=True)
 
+    dEs = np.gradient(Es,psip_Rs)
+
     axarr[0].plot(psip_Rs,Es,'.')
     axarr[0].scatter(psip_Rs[i_min],Es[i_min])
     axarr[0].set_ylabel(r"$E(psip_R)$")
     axarr[1].plot(psip_Rs,dEdpsip_Rs,'.')
-    axarr[1].plot(psip_Rs,np.abs(dEdpsip_Rs),'--')
+    axarr[1].plot(psip_Rs,dEs,'-')
+    #axarr[1].plot(psip_Rs,np.abs(dEdpsip_Rs),'--')
     axarr[1].scatter(psip_Rs[j_zero1],dEdpsip_Rs[j_zero1])
     axarr[1].set_ylabel(r"$dE/d\psi_R^{\prime}$")
     axarr[1].set_xlabel(r"$\psi_R^{\prime}$")

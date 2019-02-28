@@ -36,7 +36,7 @@ if __name__ == "__main__":
     rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=loadsuf)
         
     # create a class to do calculations with current parameters in scan.
-    run = SingleRun(rp,executable="../../../bin/samplecalc_testEvsR_s")
+    run = SingleRun(rp,executable="../../../bin/EvsR_s")
     # run C executable.
     run.run_exe()
     dataname = run.mv_file('EvsR_s')
@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # as where the min above occurs according to calculus).
     j_zero1 = np.argmin(np.abs(dEdR_ss))
         
-
+    dEs = np.gradient(Es,R_ss)
     # plot Es vs R_ss and dEdR_ss vs R_ss
 
     fig,axarr = plt.subplots(2,sharex=True)
@@ -64,6 +64,7 @@ if __name__ == "__main__":
     axarr[0].scatter(R_ss[i_min],Es[i_min])
     axarr[0].set_ylabel(r"$E(R_s)$")
     axarr[1].plot(R_ss,dEdR_ss,'.')
+    axarr[1].plot(R_ss,dEs,'-')
     axarr[1].plot(R_ss,np.abs(dEdR_ss),'--')
     axarr[1].scatter(R_ss[j_zero1],dEdR_ss[j_zero1])
     axarr[1].set_ylabel(r"$dE/dR_s$")
@@ -79,7 +80,7 @@ if __name__ == "__main__":
     print(f"first zero of dEdR_s = {dEdR_ss[j_zero1]} is at R_s = {R_ss[j_zero1]}")
 
     sname = dataname.replace("data/","results/").replace(".txt",".pdf")
-
+    plt.show()
     fig.savefig(sname)
 
 

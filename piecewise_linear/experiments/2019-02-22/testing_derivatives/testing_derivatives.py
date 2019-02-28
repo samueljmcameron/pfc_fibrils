@@ -1,3 +1,6 @@
+# testing the derivatives with this file turned out to be not so useful. see later tests.
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -39,7 +42,7 @@ if __name__ == "__main__":
     rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=loadsuf)
         
     # create a class to do calculations with current parameters in scan.
-    run = SingleRun(rp,executable="../../../bin/samplecalc_testderivatives")
+    run = SingleRun(rp,executable="../../../bin/derivatives")
     # run C executable.
     run.run_exe()
 

@@ -24,7 +24,7 @@ double Efunc(struct params *p)
 
 
   
-  if (R_c<0 || R_s < R_c || R < R_s) return FAILED_E;
+  //if (R_c<0 || R_s < R_c || R < R_s) return FAILED_E;
   
   double psi1 = (psip_c-psip_s)*R_c;
   double psi2 = (psip_s-psip_R)*R_s+(psip_c-psip_s)*R_c;
@@ -44,7 +44,6 @@ double Efunc(struct params *p)
 	      +vfunc(R_s,R,psi2,psip_R));
 
   a1 *= 2/(R*R);
-  printf("a1 = %lf\t",a1);
 
   double a2;
   
@@ -56,16 +55,16 @@ double Efunc(struct params *p)
 						   +g_2func(R_c,R_s,psi1,psip_s)
 						   +g_2func(R_s,R,psi2,psip_R));
   a2 *= 8*M_PI*M_PI*M_PI*M_PI*p->Lambda*delta*delta/(2*R*R);
-  printf("a2 = %lf\n",a2);
   
   double a3;
 
 
   a3 = 0.5*p->omega*delta*delta*(0.75*delta*delta-1);
 
-  a3 += -(1+p->k24)*sin(psip_R*R+psi2)/(R*R)+2*p->gamma_s/R;
+  a3 += -(1+p->k24)*sin(psip_R*R+psi2)*sin(psip_R*R+psi2)/(R*R)+2*p->gamma_s/R;
 
   
-  return a1 + a2 + a3;
+  return a1+a2+a3;
 
 }
+

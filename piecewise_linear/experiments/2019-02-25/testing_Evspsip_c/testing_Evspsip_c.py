@@ -55,7 +55,7 @@ if __name__ == "__main__":
     # as where the min above occurs according to calculus).
     j_zero1 = np.argmin(np.abs(dEdpsip_cs))
         
-
+    dEs = np.gradient(Es,psip_cs)
     # plot Es vs psip_cs and dEdpsip_cs vs psip_cs
 
     fig,axarr = plt.subplots(2,sharex=True)
@@ -64,6 +64,7 @@ if __name__ == "__main__":
     axarr[0].scatter(psip_cs[i_min],Es[i_min])
     axarr[0].set_ylabel(r"$E(psip_c)$")
     axarr[1].plot(psip_cs,dEdpsip_cs,'.')
+    axarr[1].plot(psip_cs,dEs,'-')
     axarr[1].plot(psip_cs,np.abs(dEdpsip_cs),'--')
     axarr[1].scatter(psip_cs[j_zero1],dEdpsip_cs[j_zero1])
     axarr[1].set_ylabel(r"$dE/dpsip_c$")
@@ -81,6 +82,7 @@ if __name__ == "__main__":
 
     sname = dataname.replace("data/","results/").replace(".txt",".pdf")
 
+    plt.show()
     fig.savefig(sname)
 
 

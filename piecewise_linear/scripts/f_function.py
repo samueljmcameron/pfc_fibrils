@@ -350,6 +350,8 @@ class falphaFunction(object):
             ValueError("u value of integrand cannot have lower integration limit of zero "
                        "if the intercept of psi(r) is non-zero.")
 
+            result = np.nan
+
         return result
 
     def integrand_dfdxi_exact(self,u,xi,zeta):
@@ -390,12 +392,19 @@ if __name__ == "__main__":
     f2 = falphaFunction(2)
 
 
+    R_c = 0.0355
+    R_s = 0.865
+    R = 0.88
+    psip_c = 3.0
+    psip_s = 0.0
+    
+
     zetas = np.linspace(-1,1,num=201,endpoint=True)
 
-    x_1 = 0.865
-    x_2 = 0.88
+    x_1 = R_s
+    x_2 = R
 
-    xi = 0.1
+    xis = (psip_s-zetas)*R_s+(psip_c-psip_s)*R_c
 
 
     # first plot f_1 and f_2
@@ -409,22 +418,22 @@ if __name__ == "__main__":
     ax1.append(fig1.add_subplot(1,2,2))
 
 
-    ax1[0].plot(zetas,f1.falpha_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    #ax1[0].plot(zetas,f1.falpha_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax1[0].plot(zetas,[f1.falpha_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',
-                label='exact')
+    #ax1[0].plot(zetas,[f1.falpha_exact(x_1,x_2,xi,zeta) for xi,zeta in zip(xis,zetas)],'r.',
+    #            label='exact')
 
-    ax1[0].plot(zetas,[f1.falpha_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',
+    ax1[0].plot(zetas,[f1.falpha_full(x_1,x_2,xi,zeta) for xi,zeta in zip(xis,zetas)],'k-',
                 label='full')
 
     ax1[1].set_ylabel(r'$f_1$')
 
-    ax1[1].plot(zetas,f2.falpha_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    #ax1[1].plot(zetas,f2.falpha_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax1[1].plot(zetas,[f2.falpha_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',
-                label='exact')
+    #ax1[1].plot(zetas,[f2.falpha_exact(x_1,x_2,xi,zeta) for xi,zeta in zip(xis,zetas)],'r.',
+    #            label='exact')
 
-    ax1[1].plot(zetas,[f2.falpha_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',
+    ax1[1].plot(zetas,[f2.falpha_full(x_1,x_2,xi,zeta) for xi,zeta in zip(xis,zetas)],'k-',
                 label='full')
 
     ax1[1].set_ylabel(r'$f_2$')
@@ -442,19 +451,23 @@ if __name__ == "__main__":
     ax2.append(fig2.add_subplot(1,2,2))
 
 
-    ax2[0].plot(zetas,f1.dfalphadzeta_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    #ax2[0].plot(zetas,f1.dfalphadzeta_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax2[0].plot(zetas,[f1.dfalphadzeta_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',label='exact')
+    #ax2[0].plot(zetas,[f1.dfalphadzeta_exact(x_1,x_2,xi,zeta)
+    #                   for xi,zeta in zip(xis,zetas)],'r.',label='exact')
 
-    ax2[0].plot(zetas,[f1.dfalphadzeta_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',label='full')
+    ax2[0].plot(zetas,[f1.dfalphadzeta_full(x_1,x_2,xi,zeta)
+                       for xi,zeta in zip(xis,zetas)],'k-',label='full')
 
     ax2[0].set_ylabel(r'$\frac{\partial f_1}{\partial\zeta}$')
 
-    ax2[1].plot(zetas,f2.dfalphadzeta_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    #ax2[1].plot(zetas,f2.dfalphadzeta_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax2[1].plot(zetas,[f2.dfalphadzeta_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',label='exact')
+    #ax2[1].plot(zetas,[f2.dfalphadzeta_exact(x_1,x_2,xi,zeta)
+    #                   for xi,zeta in zip(xis,zetas)],'r.',label='exact')
 
-    ax2[1].plot(zetas,[f2.dfalphadzeta_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',label='full')
+    ax2[1].plot(zetas,[f2.dfalphadzeta_full(x_1,x_2,xi,zeta)
+                       for xi,zeta in zip(xis,zetas)],'k-',label='full')
 
     ax2[1].set_ylabel(r'$\frac{\partial f_2}{\partial\zeta}$')
     
@@ -471,19 +484,23 @@ if __name__ == "__main__":
     ax3.append(fig3.add_subplot(1,2,2))
 
 
-    ax3[0].plot(zetas,f1.dfalphadxi_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    #ax3[0].plot(zetas,f1.dfalphadxi_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax3[0].plot(zetas,[f1.dfalphadxi_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',label='exact')
+    #ax3[0].plot(zetas,[f1.dfalphadxi_exact(x_1,x_2,xi,zeta)
+    #                   for xi,zeta in zip(xis,zetas)],'r.',label='exact')
 
-    ax3[0].plot(zetas,[f1.dfalphadxi_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',label='full')
+    ax3[0].plot(zetas,[f1.dfalphadxi_full(x_1,x_2,xi,zeta)
+                       for xi,zeta in zip(xis,zetas)],'k-',label='full')
 
     ax3[1].set_ylabel(r'$\frac{\partial f_1}{\partial\xi}$')
     
-    ax3[1].plot(zetas,f2.dfalphadxi_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    #ax3[1].plot(zetas,f2.dfalphadxi_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    ax3[1].plot(zetas,[f2.dfalphadxi_exact(x_1,x_2,xi,zeta) for zeta in zetas],'r.',label='exact')
+    #ax3[1].plot(zetas,[f2.dfalphadxi_exact(x_1,x_2,xi,zeta)
+    #                   for xi,zeta in zip(xis,zetas)],'r.',label='exact')
 
-    ax3[1].plot(zetas,[f2.dfalphadxi_full(x_1,x_2,xi,zeta) for zeta in zetas],'k-',label='full')
+    ax3[1].plot(zetas,[f2.dfalphadxi_full(x_1,x_2,xi,zeta)
+                       for xi,zeta in zip(xis,zetas)],'k-',label='full')
 
     ax3[1].set_ylabel(r'$\frac{\partial f_2}{\partial\xi}$')
     

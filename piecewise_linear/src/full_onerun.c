@@ -53,6 +53,21 @@ int main(int argc, char **argv)
     reset_guess_vals(&p);
     calculation = full_driver(&E,&p,(NULL));
   }
+  if (calculation == DRIVER_POORSCALING) {
+    printf("RETRYING!\n");
+    reset_guess_vals(&p);
+    calculation = full_driver(&E,&p,(NULL));
+  }
+  if (calculation == DRIVER_POORSCALING) {
+    printf("RETRYING!\n");
+    reset_guess_vals(&p);
+    calculation = full_driver(&E,&p,(NULL));
+  }
+  if (calculation == DRIVER_POORSCALING) {
+    printf("RETRYING!\n");
+    reset_guess_vals(&p);
+    calculation = full_driver(&E,&p,(NULL));
+  }
   if (calculation == DRIVER_SUCCESS) {
     printf("success!\n");
     

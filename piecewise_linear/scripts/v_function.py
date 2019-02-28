@@ -303,11 +303,19 @@ if __name__ == "__main__":
 
     vfunc = vFunction()
 
+    R_c = 0.0355
+    R_s = 0.865
+    R = 0.88
+    psip_c = 3.0
+    psip_s = 0.0
+    
 
-    zetas = np.linspace(-1,1,num=201,endpoint=True)
-    x_1 = 0.01
-    x_2 = 0.1
-    xi = 0.1
+    zetas = np.linspace(-0.1,0.1,num=601,endpoint=True)
+
+    x_1 = R_s
+    x_2 = R
+
+    xis = (psip_s-zetas)*R_s+(psip_c-psip_s)*R_c
 
     axs = []
 
@@ -315,11 +323,11 @@ if __name__ == "__main__":
 
     axs.append(fig1.add_subplot(1,1,1))
 
-    axs[0].plot(zetas,vfunc.v_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    axs[0].plot(zetas,vfunc.v_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    axs[0].plot(zetas,vfunc.v_exact(x_1,x_2,xi,zetas),'r.',label='exact')
+    axs[0].plot(zetas,vfunc.v_exact(x_1,x_2,xis,zetas),'r.',label='exact')
 
-    axs[0].plot(zetas,vfunc.v_full(x_1,x_2,xi,zetas),'k-',label='full')
+    axs[0].plot(zetas,vfunc.v_full(x_1,x_2,xis,zetas),'k-',label='full')
 
     axs[0].set_ylabel(r'$v$')
 
@@ -327,11 +335,11 @@ if __name__ == "__main__":
     
     axs.append(fig2.add_subplot(1,1,1))
 
-    axs[1].plot(zetas,vfunc.dvdzeta_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    axs[1].plot(zetas,vfunc.dvdzeta_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    axs[1].plot(zetas,vfunc.dvdzeta_exact(x_1,x_2,xi,zetas),'r.',label='exact')
+    axs[1].plot(zetas,vfunc.dvdzeta_exact(x_1,x_2,xis,zetas),'r.',label='exact')
 
-    axs[1].plot(zetas,vfunc.dvdzeta_full(x_1,x_2,xi,zetas),'k-',label='full')
+    axs[1].plot(zetas,vfunc.dvdzeta_full(x_1,x_2,xis,zetas),'k-',label='full')
 
     axs[1].set_ylabel(r'$\frac{dv}{d\zeta}$')
 
@@ -339,11 +347,11 @@ if __name__ == "__main__":
     
     axs.append(fig3.add_subplot(1,1,1))
 
-    axs[2].plot(zetas,vfunc.dvdx_1_approx(x_1,xi,zetas),'bo',label='approx')
+    axs[2].plot(zetas,vfunc.dvdx_1_approx(x_1,xis,zetas),'bo',label='approx')
 
-    axs[2].plot(zetas,vfunc.dvdx_1_exact(x_1,xi,zetas),'r.',label='exact')
+    axs[2].plot(zetas,vfunc.dvdx_1_exact(x_1,xis,zetas),'r.',label='exact')
 
-    axs[2].plot(zetas,vfunc.dvdx_1_full(x_1,xi,zetas),'k-',label='full')
+    axs[2].plot(zetas,vfunc.dvdx_1_full(x_1,xis,zetas),'k-',label='full')
 
     axs[2].set_ylabel(r'$\frac{dv}{dx_1}$')
 
@@ -351,11 +359,11 @@ if __name__ == "__main__":
 
     axs.append(fig4.add_subplot(1,1,1))
 
-    axs[3].plot(zetas,vfunc.dvdx_2_approx(x_2,xi,zetas),'bo',label='approx')
+    axs[3].plot(zetas,vfunc.dvdx_2_approx(x_2,xis,zetas),'bo',label='approx')
 
-    axs[3].plot(zetas,vfunc.dvdx_2_exact(x_2,xi,zetas),'r.',label='exact')
+    axs[3].plot(zetas,vfunc.dvdx_2_exact(x_2,xis,zetas),'r.',label='exact')
 
-    axs[3].plot(zetas,vfunc.dvdx_2_full(x_2,xi,zetas),'k-',label='full')
+    axs[3].plot(zetas,vfunc.dvdx_2_full(x_2,xis,zetas),'k-',label='full')
 
     axs[3].set_ylabel(r'$\frac{dv}{dx_2}$')
 
@@ -364,11 +372,11 @@ if __name__ == "__main__":
 
     axs.append(fig5.add_subplot(1,1,1))
 
-    axs[4].plot(zetas,vfunc.dvdxi_approx(x_1,x_2,xi,zetas),'bo',label='approx')
+    axs[4].plot(zetas,vfunc.dvdxi_approx(x_1,x_2,xis,zetas),'bo',label='approx')
 
-    axs[4].plot(zetas,vfunc.dvdxi_exact(x_1,x_2,xi,zetas),'r.',label='exact')
+    axs[4].plot(zetas,vfunc.dvdxi_exact(x_1,x_2,xis,zetas),'r.',label='exact')
 
-    axs[4].plot(zetas,vfunc.dvdxi_full(x_1,x_2,xi,zetas),'k-',label='full')
+    axs[4].plot(zetas,vfunc.dvdxi_full(x_1,x_2,xis,zetas),'k-',label='full')
 
     axs[4].set_ylabel(r'$\frac{dv}{d\xi}$')
 

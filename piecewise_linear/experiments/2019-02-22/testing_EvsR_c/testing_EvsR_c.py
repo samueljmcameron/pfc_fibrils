@@ -36,7 +36,7 @@ if __name__ == "__main__":
     rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=loadsuf)
         
     # create a class to do calculations with current parameters in scan.
-    run = SingleRun(rp,executable="../../../bin/samplecalc_testEvsR_c")
+    run = SingleRun(rp,executable="../../../bin/EvsR_c")
     # run C executable.
     run.run_exe()
     dataname = run.mv_file('EvsR_c')
@@ -89,5 +89,5 @@ if __name__ == "__main__":
     sname = dataname.replace("data/","results/").replace(".txt",".pdf")
 
     fig.savefig(sname)
-
+    plt.show()
 
