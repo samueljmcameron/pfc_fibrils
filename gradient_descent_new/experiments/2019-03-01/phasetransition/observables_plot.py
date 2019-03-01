@@ -26,7 +26,7 @@ height = width
 
 #configure_fig_settings()
 
-observable_list = ['E','R','eta','delta','surfacetwist']
+
 
 fig = {}
 ax = {}
@@ -51,8 +51,11 @@ scan['\\omega']=str(omega)
 obs = ObservableData(["\\Lambda"],scan_dir='scanforward',scan=scan,loadsuf=loadsuf,
                      savesuf=savesuf)
 
+observable_list = ['E','R','eta','delta','surfacetwist']
+ys = [obs.E(),obs.R(),obs.eta(),obs.delta(),obs.surfacetwist()]
 
-for observable in observable_list:
+
+for i,observable in enumerate(observable_list):
 
 
     fig[observable] = plt.figure()
@@ -71,14 +74,17 @@ for observable in observable_list:
     else:
         ylabel = fr'${observable}$'
 
+    ax[observable].plot(Lambdas,ys[i])
+    ax[observable].set_xlabel(r"$\Lambda$")
+    ax[observable].set_ylabel(ylabel)
 
-    ax[observable].plot(Lambdas,obs.R(),'.')
-
+    if observable == 'R':
+        ax[observable].set_yscale('log')
  
-#for observable in observable_list:
+for observable in observable_list:
     
-#    fig[observable].subplots_adjust(left=0.2,right=0.95)
-#    fig[observable].savefig(obs.observable_sname(observable))
+    fig[observable].subplots_adjust(left=0.2,right=0.95)
+    #fig[observable].savefig(obs.observable_sname(observable))
 
 plt.show()
 
