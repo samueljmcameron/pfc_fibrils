@@ -16,13 +16,15 @@ class PsiData(ReadParams):
                  loadsuf=["K_{33}","k_{24}","\\Lambda",
                           "\\omega","\\gamma_s"],
                  savesuf=["K_{33}","k_{24}","\\Lambda",
-                          "\\omega","\\gamma_s"],sfile_format=".pdf"):
+                          "\\omega","\\gamma_s"],sfile_format=".pdf",
+                 name="psivsr"):
 
         ReadParams.__init__(self,datfile=datfile,
                             scan=scan,loadsuf=loadsuf,savesuf=savesuf)
 
         self.sfile_format = sfile_format
         self.scan_dir = scan_dir
+        self.name = name
         self.data = np.loadtxt(self.psivsr_fname())
 
         return
@@ -43,16 +45,16 @@ class PsiData(ReadParams):
 
         suffix = self.write_suffix()
     
-        return f"data/_psivsr_{suffix}.txt"
+        return f"data/_{self.name}_{suffix}.txt"
     
     def psivsr_sname(self):
 
         suffix = self.write_suffix(suffix_type="save")
 
         if self.scan_dir != "":
-            sname = f"results/_psivsr_{self.scan_dir}_{suffix}.{self.sfile_format}"
+            sname = f"results/_{self.name}_{self.scan_dir}_{suffix}.{self.sfile_format}"
         else:
-            sname = f"results/_psivsr_{suffix}.{self.sfile_format}"
+            sname = f"results/_{self.name}_{suffix}.{self.sfile_format}"
 
         return sname
 

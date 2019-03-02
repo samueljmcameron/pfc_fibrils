@@ -16,13 +16,15 @@ class ObservableData(ReadParams):
                  loadsuf=["K_{33}","k_{24}","\\Lambda",
                           "\\omega","\\gamma_s"],
                  savesuf=["K_{33}","k_{24}","\\Lambda",
-                          "\\omega","\\gamma_s"]):
+                          "\\omega","\\gamma_s"],
+                 name= "observables"):
 
         ReadParams.__init__(self,datfile=datfile,
                             scan=scan,loadsuf=loadsuf,savesuf=savesuf)
 
         self.xaxis = xaxis
         self.scan_dir = scan_dir
+        self.name = name
         self.data = np.loadtxt(self.observables_fname())
 
         return
@@ -33,9 +35,9 @@ class ObservableData(ReadParams):
         suffix = self.write_suffix()
 
         if self.scan_dir != "":
-            fname =f"data/_observables_{self.scan_dir}_{suffix}.txt"
+            fname =f"data/_{self.name}_{self.scan_dir}_{suffix}.txt"
         else:
-            fname =f"data/_observables_{suffix}.txt"
+            fname =f"data/_{self.name}_{suffix}.txt"
         return fname
     
     def observable_sname(self,varname,plot_format="pdf"):

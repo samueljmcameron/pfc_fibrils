@@ -62,7 +62,9 @@ for i,observable in enumerate(observable_list):
     fig[observable].set_size_inches(width,height)
 
     if observable == 'surfacetwist':
-        ylabel = r'$\psi(R)$'
+        ylabel = r'$\psi(R)$' + " (" + r"$^\circ$" + ")"
+        ysfwd[i] *=180/np.pi
+        ysbkwd[i] *= 180/np.pi
     elif observable == 'eta':
         ylabel = r'$2\pi/\eta$'
     elif observable == 'delta':
@@ -90,12 +92,13 @@ for i,observable in enumerate(observable_list):
     ax[observable].set_ylabel(ylabel,fontsize=24)
 
     ax[observable].set_xscale('log')
+    ax[observable].tick_params("both",labelsize=18)
 
 
  
 for observable in observable_list:
     
-    fig[observable].subplots_adjust(left=0.25,right=0.95,bottom=0.2)
+    fig[observable].subplots_adjust(left=0.15,right=0.95,bottom=0.1)
     fig[observable].savefig(obsfwd.observable_sname(observable))
 
 plt.show()
