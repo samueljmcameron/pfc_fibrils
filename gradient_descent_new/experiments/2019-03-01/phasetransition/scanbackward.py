@@ -29,7 +29,7 @@ if __name__=="__main__":
         gamma,k24,omega = sys.argv[1],sys.argv[2],sys.argv[3]
 
 
-    Lambdas = np.linspace(0,40,num=400,endpoint=True)
+    Lambdas = np.linspace(30,44,num=15,endpoint=True)
 
     scan = {}
     scan['k_{24}'] = k24

@@ -38,11 +38,11 @@ class ObservableData(ReadParams):
             fname =f"data/_observables_{suffix}.txt"
         return fname
     
-    def observable_sname(self,varname):
+    def observable_sname(self,varname,plot_format="pdf"):
 
         suffix = self.write_suffix(suffix_type="save")
 
-        return f"results/_{varname}_{suffix}.{self.plot_format}"
+        return f"results/_{varname}_{suffix}.{plot_format}"
 
     def ylabelstr_to_column(self,varname,observables_num = 5):
         
