@@ -55,6 +55,15 @@ void save_observables(FILE *observables,double E,struct params *p)
   return;
 }
 
+void save_observablesandmodulus(FILE *observables,double E,struct params *p,
+				double K)
+{
+
+  fprintf(observables,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+	  E,p->R,p->eta,p->delta,p->y[1][p->mpt],K);
+  return;
+}
+
 
 
 void save_psivsr(FILE *psivsr,struct params *p)

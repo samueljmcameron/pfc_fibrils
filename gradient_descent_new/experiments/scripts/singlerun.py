@@ -74,11 +74,11 @@ class SingleRun(object):
         with open(fullpath,"r") as f:
             line = f.readline()
             if str2float:
-                E,R,eta,delta,surftwist = map(float,line.split())
+                observables=map(float,line.split())
             else:
-                E,R,eta,delta,surftwist = line.split()
+                observables=line.split()
 
-        return E,R,eta,delta,surftwist
+        return observables
     
     def mv_file(self,mname,newname=None):
         # move a file from the temporary file folder to the data folder.
@@ -151,15 +151,22 @@ class SingleRun(object):
         return
 
     def write_observables(self,E0,R0,eta0,delta0,
-                          surftwist0,vrs,externalparam=None):
+                          surftwist0,vrs,modulus=None,externalparam=None):
 
         suffix1 = self.readparams.write_suffix(suffix_type="save")
 
         newfname = f"data/_observables_{self.scan_dir}_{suffix1}.txt"
 
         with open(newfname,"a+") as f1:
-    
-            line=f"{E0:13.6e}\t{R0:13.6e}\t{eta0:13.6e}\t{delta0:13.6e}\t{surftwist0:13.6e}\n"
+
+            if modulus != None:
+            
+                line=(f"{E0:13.6e}\t{R0:13.6e}\t{eta0:13.6e}\t"
+                      +f"{delta0:13.6e}\t{surftwist0:13.6e}\t{modulus:13.6e}\n")
+
+            else:
+                line=(f"{E0:13.6e}\t{R0:13.6e}\t{eta0:13.6e}\t"
+                      +f"{delta0:13.6e}\t{surftwist0:13.6e}\n")
 
             f1.write(f"{self.add_datastring(vrs,externalparam=externalparam)}\t{line}")
             
