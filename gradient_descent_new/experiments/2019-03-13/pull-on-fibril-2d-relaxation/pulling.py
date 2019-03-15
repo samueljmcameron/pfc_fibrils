@@ -12,9 +12,6 @@ sys.path.append('../../scripts/')
 from singlerun import SingleRun
 from readparams import ReadParams
 
-
-
-
 if __name__=="__main__":
 
 
@@ -37,7 +34,7 @@ if __name__=="__main__":
     run = SingleRun(rp)
 
 
-    strains = np.linspace(0,0.02,num=201,endpoint=True)
+    strains = np.linspace(0,0.05,num=51,endpoint=True)
 
 
     for i,u in enumerate(strains):
@@ -51,9 +48,8 @@ if __name__=="__main__":
             
         else:
             
-            executable = "../../../bin/delta1var_onerun"
+            executable = "../../../bin/Rdelta2var_onerun"
             scan['etaguess'] = str(eta_eq/(1+u))
-            scan['Rguess'] = str(R_eq/np.sqrt(1+u))
 
         
 
@@ -79,14 +75,18 @@ if __name__=="__main__":
             # inverse d band spacing, which I now need to set (and do so below).
 
             eta_eq = etai
-            R_eq = Ri
+
 
         run.concatenate_observables(None,externalparam=u)
 
-        # now just adjust my guess for delta
+        # now just adjust my guesses for R and delta
         
-        deltaguess = str(deltai)
+        Rguess,deltaguess = str(Ri),str(deltai)
 
+
+        scan['Rguess'] = Rguess
+        scan['Rupper'] = str(1.5*float(Rguess))
+        scan['Rlower'] = str(0.75*float(Rguess))
 
 
         if not (np.isnan(float(deltaguess))
