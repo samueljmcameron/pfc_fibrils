@@ -41,5 +41,5 @@ ax1.set_ylim(0,1.3*psi0)
 
 fig.subplots_adjust(left=0.2,bottom=0.15)
 
-fig.savefig('results/constant_twist.pdf')
+fig.savefig('results/constant_twist.png',dpi=300)
 

@@ -99,7 +99,7 @@ for i,observable in enumerate(observable_list):
 for observable in observable_list:
     
     fig[observable].subplots_adjust(left=0.15,right=0.95,bottom=0.1)
-    fig[observable].savefig(obsfwd.observable_sname(observable))
+    fig[observable].savefig(obsfwd.observable_sname(observable,plot_format="png"))
 
 plt.show()
 

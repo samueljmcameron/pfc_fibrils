@@ -80,7 +80,7 @@ ax1.tick_params("both",labelsize=18)
 
 ax2 = fig.add_subplot(1,2,2,projection='polar')
 
-fibrilstrain = FibrilStrain(psistuff,observablestuff,sfile_format='.pdf')
+fibrilstrain = FibrilStrain(psistuff,observablestuff,sfile_format='png')
 
 rs,thetas = fibrilstrain.mesh_polar()
 
@@ -106,5 +106,5 @@ ax2.annotate(rf'$R={R:1.0f}\si{{\nano\meter}}$',xy=(5*np.pi/4,R-0.01*R),xytext=(
 
 fig.subplots_adjust(left=0.15,bottom=0.2,right=0.95)
 
-fig.savefig(fibrilstrain.strain_sname(descriptor=f'polar_{denom}_{type}'))
+fig.savefig(fibrilstrain.strain_sname(descriptor=f'polar_{denom}_{type}'),dpi=300)
 

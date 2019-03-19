@@ -42,7 +42,8 @@ R_units = 1000.0/10.0  # units of nano meters, with q = 10 (um)^{-1}
 loadsuf=["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
 
 
-psistuff = PsiData(scan=scan,loadsuf=loadsuf,savesuf=loadsuf,name=f"psivsr{type}")
+psistuff = PsiData(scan=scan,loadsuf=loadsuf,savesuf=loadsuf,name=f"psivsr{type}",
+                   sfile_format=".png")
 
 rs = psistuff.r()*R_units
 psis = psistuff.psi()*180/np.pi

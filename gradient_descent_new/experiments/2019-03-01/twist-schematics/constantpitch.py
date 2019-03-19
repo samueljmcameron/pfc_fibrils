@@ -41,5 +41,5 @@ ax1.set_ylim(bottom=0)
 
 fig.subplots_adjust(left=0.2,bottom=0.15)
 
-fig.savefig('results/constant_pitch.pdf')
+fig.savefig('results/constant_pitch.png',dpi=300)
 
