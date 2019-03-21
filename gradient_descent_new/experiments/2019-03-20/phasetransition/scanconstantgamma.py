@@ -18,18 +18,13 @@ if __name__=="__main__":
     
     FAILED_E = 1e300
 
-    if len(sys.argv)<4:
-
-        user_input = input("input string of a gamma,k24,omega values, "
-                           "using comma as delimiter: ")
-        gamma,k24,omega = user_input.split(',')
-
-    else:
-
-        gamma,k24,omega = sys.argv[1],sys.argv[2],sys.argv[3]
+    k24s = ['-1.0','-0.8','-0.6','-0.4','-0.2','0.2','0.4','0.6','0.8','1.0']
 
 
-    Lambdas = np.linspace(30,44,num=15,endpoint=True)
+    gamma,k24,omega = sys.argv[1],k24s[int(sys.argv[2])],sys.argv[3]
+
+
+    Lambdas = np.linspace(0,1000,num=1001,endpoint=True)
 
     scan = {}
     scan['k_{24}'] = k24
@@ -38,10 +33,10 @@ if __name__=="__main__":
     
     loadsuf=["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
     savesuf=["K_{33}","k_{24}","\\omega","\\gamma_s"]
-    scan_dir = "scanbackward"
+    scan_dir = "scanforward"
 
-    i = len(Lambdas)-1
-    while (i >= 0):
+    i = 0
+    while (i < len(Lambdas)):
 
         Lambda = Lambdas[i]
         
@@ -100,7 +95,7 @@ if __name__=="__main__":
         else:
             # calculation ran smoothly.
             run.concatenate_observables("\\Lambda")
-            i-= 1
+            i+= 1
         
         Rguess,etaguess,deltaguess = str(Ri),str(etai),str(deltai)
 

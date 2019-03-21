@@ -18,15 +18,10 @@ if __name__=="__main__":
     
     FAILED_E = 1e300
 
-    if len(sys.argv)<4:
+    gammas = ['0.02','0.06','0.08','0.1','0.12']
 
-        user_input = input("input string of a gamma,k24,omega values, "
-                           "using comma as delimiter: ")
-        gamma,k24,omega = user_input.split(',')
 
-    else:
-
-        gamma,k24,omega = sys.argv[1],sys.argv[2],sys.argv[3]
+    gamma,k24,omega = gammas[int(sys.argv[1])],sys.argv[2],sys.argv[3]
 
 
     Lambdas = np.linspace(0,1000,num=1001,endpoint=True)
