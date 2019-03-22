@@ -57,7 +57,7 @@ int delta1var_driver(double *E,struct params *p,FILE *energy)
   my_func.params = p;
 
   size_t iter = 0;
-  size_t itermax = 100;
+  size_t itermax = 1000;
   int status;
 
   int poorscaling_count=0;
