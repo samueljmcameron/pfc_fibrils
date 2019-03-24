@@ -10,7 +10,7 @@ from observabledata import ObservableData
 from readparams import ReadParams
 
 
-gamma,omega = '0.04','10'
+gamma,omega = sys.argv[1],'10'
 
 width  = 3.375
 height = width
@@ -24,14 +24,13 @@ ax = {}
 
 data2d = {}
 
-colors = sns.color_palette()
+colors = sns.color_palette("hls",11)
 
 loadsuf = ["K_{33}","k_{24}","\\omega","\\gamma_s"]
 savesuf = loadsuf
 
 
 
-Lambdas = np.linspace(0,1000,num=1001,endpoint=True)
 #i_fwd = 38
 #ms_fwd = np.array([38,39],float)
 #ms_bkwd = np.array([37,38,39,40],float)
@@ -48,9 +47,11 @@ for i,observable in enumerate(observable_list):
     fig[observable].set_size_inches(width,height)
 
 
-k24s = ['-0.8','-0.4','0.0','0.4','0.8']
+k24s = ['-1.0','-0.8','-0.6','-0.4','-0.2','0.0',
+        '0.2','0.4','0.6','0.8','1.0']
 
 for js,k24 in enumerate(k24s):
+    print(k24)
 
     scan = {}
     scan['\\gamma_s']=gamma
@@ -59,6 +60,13 @@ for js,k24 in enumerate(k24s):
 
     obsfwd = ObservableData(["\\Lambda"],scan_dir='scanforward',scan=scan,loadsuf=loadsuf,
                             savesuf=savesuf)
+    if not obsfwd.file_exists:
+        continue
+
+    obsfwd.sort_observables()
+    obsfwd.remove_duplicates()
+
+    Lambdas = obsfwd.data[:,0]
     #obsbkwd = ObservableData(["\\Lambda"],scan_dir='scanbackward',scan=scan,loadsuf=loadsuf,
     #                         savesuf=savesuf)
     #obsbkwd.sort_observables()
@@ -66,7 +74,6 @@ for js,k24 in enumerate(k24s):
 
     ysfwd = [obsfwd.E(),obsfwd.R(),obsfwd.eta(),obsfwd.delta(),obsfwd.surfacetwist()]
     #ysbkwd = [obsbkwd.E(),obsbkwd.R(),obsbkwd.eta(),obsbkwd.delta(),obsbkwd.surfacetwist()]
-
 
     for i,observable in enumerate(observable_list):
 
@@ -83,7 +90,6 @@ for js,k24 in enumerate(k24s):
             ylabel = fr'$\{observable}$'
         else:
             ylabel = fr'${observable}$'
-
 
         ax[observable].plot(Lambdas[1:],ysfwd[i][1:],'.-',color=colors[js],
                             label=rf"$k_{{24}}={k24}$")

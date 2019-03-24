@@ -9,6 +9,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from readparams import ReadParams
+import os
 
 class ObservableData(ReadParams):
 
@@ -25,7 +26,13 @@ class ObservableData(ReadParams):
         self.xaxis = xaxis
         self.scan_dir = scan_dir
         self.name = name
-        self.data = np.loadtxt(self.observables_fname())
+        if os.path.isfile(self.observables_fname()):
+            self.data = np.loadtxt(self.observables_fname())
+            self.file_exists = True
+        else:
+            print("could not find a file by the name of ",
+                  self.observables_fname())
+            self.file_exists = False
 
         return
 
@@ -138,6 +145,14 @@ class ObservableData(ReadParams):
     def sort_observables(self):
 
         self.data = self.data[self.data[:,0].argsort()]
+
+        np.savetxt(self.observables_fname(),self.data,fmt='%13.6e',delimiter = '\t')
+
+        return
+
+    def remove_duplicates(self):
+
+        self.data = np.unique(self.data,axis=0)
 
         np.savetxt(self.observables_fname(),self.data,fmt='%13.6e',delimiter = '\t')
 

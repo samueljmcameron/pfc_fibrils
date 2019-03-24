@@ -10,7 +10,7 @@ from observabledata import ObservableData
 from readparams import ReadParams
 
 
-k24,omega = '0.0','10'
+k24,omega = sys.argv[1],'10'
 
 width  = 3.375
 height = width
@@ -30,8 +30,6 @@ loadsuf = ["K_{33}","k_{24}","\\omega","\\gamma_s"]
 savesuf = loadsuf
 
 
-
-Lambdas = np.linspace(0,1000,num=1001,endpoint=True)
 #i_fwd = 38
 #ms_fwd = np.array([38,39],float)
 #ms_bkwd = np.array([37,38,39,40],float)
@@ -48,7 +46,7 @@ for i,observable in enumerate(observable_list):
     fig[observable].set_size_inches(width,height)
 
 
-gammas = ['0.02','0.04','0.08','0.1','0.12']
+gammas = ['0.02','0.06','0.08','0.1','0.12']
 
 for js,gamma in enumerate(gammas):
 
@@ -59,6 +57,15 @@ for js,gamma in enumerate(gammas):
 
     obsfwd = ObservableData(["\\Lambda"],scan_dir='scanforward',scan=scan,loadsuf=loadsuf,
                             savesuf=savesuf)
+    if not obsfwd.file_exists:
+        continue
+
+    obsfwd.sort_observables()
+    obsfwd.remove_duplicates()
+
+    Lambdas = obsfwd.data[:,0]
+
+
     #obsbkwd = ObservableData(["\\Lambda"],scan_dir='scanbackward',scan=scan,loadsuf=loadsuf,
     #                         savesuf=savesuf)
     #obsbkwd.sort_observables()
