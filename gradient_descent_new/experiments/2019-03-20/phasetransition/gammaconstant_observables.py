@@ -12,7 +12,7 @@ from readparams import ReadParams
 
 gamma,omega = sys.argv[1],'10'
 
-width  = 3.375
+width  = 3.37
 height = width
 
 configure_fig_settings()
