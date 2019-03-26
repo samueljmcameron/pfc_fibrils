@@ -67,6 +67,19 @@ k24s = ['0.0','1.0']
 
 for js,pair in enumerate(zip(gammas,k24s)):
 
+    if js == 0:
+        Lambdalist=['184']
+        mtypes = ["s"]
+        ltypes = ["--"]
+    elif js == 1:
+        Lambdalist=['27']
+        mtypes = ["X","D"]
+        ltypes = ["-.",":"]
+        ms_lower = 43
+        ms_upper = 12
+
+    i_Lambda = int(Lambdalist[0])
+
     gamma = pair[0]
     k24 = pair[1]
 
@@ -80,14 +93,16 @@ for js,pair in enumerate(zip(gammas,k24s)):
 
     Lambdas = obsfwd.data[:,0]
 
-
-    #obsbkwd = ObservableData(["\\Lambda"],scan_dir='scanbackward',scan=scan,loadsuf=loadsuf,
-    #                         savesuf=savesuf)
-    #obsbkwd.sort_observables()
-
-
     ysfwd = [obsfwd.R(),obsfwd.surfacetwist()]
-    #ysbkwd = [obsbkwd.E(),obsbkwd.R(),obsbkwd.eta(),obsbkwd.delta(),obsbkwd.surfacetwist()]
+
+    if js == 1:
+        obsbkwd = ObservableData(["\\Lambda"],scan_dir='scanbackward',scan=scan,loadsuf=loadsuf,
+                                 savesuf=savesuf)
+        obsbkwd.sort_observables()
+        ysbkwd = [obsbkwd.R(),obsbkwd.surfacetwist()]
+
+
+
 
 
     for i,observable in enumerate(observable_list):
@@ -95,51 +110,60 @@ for js,pair in enumerate(zip(gammas,k24s)):
 
         if observable == 'surfacetwist':
             ylabel = r'$\psi(R)$'
-        elif observable == 'eta':
-            ylabel = r'$2\pi/\eta$'
-            ysfwd[i] = 2*np.pi/ysfwd[i]
-        elif observable == 'delta':
-            ylabel = r'$\delta/\delta_0$'
-            ysfwd[i] = ysfwd[i]/np.sqrt(2/3)
-        elif len(observable) > 1:
-            ylabel = fr'$\{observable}$'
         else:
             ylabel = fr'${observable}$'
 
 
-        ax[observable].plot(Lambdas[1:],ysfwd[i][1:],'.-',color=colors[js],
-                            label=rf"$(\gamma,k_{{24}})=({gamma},{k24})$")
+        if js == 0:
+            ax[observable].plot(Lambdas[1:],ysfwd[i][1:],'-',color=colors[js],
+                                label=rf"$(\gamma,k_{{24}})=({gamma},{k24})$",
+                                lw=3)
+        else:
+            ax[observable].plot(Lambdas[1:i_Lambda],ysfwd[i][1:i_Lambda],'-',color=colors[js],
+                                label=rf"$(\gamma,k_{{24}})=({gamma},{k24})$",
+                                lw=3)
+            ax[observable].plot(Lambdas[i_Lambda:ms_lower],
+                                ysfwd[i][i_Lambda:ms_lower],'-',color=colors[js],
+                                lw=1)
 
-        #ax[observable].plot(Lambdas[:i_fwd+1],ysfwd[i][:i_fwd+1],'.',color=colors[i])
-        #ax[observable].plot(Lambdas[i_fwd:i_fwd+2],ysfwd[i][i_fwd:i_fwd+2],'-',
-        #                    color=colors[i])
-        #ax[observable].plot(ms_bkwd,ysbkwd[i][1:],'-',color=colors[i])
-        #ax[observable].plot(Lambdas[i_fwd+2:],ysfwd[i][i_fwd+2:],'.',color=colors[i])
+            ax[observable].plot(Lambdas[ms_upper:i_Lambda],ysbkwd[i][ms_upper:i_Lambda],
+                                '-',color=colors[js],lw=1)
+            ax[observable].plot(Lambdas[i_Lambda:],ysbkwd[i][i_Lambda:],'-',color=colors[js],
+                                lw=3)
+            ax[observable].plot(Lambdas[i_Lambda],ysbkwd[i][i_Lambda],color=colors[js],
+                                marker=mtypes[1],markeredgewidth=0.5,markeredgecolor="w")
 
         ax[observable].set_ylabel(ylabel,fontsize = 10)
 
-        #ax[observable].tick_params("both",labelsize=18)
+        ax[observable].plot(Lambdas[i_Lambda],ysfwd[i][i_Lambda],color=colors[js],
+                            marker=mtypes[0],markeredgewidth=0.5,markeredgecolor="w")
+
         
     ax[observable].set_xlabel(r"$\Lambda$",fontsize = 10)
 
 
-    if js == 1:
-        for Lambda in ['24.0']:# ['1.0','24.0','184.0','1000.0']:
+    for ms,Lambda in enumerate(Lambdalist):
 
-            scan['\\Lambda'] = Lambda
+        scan['\\Lambda'] = Lambda
+        psistuff = PsiData(scan=scan,loadsuf=psi_loadsuf,savesuf=psi_loadsuf,
+                           name=f"psivsr")
+        ax["psi(r)"].plot(psistuff.r()/psistuff.r()[-1],psistuff.psi(),
+                          linestyle=ltypes[0],label=rf"$\Lambda={Lambda}$",
+                          color=colors[js],lw=3)
+
+        ax["psi(r)"].plot(1.0,psistuff.psi()[-1],marker=mtypes[ms],
+                          color=colors[js],markeredgewidth=0.5,markeredgecolor="w")
+
+        if Lambda == '27':
+
             psistuff = PsiData(scan=scan,loadsuf=psi_loadsuf,savesuf=psi_loadsuf,
-                               name=f"psivsr")
-            ax["psi(r)"].plot(psistuff.r()/psistuff.r()[-1],
-                              psistuff.psi(),label=rf"$\Lambda={Lambda}$",
-                              color=colors[js])
-
-            if Lambda == '24.0':
-
-                psistuff = PsiData(scan=scan,loadsuf=psi_loadsuf,savesuf=psi_loadsuf,
-                                   name=f"frustratedpsivsr")
-                ax["psi(r)"].plot(psistuff.r()/psistuff.r()[-1],psistuff.psi(),
-                                  label=rf"$\Lambda={Lambda}$",
-                                  color=colors[js])
+                               name=f"frustratedpsivsr")
+            ax["psi(r)"].plot(psistuff.r()/psistuff.r()[-1],psistuff.psi(),
+                              linestyle=ltypes[1],label=rf"$\Lambda={Lambda}$",
+                              color=colors[js],lw=3)
+            ax["psi(r)"].plot(1.0,psistuff.psi()[-1],marker=mtypes[ms+1],
+                              color=colors[js],markeredgewidth=0.5,
+                              markeredgecolor="w")
 
     
 
