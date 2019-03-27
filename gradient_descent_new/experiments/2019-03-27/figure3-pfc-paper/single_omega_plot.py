@@ -105,7 +105,7 @@ if __name__=="__main__":
                 ax[observable].plot(strains*100,ysfwd[i][:],'.-',color=colors[js],
                                     label=rf"$\Lambda={Lambda}$")
             ax[observable].set_ylabel(ylabel,fontsize = 10)
-            ax[observable].set_xlabel("strain (\%)",fontsize = 10)
+            ax[observable].set_xlabel(r"$\epsilon\times100\%$",fontsize = 10)
         
 
             
