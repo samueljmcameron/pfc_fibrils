@@ -16,11 +16,11 @@ class FibrilStrain(object):
         return
 
 
-    def mesh_polar(self,num_azm=50):
+    def mesh_polar(self,num_azm=50,grid_skip=1):
 
         azm = np.linspace(0,2*np.pi,num=num_azm)
 
-        rs,thetas = np.meshgrid(self.psidata.r(),azm)
+        rs,thetas = np.meshgrid(self.psidata.r()[::grid_skip],azm)
 
         return rs,thetas
 
@@ -41,9 +41,9 @@ class FibrilStrain(object):
 
         return (true_dband-preferred_dband)/dn
 
-    def strain_polar(self,r_mesh,denom='d(r)'):
+    def strain_polar(self,r_mesh,denom='d(r)',grid_skip=1):
 
-        return np.tile(self.strain_1d(denom=denom),
+        return np.tile(self.strain_1d(denom=denom)[::grid_skip],
                        (r_mesh.shape[0],1))
 
 

@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
@@ -10,7 +9,7 @@ from observabledata import ObservableData
 from fibrilstrain import FibrilStrain
 from midpointnormalize import MidpointNormalize
 import seaborn as sns
-
+from matplotlib.gridspec import GridSpec
 
 colors = sns.color_palette()
 
@@ -31,8 +30,17 @@ else:
     denom = sys.argv[5]
 
 
-type = input("Now input the type of psi vs r curve (linear, "
-             "constant, or no type in which case just press enter):\n")
+width  = 3.37*2
+height = width/3.0
+
+fig = plt.figure()
+fig.set_size_inches(width,height)
+gs = GridSpec(1,4,figure=fig,wspace=0.5)
+axarr = []
+
+axarr.append(fig.add_subplot(gs[0,:2]))
+axarr.append(fig.add_subplot(gs[0,2],projection='polar'))
+axarr.append(fig.add_subplot(gs[0,3],projection='polar'))
 
 scan = {}
 scan['\\gamma_s'] = gamma
@@ -41,70 +49,58 @@ scan['\\Lambda'] = Lambda
 scan['\\omega'] = omega
 
 
-R_units = 1000.0/10.0  # units of nano meters, with q = 10 (um)^{-1}
-
 loadsuf=["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
 
-
-psistuff = PsiData(scan=scan,loadsuf=loadsuf,savesuf=loadsuf,
-                   name=f"psivsr{type}")
-
-rs = psistuff.r()*R_units
-psis = psistuff.psi()*180/np.pi
-
-observablestuff = ObservableData(scan=scan,loadsuf=loadsuf,savesuf=loadsuf,
-                                 name=f"observables{type}")
-
-print(observablestuff.surfacetwist())
-
-R = observablestuff.R()*R_units
+label=["linear","frustrated"]
 
 
-fig = plt.figure()
-width  = 4
-height = width
-fig.set_size_inches(2*width,height)
+for i,type in enumerate(["","frustrated"]):
 
-ax1 = fig.add_subplot(1,2,1)
+
+    psistuff = PsiData(scan=scan,loadsuf=loadsuf,savesuf=loadsuf,
+                       name=f"{type}psivsr")
+
+    rs = psistuff.r()
+    psis = psistuff.psi()
+
+    observablestuff = ObservableData(scan=scan,loadsuf=loadsuf,savesuf=loadsuf,
+                                     name=f"{type}observables")
+
+    R = observablestuff.R()
 
 
 
-ax1.plot(rs,psis,'.',label=rf'$\Lambda={Lambda}$')
+    axarr[0].plot(rs/R,psis,'.',label=rf'{label[i]}')
 
-ax1.set_xlabel(r'$r$' ' ' r'$(\si{\nano\meter})$',fontsize=24)
-ax1.set_ylabel(r'$\psi(r)$' + " (" + r"$^\circ$" + ")",fontsize=24)
-ax1.legend(frameon=False,fontsize=24)
-ax1.tick_params("both",labelsize=18)
+    axarr[0].set_xlabel(r'$r$',fontsize=10)
+    axarr[0].set_ylabel(r'$\psi(r)$',fontsize=10)
+    axarr[0].legend(frameon=False)
 
+    fibrilstrain = FibrilStrain(psistuff,observablestuff,sfile_format='pdf')
 
+    rs,thetas = fibrilstrain.mesh_polar(grid_skip=4)
 
-ax2 = fig.add_subplot(1,2,2,projection='polar')
+    strains = fibrilstrain.strain_polar(rs,denom=denom,grid_skip=4)
 
-fibrilstrain = FibrilStrain(psistuff,observablestuff,sfile_format='png')
+    norm = MidpointNormalize(midpoint=0)
 
-rs,thetas = fibrilstrain.mesh_polar()
+    im = axarr[i+1].contourf(thetas,rs,strains,100,norm=norm,
+                      cmap='bwr')
 
-rs = rs*R_units
+    #clb = fig.colorbar(im,ax=axarr[i+1])
 
-strains = fibrilstrain.strain_polar(rs,denom=denom)
+    #clb.ax.set_title(rf'$\frac{{d-d(r)}}{{{denom}}}$')
 
-norm = MidpointNormalize(midpoint=0)
-
-im = ax2.contourf(thetas,rs,strains,100,norm=norm,
-                  cmap='bwr')
-
-#clb = fig.colorbar(im,ax=ax2)
-
-#clb.ax.set_title(rf'$\frac{{d-d(r)}}{{{denom}}}$')
-
-ax2.set_xticks([])
-ax2.set_yticks([])
+    axarr[i+1].set_xticks([])
+    axarr[i+1].set_yticks([])
 
 
-ax2.annotate(rf'$R={R:1.0f}\si{{\nano\meter}}$',xy=(5*np.pi/4,R-0.01*R),xytext=(5*np.pi/4,R+2/3*R-0.01*R),fontsize=20)
+    axarr[i+1].annotate(rf'$R={R:1.3f}$',xy=(5*np.pi/4,R-0.01*R),
+                        xytext=(5*np.pi/4,R+R-0.01*R),fontsize=20,
+                        color=colors[i])
 
 
-fig.subplots_adjust(left=0.15,bottom=0.2,right=0.95)
+fig.subplots_adjust(left=0.1,bottom=0.2,right=0.95)
 
-fig.savefig(fibrilstrain.strain_sname(descriptor=f'polar_{denom}_{type}'),dpi=300)
+fig.savefig(fibrilstrain.strain_sname(descriptor=f'polar_{denom}_{type}'))
 
