@@ -1,0 +1,3 @@
+Testing out what might happen if I "pull" on the fibrils, by setting my eta value as eta = eta_eq/(1+u), where u is the strain, and then minimizing the free energy with respect to R and delta. The catch to this experiment is that you technically need to do two things, first find the equilibrium, non-strained value of eta, which is eta_eq. Then you hold this value constant, and add a non zero strain, and then minimize to find the equilibrium for that strain.
+
+It seems like after you get past a very small amount of strain, you end up driving the fibril size to R-> infinity...
