@@ -50,7 +50,7 @@ void reset_guess_vals(struct params *p)
 void save_observables(FILE *observables,double E,struct params *p)
 {
 
-  fprintf(observables,"%13.6e\t%13.6e\t%13.6e\t%13.6e\t%13.6e\n",
+  fprintf(observables,"%15.8e\t%15.8e\t%15.8e\t%15.8e\t%15.8e\n",
 	  E,p->R,p->eta,p->delta,p->y[1][p->mpt]);
   return;
 }
