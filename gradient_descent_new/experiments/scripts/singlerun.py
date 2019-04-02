@@ -22,12 +22,13 @@ class SingleRun(object):
     #  executable - the executable that creates and writes the output files
     
     def __init__(self,readparams,tmp_path="../../../tmp_data/",scan_dir="",
-                 params=None,executable="../../../bin/full3var_onerun"):
+                 params=None,executable="../../../bin/full3var_onerun",strain=None):
 
         self.readparams = readparams
         self.tmp_path = tmp_path
         self.executable = executable
         self.scan_dir = scan_dir
+        self.strain = strain
         if (params == None):
             self.params = self.readparams.params
         else:
@@ -38,7 +39,11 @@ class SingleRun(object):
     def run_exe(self):
         # run c executable to determine psi(r), R, delta, etc.
 
-        subprocess.run([self.executable,self.tmp_path,*self.params.values()],check=True)
+        if self.strain == None:
+            subprocess.run([self.executable,self.tmp_path,*self.params.values()],check=True)
+
+        else:
+            subprocess.run([self.executable,self.tmp_path,*self.params.values(),self.strain],check=True)
 
         return
 
@@ -80,10 +85,14 @@ class SingleRun(object):
 
         return observables
     
-    def mv_file(self,mname,newname=None):
+    def mv_file(self,mname,newname=None,strain=None):
         # move a file from the temporary file folder to the data folder.
     
         suffix = self.readparams.write_suffix()
+
+        if strain != None:
+
+            suffix = suffix + f"_{float(strain):1.4e}"
 
         fname = f"_{mname}_{suffix}.txt"
 

@@ -1,0 +1,1 @@
+straining fibrils with (gamma,k24) = (0.12,1) at Lambda = 1,10,100. Trying to reproduce the bell meek data 2018. Note that the calculation is very quick, so in the interest of saving space, I have deleted the data which generated the results plots. It can be easily re-generated using the pulling.py script.
