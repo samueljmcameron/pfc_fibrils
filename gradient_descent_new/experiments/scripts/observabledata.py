@@ -142,11 +142,12 @@ class ObservableData(ReadParams):
 
         return result
     
-    def sort_observables(self):
+    def sort_observables(self,observables_num=5):
 
         self.data = self.data[self.data[:,0].argsort()]
 
-        np.savetxt(self.observables_fname(),self.data,fmt='%13.6e',delimiter = '\t')
+        np.savetxt(self.observables_fname(),self.data,
+                   fmt='\t'.join(["%13.6e"] + ["%15.8e"]*observables_num))
 
         return
 
@@ -154,6 +155,7 @@ class ObservableData(ReadParams):
 
         self.data = np.unique(self.data,axis=0)
 
-        np.savetxt(self.observables_fname(),self.data,fmt='%13.6e',delimiter = '\t')
+        np.savetxt(self.observables_fname(),self.data,
+                   fmt='\t'.join(["%13.6e"] + ["%15.8e"]*observables_num))
 
         return
