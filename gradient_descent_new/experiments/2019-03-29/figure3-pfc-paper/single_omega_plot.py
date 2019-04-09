@@ -17,8 +17,8 @@ if __name__=="__main__":
     height = width*1.5
 
 
-    k24 = '0.0'
-    gamma = '0.04'
+    k24 = '1.0'
+    gamma = '0.12'
     omega = sys.argv[1]
 
     scan = {}
@@ -30,6 +30,7 @@ if __name__=="__main__":
     #Larray[0] = 1.0
 
     Larray = np.array([1.0,10.0,100.0,1000.0],float)
+
 
     #Larray = np.array([1.0,10.0,150.0,650.0,810.0],float)
 
@@ -122,6 +123,9 @@ if __name__=="__main__":
             ax[observable].legend(frameon=False)
         if observable == "surfacetwist":
             ax[observable].set_ylim(top=0.4)
+            strainpoints= np.array([0.01,1.4,2.8,5.0],float)
+            tilt = np.array([16,14,12,11],float)*np.pi/180
+            ax[observable].plot(strainpoints,tilt,'k^')
     fig.subplots_adjust(left=0.2,right=0.8,bottom=0.1,top=0.95,hspace=0.05)
     fig.savefig(obsfwd.observable_sname("multiLambda-observable-vsstrain",plot_format="pdf"))
 

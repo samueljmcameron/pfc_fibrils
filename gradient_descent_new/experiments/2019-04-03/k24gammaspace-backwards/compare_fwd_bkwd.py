@@ -37,7 +37,8 @@ scan = {}
 scan['\\Lambda']=Lambda
 scan['\\omega']=omega
 
-
+gammacoexist = []
+k24coexist = []
 
 # load in 2d grid of data in data2d for each observable at the
 # specified gamma,k24 pair.
@@ -71,6 +72,14 @@ for i,k24 in enumerate(k24s):
         pstr = f"{k24:.2e} {gammas[j]:.2e} {jsmall} {obsfwd.R()[j]:.2e} {obsbkwd.R()[j]:.2e}"
         print(pstr)
         data2d[i,j] = 1
+        gammacoexist.append(obsfwd.data[j,0])
+        k24coexist.append(k24)
+
+scoexist = np.array([gammacoexist,k24coexist],float)
+
+np.savetxt(obsfwd.observable_sname("coexistence",plot_format='txt'),scoexist.T,
+           fmt="%8.4e")
+
 
 width = 3.37
 height = width
