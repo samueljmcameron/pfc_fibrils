@@ -1,0 +1,1 @@
+The other folder in this 2019-04-03 directory has all of the k24 gamma space results, but for whatever reason the calculation failed at certain points. So this folder is just performing those failed calculations to fill in the blanks.

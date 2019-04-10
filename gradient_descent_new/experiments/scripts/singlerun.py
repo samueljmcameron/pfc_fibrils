@@ -151,7 +151,9 @@ class SingleRun(object):
 
                 for line in f2:
 
-                    f1.write(f"{self.add_datastring(vrs,externalparam=externalparam)}\t{line}")
+                    f1.write(f"{self.add_datastring(vrs,externalparam=externalparam)}"
+                             + f"\t{line}")
+            
 
             if os.path.isfile(fname):
 
