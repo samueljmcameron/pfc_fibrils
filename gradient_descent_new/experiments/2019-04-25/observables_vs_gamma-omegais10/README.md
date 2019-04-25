@@ -1,0 +1,1 @@
+In this folder, I will plot (for a few different k24 values near the coexistence line) R, psi(R), and maybe more vs gamma. I got the data from the 2019-04-09 folder where Lambda = 27 and omega = 10.

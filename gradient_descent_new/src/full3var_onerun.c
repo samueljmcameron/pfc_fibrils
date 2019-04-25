@@ -46,11 +46,15 @@ int main(int argc, char **argv)
 
   int calculation = full3var_driver(&E,&p,(NULL));
 
+  int max_iterations=10;
   
-  if (calculation == DRIVER_POORSCALING) {
+  int k0 = 0;
+
+  while (calculation == DRIVER_POORSCALING && k0 < max_iterations) {
     printf("RETRYING!\n");
     reset_guess_vals(&p);
     calculation = full3var_driver(&E,&p,(NULL));
+    k0 += 1;
   }
   if (calculation == DRIVER_SUCCESS) {
     printf("success!\n");
