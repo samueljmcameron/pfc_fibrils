@@ -1,0 +1,1 @@
+Pulling on fibrils with gamma = 0.12, and k24 = 1.
