@@ -1,3 +1,6 @@
+# for some reason, really tough to get this working well in manual contour labelling mode.
+
+
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
@@ -16,8 +19,12 @@ height = width
 
 configure_fig_settings()
 
+print('MANUAL CONTOURS ARE NOT WORKING WELL, SO BE SURE THAT THE FIGURES'
+      'WITH THE CORRECT CONTOURS ARE SAVED BEFORE CONTINUING')
+
+
 #observable_list = ['E','R','eta','delta','surfacetwist']
-observable_list = ['eta']
+#observable_list = ['eta']
 
 observable_levels = {}
 
@@ -195,14 +202,14 @@ for observable in observable_list:
                                  observable_levels[observable],
                                  colors='k',linestyles='dashed',linewidths=1)
 
-    ax[observable].clabel(css,manual=True,fontsize=10,inline=1,fmt='%1.2f')
+    #ax[observable].clabel(css,manual=True,fontsize=10,inline=1,fmt='%1.2f')
+    ax[observable].clabel(css,fontsize=10,inline=1,fmt='%1.2f')
     ax[observable].set_yticks([-1,-0.5,0,0.5,1])
     ax[observable].set_xlabel(r"$\gamma$",fontsize=10)
     ax[observable].set_ylabel(r"$k_{24}$",fontsize=10)
-
+    
 
 coexist = np.loadtxt(obs.observable_sname("coexistence",plot_format="txt"))
-
 
 for observable in observable_list:
     
