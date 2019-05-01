@@ -6,9 +6,8 @@ import seaborn as sns
 sys.path.append('../../../../scripts/')
 from fig_settings import configure_fig_settings
 sys.path.append('../../scripts/')
-from plotobservables import PlotObservables
+from observabledata import ObservableData
 from gridmbyn import GridmByn
-from readparams import ReadParams
 
 
 width  = 3.487
@@ -128,6 +127,7 @@ for observable in observable_list:
 scan = {}
 scan['\\Lambda']=sys.argv[1]
 scan['\\omega']=sys.argv[2]
+scan_dir=sys.argv[3]
 
 
 
@@ -137,9 +137,8 @@ for om,k24 in enumerate(k24s):
     
     scan['k_{24}']=str(k24)
     
-    rp = ReadParams(scan=scan,loadsuf=loadsuf,savesuf=savesuf)
-
-    obs = PlotObservables(["\\gamma_s"],rp,scan_dir='scanforward')
+    obs = ObservableData(["\\gamma_s"],scan=scan,loadsuf=loadsuf,savesuf=savesuf,
+                         scan_dir=scan_dir)
     print(k24)
     for observable in observable_list:
 

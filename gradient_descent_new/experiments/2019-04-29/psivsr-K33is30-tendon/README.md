@@ -1,0 +1,1 @@
+Producing psi-vs-r plots for the two qualitatively different cases of fibrils. Keeping k24,omega,Lambda constant while varying gamma.

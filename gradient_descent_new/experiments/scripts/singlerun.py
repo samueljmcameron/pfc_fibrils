@@ -116,7 +116,10 @@ class SingleRun(object):
             dstring = '\t'.join(map("{:13.6e}".format,a))
         elif vrs == None:
             a = externalparam
-            dstring = f"{a:13.6e}"
+            if isinstance(externalparam,list):
+                dstring = '\t'.join(map("{:13.6e}".format,a))
+            else:
+                dstring = f"{a:13.6e}"
 
         else:
             a = float(self.params[vrs])
@@ -124,9 +127,13 @@ class SingleRun(object):
 
         return dstring
 
-    def remove_file(self,fname="observables"):
+    def remove_file(self,fname="observables",strain=None):
 
         suffix = self.readparams.write_suffix()
+
+        if strain != None:
+
+            suffix = suffix + f"_{float(strain):1.4e}"
 
         fname = f"data/_{fname}_{suffix}.txt"
 

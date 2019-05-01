@@ -34,7 +34,7 @@ if __name__=="__main__":
     savesuf = ["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
 
     #observable_list = ["E","R","delta","surfacetwist","stress"]
-    observable_list = ["stress","delta","surfacetwist"]
+    observable_list = ["stress","surfacetwist","delta"]
 
 
 
@@ -43,6 +43,10 @@ if __name__=="__main__":
     fig.set_size_inches(width,height)
 
     ax = {}
+
+    q = 24.0 # um^{-1}
+
+    K_22 = 6 # pN
 
     for i,observable in enumerate(observable_list):
 
@@ -54,15 +58,14 @@ if __name__=="__main__":
 
     obsfwd = ObservableData(["strain"],scan_dir='scanforward',scan=scan,loadsuf=loadsuf,
                             savesuf=savesuf)
-    Req = obsfwd.R()[0]
-    #obsfwd.sort_observables()
-    #obsfwd.remove_duplicates()
+    Req = obsfwd.R()[0]/q*1000 # nm
+
 
     strains = obsfwd.data[:,0]
-    stresses = np.gradient(obsfwd.E(),strains)
+    stresses = np.gradient(obsfwd.E(),strains)*K_22*q*q/1e3 # in kPa
     stresses[0] = 0.0
-    #ysfwd = [obsfwd.E(),obsfwd.R(),obsfwd.delta(),obsfwd.surfacetwist(),stresses]
-    ysfwd = [stresses,obsfwd.delta(),obsfwd.surfacetwist()]
+
+    ysfwd = [stresses,obsfwd.surfacetwist(),obsfwd.delta()]
     if obsfwd.E()[0] > 1e299:
         print("bad calculation at Lambda = ",Lambda)
 
@@ -72,9 +75,9 @@ if __name__=="__main__":
 
 
         if observable == 'surfacetwist':
-            ylabel = r'$\psi(R)$'
+            ylabel = r'$\psi(R)$' + ' (' + r'$\si{\radian}$' + ')'
         elif observable == "stress":
-            ylabel = r"$\sigma$"
+            ylabel = r"$\sigma$" + ' (' + r'$\si{\kilo\pascal}$' + ')'
         elif observable == 'delta':
             ylabel = r'$\delta/\delta_0$'
             ysfwd[i] = ysfwd[i]/np.sqrt(2/3)
@@ -89,7 +92,7 @@ if __name__=="__main__":
             ys = a[a>0]
             ax[observable].plot(xs,ys,'.-',color=colors[0],
                                 label=rf"$\Lambda={Lambda}$")
-            Y = np.gradient(ys,xs/100)[2]
+            Y = np.gradient(ys,xs/100)[2]/1e3
         else:
             ax[observable].plot(strains*100,ysfwd[i][:],'.-',color=colors[0],
                                 label=rf"$\Lambda={Lambda}$")
@@ -100,14 +103,9 @@ if __name__=="__main__":
             
     for observable in observable_list:
 
-        #ax[observable].set_xscale('log')
-        if observable == "R":
-            ax[observable].legend(frameon=False)
         if observable == "stress":
-            ax[observable].text(0.1,30,f"Youngs modulus\n={Y:3.0f}")
-        if observable == "delta":
-            ax[observable].legend(frameon=False)
-            ax[observable].text(0.1,0.94,"incompressible")
+            ax[observable].text(0.1,100,f"Youngs modulus\n={Y:3.0f}"
+                                + r"$\si{\mega\pascal}$")
         if observable == "surfacetwist":
             ax[observable].text(2,0.26,rf"$R_{{eq}}=\num{{{Req:1.1e}}}$")
             strainpoints= np.array([0.01,1.4,2.8,5.0],float)

@@ -1,8 +1,3 @@
-################################################################################
-# This file can only be run if the corresponding deltazero_energy.py script    #
-# has been run first! Otherwise, 'observables_Emin' type file below will not   #
-# exist and the script will fail. #
-################################################################################
 
 import numpy as np
 import subprocess
