@@ -30,11 +30,11 @@ if __name__=="__main__":
 
         user_input = input("input string of a gamma,k24,omega values, "
                            "using comma as delimiter: ")
-        gamma,k24,omega,Lambda = user_input.split(',')
+        gamma,k24,Lambda,omega = user_input.split(',')
 
     else:
 
-        gamma,k24,omega,Lambda = sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4]
+        gamma,k24,Lambda,omega = sys.argv[1],sys.argv[2],sys.argv[3],sys.argv[4]
 
     
     FAILED_E = 1e300

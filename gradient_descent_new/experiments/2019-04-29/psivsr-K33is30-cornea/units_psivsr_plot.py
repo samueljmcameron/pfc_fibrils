@@ -15,11 +15,11 @@ colors = sns.color_palette()
 
 configure_fig_settings()
 
-gammas = [0.15]
+gamma = sys.argv[1]
 
-k24 = 0.8
-Lambda = 0.9
-omega = 20.0
+k24 = sys.argv[2]
+Lambda = sys.argv[3]
+omega = sys.argv[4]
 
 fig = plt.figure()
 width  = 3.37
@@ -32,27 +32,27 @@ loadsuf=["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
 savesuf=["K_{33}","k_{24}","\\Lambda","\\omega"]
 
 
-q = 24/1000 # nm^{-1}
-
-for i,gamma in enumerate(gammas):
-
-    scan = {}
-    scan['\\gamma_s'] = gamma
-    scan['k_{24}'] = k24
-    scan['\\Lambda'] = Lambda
-    scan['\\omega'] = omega
+q = 110/1000 # nm^{-1}
 
 
 
+scan = {}
+scan['\\gamma_s'] = gamma
+scan['k_{24}'] = k24
+scan['\\Lambda'] = Lambda
+scan['\\omega'] = omega
 
 
-    psistuff = PsiData(scan=scan,loadsuf=loadsuf,savesuf=savesuf,name=f"psivsr",
-                       sfile_format="pdf")
 
-    rs = psistuff.r()
-    psis = psistuff.psi()
 
-    ax1.plot(rs/q,psis,'k-',label=rf'$\gamma={gamma}$',lw=2)
+
+psistuff = PsiData(scan=scan,loadsuf=loadsuf,savesuf=savesuf,name=f"psivsr",
+                   sfile_format="pdf")
+
+rs = psistuff.r()
+psis = psistuff.psi()
+
+ax1.plot(rs/q,psis,'k-',label=rf'$\gamma={gamma}$',lw=2)
 
 ax1.set_xlabel(r'$r$' + ' (' + r'$\si{\nano\meter}$' + ')',fontsize=10)
 ax1.set_ylabel(r'$\psi(r)$' + ' (' + r'$\si{\radian}$' + ')',fontsize=10)

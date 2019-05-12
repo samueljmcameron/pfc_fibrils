@@ -19,8 +19,8 @@ if __name__=="__main__":
 
     gamma = sys.argv[1]
     k24 = sys.argv[2]
-    omega = sys.argv[3]
-    Lambda = sys.argv[4]
+    Lambda = sys.argv[3]
+    omega = sys.argv[4]
 
     scan = {}
     scan['\\gamma_s']=gamma
@@ -56,7 +56,7 @@ if __name__=="__main__":
 
 
 
-    obsfwd = ObservableData(["strain"],scan_dir='scanforward',scan=scan,loadsuf=loadsuf,
+    obsfwd = ObservableData(["strain","averagetwist"],scan_dir='scanforward',scan=scan,loadsuf=loadsuf,
                             savesuf=savesuf)
     Req = obsfwd.R()[0]/q*1000 # nm
 
@@ -86,16 +86,19 @@ if __name__=="__main__":
         else:
             ylabel = fr'${observable}$'
 
+        a = ysfwd[i][:]
+        xs = strains[a>0]*100
+        ys = a[a>0]
+
         if observable == "stress":
-            a = ysfwd[i][:]
-            xs = strains[a>0]*100
-            ys = a[a>0]
             ax[observable].plot(xs,ys,'.-',color=colors[0],
                                 label=rf"$\Lambda={Lambda}$")
             Y = np.gradient(ys,xs/100)[2]/1e3
         else:
             ax[observable].plot(strains*100,ysfwd[i][:],'.-',color=colors[0],
                                 label=rf"$\Lambda={Lambda}$")
+            slope = np.gradient(ys,xs)[2]
+            print(f"for {observable}, slope is {slope}")
         ax[observable].set_ylabel(ylabel,fontsize = 10)
         ax[observable].set_xlabel(r"$\epsilon\times100\%$",fontsize = 10)
 
@@ -108,11 +111,17 @@ if __name__=="__main__":
                                 + r"$\si{\mega\pascal}$")
         if observable == "surfacetwist":
             ax[observable].text(2,0.26,rf"$R_{{eq}}=\num{{{Req:1.1e}}}$")
-            strainpoints= np.array([0.01,1.4,2.8,5.0],float)
-            tilt = np.array([16,14,12,11],float)*np.pi/180
-            ax[observable].plot(strainpoints,tilt,'k^')
+            expdata = np.loadtxt("data/BellMeek2018.txt")
+
+            strainpoints= expdata[:,1]
+            tilt = expdata[:,2]*np.pi/180
+            ax[observable].plot(strainpoints*100,tilt,'k^')
+            slope = np.gradient(tilt,strainpoints*100)[2]
+            print(f"for experiment, slope is {slope}")
+
+
     fig.subplots_adjust(left=0.2,right=0.8,bottom=0.1,top=0.95,hspace=0.05)
-    fig.savefig(obsfwd.observable_sname("multiLambda-observable-vsstrain",plot_format="pdf"))
+    fig.savefig(obsfwd.observable_sname("psi_etc-vsstrain",plot_format="pdf"))
 
     plt.show()
 
