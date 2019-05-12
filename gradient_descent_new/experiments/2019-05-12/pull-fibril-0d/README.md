@@ -1,0 +1,1 @@
+Pulling on fibrils while keeping delta constant, decreasing R and decreasing eta.
