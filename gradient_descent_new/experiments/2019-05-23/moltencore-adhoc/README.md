@@ -1,0 +1,1 @@
+Just taking a tendon fibril psi(r), and seeing if the energy becomes smaller by introducing a finite shell in an ad-hoc way by saying that the d-band amplitude delta is only non zero from [R0,R] instead of from [0,R].

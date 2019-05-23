@@ -1,0 +1,1 @@
+Altering a plot from 2019-04-26/pulling-… for Andrew. It’s the tendon plot with stress strain and twist strain, but I’m adding also the delta strain.
