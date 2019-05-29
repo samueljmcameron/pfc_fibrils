@@ -85,7 +85,7 @@ if __name__=="__main__":
             if observable == 'surfacetwist':
                 ylabel = r'$<\psi>$' + ' (' + r"$\si{\radian}$" + ')'
             elif observable == "stress":
-                ylabel = r"$\sigma$" + ' (' + r"$\si{\kilo\pascal}$" + ')'
+                ylabel = r"$\tilde{\sigma}$" + ' (' + r"$\si{\kilo\pascal}$" + ')'
             elif observable == 'delta':
                 ylabel = r'$\delta/\delta_0$'
                 ysfwd[j] = ysfwd[j]/np.sqrt(2/3)

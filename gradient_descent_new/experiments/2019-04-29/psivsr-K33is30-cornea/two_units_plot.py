@@ -67,8 +67,8 @@ for i,type in enumerate(types):
 
     print("surface twist = ",psis[-1]," rad.")
 
-ax1.set_xlabel(r'$r$' + ' (' + r'$\si{\nano\meter}$' + ')',fontsize=10)
-ax1.set_ylabel(r'$\psi(r)$' + ' (' + r'$\si{\radian}$' + ')',fontsize=10)
+ax1.set_xlabel(r'$\tilde{r}$' + ' (' + r'$\si{\nano\meter}$' + ')',fontsize=10)
+ax1.set_ylabel(r'$\psi(\tilde{r})$' + ' (' + r'$\si{\radian}$' + ')',fontsize=10)
 ax1.set_xlim(left=0)
 ax1.set_ylim(bottom=0)
 ax1.legend(frameon=False,fontsize=10)

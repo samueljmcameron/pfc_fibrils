@@ -15,11 +15,11 @@ colors = sns.color_palette()
 
 configure_fig_settings()
 
-gamma = 0.04
+gammas = [0.15]
 
-k24 = 0.5
-Lambda = 600
-omega = 20
+k24 = 0.8
+Lambda = 0.9
+omega = 20.0
 
 fig = plt.figure()
 width  = 3.37
@@ -29,49 +29,39 @@ fig.set_size_inches(width,height)
 ax1 = fig.add_subplot(1,1,1)
 
 loadsuf=["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
-savesuf = loadsuf
+savesuf=["K_{33}","k_{24}","\\Lambda","\\omega"]
 
 markertypes=['--','-.']
 
 
-q = 4/1000 # nm^{-1}
+for i,gamma in enumerate(gammas):
 
-scan = {}
-scan['\\gamma_s'] = gamma
-scan['k_{24}'] = k24
-scan['\\Lambda'] = Lambda
-scan['\\omega'] = omega
-
-types = ['linear','frustrated']
-
-for i,type in enumerate(types):
+    scan = {}
+    scan['\\gamma_s'] = gamma
+    scan['k_{24}'] = k24
+    scan['\\Lambda'] = Lambda
+    scan['\\omega'] = omega
 
 
 
 
 
-    psistuff = PsiData(scan=scan,loadsuf=loadsuf,savesuf=savesuf,name=f"psivsr_{type}",
+    psistuff = PsiData(scan=scan,loadsuf=loadsuf,savesuf=savesuf,name=f"psivsr",
                        sfile_format="pdf")
 
-    rs = psistuff.r()/q
+    rs = psistuff.r()
     psis = psistuff.psi()
 
-    ax1.plot(rs,psis,markertypes[i],label=f'{type} tendon',lw=2)
+    ax1.plot(rs/rs[-1],psis,markertypes[i],label=rf'$\gamma={gamma}$',lw=2)
 
-    print("Radius = ",rs[-1], " nm.")
-
-    print("surface twist = ",psis[-1]," rad.")
-
-ax1.set_xlabel(r'$\tilde{r}$' + ' (' + r'$\si{\nano\meter}$' + ')',fontsize=10)
-ax1.set_ylabel(r'$\psi(\tilde{r})$' + ' (' + r'$\si{\radian}$' + ')',fontsize=10)
+ax1.set_xlabel(r'$r/R$',fontsize=10)
+ax1.set_ylabel(r'$\psi(r)$',fontsize=10)
 ax1.set_xlim(left=0)
 ax1.set_ylim(bottom=0)
 ax1.legend(frameon=False,fontsize=10)
 
 
 fig.subplots_adjust(left=0.2,bottom=0.2)
-
-psistuff.name = f"coexistingtendons"
 
 fig.savefig(psistuff.psivsr_sname())
 
