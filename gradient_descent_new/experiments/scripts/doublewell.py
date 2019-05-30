@@ -12,44 +12,20 @@ class DoubleWell(object):
     #  tmp_path - the path of where the output files are stored initially
     #  executable - the executable that creates and writes the output files
     
-    def __init__(self,datfile='data/input.dat',scan={},params=None,
-                 tmp_path="../../../tmp_data/",
-                 executable="../../../bin/double_well_scan"):
+    def __init__(self,readparams,tmp_path="../../../tmp_data/",
+                 params=None,executable="../../../bin/double_well_scan"):
 
-        self.datfile = datfile
+        self.readparams = readparams
         self.tmp_path = tmp_path
         self.executable = executable
-        self.scan = scan
+
         if (params == None):
-            self.params = self.read_params()
+            self.params = self.readparams.params
         else:
             self.params = params
-        
+
         return
 
-    def set_param(self,key,val):
-        
-        for scan_key,scan_val in self.scan.items():
-
-            if (key == scan_key):
-                return scan_val
-
-        return val
-
-    
-    def read_params(self):
-        # read input parameters from datfile.
-
-        params = []
-        
-        with open(self.datfile) as f:
-
-            for line in f:
-
-                (key,val) = line.split()
-                params.append(self.set_param(key,val))
-
-        return params
 
 
     def run_exe(self,valgrind = False):
@@ -57,9 +33,9 @@ class DoubleWell(object):
 
         if valgrind:
             subprocess.run(['valgrind','--track-origins=yes',self.executable,self.tmp_path,
-                            *self.params],check=True)
+                            *self.params.values()],check=True)
         else:
-            subprocess.run([self.executable,self.tmp_path,*self.params],check=True)
+            subprocess.run([self.executable,self.tmp_path,*self.params.values()],check=True)
 
         return
 
@@ -70,17 +46,24 @@ class DoubleWell(object):
         
         return suffix
 
-    def mv_file(self):
+    def mv_file(self,mname,newname=None):
         # move a file from the temporary file folder to the data folder.
     
-        suffix = self.write_suffix(self.params[:6])
+        suffix = self.readparams.write_suffix()
 
-        fname = f"_Evst_{suffix}.txt"
+
+        fname = f"_{mname}_{suffix}.txt"
 
         mvfrom = f"{self.tmp_path}{fname}"
 
-        mvto = f"data/{fname}"
+        if newname != None:
+            newfname = f"_{newname}_{suffix}.txt"
+        else:
+            newfname = fname
+
+        mvto = f"data/{newfname}"
 
         subprocess.run(["mv",mvfrom,mvto],check=True)
 
         return
+

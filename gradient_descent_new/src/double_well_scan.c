@@ -37,11 +37,12 @@ int main(int argc, char **argv)
   initialize_param_vectors(&p);
 
   double *x0; // this will hold the coordinates at the first minimum (smaller R)
-  x0 = vector(1,X_SIZE);
+  p.x_size = 3;
+  x0 = vector(1,p.x_size);
   initialize_first_xpoint_x0(x0,&p);
 
   double *x1; // this will hold the coordinates at the second minimum (larger R)
-  x1 = vector(1,X_SIZE);
+  x1 = vector(1,p.x_size);
   initialize_second_xpoint_x1(x1,&p);
 
 
@@ -71,13 +72,14 @@ int main(int argc, char **argv)
     x_of_t(&p,t,x0,x1);
 
     E = E_calc(&p);
+    printf("E=%lf\n",E);
 
     fprintf(Evst,"%13.6e\t%13.6e\n",t,E);
 
   }
 
-  free_vector(x0,1,X_SIZE);
-  free_vector(x1,1,X_SIZE);
+  free_vector(x0,1,p.x_size);
+  free_vector(x1,1,p.x_size);
   
   free_vector(p.r,1,MAX_M);
   free_matrix(p.y,1,NE,1,MAX_M);
@@ -96,21 +98,21 @@ int main(int argc, char **argv)
 int set_numpoints(char **args)
 {
   int n;
-  sscanf(args[16],"%d",&n);
+  sscanf(args[15],"%d",&n);
   return n;
 }
 
 double set_t_start(char **args)
 {
   double t0;
-  sscanf(args[14],"%lf",&t0);
+  sscanf(args[13],"%lf",&t0);
   return t0;
 }
 
 double set_t_end(char **args)
 {
   double t1;
-  sscanf(args[15],"%lf",&t1);
+  sscanf(args[14],"%lf",&t1);
   return t1;
 }
 

@@ -1,58 +1,47 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from readparams import ReadParams
+import os
 
 
-class PlotDoubleWell(object):
+class PlotDoubleWell(ReadParams):
 
-    def __init__(self,gamma,k24,omega,Lambda,ax,K33=30.0,d0=1.0,lpath="data/",
-                 spath="results/",plot_format="pdf"):
+    def __init__(self,xaxis=None,scan_dir="",datfile="data/input.dat",scan={},
+                 loadsuf=["K_{33}","k_{24}","\\Lambda",
+                          "\\omega","\\gamma_s"],
+                 savesuf=["K_{33}","k_{24}","\\Lambda",
+                          "\\omega","\\gamma_s"],
+                 name= "Evst"):
 
-        self.gamma = gamma
-        self.k24 = k24
-        self.omega = omega
-        self.Lambda = Lambda
-        self.K33 = K33;
-        self.d0 = d0;
-        self.spath = spath
-        self.lpath = lpath
-        self.plot_format = plot_format
-        self.ax = ax
+        ReadParams.__init__(self,datfile=datfile,
+                            scan=scan,loadsuf=loadsuf,savesuf=savesuf)
+
+        self.xaxis = xaxis
+        self.scan_dir = scan_dir
+        self.name = name
+        if os.path.isfile(self.fname()):
+            self.data = np.loadtxt(self.fname())
+            self.file_exists = True
+        else:
+            print("could not find a file by the name of ",
+                  self.fname())
+            self.file_exists = False
+
+        return
 
     def fname(self):
-
-        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}_{self.omega:.4e}"
-                  f"_{self.Lambda:.4e}_{self.gamma:.4e}")
     
-        return f"{self.lpath}_Evst{suffix}.txt"
+        suffix = self.write_suffix()
+
+        if self.scan_dir != "":
+            fname =f"data/_{self.name}_{self.scan_dir}_{suffix}.txt"
+        else:
+            fname =f"data/_{self.name}_{suffix}.txt"
+        return fname
     
-    def sname(self):
+    def sname(self,varname,plot_format="pdf"):
 
-        suffix = (f"_{self.K33:.4e}_{self.k24:.4e}"
-                  f"_{self.gamma:.4e}")
-        return f"{self.spath}_Evst{suffix}.{self.plot_format}"
+        suffix = self.write_suffix(suffix_type="save")
 
-    def plot_dw(self,label=None,markertype='.',color=None):
+        return f"results/_{varname}_{suffix}.{plot_format}"
 
-        data = np.loadtxt(self.fname())
-        ts = data[:,0]
-        Es = data[:,1]
-        if color == None:
-            self.ax.plot(ts,Es,markertype,label=label)
-        else:
-            self.ax.plot(ts,Es,markertype,label=label,color=color)
-
-        return
-
-
-    def plot_y_centred_dw(self,label=None,markertype='.',color=None):
-
-        data = np.loadtxt(self.fname())
-        ts = data[:,0]
-        Es = data[:,1]
-        Es = Es-np.average(Es)
-        if color == None:
-            self.ax.plot(ts,Es,markertype,label=label)
-        else:
-            self.ax.plot(ts,Es,markertype,label=label,color=color)
-
-        return
