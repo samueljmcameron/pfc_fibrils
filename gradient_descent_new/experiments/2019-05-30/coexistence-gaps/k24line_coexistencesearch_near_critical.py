@@ -77,7 +77,7 @@ if __name__ == "__main__":
     Lambda = 27
     omega = 10
     K33 = 30
-    k24 = 0.426
+    k24 = float(sys.argv[1])
 
 
 
@@ -95,11 +95,11 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    gamma0 = 0.08384
+    gamma0 = float(sys.argv[2])
 
-    gamma2 = 0.08385
+    gamma2 = float(sys.argv[3])
 
-    dg = 0.00002
+    dg = 0.000005
 
 
     Ef0,Rf0 = single_E_calc(gamma0,scan,loadsuf,savesuf,"scanforward")
@@ -117,6 +117,19 @@ if __name__ == "__main__":
         
     print("finished loop 1")
 
+    if np.abs(Ef0-Eb0)<1e-7:
+
+        print("successfully found coexistence!")
+        exit()
+
+    elif Ef0>Eb0:
+        
+        print("lower bounding gamma is not small enough.")
+        print("Coexistence point not bracketed from below.")
+        print("exiting but FAILED!")
+
+        exit()
+
     Ef2,Rf2 = single_E_calc(gamma2,scan,loadsuf,savesuf,"scanforward")
     Eb2,Rb2 = single_E_calc(gamma2,scan,loadsuf,savesuf,"scanbackward")
 
@@ -133,7 +146,23 @@ if __name__ == "__main__":
 
     print("finished loop 2")
 
-    while(np.abs(Ef0-Ef2)>1e-5):
+    if np.abs(Ef2-Eb2)<1e-7:
+
+        print("successfully found coexistence!")
+        exit()
+
+    elif Eb2>Ef2:
+
+        print("upper bounding gamma is not big enough.")
+        print("Coexistence point not bracketed from above.")
+        print("exiting but FAILED!")
+
+        exit()
+        
+    Ef1 = 1
+    Eb1 = 1000
+
+    while(np.abs(Ef1-Eb1)>1e-7):
 
         gamma1 = 0.5*(gamma0+gamma2)
 
@@ -155,3 +184,4 @@ if __name__ == "__main__":
             gamma2 = gamma1
 
 
+    print("successfully found coexistence!")

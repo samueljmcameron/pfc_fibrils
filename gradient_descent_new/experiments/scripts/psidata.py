@@ -54,18 +54,22 @@ class PsiData(ReadParams):
     
         return f"data/_{self.name}_{suffix}.txt"
     
-    def psivsr_sname(self):
+    def psivsr_sname(self,name=None):
 
         suffix = self.write_suffix(suffix_type="save")
+
+        if name == None:
+
+            name = self.name
         
         if self.strain != None:
 
             suffix = suffix + f"_{self.strain:.4e}"
 
         if self.scan_dir != "":
-            sname = f"results/_{self.name}_{self.scan_dir}_{suffix}.{self.sfile_format}"
+            sname = f"results/_{name}_{self.scan_dir}_{suffix}.{self.sfile_format}"
         else:
-            sname = f"results/_{self.name}_{suffix}.{self.sfile_format}"
+            sname = f"results/_{name}_{suffix}.{self.sfile_format}"
 
         return sname
 

@@ -74,7 +74,7 @@ int main(int argc, char **argv)
     E = E_calc(&p);
     printf("E=%lf\n",E);
 
-    fprintf(Evst,"%13.6e\t%13.6e\n",t,E);
+    fprintf(Evst,"%13.6e\t%13.9e\n",t,E);
 
   }
 

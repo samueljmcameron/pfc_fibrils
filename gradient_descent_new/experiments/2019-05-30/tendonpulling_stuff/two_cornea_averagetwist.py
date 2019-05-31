@@ -14,14 +14,14 @@ if __name__=="__main__":
     configure_fig_settings()
 
     width  = 3.37
-    height = width*1.2
+    height = width*1.5
 
     colors = sns.color_palette()
 
     loadsuf = ["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
     savesuf = ["K_{33}","k_{24}","\\Lambda","\\omega","\\gamma_s"]
 
-    observable_list = ["stress","surfacetwist"]
+    observable_list = ["stress","surfacetwist","delta"]
 
     gamma = 0.15
 
@@ -44,9 +44,9 @@ if __name__=="__main__":
     for i,observable in enumerate(observable_list):
 
         if (i > 0):
-            ax[observable] = fig.add_subplot(2,1,i+1,sharex=ax[observable_list[0]])
+            ax[observable] = fig.add_subplot(3,1,i+1,sharex=ax[observable_list[0]])
         else:
-            ax[observable] = fig.add_subplot(2,1,i+1)
+            ax[observable] = fig.add_subplot(3,1,i+1)
 
 
     for i,type in enumerate(types):
@@ -129,9 +129,13 @@ if __name__=="__main__":
 
             ax[observable].plot(strainpoints,tilt,'k^',label="expt.")
             slope = np.gradient(tilt,strainpoints)[2]
+            print(f"for experiment, slope is {slope}")
+
+        if observable != "delta":
+            plt.setp(ax[observable].get_xticklabels(),visible=False)
+        else:
             ax[observable].set_xlabel(r"$\epsilon\times100\%$",fontsize = 10)
             ax[observable].set_xlim(left=0)
-            print(f"for experiment, slope is {slope}")
 
     fig.subplots_adjust(left=0.2,right=0.8,bottom=0.1,top=0.95,hspace=0.05)
     fig.savefig(obsfwd.observable_sname("psiavg_etc-vsstrain",plot_format="pdf"))

@@ -113,17 +113,17 @@ class SingleRun(object):
 
         if isinstance(vrs,list):
             a = [float(self.params[var]) for var in vrs]
-            dstring = '\t'.join(map("{:13.6e}".format,a))
+            dstring = '\t'.join(map("{:15.8e}".format,a))
         elif vrs == None:
             a = externalparam
             if isinstance(externalparam,list):
-                dstring = '\t'.join(map("{:13.6e}".format,a))
+                dstring = '\t'.join(map("{:15.8e}".format,a))
             else:
-                dstring = f"{a:13.6e}"
+                dstring = f"{a:15.8e}"
 
         else:
             a = float(self.params[vrs])
-            dstring = f"{a:13.6e}"
+            dstring = f"{a:15.8e}"
 
         return dstring
 
@@ -179,12 +179,12 @@ class SingleRun(object):
 
             if modulus != None:
             
-                line=(f"{E0:13.6e}\t{R0:13.6e}\t{eta0:13.6e}\t"
-                      +f"{delta0:13.6e}\t{surftwist0:13.6e}\t{modulus:13.6e}\n")
+                line=(f"{E0:15.8e}\t{R0:15.8e}\t{eta0:15.8e}\t"
+                      +f"{delta0:15.8e}\t{surftwist0:15.8e}\t{modulus:15.8e}\n")
 
             else:
-                line=(f"{E0:13.6e}\t{R0:13.6e}\t{eta0:13.6e}\t"
-                      +f"{delta0:13.6e}\t{surftwist0:13.6e}\n")
+                line=(f"{E0:15.8e}\t{R0:15.8e}\t{eta0:15.8e}\t"
+                      +f"{delta0:15.8e}\t{surftwist0:15.8e}\n")
 
             f1.write(f"{self.add_datastring(vrs,externalparam=externalparam)}\t{line}")
             
